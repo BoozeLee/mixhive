@@ -1,0 +1,50 @@
+name: Schema drift
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+      - 'src/lib/database.types.ts'
+      - 'src/lib/types.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift-check:
+    name: DB types match schema
+    runs-on: ubuntu-latest
+    # Skipped automatically if the secret is not configured.
+    if: ${{ vars.SCHEMA_DRIFT_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check generated types match live schema
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          supabase gen types typescript --linked > /tmp/generated.ts
+          if ! diff -q /tmp/generated.ts src/lib/database.types.ts > /dev/null; then
+            echo "::error::Schema drift detected. Run 'npm run db:types' locally and commit src/lib/database.types.ts."
+            diff /tmp/generated.ts src/lib/database.types.ts || true
+            exit 1
+          fi
+          echo "Schema in sync."

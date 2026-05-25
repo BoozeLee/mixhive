@@ -61,6 +61,25 @@ The app expects an initialised Supabase project with the migrations from `supaba
 | `npm run build` | Type check + production build |
 | `npm run lint` | Run ESLint |
 | `npm run preview` | Preview built output |
+| `npm run db:types` | Regenerate `src/lib/database.types.ts` from the linked Supabase project |
+| `npm run db:types:check` | Diff live schema against the committed types (CI uses this) |
+
+## Database types
+
+Schema types in `src/lib/database.types.ts` are auto-generated from the live Supabase project. To populate or refresh them:
+
+```bash
+# one-time setup
+supabase login
+supabase link --project-ref <YOUR_PROJECT_REF>
+
+# whenever migrations change
+npm run db:types
+git add src/lib/database.types.ts
+git commit -m "chore(db): regenerate schema types"
+```
+
+A `Schema drift` GitHub Actions job runs on PRs that touch migrations or generated types; it fails the build if the committed file is stale. The job is opt-in — set the repo variable `SCHEMA_DRIFT_ENABLED=true` and the secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF` to enable it.
 
 ## Contributing
 

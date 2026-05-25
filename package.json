@@ -18,7 +18,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:types": "supabase gen types typescript --linked > src/lib/database.types.ts",
+    "db:types:check": "supabase gen types typescript --linked | diff - src/lib/database.types.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",

@@ -50,7 +50,13 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
   }
 
   return (
-    <div style={{
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+    // Backdrop close: the ESC + focus-trap a11y is handled by the explicit
+    // Close button below; the backdrop is just an alternate dismissal route
+    // for pointer users and intentionally doesn't take focus.
+    <div
+      role="presentation"
+      style={{
       position: 'fixed',
       inset: 0,
       background: 'rgba(0,0,0,0.7)',
@@ -58,8 +64,15 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 100,
-    }} onClick={onClose}>
-      <div style={{
+      }}
+      onClick={onClose}
+    >
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-to-playlist-title"
+        style={{
         background: '#111',
         borderRadius: 12,
         border: '1px solid #222',
@@ -68,10 +81,12 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
         maxWidth: 400,
         maxHeight: '80vh',
         overflowY: 'auto',
-      }} onClick={e => e.stopPropagation()}>
+        }}
+        onClick={e => e.stopPropagation()}
+      >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 600, color: '#eee', margin: 0 }}>Add to Playlist</h3>
-          <button onClick={onClose} style={{
+          <h3 id="add-to-playlist-title" style={{ fontSize: 16, fontWeight: 600, color: '#eee', margin: 0 }}>Add to Playlist</h3>
+          <button aria-label="Close playlist modal" onClick={onClose} style={{
             background: 'transparent',
             border: 'none',
             color: '#666',

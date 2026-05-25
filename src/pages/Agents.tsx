@@ -109,11 +109,12 @@ export function Agents() {
 
   return (
     <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: space[10] }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: space[10], flexWrap: 'wrap', gap: space[6] }}>
         <div>
           <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold }}>Lua agents</h1>
           <p style={{ margin: '4px 0 0', color: colors.text.muted, fontSize: fontSize.md }}>
-            Tiny Lua scripts that react to events on your account.
+            Tiny Lua scripts that react to events on your account.{' '}
+            <a href="/agents/gallery" style={{ color: colors.accent }}>Browse the gallery →</a>
           </p>
         </div>
         <Button onClick={() => setCreating(true)}>+ New agent</Button>
@@ -192,6 +193,8 @@ function AgentEditor({ agent, onCancel, onSaved }: { agent: LuaAgent | null; onC
   const [description, setDescription] = useState(agent?.description ?? '')
   const [trigger, setTrigger] = useState<LuaAgentTrigger>(agent?.trigger_type ?? 'on_follow')
   const [code, setCode] = useState(agent?.lua_code ?? STARTER_TEMPLATES['on_follow'])
+  const [cronExpr, setCronExpr] = useState(agent?.cron_expr ?? '0 9 * * 1')
+  const [isPublic, setIsPublic] = useState(agent?.is_public ?? false)
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
   const [testResult, setTestResult] = useState<string | null>(null)
@@ -214,10 +217,11 @@ function AgentEditor({ agent, onCancel, onSaved }: { agent: LuaAgent | null; onC
   async function save() {
     setSaving(true)
     try {
+      const cron = trigger === 'on_schedule' ? cronExpr : null
       if (agent) {
-        await updateAgent(agent.id, { name, description, trigger_type: trigger, lua_code: code })
+        await updateAgent(agent.id, { name, description, trigger_type: trigger, lua_code: code, cron_expr: cron, is_public: isPublic })
       } else {
-        await createAgent({ name, description, trigger_type: trigger, lua_code: code })
+        await createAgent({ name, description, trigger_type: trigger, lua_code: code, cron_expr: cron ?? undefined })
       }
       await onSaved()
     } finally { setSaving(false) }
@@ -284,6 +288,27 @@ function AgentEditor({ agent, onCancel, onSaved }: { agent: LuaAgent | null; onC
           <code>mh.notify(message)</code>, <code>mh.follow(user_id)</code>, <code>mh.print(...)</code>. Plus <code>math</code>, <code>string</code>, <code>table</code>.
         </p>
       </div>
+
+      {trigger === 'on_schedule' && (
+        <Input
+          label="Cron expression"
+          value={cronExpr}
+          onChange={e => setCronExpr(e.target.value)}
+          help="5-field cron, evaluated in UTC. e.g. '0 9 * * 1' = Mondays 09:00, '*/15 * * * *' = every 15 minutes."
+        />
+      )}
+
+      {agent && (
+        <label style={{ display: 'flex', alignItems: 'center', gap: space[5], color: colors.text.secondary, fontSize: fontSize.sm, cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={isPublic}
+            onChange={e => setIsPublic(e.target.checked)}
+            style={{ accentColor: colors.accent }}
+          />
+          Publish to the gallery so other DJs can fork this agent.
+        </label>
+      )}
 
       <div style={{ display: 'flex', gap: space[6], justifyContent: 'flex-end' }}>
         {agent && <Button variant="danger" onClick={async () => { if (confirm('Delete this agent?')) { await deleteAgent(agent.id); await onSaved() } }}>Delete</Button>}

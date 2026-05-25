@@ -31,6 +31,7 @@ const EditMix = lazy(() => import('./pages/EditMix').then(m => ({ default: m.Edi
 const PlaylistDetail = lazy(() => import('./pages/PlaylistDetail').then(m => ({ default: m.PlaylistDetail })))
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
 const Agents = lazy(() => import('./pages/Agents').then(m => ({ default: m.Agents })))
+const AgentsGallery = lazy(() => import('./pages/AgentsGallery').then(m => ({ default: m.AgentsGallery })))
 
 export default function App() {
   return (
@@ -81,6 +82,7 @@ export default function App() {
                 <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/agents" element={<ProtectedRoute><Agents /></ProtectedRoute>} />
+                <Route path="/agents/gallery" element={<AgentsGallery />} />
                 <Route path="/embed/mix/:id" element={<EmbedMix />} />
                 <Route path="/playlist/:id" element={<PlaylistDetail />} />
                 <Route path="*" element={<NotFound />} />

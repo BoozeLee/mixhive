@@ -35,6 +35,14 @@ export interface LuaAgent {
   last_error: string | null
   created_at: string
   updated_at: string
+  is_public?: boolean
+  fork_of?: string | null
+  fork_count?: number
+}
+
+export interface PublicLuaAgent extends LuaAgent {
+  owner_username?: string
+  owner_display_name?: string
 }
 
 export interface LuaAgentRun {
@@ -110,6 +118,30 @@ export async function listRuns(agentId: string, limit = 25): Promise<LuaAgentRun
     .limit(limit)
   if (error) throw error
   return (data || []) as LuaAgentRun[]
+}
+
+export async function listPublicAgents(limit = 30): Promise<PublicLuaAgent[]> {
+  const { data, error } = await supabase
+    .from('lua_agents')
+    .select('*, owner:profiles!lua_agents_owner_id_fkey(username,display_name)')
+    .eq('is_public', true)
+    .order('fork_count', { ascending: false })
+    .limit(limit)
+  if (error) throw error
+  return (data || []).map(r => ({
+    ...(r as LuaAgent),
+    owner_username: (r as unknown as { owner?: { username?: string } }).owner?.username,
+    owner_display_name: (r as unknown as { owner?: { display_name?: string } }).owner?.display_name,
+  }))
+}
+
+export async function forkAgent(sourceId: string, newName?: string): Promise<string> {
+  const { data, error } = await supabase.rpc('fork_lua_agent', {
+    p_source_id: sourceId,
+    p_new_name: newName ?? null,
+  })
+  if (error) throw error
+  return data as string
 }
 
 /** Fire an agent ad-hoc with a custom event payload (the "Test run" button). */

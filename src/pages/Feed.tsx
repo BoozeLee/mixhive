@@ -125,10 +125,24 @@ export function Feed() {
           }
         }))
       }
-    } catch {
+    } catch (error) {
+      console.error('Error loading more mixes:', error)
       setTabs(prev => ({ ...prev, [tab]: { ...prev[tab], loading: false } }))
     } finally {
       loadingMoreRef.current = false
+    }
+  }
+
+  const handleRetry = async (t: Tab) => {
+    setTabs(prev => ({ ...prev, [t]: { ...prev[t], loading: true } }))
+    try {
+      const res = await fetchTab(t)
+      if (res) {
+        setTabs(prev => ({ ...prev, [t]: { data: res.data, cursor: res.cursor, hasMore: !!res.cursor, loading: false } }))
+      }
+    } catch (error) {
+      console.error('Error retrying to load feed:', error)
+      setTabs(prev => ({ ...prev, [t]: { ...prev[t], loading: false } }))
     }
   }
 
@@ -187,9 +201,25 @@ export function Feed() {
 
       {current.loading && current.data.length === 0 ? (
         <SkeletonFeed />
-      ) : current.data.length === 0 ? (
+      ) : current.data.length === 0 && !current.loading ? (
         <div style={{ textAlign: 'center', padding: 40, color: '#666', fontSize: 14 }}>
           {tab === 'feed' ? 'Follow some DJs to see their mixes here' : 'No mixes yet'}
+          <button 
+            onClick={() => handleRetry(tab)}
+            style={{
+              marginTop: 16,
+              padding: '8px 16px',
+              background: '#f0c040',
+              color: '#0a0a0a',
+              border: 'none',
+              borderRadius: 6,
+              fontWeight: 600,
+              fontSize: 12,
+              cursor: 'pointer',
+            }}
+          >
+            Try Again
+          </button>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -207,7 +237,7 @@ export function Feed() {
                 fontSize: 14,
               }}
             >
-              {current.loading ? 'Loading...' : 'Load More'}
+              {current.loading ? 'Loading…' : 'Load More'}
             </button>
           )}
         </div>

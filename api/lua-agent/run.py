@@ -118,6 +118,9 @@ def _record_run(
 
 # Pure Lua functions and modules that are SAFE to expose. Everything not
 # in this allow-list is yanked out of the runtime before user code runs.
+# Reflection primitives (getmetatable, setmetatable, rawget, rawset,
+# rawequal, debug.*) are deliberately omitted — they're the classic
+# sandbox-escape vectors.
 _LUA_ALLOWED_GLOBALS = {
     "assert", "error", "ipairs", "next", "pairs", "pcall", "select",
     "tonumber", "tostring", "type", "unpack", "xpcall",
@@ -157,14 +160,31 @@ def _wall_clock_limit(ms: int):
         signal.signal(signal.SIGALRM, prev)
 
 
+def _deny_attribute(_obj: Any, _name: str, _setting: bool = False) -> Any:
+    """Hard-stop any attribute access from Lua onto Python objects.
+
+    Lupa's default behaviour lets Lua do `obj.__class__` / `obj.__globals__`
+    and walk back into the interpreter. CVE-2026-34444 was incomplete
+    enforcement of this filter; we keep the filter on AND keep Lupa
+    pinned at >= 2.8. The MixHive stdlib only exposes plain callables;
+    no surface needs attribute access from inside Lua.
+    """
+    raise AgentDeniedError(f"attribute access denied: {_name!r}")
+
+
 def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
     """Construct a fresh Lupa runtime with the MixHive stdlib installed."""
-    # register_eval=False blocks load()/loadstring(); attribute_handlers
-    # block attribute access on Python objects from inside Lua.
+    # register_eval=False         — blocks load() / loadstring()
+    # register_builtins=False     — keeps Python builtins out of Lua
+    # attribute_filter=_deny      — blocks Lua → Python attribute fishing
+    # attribute_handlers          — belt-and-braces: ensures no host
+    #                               attribute reads/writes succeed even
+    #                               if Lupa regresses the filter
     lua = LuaRuntime(
         unpack_returned_tuples=True,
         register_eval=False,
         register_builtins=False,
+        attribute_filter=_deny_attribute,
     )
 
     # Strip dangerous globals before any user code runs.
@@ -242,16 +262,76 @@ def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
             json={"follower_id": owner_id, "following_id": target_user_id},
         )
 
+    def unfollow(target_user_id: str) -> None:
+        client_owner.delete(
+            _rest("/rest/v1/follows"),
+            params={"follower_id": f"eq.{owner_id}", "following_id": f"eq.{target_user_id}"},
+        )
+
+    def like(mix_id: str) -> None:
+        # Idempotent — the PK (user_id, mix_id) prevents duplicates.
+        client_owner.post(
+            _rest("/rest/v1/likes"),
+            json={"user_id": owner_id, "mix_id": mix_id},
+        )
+
+    def unlike(mix_id: str) -> None:
+        client_owner.delete(
+            _rest("/rest/v1/likes"),
+            params={"user_id": f"eq.{owner_id}", "mix_id": f"eq.{mix_id}"},
+        )
+
+    def repost(mix_id: str) -> None:
+        mix = get_mix(mix_id)
+        if not mix:
+            raise AgentDeniedError(f"mix {mix_id} not found")
+        client_owner.post(
+            _rest("/rest/v1/feed_events"),
+            json={
+                "actor_id": owner_id,
+                "type": "repost",
+                "mix_id": mix_id,
+                "target_id": mix.get("dj_id"),
+            },
+        )
+
+    def unrepost(mix_id: str) -> None:
+        client_owner.post(
+            _rest("/rest/v1/rpc/unrepost"),
+            json={"p_mix_id": mix_id},
+        )
+
+    def fetch_recent_mixes(limit: int = 10) -> list[dict[str, Any]]:
+        n = max(1, min(int(limit), 50))
+        r = client_owner.get(
+            _rest("/rest/v1/mixes"),
+            params={
+                "select": "id,title,dj_id,created_at,play_count,like_count",
+                "order": "created_at.desc",
+                "published": "eq.true",
+                "limit": str(n),
+            },
+        )
+        r.raise_for_status()
+        return r.json()
+
     # Compose the mh.* table that user scripts call.
     mh = lua.table_from({
-        "agent_id":   agent["id"],
-        "owner_id":   owner_id,
-        "print":      lua_print,
-        "get_mix":    get_mix,
-        "get_profile": get_profile,
-        "comment":    comment,
-        "notify":     notify,
-        "follow":     follow,
+        "agent_id":          agent["id"],
+        "owner_id":          owner_id,
+        "trigger":           agent.get("trigger_type"),
+        "print":             lua_print,
+        "get_mix":           get_mix,
+        "get_profile":       get_profile,
+        "comment":           comment,
+        "notify":            notify,
+        "follow":            follow,
+        "unfollow":          unfollow,
+        "like":              like,
+        "unlike":            unlike,
+        "repost":            repost,
+        "unrepost":          unrepost,
+        "fetch_recent_mixes": fetch_recent_mixes,
     })
     lua.globals().mh = mh
     lua.globals().print = lua_print

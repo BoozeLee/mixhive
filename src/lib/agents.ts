@@ -144,6 +144,30 @@ export async function forkAgent(sourceId: string, newName?: string): Promise<str
   return data as string
 }
 
+/** Fork a built-in starter template into the current user's account.
+ *
+ * Unlike forkAgent() this does not call the fork_lua_agent RPC — the
+ * starter library is client-side only (no DB row to fork from), so we
+ * just create a fresh row owned by the user with enabled:false.
+ */
+export async function createFromStarter(starter: {
+  name: string
+  description: string
+  trigger_type: LuaAgentTrigger
+  lua_code: string
+  cron_expr?: string
+}): Promise<string> {
+  const created = await createAgent({
+    name: `${starter.name} (from starter)`,
+    description: starter.description,
+    trigger_type: starter.trigger_type,
+    lua_code: starter.lua_code,
+    enabled: false,
+    cron_expr: starter.cron_expr,
+  })
+  return created.id
+}
+
 /** Fire an agent ad-hoc with a custom event payload (the "Test run" button). */
 export async function testRunAgent(
   agentId: string,

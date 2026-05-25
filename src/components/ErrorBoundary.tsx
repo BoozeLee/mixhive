@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import * as Sentry from '@sentry/react'
 
 interface Props {
   children: ReactNode
@@ -9,12 +10,13 @@ interface State {
   error: Error | null
 }
 
-// Hook for Phase 2 — Sentry.captureException will be wired here.
 function reportToObservability(error: Error, info: ErrorInfo) {
   if (import.meta.env.DEV) {
     console.error('[ErrorBoundary]', error, info.componentStack)
   }
-  // window.Sentry?.captureException(error, { extra: { componentStack: info.componentStack } })
+  Sentry.captureException(error, {
+    contexts: { react: { componentStack: info.componentStack } },
+  })
 }
 
 export class ErrorBoundary extends Component<Props, State> {

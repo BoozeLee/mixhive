@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run preview)",
+      "Bash(npm run analyze)",
+      "Bash(npm test)",
+      "Bash(npm test:*)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx tsc -b)",
+      "Bash(npm ci)",
+      "Bash(npm install:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run watch:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh api repos/BoozeLee/mixhive/:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(supabase db diff:*)",
+      "Bash(supabase gen types typescript --linked)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "(cd \"$CLAUDE_PROJECT_DIR\" 2>/dev/null && branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || echo detached) && warn=$(npm run -s lint 2>&1 | grep -Eo '[0-9]+ warnings?' | head -1) && printf 'mixhive · %s · %s' \"$branch\" \"${warn:-lint ?}\")"
+  }
+}

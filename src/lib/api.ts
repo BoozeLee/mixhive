@@ -1,10 +1,31 @@
 import { isSupabaseConfigured, supabase } from './supabase'
-import type { FeedMix, Mix, Comment, Profile, Notification, FeedCursor, TrendingCursor, FeedResult, TrendingResult, Playlist, PlaylistWithMixes, ActivityEvent, RecommendedDJ } from './types'
+import type {
+  ActivityEvent,
+  AnalyticsEventType,
+  Comment,
+  FeedCursor,
+  FeedMix,
+  FeedResult,
+  Mix,
+  Notification,
+  Playlist,
+  PlaylistWithMixes,
+  Profile,
+  ProfileAnalytics,
+  RecommendedDJ,
+  TrendingCursor,
+  TrendingResult,
+  VerificationBadge,
+  VerificationBadgeType,
+  VerificationRequest,
+} from './types'
 
 // Storage bucket names
 export const AUDIO_BUCKET = 'mix-audio'
 export const ARTWORK_BUCKET = 'mix-artwork'
 export const WAVEFORM_BUCKET = 'mix-waveforms'
+export const AVATAR_BUCKET = 'profile-avatars'
+export const BANNER_BUCKET = 'profile-banners'
 
 function emptyFeedResult(): FeedResult {
   return { data: [], cursor: null }
@@ -34,6 +55,81 @@ export async function getProfileById(id: string): Promise<Profile | null> {
     .eq('id', id)
     .single()
   return data
+}
+
+export async function getProfileBadges(profileId: string): Promise<VerificationBadge[]> {
+  if (!isSupabaseConfigured) return []
+  const { data } = await supabase
+    .from('verification_badges')
+    .select('*')
+    .eq('profile_id', profileId)
+    .order('granted_at', { ascending: false })
+  return data || []
+}
+
+export async function getMyVerificationRequest(profileId: string): Promise<VerificationRequest | null> {
+  if (!isSupabaseConfigured) return null
+  const { data } = await supabase
+    .from('verification_requests')
+    .select('*')
+    .eq('profile_id', profileId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  return data
+}
+
+export async function createVerificationRequest(input: {
+  profileId: string
+  djName: string
+  links: Record<string, string>
+  proof: string
+  requestedBadge: VerificationBadgeType
+}): Promise<VerificationRequest | null> {
+  if (!isSupabaseConfigured) return null
+  const { data, error } = await supabase
+    .from('verification_requests')
+    .insert({
+      profile_id: input.profileId,
+      dj_name: input.djName,
+      links: input.links,
+      proof: input.proof,
+      requested_badge: input.requestedBadge,
+    })
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function listVerificationRequests(): Promise<VerificationRequest[]> {
+  if (!isSupabaseConfigured) return []
+  const { data } = await supabase
+    .from('verification_requests')
+    .select('*, profiles!verification_requests_profile_id_fkey(*)')
+    .order('created_at', { ascending: false })
+  return (data || []).map(row => ({
+    ...row,
+    profile: (row as unknown as { profiles: Profile }).profiles,
+  })) as VerificationRequest[]
+}
+
+export async function reviewVerificationRequest(input: {
+  requestId: string
+  reviewerId: string
+  status: 'approved' | 'rejected'
+  reason?: string
+  badgeType?: VerificationBadgeType
+}): Promise<void> {
+  if (!isSupabaseConfigured) return
+  const { error } = await supabase.rpc('review_verification_request', {
+    p_request_id: input.requestId,
+    p_reviewer_id: input.reviewerId,
+    p_status: input.status,
+    p_reason: input.reason || null,
+    p_badge_type: input.badgeType || null,
+  })
+  if (error) throw error
 }
 
 export async function searchProfiles(query: string): Promise<Profile[]> {
@@ -144,6 +240,23 @@ export async function incrementPlayCount(mixId: string, userId?: string): Promis
   } else {
     await supabase.from('play_history').insert({ mix_id: mixId })
   }
+}
+
+export async function trackAnalyticsEvent(input: {
+  profileId: string
+  eventType: AnalyticsEventType
+  actorId?: string | null
+  mixId?: string | null
+  metadata?: Record<string, unknown>
+}): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase.from('analytics_events').insert({
+    profile_id: input.profileId,
+    actor_id: input.actorId || null,
+    mix_id: input.mixId || null,
+    event_type: input.eventType,
+    metadata: input.metadata || {},
+  })
 }
 
 // --- Social ---
@@ -563,6 +676,81 @@ export async function getUserActivity(userId: string): Promise<ActivityEvent[]> 
   if (!isSupabaseConfigured) return []
   const { data } = await supabase.rpc('get_user_activity', { p_user_id: userId })
   return data || []
+}
+
+export async function getProfileAnalytics(profileId: string, mixes?: Mix[]): Promise<ProfileAnalytics> {
+  const profileMixes = mixes ?? await getMixesByDj(profileId)
+  const [followers, following] = await Promise.all([
+    getFollowersCount(profileId),
+    getFollowingCount(profileId),
+  ])
+
+  const totalPlays = profileMixes.reduce((sum, mix) => sum + (mix.play_count || 0), 0)
+  const totalLikes = profileMixes.reduce((sum, mix) => sum + (mix.like_count || 0), 0)
+  const totalComments = profileMixes.reduce((sum, mix) => sum + (mix.comment_count || 0), 0)
+  const sortedMixes = [...profileMixes].sort((a, b) => (b.play_count || 0) - (a.play_count || 0)).slice(0, 5)
+  const genreDistribution = Array.from(
+    profileMixes.reduce((map, mix) => {
+      const name = mix.genre_name || 'Uncategorized'
+      map.set(name, (map.get(name) || 0) + 1)
+      return map
+    }, new Map<string, number>()),
+  ).map(([name, count]) => ({ name, count }))
+
+  const createdTimes = profileMixes
+    .map(mix => new Date(mix.created_at).getTime())
+    .filter(time => Number.isFinite(time))
+    .sort((a, b) => a - b)
+  const uploadFrequencyDays = createdTimes.length > 1
+    ? Math.round(((createdTimes[createdTimes.length - 1] - createdTimes[0]) / (createdTimes.length - 1)) / 86400000)
+    : null
+
+  let weeklyEvents: Array<{ label: string; count: number }> = []
+  if (isSupabaseConfigured) {
+    const since = new Date(Date.now() - 1000 * 60 * 60 * 24 * 42).toISOString()
+    const { data } = await supabase
+      .from('analytics_events')
+      .select('created_at')
+      .eq('profile_id', profileId)
+      .gte('created_at', since)
+    const buckets = new Map<string, number>()
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(Date.now() - i * 7 * 86400000)
+      const label = `${date.getMonth() + 1}/${date.getDate()}`
+      buckets.set(label, 0)
+    }
+    ;(data || []).forEach(event => {
+      const date = new Date(event.created_at)
+      const weekStart = new Date(date)
+      weekStart.setDate(date.getDate() - date.getDay())
+      const label = `${weekStart.getMonth() + 1}/${weekStart.getDate()}`
+      buckets.set(label, (buckets.get(label) || 0) + 1)
+    })
+    weeklyEvents = Array.from(buckets, ([label, count]) => ({ label, count })).slice(-6)
+  }
+
+  if (weeklyEvents.length === 0) {
+    weeklyEvents = [5, 4, 3, 2, 1, 0].map(index => {
+      const date = new Date(Date.now() - index * 7 * 86400000)
+      return { label: `${date.getMonth() + 1}/${date.getDate()}`, count: 0 }
+    })
+  }
+
+  return {
+    totalPlays,
+    totalLikes,
+    totalComments,
+    totalMixes: profileMixes.length,
+    followers,
+    following,
+    averagePlaysPerMix: profileMixes.length ? Math.round(totalPlays / profileMixes.length) : 0,
+    likeToPlayRatio: totalPlays ? Number(((totalLikes / totalPlays) * 100).toFixed(1)) : 0,
+    followerEngagementRate: followers ? Number((((totalLikes + totalComments) / followers) * 100).toFixed(1)) : 0,
+    uploadFrequencyDays,
+    topMixes: sortedMixes,
+    genreDistribution,
+    weeklyEvents,
+  }
 }
 
 export async function getRecommendedDJs(userId: string): Promise<RecommendedDJ[]> {

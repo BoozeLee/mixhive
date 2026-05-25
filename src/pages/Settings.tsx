@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '../components/ui/Button'
+import { Input } from '../components/ui/Input'
+import { Textarea } from '../components/ui/Textarea'
+import { ProfileSchema, formatZodError } from '../lib/schemas'
 
 const GENRE_OPTIONS = [
   'House', 'Techno', 'Deep House', 'Tech House', 'Progressive House',
@@ -12,55 +16,94 @@ const GENRE_OPTIONS = [
 export function Settings() {
   const { profile, updateProfile } = useAuth()
   const navigate = useNavigate()
-  const [displayName, setDisplayName] = useState(profile?.display_name || '')
-  const [bio, setBio] = useState(profile?.bio || '')
-  const [location, setLocation] = useState(profile?.location || '')
-  const [selectedGenres, setSelectedGenres] = useState<string[]>(profile?.genres || [])
+  
+  const [formData, setFormData] = useState({
+    display_name: profile?.display_name || '',
+    bio: profile?.bio || '',
+    location: profile?.location || '',
+    genres: profile?.genres || [] as string[],
+  })
+  
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   function toggleGenre(g: string) {
-    setSelectedGenres(prev =>
-      prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]
-    )
+    setFormData(prev => ({
+      ...prev,
+      genres: prev.genres.includes(g) 
+        ? prev.genres.filter(x => x !== g) 
+        : [...prev.genres, g]
+    }))
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    
+    // Validate with Zod
+    const result = ProfileSchema.safeParse(formData)
+    if (!result.success) {
+      setFormErrors(formatZodError(result.error))
+      setError('')
+      return
+    }
+    
+    setFormErrors({})
+    setError('')
     setSaving(true)
-    await updateProfile({
-      display_name: displayName || null,
-      bio: bio || null,
-      location: location || null,
-      genres: selectedGenres
-    })
-    setSaving(false)
-    if (profile) navigate(`/u/${profile.username}`)
+    
+    try {
+      await updateProfile({
+        display_name: result.data.display_name || null,
+        bio: result.data.bio || null,
+        location: result.data.location || null,
+        genres: result.data.genres
+      })
+      if (profile) navigate(`/u/${profile.username}`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update profile')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
-    <div style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px' }}>
+    <div className="container" style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px' }}>
       <h1 style={{ fontSize: 22, fontWeight: 700, color: '#eee', marginBottom: 24 }}>Edit profile</h1>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {error && (
+        <div style={{ background: '#2a1010', color: '#f55', padding: '10px 14px', borderRadius: 8, fontSize: 13, marginBottom: 16 }}>
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
           <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Display name</label>
-          <input type="text" value={displayName} onChange={e => setDisplayName(e.target.value)}
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
+          <Input 
+            value={formData.display_name} 
+            onChange={e => setFormData(prev => ({ ...prev, display_name: e.target.value }))}
+            error={formErrors.display_name}
+            placeholder="Enter display name"
           />
         </div>
 
         <div>
           <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Bio</label>
-          <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3}
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
+          <Textarea 
+            value={formData.bio} 
+            onChange={e => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+            rows={3}
+            placeholder="Tell us about yourself..."
           />
         </div>
 
         <div>
           <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Location</label>
-          <input type="text" value={location} onChange={e => setLocation(e.target.value)}
+          <Input 
+            value={formData.location} 
+            onChange={e => setFormData(prev => ({ ...prev, location: e.target.value }))}
             placeholder="City, Country"
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
           />
         </div>
 
@@ -68,35 +111,30 @@ export function Settings() {
           <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 8 }}>Genres</label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {GENRE_OPTIONS.map(g => (
-              <button key={g} type="button" onClick={() => toggleGenre(g)} style={{
-                padding: '6px 12px',
-                borderRadius: 16,
-                border: 'none',
-                background: selectedGenres.includes(g) ? '#f0c040' : '#1a1a2e',
-                color: selectedGenres.includes(g) ? '#0a0a0a' : '#777',
-                fontSize: 12,
-                cursor: 'pointer',
-                fontWeight: selectedGenres.includes(g) ? 600 : 400
-              }}>
+              <button
+                key={g}
+                type="button"
+                onClick={() => toggleGenre(g)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 16,
+                  border: 'none',
+                  background: formData.genres.includes(g) ? '#f0c040' : '#1a1a2e',
+                  color: formData.genres.includes(g) ? '#0a0a0a' : '#777',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  fontWeight: formData.genres.includes(g) ? 600 : 400
+                }}
+              >
                 {g}
               </button>
             ))}
           </div>
         </div>
 
-        <button type="submit" disabled={saving} style={{
-          marginTop: 8,
-          background: saving ? '#333' : '#f0c040',
-          color: saving ? '#666' : '#0a0a0a',
-          border: 'none',
-          padding: '12px',
-          borderRadius: 8,
-          fontSize: 16,
-          fontWeight: 700,
-          cursor: saving ? 'not-allowed' : 'pointer'
-        }}>
+        <Button type="submit" disabled={saving} className="w-full" style={{ marginTop: 8 }}>
           {saving ? 'Saving...' : 'Save profile'}
-        </button>
+        </Button>
       </form>
     </div>
   )

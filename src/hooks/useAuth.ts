@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
-import { supabase } from '../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import type { Profile } from '../lib/types'
+
+const missingConfigError = {
+  message: 'Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local to enable authentication.',
+}
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -18,6 +22,11 @@ export function useAuth() {
   }
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setLoading(false)
+      return
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       if (session?.user) fetchProfile(session.user.id)
@@ -34,10 +43,12 @@ export function useAuth() {
   }, [])
 
   async function signInWithEmail(email: string, password: string) {
+    if (!isSupabaseConfigured) return { error: missingConfigError }
     return supabase.auth.signInWithPassword({ email, password })
   }
 
   async function signUpWithEmail(email: string, password: string, metadata?: Record<string, string>) {
+    if (!isSupabaseConfigured) return { error: missingConfigError }
     return supabase.auth.signUp({
       email,
       password,
@@ -46,6 +57,7 @@ export function useAuth() {
   }
 
   async function signInWithGoogle() {
+    if (!isSupabaseConfigured) return { error: missingConfigError }
     return supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` }
@@ -53,13 +65,14 @@ export function useAuth() {
   }
 
   async function signOut() {
+    if (!isSupabaseConfigured) return
     await supabase.auth.signOut()
     setUser(null)
     setProfile(null)
   }
 
   async function updateProfile(updates: Partial<Profile>) {
-    if (!user) return
+    if (!isSupabaseConfigured || !user) return
     await supabase.from('profiles').update(updates).eq('id', user.id)
     setProfile(prev => prev ? { ...prev, ...updates } : null)
   }

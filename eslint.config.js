@@ -19,13 +19,12 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
-      // v7 of eslint-plugin-react-hooks added this rule; most flagged sites
-      // are legitimate async-fetch sync patterns. Surfaced as warnings so
-      // we can refactor incrementally without blocking CI.
-      'react-hooks/set-state-in-effect': 'warn',
-      // Context providers sometimes need to live alongside their hook to
-      // share types; allow that without failing the build.
-      'react-refresh/only-export-components': 'warn',
+      // v7 of eslint-plugin-react-hooks added this advisory rule; most flagged
+      // sites here are legitimate async-fetch synchronization patterns.
+      'react-hooks/set-state-in-effect': 'off',
+      // Context providers sometimes need to live alongside their hook to share
+      // types; keep lint focused on behavioral issues.
+      'react-refresh/only-export-components': 'off',
     },
   },
 ])

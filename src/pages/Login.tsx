@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
-import { IconButton } from '../components/ui/IconButton'
 import { LoginSchema, formatZodError } from '../lib/schemas'
 
 export function Login() {
@@ -80,6 +79,7 @@ export function Login() {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Input
             type="email"
+            autoComplete="email"
             placeholder="Email"
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
@@ -87,6 +87,7 @@ export function Login() {
           />
           <Input
             type="password"
+            autoComplete="current-password"
             placeholder="Password"
             value={formData.password}
             onChange={(e) => handleInputChange('password', e.target.value)}

@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { usePlayer } from '../lib/playerStore'
 import { repost, unrepost, hasReposted } from '../lib/api'
+import { LikeButton } from './LikeButton'
+import { ShareButton } from './ShareButton'
 import type { FeedMix } from '../lib/types'
+import { colors } from '../styles/tokens'
 
 interface Props {
   mix: FeedMix
@@ -207,6 +210,12 @@ export function MixCard({ mix }: Props) {
         </div>
         {user && (
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, paddingLeft: 4, position: 'relative' }}>
+            <LikeButton
+              mix={mix}
+              userId={user.id}
+              variant="icon"
+              showCount={true}
+            />
             <button
               onClick={handleRepost}
               disabled={repostBusy}
@@ -224,6 +233,13 @@ export function MixCard({ mix }: Props) {
             >
               {reposted ? '🔁' : '↻'}
             </button>
+            <ShareButton
+              mix={mix}
+              variant="icon"
+              onShare={() => {
+                // Handle share if needed
+              }}
+            />
             <button onClick={e => { e.preventDefault(); e.stopPropagation(); setShowMenu(s => !s) }} style={{
               background: 'transparent', border: 'none', color: showMenu ? '#f0c040' : '#555',
               cursor: 'pointer', fontSize: 16, padding: '4px', lineHeight: 1,
@@ -233,18 +249,19 @@ export function MixCard({ mix }: Props) {
             {showMenu && (
               <div style={{
                 position: 'absolute', right: 0, top: '100%', zIndex: 10,
-                background: '#1a1a2e', border: '1px solid #333', borderRadius: 6,
+                background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 6,
                 minWidth: 120, padding: 4,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
               }} onClick={e => e.stopPropagation()}>
                 <button onClick={handlePlayNext} style={{
                   display: 'block', width: '100%', background: 'transparent', border: 'none',
-                  color: '#ccc', padding: '6px 10px', fontSize: 12, cursor: 'pointer', textAlign: 'left',
+                  color: colors.text.primary, padding: '6px 10px', fontSize: 12, cursor: 'pointer', textAlign: 'left',
                 }}>
                   Play Next
                 </button>
                 <button onClick={handleAddToQueue} style={{
                   display: 'block', width: '100%', background: 'transparent', border: 'none',
-                  color: '#ccc', padding: '6px 10px', fontSize: 12, cursor: 'pointer', textAlign: 'left',
+                  color: colors.text.primary, padding: '6px 10px', fontSize: 12, cursor: 'pointer', textAlign: 'left',
                 }}>
                   Add to Queue
                 </button>

@@ -78,6 +78,7 @@ export function Register() {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Input
             type="text"
+            autoComplete="username"
             placeholder="Username"
             value={formData.username}
             onChange={(e) => handleInputChange('username', e.target.value)}
@@ -86,6 +87,7 @@ export function Register() {
           />
           <Input
             type="email"
+            autoComplete="email"
             placeholder="Email"
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
@@ -93,6 +95,7 @@ export function Register() {
           />
           <Input
             type="password"
+            autoComplete="new-password"
             placeholder="Password"
             value={formData.password}
             onChange={(e) => handleInputChange('password', e.target.value)}
@@ -101,6 +104,7 @@ export function Register() {
           />
           <Input
             type="text"
+            autoComplete="name"
             placeholder="Display name"
             value={formData.display_name}
             onChange={(e) => handleInputChange('display_name', e.target.value)}

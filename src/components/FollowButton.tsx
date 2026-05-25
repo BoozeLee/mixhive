@@ -1,65 +1,78 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { useEffect, useState } from 'react'
+import { Button } from './ui/Button'
+import { follow, isFollowing as readIsFollowing, unfollow } from '../lib/api'
+import type { Profile } from '../lib/types'
 
-interface FollowButtonProps {
-  targetUserId: string
-  currentUserId: string
+type Props = {
+  profile?: Profile
+  targetUserId?: string
+  currentUserId?: string
+  userId?: string
+  showCount?: boolean
+  onFollow?: (isFollowing: boolean) => void
   onToggle?: () => void
+  className?: string
+  variant?: 'default' | 'ghost' | 'outline'
 }
 
-export function FollowButton({ targetUserId, currentUserId, onToggle }: FollowButtonProps) {
-  const [following, setFollowing] = useState(false)
+export function FollowButton({
+  profile,
+  targetUserId,
+  currentUserId,
+  userId,
+  onFollow,
+  onToggle,
+  className,
+  variant = 'default',
+}: Props) {
+  const targetId = targetUserId || profile?.id
+  const viewerId = currentUserId || userId
+  const [isFollowing, setIsFollowing] = useState(false)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (targetUserId === currentUserId) return
-    supabase
-      .from('follows')
-      .select('*')
-      .eq('follower_id', currentUserId)
-      .eq('following_id', targetUserId)
-      .maybeSingle()
-      .then(({ data }) => setFollowing(!!data))
-  }, [targetUserId, currentUserId])
+    let cancelled = false
+    if (!viewerId || !targetId || viewerId === targetId) return
+    readIsFollowing(viewerId, targetId).then(value => {
+      if (!cancelled) setIsFollowing(value)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [viewerId, targetId])
 
   async function toggle() {
-    if (loading || targetUserId === currentUserId) return
+    if (!viewerId || !targetId || viewerId === targetId || loading) return
     setLoading(true)
-    if (following) {
-      await supabase.from('follows').delete().match({
-        follower_id: currentUserId,
-        following_id: targetUserId
-      })
-      setFollowing(false)
-    } else {
-      await supabase.from('follows').insert({
-        follower_id: currentUserId,
-        following_id: targetUserId
-      })
-      setFollowing(true)
+    try {
+      if (isFollowing) {
+        await unfollow(viewerId, targetId)
+        setIsFollowing(false)
+        onFollow?.(false)
+      } else {
+        await follow(viewerId, targetId)
+        setIsFollowing(true)
+        onFollow?.(true)
+      }
+      onToggle?.()
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
-    onToggle?.()
   }
 
-  if (targetUserId === currentUserId) return null
+  if (!targetId || viewerId === targetId) return null
 
   return (
-    <button
+    <Button
+      type="button"
+      variant={isFollowing ? (variant === 'ghost' ? 'ghost' : 'secondary') : 'primary'}
+      size="sm"
       onClick={toggle}
-      disabled={loading}
-      style={{
-        background: following ? '#1a1a2e' : '#f0c040',
-        color: following ? '#888' : '#0a0a0a',
-        border: following ? '1px solid #333' : 'none',
-        padding: '6px 14px',
-        borderRadius: 6,
-        cursor: loading ? 'wait' : 'pointer',
-        fontSize: 12,
-        fontWeight: following ? 400 : 600,
-      }}
+      loading={loading}
+      disabled={!viewerId}
+      className={className}
     >
-      {loading ? '...' : following ? 'Following' : '+ Follow'}
-    </button>
+      {isFollowing ? 'Following' : 'Follow'}
+    </Button>
   )
 }

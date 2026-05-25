@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { getMix, updateMix, deleteMix } from '../lib/api'
-import { supabase } from '../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { AUDIO_BUCKET, ARTWORK_BUCKET } from '../lib/api'
 import type { Mix, TrackItem } from '../lib/types'
 
@@ -57,6 +57,7 @@ export function EditMix() {
   }, [id, user])
 
   async function uploadFile(file: File, bucket: string): Promise<string | null> {
+    if (!isSupabaseConfigured) return null
     const ext = file.name.split('.').pop()
     const path = `${crypto.randomUUID()}.${ext}`
     const { error: uploadErr } = await supabase.storage.from(bucket).upload(path, file)

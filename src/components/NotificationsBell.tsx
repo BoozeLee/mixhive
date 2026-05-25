@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 
 export function NotificationsBell() {
@@ -18,7 +18,7 @@ export function NotificationsBell() {
   }, [user])
 
   useEffect(() => {
-    if (!user) return
+    if (!isSupabaseConfigured || !user) return
     const channel = supabase
       .channel('notifications')
       .on(

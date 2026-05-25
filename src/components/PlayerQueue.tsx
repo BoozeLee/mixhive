@@ -41,7 +41,7 @@ export function PlayerQueue() {
               {track.artworkUrl ? (
                 <img
                   src={track.artworkUrl}
-                  alt=""
+                  alt={`Artwork for ${track.title}`}
                   width={32}
                   height={32}
                   loading="lazy"

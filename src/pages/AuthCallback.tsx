@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 
 export function AuthCallback() {
   const navigate = useNavigate()
   const [error, setError] = useState('')
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setError('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local, then try signing in again.')
+      return
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate('/feed', { replace: true })

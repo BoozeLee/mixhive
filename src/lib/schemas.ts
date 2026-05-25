@@ -1,10 +1,9 @@
 import { z } from 'zod'
 
-// Upload form schema
-export const UploadSchema = z.object({
+const MixFormBaseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title too long'),
   description: z.string().max(10000, 'Description too long').optional(),
-  genre: z.string().min(1, 'Genre is required'),
+  genre: z.string().min(1, 'Genre is required').or(z.literal('')),
   tags: z.array(z.string()).max(10, 'Maximum 10 tags allowed'),
   artworkFile: z.instanceof(File).refine(
     (file) => file.size <= 10 * 1024 * 1024, // 10MB
@@ -23,8 +22,14 @@ export const UploadSchema = z.object({
   isPublic: z.boolean().default(true),
 })
 
+// Upload form schema
+export const UploadSchema = MixFormBaseSchema.refine((data) => data.genre !== '', {
+  message: 'Genre is required',
+  path: ['genre'],
+})
+
 // Edit mix schema (removes required audio file)
-export const EditMixSchema = UploadSchema.omit({
+export const EditMixSchema = MixFormBaseSchema.omit({
   audioFile: true,
 }).extend({
   title: z.string().min(1, 'Title is required').max(100, 'Title too long'),
@@ -100,13 +105,13 @@ export type PlaylistFormData = z.infer<typeof PlaylistSchema>
 // Utility function to handle form validation errors
 export function formatZodError(error: z.ZodError): Record<string, string> {
   const errors: Record<string, string> = {}
-  
-  error.errors.forEach((err) => {
+
+  error.issues.forEach((err) => {
     if (err.path.length > 0) {
-      const field = err.path[0]
+      const field = String(err.path[0])
       errors[field] = err.message
     }
   })
-  
+
   return errors
 }

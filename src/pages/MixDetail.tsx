@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { usePlayer } from '../lib/playerStore'
-import { supabase } from '../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { getMix, getComments, createComment, like, unlike, hasLiked, incrementPlayCount, repost, unrepost, hasReposted, getFansAlsoLiked } from '../lib/api'
 import { WaveformPlayer } from '../components/WaveformPlayer'
 import { SkeletonMixDetail } from '../components/Skeleton'
@@ -67,7 +67,7 @@ export function MixDetail() {
   // Realtime: new comments + live like-count updates for everyone viewing
   // this mix. Mirrors the NotificationsBell channel pattern.
   useEffect(() => {
-    if (!id) return
+    if (!isSupabaseConfigured || !id) return
     const channel = supabase
       .channel(`mix:${id}`)
       .on(
@@ -434,7 +434,7 @@ export function MixDetail() {
                   {c.user?.avatar_url && (
                     <img
                       src={c.user.avatar_url}
-                      alt=""
+                      alt={`${c.user.display_name || c.user.username}'s avatar`}
                       style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover' }}
                     />
                   )}
@@ -458,7 +458,7 @@ export function MixDetail() {
                     {r.user?.avatar_url && (
                       <img
                         src={r.user.avatar_url}
-                        alt=""
+                        alt={`${r.user.display_name || r.user.username}'s avatar`}
                         style={{ width: 18, height: 18, borderRadius: '50%', objectFit: 'cover' }}
                       />
                     )}

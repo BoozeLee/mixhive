@@ -1,8 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { IconButton } from './ui/IconButton'
-import { colors, space, bp, transition } from '../styles/tokens'
-import type { ReactNode } from 'react'
+import { colors, space, bp, transition, fontSize, fontWeight } from '../styles/tokens'
 
 interface NavItem {
   path: string
@@ -13,6 +12,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: '/feed', icon: '🎵', label: 'Feed', ariaLabel: 'Feed' },
+  { path: '/discover', icon: '⭐', label: 'Discover', ariaLabel: 'Discover' },
   { path: '/search', icon: '🔍', label: 'Search', ariaLabel: 'Search' },
   { path: '/upload', icon: '⬆️', label: 'Upload', ariaLabel: 'Upload mix' },
   { path: '/notifications', icon: '🔔', label: 'Notifications', ariaLabel: 'Notifications' },

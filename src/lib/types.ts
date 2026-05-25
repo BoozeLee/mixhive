@@ -11,8 +11,66 @@ export interface Profile {
   social_links: Record<string, string>
   is_dj: boolean
   verified: boolean
+  is_admin?: boolean
   created_at: string
   updated_at: string
+}
+
+export type VerificationBadgeType = 'verified' | 'artist' | 'official'
+export type VerificationRequestStatus = 'pending' | 'approved' | 'rejected'
+export type AnalyticsEventType = 'profile_view' | 'follow' | 'upload' | 'play' | 'like' | 'comment' | 'share' | 'verification'
+
+export interface VerificationBadge {
+  id: string
+  profile_id: string
+  badge_type: VerificationBadgeType
+  label: string
+  reason: string | null
+  granted_by: string | null
+  granted_at: string
+  expires_at: string | null
+}
+
+export interface VerificationRequest {
+  id: string
+  profile_id: string
+  dj_name: string
+  links: Record<string, string>
+  proof: string
+  requested_badge: VerificationBadgeType
+  status: VerificationRequestStatus
+  rejection_reason: string | null
+  reviewed_by: string | null
+  reviewed_at: string | null
+  created_at: string
+  updated_at: string
+  profile?: Profile
+}
+
+export interface AnalyticsEvent {
+  id: string
+  profile_id: string
+  actor_id: string | null
+  mix_id: string | null
+  event_type: AnalyticsEventType
+  metadata: Record<string, unknown>
+  created_at: string
+}
+
+export interface ProfileAnalytics {
+  totalPlays: number
+  totalLikes: number
+  totalComments: number
+  totalMixes: number
+  followers: number
+  following: number
+  averagePlaysPerMix: number
+  likeToPlayRatio: number
+  followerEngagementRate: number
+  uploadFrequencyDays: number | null
+  topMixes: Mix[]
+  genreDistribution: Array<{ name: string; count: number }>
+  weeklyEvents: Array<{ label: string; count: number }>
 }
 
 export interface Mix {

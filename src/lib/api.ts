@@ -182,24 +182,94 @@ export async function hasLiked(userId: string, mixId: string): Promise<boolean> 
 
 // --- Comments ---
 
-export async function getComments(mixId: string): Promise<Comment[]> {
-  const { data } = await supabase
-    .from('comments')
-    .select('*, profiles!comments_user_id_fkey(*)')
-    .eq('mix_id', mixId)
-    .is('parent_id', null)
-    .order('created_at', { ascending: true })
-  if (!data) return []
-  const comments = data.map(c => ({ ...c, user: c.profiles }))
-  for (const comment of comments) {
-    const { data: replies } = await supabase
-      .from('comments')
-      .select('*, profiles!comments_user_id_fkey(*)')
-      .eq('parent_id', comment.id)
-      .order('created_at', { ascending: true })
-    comment.replies = (replies || []).map(r => ({ ...r, user: r.profiles }))
-  }
-  return comments
+interface ThreadedCommentRow {
+  id: string
+  user_id: string
+  mix_id: string
+  parent_id: string | null
+  body: string
+  created_at: string
+  updated_at: string
+  user_username: string
+  user_display_name: string | null
+  user_avatar_url: string | null
+  user_verified: boolean
+  replies: Array<{
+    id: string
+    user_id: string
+    mix_id: string
+    parent_id: string
+    body: string
+    created_at: string
+    updated_at: string
+    user: {
+      id: string
+      username: string
+      display_name: string | null
+      avatar_url: string | null
+      verified: boolean
+    }
+  }>
+}
+
+export async function getComments(mixId: string, limit = 50, offset = 0): Promise<Comment[]> {
+  const { data, error } = await supabase.rpc('get_mix_comments', {
+    p_mix_id: mixId,
+    p_limit: limit,
+    p_offset: offset,
+  })
+  if (error || !data) return []
+
+  return (data as ThreadedCommentRow[]).map(row => ({
+    id: row.id,
+    user_id: row.user_id,
+    mix_id: row.mix_id,
+    parent_id: row.parent_id,
+    body: row.body,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+    user: {
+      id: row.user_id,
+      username: row.user_username,
+      display_name: row.user_display_name,
+      avatar_url: row.user_avatar_url,
+      verified: row.user_verified,
+      banner_url: null,
+      bio: null,
+      location: null,
+      website: null,
+      genres: [],
+      social_links: {},
+      is_dj: true,
+      created_at: '',
+      updated_at: '',
+    },
+    replies: row.replies.map(r => ({
+      id: r.id,
+      user_id: r.user_id,
+      mix_id: r.mix_id,
+      parent_id: r.parent_id,
+      body: r.body,
+      created_at: r.created_at,
+      updated_at: r.updated_at,
+      user: {
+        id: r.user.id,
+        username: r.user.username,
+        display_name: r.user.display_name,
+        avatar_url: r.user.avatar_url,
+        verified: r.user.verified,
+        banner_url: null,
+        bio: null,
+        location: null,
+        website: null,
+        genres: [],
+        social_links: {},
+        is_dj: true,
+        created_at: '',
+        updated_at: '',
+      },
+    })),
+  }))
 }
 
 export async function createComment(comment: Partial<Comment>): Promise<Comment | null> {

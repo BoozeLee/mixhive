@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { LogoStacked } from '../components/Logo'
 
 export function Landing() {
   const { user } = useAuth()
@@ -16,6 +17,7 @@ export function Landing() {
         minHeight: '70vh',
         background: 'radial-gradient(ellipse at center, #0a0a1a 0%, #050505 100%)'
       }}>
+        <LogoStacked />
         <h1 style={{
           fontSize: 'clamp(40px, 8vw, 80px)',
           fontWeight: 800,

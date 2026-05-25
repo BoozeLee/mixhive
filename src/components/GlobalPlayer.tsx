@@ -12,11 +12,28 @@ export function GlobalPlayer() {
 
   if (!currentTrack) return null
 
-  function handleSeek(e: React.MouseEvent<HTMLDivElement>) {
+  function handleSeek(e: React.MouseEvent<HTMLElement>) {
     if (!duration) return
     const rect = e.currentTarget.getBoundingClientRect()
     const pct = (e.clientX - rect.left) / rect.width
     seek(pct * duration)
+  }
+
+  function handleSeekKey(e: React.KeyboardEvent<HTMLElement>) {
+    if (!duration) return
+    const stepSmall = 5
+    const stepLarge = 30
+    let next: number | null = null
+    if (e.key === 'ArrowRight') next = Math.min(duration, currentTime + stepSmall)
+    else if (e.key === 'ArrowLeft') next = Math.max(0, currentTime - stepSmall)
+    else if (e.key === 'PageUp') next = Math.min(duration, currentTime + stepLarge)
+    else if (e.key === 'PageDown') next = Math.max(0, currentTime - stepLarge)
+    else if (e.key === 'Home') next = 0
+    else if (e.key === 'End') next = duration
+    if (next !== null) {
+      e.preventDefault()
+      seek(next)
+    }
   }
 
   function formatTime(s: number) {
@@ -137,9 +154,23 @@ export function GlobalPlayer() {
 
         {/* Progress bar */}
         <div style={{ flex: 1, minWidth: 80 }}>
-          <div onClick={handleSeek} style={{
-            height: 3, background: '#222', borderRadius: 2, cursor: 'pointer', position: 'relative',
-          }}>
+          <div
+            role="slider"
+            aria-label="Seek"
+            aria-valuemin={0}
+            aria-valuemax={Math.max(0, Math.floor(duration))}
+            aria-valuenow={Math.floor(currentTime)}
+            aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
+            tabIndex={0}
+            onClick={handleSeek}
+            onKeyDown={handleSeekKey}
+            style={{
+              height: 3, background: '#222', borderRadius: 2, cursor: 'pointer', position: 'relative',
+              outline: 'none',
+            }}
+            onFocus={e => { e.currentTarget.style.boxShadow = `0 0 0 2px #f0c04055` }}
+            onBlur={e => { e.currentTarget.style.boxShadow = 'none' }}
+          >
             <div style={{
               height: '100%',
               width: duration ? `${(currentTime / duration) * 100}%` : '0%',

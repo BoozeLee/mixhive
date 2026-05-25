@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { signInWithMock } from '../lib/mockAuth'
 
 export function DevLogin() {
@@ -7,10 +7,9 @@ export function DevLogin() {
   const handleDevLogin = async () => {
     setLoading(true)
     try {
-      const { error } = await signInWithMock()
-      if (error) {
-        console.error('Mock login error:', error)
-      } else {
+      const result = await signInWithMock()
+      // Mock auth doesn't return error, just check if user exists
+      if (result.user) {
         // Redirect to home or refresh the page
         window.location.href = '/'
       }

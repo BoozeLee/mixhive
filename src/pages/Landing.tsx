@@ -74,6 +74,17 @@ export function Landing() {
               }}>
                 Sign In
               </Link>
+              <Link to="/dev-login" style={{
+                background: '#8b5cf6',
+                color: '#ffffff',
+                textDecoration: 'none',
+                padding: '12px 28px',
+                borderRadius: 8,
+                fontSize: 16,
+                border: '1px solid #8b5cf6'
+              }}>
+                🎮 Demo Mode
+              </Link>
             </>
           )}
         </div>

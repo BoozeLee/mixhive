@@ -32,6 +32,7 @@ const PlaylistDetail = lazy(() => import('./pages/PlaylistDetail').then(m => ({ 
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
 const Agents = lazy(() => import('./pages/Agents').then(m => ({ default: m.Agents })))
 const AgentsGallery = lazy(() => import('./pages/AgentsGallery').then(m => ({ default: m.AgentsGallery })))
+const DevLogin = lazy(() => import('./pages/DevLogin').then(m => ({ default: m.DevLogin })))
 
 export default function App() {
   return (
@@ -70,6 +71,7 @@ export default function App() {
                 <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/dev-login" element={<DevLogin />} />
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/discover" element={<Discover />} />
                 <Route path="/trending" element={<Feed />} />

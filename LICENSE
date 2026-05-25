@@ -1,21 +1,80 @@
-MIT License
+MixHive — Proprietary Software License
+=======================================
 
-Copyright (c) 2026 MixHive
+Copyright (c) 2026 BoozeLee (kiliaanv2@gmail.com). All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+The source code and all associated files in this repository (the "Software")
+are the proprietary property of the copyright holder. All rights are reserved
+and protected under applicable international copyright law and treaties.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+PERMITTED USE
+-------------
+You may view the contents of this repository for the sole purpose of
+evaluating it as a portfolio or reference work and for personal,
+non-commercial study.
 
+PROHIBITED USE
+--------------
+Without explicit, prior, written permission from the copyright holder, you
+MAY NOT:
+
+  1. Copy, reproduce, mirror, fork, or redistribute the Software, in whole
+     or in part, in source or binary form, through any medium.
+  2. Create derivative works, modifications, ports, translations, or
+     adaptations based on the Software.
+  3. Use the Software, or any portion of it, in any commercial product,
+     service, or offering.
+  4. Use the Software in a production environment of any kind.
+  5. Use the Software to train, fine-tune, evaluate, or otherwise inform
+     machine learning models, embeddings, datasets, or AI systems of any
+     kind.
+  6. Re-license or sub-license the Software.
+  7. Remove, alter, obscure, or replace any copyright, trademark, or
+     attribution notice contained in the Software.
+
+The names "MixHive", the MixHive wordmark, and any associated logos are
+trademarks of the copyright holder and may not be used without explicit
+written permission.
+
+REQUESTS FOR PERMISSION
+-----------------------
+Requests for any use beyond the limited permission granted above must be
+sent to: kiliaanv2@gmail.com, with the subject line "MixHive — License
+Request". A response is not guaranteed. Silence does not constitute
+permission.
+
+VIOLATION
+---------
+Any use of the Software outside the limited permission granted above is a
+breach of this license and an infringement of the copyright holder's
+exclusive rights. The copyright holder reserves the right to pursue all
+available legal remedies, including but not limited to injunctive relief,
+damages, statutory damages, attorney's fees and costs.
+
+NO WARRANTY
+-----------
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE. IN NO EVENT
+SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
+FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+THIRD-PARTY DEPENDENCIES
+------------------------
+This Software depends on third-party open-source packages declared in
+package.json. Those packages are governed by their own licenses, which
+remain in force; this license applies only to the original code authored
+by the copyright holder.
+
+SEVERABILITY
+------------
+If any provision of this license is held to be unenforceable, the
+remaining provisions shall remain in full force and effect.
+
+GOVERNING LAW
+-------------
+This license is governed by the laws of Belgium, without regard to its
+conflict-of-law provisions. Any disputes shall be brought exclusively in
+the courts located in Belgium.

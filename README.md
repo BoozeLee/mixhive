@@ -68,6 +68,16 @@ This repository is private during initial development. Internal contributors sho
 
 See [`.github/CONTRIBUTING.md`](./.github/CONTRIBUTING.md) for details.
 
-## License
+## License & Copyright
 
-[MIT](./LICENSE) © 2026 MixHive
+**Proprietary — All Rights Reserved.**
+
+Copyright © 2026 BoozeLee (kiliaanv2@gmail.com). The source is published for
+portfolio / evaluation purposes only. You may **not** copy, redistribute,
+modify, use commercially, run in production, or use to train ML models
+without explicit prior written permission. See [LICENSE](./LICENSE) for the
+full terms and [NOTICE](./NOTICE) for the copyright notice.
+
+"MixHive" is a trademark of the copyright holder.
+
+To request a license, email kiliaanv2@gmail.com with subject "MixHive — License Request".

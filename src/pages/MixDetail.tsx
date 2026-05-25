@@ -10,6 +10,7 @@ import { FollowButton } from '../components/FollowButton'
 import { AddToPlaylistModal } from '../components/AddToPlaylistModal'
 import { MentionRenderer } from '../components/MentionRenderer'
 import { MixCard } from '../components/MixCard'
+import { MixAgentHints } from '../components/MixAgentHints'
 import { NotFoundState } from '../components/EmptyState'
 import type { Mix, Comment as CommentType, FeedMix } from '../lib/types'
 
@@ -364,6 +365,8 @@ export function MixDetail() {
           </div>
         </div>
       )}
+
+      <MixAgentHints mix={mix} djUsername={mix.dj?.username} />
 
       {fansAlsoLiked.length > 0 && (
         <div style={{ marginTop: 32 }}>

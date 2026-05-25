@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
@@ -6,6 +6,16 @@ import { useAuth } from '../hooks/useAuth'
 export function NotificationsBell() {
   const { user } = useAuth()
   const [unread, setUnread] = useState(0)
+
+  const fetchUnread = useCallback(async () => {
+    if (!user) return
+    const { count } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('read', false)
+    setUnread(count || 0)
+  }, [user])
 
   useEffect(() => {
     if (!user) return
@@ -20,24 +30,14 @@ export function NotificationsBell() {
           filter: `user_id=eq.${user.id}`,
         },
         () => {
-          fetchUnread()
+          void fetchUnread()
         },
       )
       .subscribe()
 
-    fetchUnread()
+    void fetchUnread()
     return () => { supabase.removeChannel(channel) }
-  }, [user])
-
-  async function fetchUnread() {
-    if (!user) return
-    const { count } = await supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('read', false)
-    setUnread(count || 0)
-  }
+  }, [user, fetchUnread])
 
   if (!user) return null
 

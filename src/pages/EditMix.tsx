@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { getMix, updateMix, deleteMix } from '../lib/api'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { AUDIO_BUCKET, ARTWORK_BUCKET } from '../lib/api'
+import { Input, Textarea, Select, FileInput } from '../components/ui'
 import type { Mix, TrackItem } from '../lib/types'
 
 export function EditMix() {
@@ -142,64 +143,48 @@ export function EditMix() {
         </div>
       )}
 
-      <form onSubmit={e => e.preventDefault()}>
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Title</label>
+      <form onSubmit={e => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <Input
+          label="Title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="Mix title"
+        />
+
+        <Textarea
+          label="Description"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          rows={4}
+          placeholder="Describe your mix..."
+        />
+
+        <Select
+          label="Genre"
+          value={genreId === '' ? '' : String(genreId)}
+          onChange={e => setGenreId(e.target.value === '' ? '' : Number(e.target.value))}
+          placeholder="Select genre"
+        />
+
+        <Input
+          label="Tags (comma separated)"
+          value={tags}
+          onChange={e => setTags(e.target.value)}
+          placeholder="house, deep, vinyl"
+        />
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: '#ccc', fontSize: 13 }}>
           <input
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            placeholder="Mix title"
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
+            type="checkbox"
+            checked={isExplicit}
+            onChange={e => setIsExplicit(e.target.checked)}
+            style={{ width: 16, height: 16 }}
           />
-        </div>
+          <span>Mark as explicit content</span>
+        </label>
 
-        <div style={{ marginTop: 16 }}>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Description</label>
-          <textarea
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            rows={4}
-            placeholder="Describe your mix..."
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 12, resize: 'vertical' }}
-          />
-        </div>
-
-        <div style={{ marginTop: 16 }}>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Genre</label>
-          <select
-            value={genreId === '' ? '' : String(genreId)}
-            onChange={e => setGenreId(e.target.value === '' ? '' : Number(e.target.value))}
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
-          >
-            <option value="">Select genre</option>
-          </select>
-        </div>
-
-        <div style={{ marginTop: 16 }}>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Tags (comma separated)</label>
-          <input
-            value={tags}
-            onChange={e => setTags(e.target.value)}
-            placeholder="house, deep, vinyl"
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
-          />
-        </div>
-
-        <div style={{ marginTop: 16 }}>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Explicit Content</label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={isExplicit}
-              onChange={e => setIsExplicit(e.target.checked)}
-              style={{ width: 16, height: 16 }}
-            />
-            <span style={{ fontSize: 13, color: '#ccc' }}>Mark as explicit</span>
-          </label>
-        </div>
-
-        <div style={{ marginTop: 16 }}>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Platform Links (optional)</label>
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Platform Links (optional)</legend>
           <div style={{ marginTop: 8 }}>
             {[
               ['SoundCloud', 'soundcloud'],
@@ -209,8 +194,9 @@ export function EditMix() {
               ['Apple Music', 'applemusic'],
             ].map(([label, key]) => (
               <div key={key} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
-                <input
-                  type="text"
+                <Input
+                  hideLabel
+                  label={`${label} URL`}
                   value={platformLinks[key] || ''}
                   onChange={e => {
                     const links = { ...platformLinks }
@@ -222,20 +208,21 @@ export function EditMix() {
                     setPlatformLinks(links)
                   }}
                   placeholder={`${label} URL`}
-                  style={{ flex: 1, background: '#111', border: '1px solid #222', color: '#eee', padding: '8px 12px', borderRadius: 6, fontSize: 13 }}
+                  style={{ flex: 1 }}
                 />
               </div>
             ))}
           </div>
-        </div>
+        </fieldset>
 
-        <div style={{ marginTop: 16 }}>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Tracklist</label>
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Tracklist</legend>
           <div style={{ marginTop: 8 }}>
             {tracklist.map((track, index) => (
               <div key={index} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
-                <input
-                  type="text"
+                <Input
+                  hideLabel
+                  label={`Artist for track ${index + 1}`}
                   value={track.artist}
                   onChange={e => {
                     const list = [...tracklist]
@@ -243,10 +230,11 @@ export function EditMix() {
                     setTracklist(list)
                   }}
                   placeholder="Artist"
-                  style={{ flex: 1, background: '#111', border: '1px solid #222', color: '#eee', padding: '8px 12px', borderRadius: 6, fontSize: 13 }}
+                  style={{ flex: 1 }}
                 />
-                <input
-                  type="text"
+                <Input
+                  hideLabel
+                  label={`Title for track ${index + 1}`}
                   value={track.title}
                   onChange={e => {
                     const list = [...tracklist]
@@ -254,9 +242,11 @@ export function EditMix() {
                     setTracklist(list)
                   }}
                   placeholder="Track Title"
-                  style={{ flex: 1, background: '#111', border: '1px solid #222', color: '#eee', padding: '8px 12px', borderRadius: 6, fontSize: 13 }}
+                  style={{ flex: 1 }}
                 />
-                <input
+                <Input
+                  hideLabel
+                  label={`Start time for track ${index + 1}`}
                   type="number"
                   value={track.start_time ?? 0}
                   onChange={e => {
@@ -266,7 +256,7 @@ export function EditMix() {
                     setTracklist(list)
                   }}
                   placeholder="Start (sec)"
-                  style={{ width: 80, background: '#111', border: '1px solid #222', color: '#eee', padding: '8px 12px', borderRadius: 6, fontSize: 13 }}
+                  style={{ width: 80 }}
                 />
                 <button
                   type="button"
@@ -291,15 +281,13 @@ export function EditMix() {
               </button>
             </div>
           </div>
-        </div>
+        </fieldset>
 
-        <div style={{ marginTop: 24 }}>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Audio File (leave empty to keep current)</label>
-          <input
-            type="file"
+        <div>
+          <FileInput
+            label="Audio File (leave empty to keep current)"
             accept="audio/*"
             onChange={e => setAudioFile(e.target.files?.[0] || null)}
-            style={{ width: '100%', background: '#111', border: '1px solid #222', borderRadius: 8, padding: '10px 14px' }}
           />
           {audioFile && (
             <div style={{ marginTop: 8, fontSize: 12, color: '#888' }}>
@@ -308,13 +296,11 @@ export function EditMix() {
           )}
         </div>
 
-        <div style={{ marginTop: 16 }}>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Artwork Image (leave empty to keep current)</label>
-          <input
-            type="file"
+        <div>
+          <FileInput
+            label="Artwork Image (leave empty to keep current)"
             accept="image/*"
             onChange={e => setArtworkFile(e.target.files?.[0] || null)}
-            style={{ width: '100%', background: '#111', border: '1px solid #222', borderRadius: 8, padding: '10px 14px' }}
           />
           {artworkFile && (
             <div style={{ marginTop: 8, fontSize: 12, color: '#888' }}>

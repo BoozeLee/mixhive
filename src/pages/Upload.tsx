@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { createMix } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
+import { Button } from '../components/ui/Button'
+import { Input } from '../components/ui/Input'
+import { Textarea } from '../components/ui/Textarea'
+import { Select } from '../components/ui/Select'
+import { FileInput } from '../components/ui/FileInput'
+import { UploadSchema, formatZodError } from '../lib/schemas'
 import { AUDIO_BUCKET, ARTWORK_BUCKET, WAVEFORM_BUCKET } from '../lib/api'
 import { generateWaveform, waveformToJson } from '../lib/waveform'
 import type { Mix, TrackItem } from '../lib/types'
@@ -10,10 +16,14 @@ import type { Mix, TrackItem } from '../lib/types'
 export function Upload() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [genreId, setGenreId] = useState<number | ''>('')
-  const [tags, setTags] = useState('')
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    genreId: '' as number | '',
+    tags: '',
+  })
+  
   const [audioFile, setAudioFile] = useState<File | null>(null)
   const [artworkFile, setArtworkFile] = useState<File | null>(null)
   const [tracklist, setTracklist] = useState<TrackItem[]>([])
@@ -24,23 +34,27 @@ export function Upload() {
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([])
   const [uploading, setUploading] = useState(false)
   const [detectingDuration, setDetectingDuration] = useState(false)
-  const [error, setError] = useState('')
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  const [generalError, setGeneralError] = useState('')
+  const [publishedTitle, setPublishedTitle] = useState('')
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return
     supabase.from('genres').select('id, name').order('name').then(({ data }) => {
       if (data) setGenres(data)
     })
   }, [])
 
   useEffect(() => {
-    if (!audioFile || !audioFile.type.startsWith('audio/')) {
-      setError('Please select an audio file')
-      if (audioFile) setAudioFile(null)
+    if (!audioFile) return
+    if (!audioFile.type.startsWith('audio/')) {
+      setGeneralError('Please select an audio file')
+      setAudioFile(null)
       return
     }
 
     setDetectingDuration(true)
-    setError('')
+    setGeneralError('')
     const url = URL.createObjectURL(audioFile)
     let timeoutId: ReturnType<typeof setTimeout>
     let cancelled = false
@@ -57,7 +71,7 @@ export function Upload() {
       audio.preload = 'metadata'
 
       timeoutId = setTimeout(() => {
-        setError('Audio duration detection timed out')
+        setGeneralError('Audio duration detection timed out')
         setAudioFile(null)
         cleanup()
       }, 15000)
@@ -74,7 +88,7 @@ export function Upload() {
         cleanup()
       })
     } catch {
-      setError('Failed to process audio file')
+      setGeneralError('Failed to process audio file')
       cleanup()
     }
 
@@ -84,9 +98,32 @@ export function Upload() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!user || !audioFile) return
-    setUploading(true)
-    setError('')
-
+    if (!isSupabaseConfigured) {
+      setGeneralError('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local before uploading.')
+      return
+    }
+    
+    // Validate with Zod
+    const validationData = {
+      title: formData.title,
+      description: formData.description || undefined,
+      genre: formData.genreId ? String(formData.genreId) : undefined,
+      tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+    }
+    
+    const result = UploadSchema.safeParse({
+      ...validationData,
+      artworkFile: artworkFile,
+      audioFile: audioFile,
+    })
+    
+    if (!result.success) {
+      setFormErrors(formatZodError(result.error))
+      setGeneralError('')
+      setUploading(false)
+      return
+    }
+    
     // Validate platform links before submitting
     const linkErrors: Record<string, string> = {}
     for (const [key, value] of Object.entries(platformLinks)) {
@@ -96,10 +133,14 @@ export function Upload() {
     }
     if (Object.keys(linkErrors).length > 0) {
       setPlatformErrors(prev => ({ ...prev, ...linkErrors }))
+      setGeneralError('Please fix invalid platform URLs before uploading')
       setUploading(false)
-      setError('Please fix invalid platform URLs before uploading')
       return
     }
+    
+    setFormErrors({})
+    setGeneralError('')
+    setUploading(true)
 
     try {
       // Generate waveform data (non-critical, can fail silently)
@@ -133,10 +174,10 @@ export function Upload() {
 
       const mixData: Partial<Mix> = {
         dj_id: user.id,
-        title,
-        description: description || null,
-        genre_id: genreId || null,
-        tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+        title: formData.title,
+        description: formData.description || null,
+        genre_id: formData.genreId || null,
+        tags: formData.tags.split(',').map((t: string) => t.trim()).filter(Boolean),
         duration_seconds: duration,
         is_explicit: isExplicit,
         audio_url: audioUrl,
@@ -156,15 +197,19 @@ export function Upload() {
 
       const mix = await createMix(mixData)
 
-      if (mix) navigate(`/mix/${mix.id}`)
+      if (mix) {
+        setPublishedTitle(mix.title)
+        window.setTimeout(() => navigate(`/mix/${mix.id}`), 700)
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Upload failed')
+      setGeneralError(err instanceof Error ? err.message : 'Upload failed')
     } finally {
       setUploading(false)
     }
   }
 
   async function uploadFile(file: File, bucket: string): Promise<string | null> {
+    if (!isSupabaseConfigured) return null
     const ext = file.name.split('.').pop()
     const path = `${crypto.randomUUID()}.${ext}`
     const { error: uploadErr } = await supabase.storage.from(bucket).upload(path, file)
@@ -173,77 +218,84 @@ export function Upload() {
     return publicUrl
   }
 
+  const handleInputChange = (field: keyof typeof formData, value: string | number) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    // Clear field-specific error when user types
+    if (formErrors[field]) {
+      setFormErrors(prev => ({ ...prev, [field]: '' }))
+    }
+  }
+
   return (
-    <div style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px' }}>
+    <div className="container" style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px' }}>
       <h1 style={{ fontSize: 22, fontWeight: 700, color: '#eee', marginBottom: 24 }}>Upload a mix</h1>
 
-      {error && (
+      {generalError && (
         <div style={{ background: '#2a1010', color: '#f55', padding: '10px 14px', borderRadius: 8, fontSize: 13, marginBottom: 16 }}>
-          {error}
+          {generalError}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Audio file *</label>
-          <input type="file" accept="audio/*" required
-            onChange={e => setAudioFile(e.target.files?.[0] || null)}
-            style={{ color: '#ccc', fontSize: 13, width: '100%' }}
-          />
-        </div>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <FileInput
+          label="Audio file *"
+          accept="audio/*"
+          required
+          help="Large touch target. Select an MP3, WAV, AIFF, or FLAC mix."
+          style={{ minHeight: 48 }}
+          onChange={e => setAudioFile(e.target.files?.[0] || null)}
+        />
+
+        <Input
+          label="Title *"
+          value={formData.title}
+          onChange={e => handleInputChange('title', e.target.value)}
+          required
+          error={formErrors.title}
+          placeholder="Enter mix title"
+        />
+
+        <Textarea
+          label="Description"
+          value={formData.description}
+          onChange={e => handleInputChange('description', e.target.value)}
+          rows={3}
+          placeholder="Describe your mix..."
+        />
+
+        <Select
+          label="Genre"
+          value={formData.genreId === '' ? '' : String(formData.genreId)}
+          onChange={e => handleInputChange('genreId', e.target.value === '' ? '' : Number(e.target.value))}
+          placeholder="Select genre"
+        >
+          {genres.map(g => (
+            <option key={g.id} value={g.id}>{g.name}</option>
+          ))}
+        </Select>
+
+        <Input
+          label="Tags (comma separated)"
+          value={formData.tags}
+          onChange={e => handleInputChange('tags', e.target.value)}
+          placeholder="house, deep, vinyl"
+        />
+
+        <FileInput
+          label="Artwork (optional)"
+          accept="image/*"
+          help="Square artwork works best. JPG, PNG, or WebP."
+          style={{ minHeight: 48 }}
+          onChange={e => setArtworkFile(e.target.files?.[0] || null)}
+        />
 
         <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Title *</label>
-          <input type="text" value={title} onChange={e => setTitle(e.target.value)} required
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
-          />
-        </div>
-
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Description</label>
-          <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3}
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14, resize: 'vertical' }}
-          />
-        </div>
-
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Genre</label>
-          <select
-            value={genreId === '' ? '' : String(genreId)}
-            onChange={e => setGenreId(e.target.value === '' ? '' : Number(e.target.value))}
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
-          >
-            <option value="">Select genre</option>
-            {genres.map(g => (
-              <option key={g.id} value={g.id}>{g.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Tags (comma separated)</label>
-          <input type="text" value={tags} onChange={e => setTags(e.target.value)}
-            placeholder="house, deep, vinyl"
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
-          />
-        </div>
-
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Artwork (optional)</label>
-          <input type="file" accept="image/*"
-            onChange={e => setArtworkFile(e.target.files?.[0] || null)}
-            style={{ color: '#ccc', fontSize: 13, width: '100%' }}
-          />
-        </div>
-
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Duration (seconds)</label>
-          <input
+          <Input
+            label="Duration (seconds)"
             type="number"
             value={duration ?? ''}
             onChange={e => setDuration(e.target.value === '' ? null : Number(e.target.value))}
             placeholder="Auto-detected (will show when loaded)"
-            style={{ width: '100%', background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
           />
           {detectingDuration && (
             <div style={{
@@ -262,28 +314,24 @@ export function Upload() {
           )}
         </div>
 
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Explicit Content</label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={isExplicit}
-              onChange={(e) => {
-  if (!audioFile) {
-    setError('Must select audio file to set explicit content')
-    return
-  }
-  setIsExplicit(e.target.checked)
-}}
+        <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', color: '#ccc', fontSize: 14, minHeight: 44, padding: '8px 0' }}>
+          <input
+            type="checkbox"
+            checked={isExplicit}
+            onChange={(e) => {
+              if (!audioFile) {
+                setGeneralError('Must select audio file to set explicit content')
+                return
+              }
+              setIsExplicit(e.target.checked)
+            }}
+            style={{ width: 22, height: 22 }}
+          />
+          <span>Mark as explicit content</span>
+        </label>
 
-              style={{ width: 16, height: 16 }}
-            />
-            <span style={{ fontSize: 13, color: '#ccc' }}>Mark as explicit</span>
-          </label>
-        </div>
-
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Platform Links (optional)</label>
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Platform Links (optional)</legend>
           <div style={{ marginTop: 8 }}>
             {[
               ['SoundCloud', 'soundcloud'],
@@ -292,8 +340,8 @@ export function Upload() {
               ['Spotify', 'spotify'],
               ['Apple Music', 'applemusic'],
             ].map(([label, key]) => (
-              <div key={key} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
-                <input
+              <div key={key} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}>
+                <Input
                   type="text"
                   value={platformLinks[key] || ''}
                   onChange={e => {
@@ -314,15 +362,7 @@ export function Upload() {
                     setPlatformErrors(errors)
                   }}
                   placeholder={`${label} URL`}
-                  style={{
-                    flex: 1,
-                    background: '#111',
-                    border: platformErrors[key] ? '1px solid #f55' : '1px solid #222',
-                    color: '#eee',
-                    padding: '8px 12px',
-                    borderRadius: 6,
-                    fontSize: 13
-                  }}
+                  error={platformErrors[key]}
                 />
                 {platformErrors[key] && (
                   <small style={{ color: '#f55', fontSize: 11, display: 'block', marginTop: 2 }}>
@@ -332,14 +372,14 @@ export function Upload() {
               </div>
             ))}
           </div>
-        </div>
+        </fieldset>
 
-        <div>
-          <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 4 }}>Tracklist</label>
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Tracklist</legend>
           <div style={{ marginTop: 8 }}>
             {tracklist.map((track, index) => (
-              <div key={index} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
-                <input
+              <div key={index} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) 96px 44px', gap: 8, alignItems: 'center', marginBottom: 10 }}>
+                <Input
                   type="text"
                   value={track.artist}
                   onChange={e => {
@@ -348,9 +388,9 @@ export function Upload() {
                     setTracklist(list)
                   }}
                   placeholder="Artist"
-                  style={{ flex: 1, background: '#111', border: '1px solid #222', color: '#eee', padding: '8px 12px', borderRadius: 6, fontSize: 13 }}
+                  style={{ flex: 1 }}
                 />
-                <input
+                <Input
                   type="text"
                   value={track.title}
                   onChange={e => {
@@ -359,9 +399,9 @@ export function Upload() {
                     setTracklist(list)
                   }}
                   placeholder="Track Title"
-                  style={{ flex: 1, background: '#111', border: '1px solid #222', color: '#eee', padding: '8px 12px', borderRadius: 6, fontSize: 13 }}
+                  style={{ flex: 1 }}
                 />
-                <input
+                <Input
                   type="number"
                   value={track.start_time ?? 0}
                   onChange={e => {
@@ -371,7 +411,7 @@ export function Upload() {
                     setTracklist(list)
                   }}
                   placeholder="Start (sec)"
-                  style={{ width: 80, background: '#111', border: '1px solid #222', color: '#eee', padding: '8px 12px', borderRadius: 6, fontSize: 13 }}
+                  style={{ width: '100%' }}
                 />
                 <button
                   type="button"
@@ -380,7 +420,7 @@ export function Upload() {
                     list.splice(index, 1)
                     setTracklist(list)
                   }}
-                  style={{ background: '#2a1010', color: '#f55', border: 'none', borderRadius: 4, padding: '4px 8px', fontSize: 12, cursor: 'pointer' }}
+                  style={{ background: '#2a1010', color: '#f55', border: 'none', borderRadius: 6, minHeight: 40, padding: '8px 10px', fontSize: 16, cursor: 'pointer' }}
                 >
                   −
                 </button>
@@ -390,27 +430,22 @@ export function Upload() {
               <button
                 type="button"
                 onClick={() => setTracklist([...tracklist, { artist: '', title: '' }])}
-                style={{ background: '#1a1a2e', color: '#f0c040', border: '1px solid #f0c040', borderRadius: 4, padding: '6px 12px', fontSize: 13, cursor: 'pointer' }}
+                style={{ background: '#1a1a2e', color: '#f0c040', border: '1px solid #f0c040', borderRadius: 6, minHeight: 40, padding: '8px 14px', fontSize: 14, cursor: 'pointer' }}
               >
                 + Add Track
               </button>
             </div>
           </div>
-        </div>
+        </fieldset>
 
-        <button type="submit" disabled={uploading || !audioFile} style={{
-          marginTop: 8,
-          background: uploading ? '#333' : '#f0c040',
-          color: uploading ? '#666' : '#0a0a0a',
-          border: 'none',
-          padding: '12px',
-          borderRadius: 8,
-          fontSize: 16,
-          fontWeight: 700,
-          cursor: uploading ? 'not-allowed' : 'pointer'
-        }}>
+        <Button type="submit" disabled={uploading || !audioFile} fullWidth size="lg" style={{ marginTop: 8 }}>
           {uploading ? 'Uploading...' : 'Publish mix'}
-        </button>
+        </Button>
+        {publishedTitle && (
+          <div role="status" style={{ marginTop: 12, padding: 12, borderRadius: 8, border: '1px solid #f0c04044', background: 'linear-gradient(135deg, #f0c04022, rgba(59,130,246,0.14))', color: '#f0c040', fontSize: 13, fontWeight: 700, textAlign: 'center' }}>
+            Honey Drop live: {publishedTitle}
+          </div>
+        )}
       </form>
     </div>
   )

@@ -86,10 +86,10 @@ export function SearchFilters({
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: space[9] }}>
-        <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
             Content
-          </label>
+          </legend>
           <div style={{ display: 'flex', gap: space[4] }}>
             {(['mixes', 'profiles', 'all'] as const).map(type => (
               <Button
@@ -104,7 +104,7 @@ export function SearchFilters({
               </Button>
             ))}
           </div>
-        </div>
+        </fieldset>
 
         <div>
           <label htmlFor="search-genre" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
@@ -134,10 +134,10 @@ export function SearchFilters({
           </select>
         </div>
 
-        <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
             Duration
-          </label>
+          </legend>
           <div style={{ display: 'flex', alignItems: 'center', gap: space[5] }}>
             <Input
               type="number"
@@ -167,12 +167,13 @@ export function SearchFilters({
               style={{ width: 76 }}
             />
           </div>
+        </fieldset>
         </div>
 
-        <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
+        <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
+          <legend style={{ display: 'block', fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
             Explicit
-          </label>
+          </legend>
           <div style={{ display: 'flex', gap: space[4] }}>
             <Button type="button" variant={localFilters.explicit === undefined ? 'primary' : 'secondary'} size="sm" onClick={() => update({ explicit: undefined })}>
               All
@@ -184,8 +185,7 @@ export function SearchFilters({
               Explicit
             </Button>
           </div>
-        </div>
-      </div>
+        </fieldset>
     </section>
   )
 }

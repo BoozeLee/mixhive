@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { supabase } from '../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { getFeed, getTrending, getRecentMixes } from '../lib/api'
 import { MixCard } from '../components/MixCard'
 import { RecommendedDJs } from '../components/RecommendedDJs'
@@ -84,7 +84,7 @@ export function Feed() {
   // Realtime: count feed events landing for this user. When the user
   // clicks the "show N new mixes" pill, we re-fetch the following tab.
   useEffect(() => {
-    if (!user) return
+    if (!isSupabaseConfigured || !user) return
     const channel = supabase
       .channel(`feed:${user.id}`)
       .on(

@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { isSupabaseConfigured, supabase } from './supabase'
 import type { FeedMix, Mix, Comment, Profile, Notification, FeedCursor, TrendingCursor, FeedResult, TrendingResult, Playlist, PlaylistWithMixes, ActivityEvent, RecommendedDJ } from './types'
 
 // Storage bucket names
@@ -6,9 +6,18 @@ export const AUDIO_BUCKET = 'mix-audio'
 export const ARTWORK_BUCKET = 'mix-artwork'
 export const WAVEFORM_BUCKET = 'mix-waveforms'
 
+function emptyFeedResult(): FeedResult {
+  return { data: [], cursor: null }
+}
+
+function emptyTrendingResult(): TrendingResult {
+  return { data: [], cursor: null }
+}
+
 // --- Profiles ---
 
 export async function getProfile(username: string): Promise<Profile | null> {
+  if (!isSupabaseConfigured) return null
   const { data } = await supabase
     .from('profiles')
     .select('*')
@@ -18,6 +27,7 @@ export async function getProfile(username: string): Promise<Profile | null> {
 }
 
 export async function getProfileById(id: string): Promise<Profile | null> {
+  if (!isSupabaseConfigured) return null
   const { data } = await supabase
     .from('profiles')
     .select('*')
@@ -27,6 +37,7 @@ export async function getProfileById(id: string): Promise<Profile | null> {
 }
 
 export async function searchProfiles(query: string): Promise<Profile[]> {
+  if (!isSupabaseConfigured) return []
   const { data } = await supabase
     .from('profiles')
     .select('*')
@@ -38,6 +49,7 @@ export async function searchProfiles(query: string): Promise<Profile[]> {
 // --- Mixes ---
 
 export async function getFeed(userId: string, limit = 20, cursor?: FeedCursor): Promise<FeedResult> {
+  if (!isSupabaseConfigured) return emptyFeedResult()
   const { data } = await supabase.rpc('get_feed_cursor', {
     p_user_id: userId,
     p_limit: limit,
@@ -52,6 +64,7 @@ export async function getFeed(userId: string, limit = 20, cursor?: FeedCursor): 
 }
 
 export async function getTrending(limit = 20, cursor?: TrendingCursor): Promise<TrendingResult> {
+  if (!isSupabaseConfigured) return emptyTrendingResult()
   const { data } = await supabase.rpc('get_trending_cursor', {
     p_limit: limit,
     p_cursor_score: cursor?.score ?? null,
@@ -65,6 +78,7 @@ export async function getTrending(limit = 20, cursor?: TrendingCursor): Promise<
 }
 
 export async function getRecentMixes(limit = 20, cursor?: FeedCursor): Promise<FeedResult> {
+  if (!isSupabaseConfigured) return emptyFeedResult()
   const { data } = await supabase.rpc('get_latest_cursor', {
     p_limit: limit,
     p_cursor_created_at: cursor?.created_at ?? null,
@@ -78,6 +92,7 @@ export async function getRecentMixes(limit = 20, cursor?: FeedCursor): Promise<F
 }
 
 export async function getMixesByDj(djId: string): Promise<Mix[]> {
+  if (!isSupabaseConfigured) return []
   const { data } = await supabase
     .from('mixes')
     .select('*')
@@ -87,6 +102,7 @@ export async function getMixesByDj(djId: string): Promise<Mix[]> {
 }
 
 export async function getMix(id: string): Promise<Mix | null> {
+  if (!isSupabaseConfigured) return null
   const { data, error } = await supabase
     .from('mixes')
     .select('*, profiles!mixes_dj_id_fkey(*), genres(name)')
@@ -101,6 +117,7 @@ export async function getMix(id: string): Promise<Mix | null> {
 }
 
 export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
+  if (!isSupabaseConfigured) return null
   const { data } = await supabase
     .from('mixes')
     .insert(mix)
@@ -110,14 +127,17 @@ export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
 }
 
 export async function updateMix(id: string, updates: Partial<Mix>): Promise<void> {
+  if (!isSupabaseConfigured) return
   await supabase.from('mixes').update(updates).eq('id', id)
 }
 
 export async function deleteMix(id: string): Promise<void> {
+  if (!isSupabaseConfigured) return
   await supabase.from('mixes').delete().eq('id', id)
 }
 
 export async function incrementPlayCount(mixId: string, userId?: string): Promise<void> {
+  if (!isSupabaseConfigured) return
   await supabase.rpc('increment_play_count', { p_mix_id: mixId })
   if (userId) {
     await supabase.from('play_history').insert({ mix_id: mixId, user_id: userId })
@@ -129,14 +149,17 @@ export async function incrementPlayCount(mixId: string, userId?: string): Promis
 // --- Social ---
 
 export async function follow(followerId: string, followingId: string) {
+  if (!isSupabaseConfigured) return { error: null }
   return supabase.from('follows').insert({ follower_id: followerId, following_id: followingId })
 }
 
 export async function unfollow(followerId: string, followingId: string) {
+  if (!isSupabaseConfigured) return { error: null }
   return supabase.from('follows').delete().match({ follower_id: followerId, following_id: followingId })
 }
 
 export async function isFollowing(followerId: string, followingId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
   const { data } = await supabase
     .from('follows')
     .select('*')
@@ -147,6 +170,7 @@ export async function isFollowing(followerId: string, followingId: string): Prom
 }
 
 export async function getFollowersCount(userId: string): Promise<number> {
+  if (!isSupabaseConfigured) return 0
   const { count } = await supabase
     .from('follows')
     .select('*', { count: 'exact', head: true })
@@ -155,6 +179,7 @@ export async function getFollowersCount(userId: string): Promise<number> {
 }
 
 export async function getFollowingCount(userId: string): Promise<number> {
+  if (!isSupabaseConfigured) return 0
   const { count } = await supabase
     .from('follows')
     .select('*', { count: 'exact', head: true })
@@ -163,14 +188,17 @@ export async function getFollowingCount(userId: string): Promise<number> {
 }
 
 export async function like(userId: string, mixId: string) {
+  if (!isSupabaseConfigured) return { error: null }
   return supabase.from('likes').insert({ user_id: userId, mix_id: mixId })
 }
 
 export async function unlike(userId: string, mixId: string) {
+  if (!isSupabaseConfigured) return { error: null }
   return supabase.from('likes').delete().match({ user_id: userId, mix_id: mixId })
 }
 
 export async function hasLiked(userId: string, mixId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
   const { data } = await supabase
     .from('likes')
     .select('*')
@@ -213,6 +241,7 @@ interface ThreadedCommentRow {
 }
 
 export async function getComments(mixId: string, limit = 50, offset = 0): Promise<Comment[]> {
+  if (!isSupabaseConfigured) return []
   const { data, error } = await supabase.rpc('get_mix_comments', {
     p_mix_id: mixId,
     p_limit: limit,
@@ -273,6 +302,7 @@ export async function getComments(mixId: string, limit = 50, offset = 0): Promis
 }
 
 export async function createComment(comment: Partial<Comment>): Promise<Comment | null> {
+  if (!isSupabaseConfigured) return null
   const { data } = await supabase
     .from('comments')
     .insert(comment)
@@ -282,6 +312,7 @@ export async function createComment(comment: Partial<Comment>): Promise<Comment 
 }
 
 export async function searchMixes(query: string): Promise<FeedMix[]> {
+  if (!isSupabaseConfigured) return []
   const { data } = await supabase
     .from('mixes')
     .select('*, profiles!mixes_dj_id_fkey(id, username, display_name, avatar_url), genres(name)')
@@ -297,6 +328,7 @@ export async function searchMixes(query: string): Promise<FeedMix[]> {
 // --- Discovery / Recommendations ---
 
 export async function getFansAlsoLiked(mixId: string, limit = 5): Promise<FeedMix[]> {
+  if (!isSupabaseConfigured) return []
   const { data } = await supabase.rpc('get_fans_also_liked', {
     p_mix_id: mixId,
     p_limit: limit
@@ -305,6 +337,7 @@ export async function getFansAlsoLiked(mixId: string, limit = 5): Promise<FeedMi
 }
 
 export async function getDiscovery(userId: string, limit = 20, cursor?: TrendingCursor): Promise<TrendingResult> {
+  if (!isSupabaseConfigured) return emptyTrendingResult()
   const { data } = await supabase.rpc('get_discovery', {
     p_user_id: userId,
     p_limit: limit,
@@ -320,6 +353,7 @@ export async function getDiscovery(userId: string, limit = 20, cursor?: Trending
 // --- Reposts ---
 
 export async function repost(userId: string, mixId: string, djId: string) {
+  if (!isSupabaseConfigured) return
   // Idempotent — unique partial index (actor_id, mix_id) WHERE type='repost'
   // prevents duplicates; we just swallow the conflict.
   const { error } = await supabase.from('feed_events').insert({
@@ -332,12 +366,14 @@ export async function repost(userId: string, mixId: string, djId: string) {
 }
 
 export async function unrepost(mixId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
   const { data, error } = await supabase.rpc('unrepost', { p_mix_id: mixId })
   if (error) throw error
   return data === true
 }
 
 export async function hasReposted(userId: string, mixId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
   const { data } = await supabase
     .from('feed_events')
     .select('id')
@@ -351,6 +387,7 @@ export async function hasReposted(userId: string, mixId: string): Promise<boolea
 // --- Notifications ---
 
 export async function getNotifications(userId: string): Promise<Notification[]> {
+  if (!isSupabaseConfigured) return []
   const { data } = await supabase
     .from('notifications')
     .select('*, profiles!notifications_actor_id_fkey(*)')
@@ -364,6 +401,7 @@ export async function getNotifications(userId: string): Promise<Notification[]> 
 }
 
 export async function markNotificationsRead(userId: string) {
+  if (!isSupabaseConfigured) return
   await supabase
     .from('notifications')
     .update({ read: true })
@@ -374,6 +412,7 @@ export async function markNotificationsRead(userId: string) {
 // --- Upload ---
 
 export async function uploadAudio(file: File): Promise<string | null> {
+  if (!isSupabaseConfigured) return null
   const ext = file.name.split('.').pop()
   const path = `mixes/${crypto.randomUUID()}.${ext}`
   const { data } = await supabase.storage.from(AUDIO_BUCKET).upload(path, file)
@@ -383,6 +422,7 @@ export async function uploadAudio(file: File): Promise<string | null> {
 }
 
 export async function uploadArtwork(file: File): Promise<string | null> {
+  if (!isSupabaseConfigured) return null
   const ext = file.name.split('.').pop()
   const path = `artwork/${crypto.randomUUID()}.${ext}`
   const { data } = await supabase.storage.from(ARTWORK_BUCKET).upload(path, file)
@@ -394,6 +434,7 @@ export async function uploadArtwork(file: File): Promise<string | null> {
 // --- Playlists ---
 
 export async function createPlaylist(title: string, ownerId: string): Promise<Playlist | null> {
+  if (!isSupabaseConfigured) return null
   const { data } = await supabase
     .from('playlists')
     .insert({ title, owner_id: ownerId })
@@ -403,6 +444,7 @@ export async function createPlaylist(title: string, ownerId: string): Promise<Pl
 }
 
 export async function getPlaylistWithMixes(id: string): Promise<PlaylistWithMixes | null> {
+  if (!isSupabaseConfigured) return null
   const { data } = await supabase.rpc('get_playlist_with_mixes', { p_playlist_id: id })
   if (!data || data.length === 0) return null
   const first = data[0] as Record<string, unknown>
@@ -445,27 +487,33 @@ export async function getPlaylistWithMixes(id: string): Promise<PlaylistWithMixe
 }
 
 export async function getPlaylistsByUser(userId: string): Promise<Playlist[]> {
+  if (!isSupabaseConfigured) return []
   const { data } = await supabase.rpc('get_playlists_by_user', { p_user_id: userId })
   return data || []
 }
 
 export async function updatePlaylist(id: string, updates: Partial<Playlist>): Promise<void> {
+  if (!isSupabaseConfigured) return
   await supabase.from('playlists').update(updates).eq('id', id)
 }
 
 export async function deletePlaylist(id: string): Promise<void> {
+  if (!isSupabaseConfigured) return
   await supabase.from('playlists').delete().eq('id', id)
 }
 
 export async function addMixToPlaylist(playlistId: string, mixId: string): Promise<void> {
+  if (!isSupabaseConfigured) return
   await supabase.rpc('add_mix_to_playlist', { p_playlist_id: playlistId, p_mix_id: mixId })
 }
 
 export async function removeMixFromPlaylist(playlistId: string, mixId: string): Promise<void> {
+  if (!isSupabaseConfigured) return
   await supabase.from('playlist_mixes').delete().match({ playlist_id: playlistId, mix_id: mixId })
 }
 
 export async function isMixInPlaylist(playlistId: string, mixId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
   const { data } = await supabase
     .from('playlist_mixes')
     .select('id')
@@ -478,14 +526,17 @@ export async function isMixInPlaylist(playlistId: string, mixId: string): Promis
 // --- Blocks ---
 
 export async function blockUser(blockerId: string, blockedId: string) {
+  if (!isSupabaseConfigured) return { error: null }
   return supabase.from('user_blocks').insert({ blocker_id: blockerId, blocked_id: blockedId })
 }
 
 export async function unblockUser(blockerId: string, blockedId: string) {
+  if (!isSupabaseConfigured) return { error: null }
   return supabase.from('user_blocks').delete().match({ blocker_id: blockerId, blocked_id: blockedId })
 }
 
 export async function isBlocked(viewerId: string, targetId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
   const { data } = await supabase
     .from('user_blocks')
     .select('*')
@@ -496,6 +547,7 @@ export async function isBlocked(viewerId: string, targetId: string): Promise<boo
 }
 
 export async function hasBlocked(blockerId: string, targetId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
   const { data } = await supabase
     .from('user_blocks')
     .select('*')
@@ -508,13 +560,82 @@ export async function hasBlocked(blockerId: string, targetId: string): Promise<b
 // --- Activity / Recommendations ---
 
 export async function getUserActivity(userId: string): Promise<ActivityEvent[]> {
+  if (!isSupabaseConfigured) return []
   const { data } = await supabase.rpc('get_user_activity', { p_user_id: userId })
   return data || []
 }
 
 export async function getRecommendedDJs(userId: string): Promise<RecommendedDJ[]> {
+  if (!isSupabaseConfigured) return []
   const { data } = await supabase.rpc('get_recommended_djs', { p_user_id: userId })
   return data || []
+}
+
+// --- Discover Features ---
+
+export async function getTrendingMixes(limit = 12): Promise<{ data: FeedMix[] }> {
+  if (!isSupabaseConfigured) return { data: [] }
+  const { data } = await supabase
+    .rpc('get_trending_cursor', { p_limit: limit, p_cursor_score: null, p_cursor_id: null })
+  return { data: (data || []).map(formatFeedMix) }
+}
+
+export async function getTopDJs(limit = 8): Promise<{ data: Profile[] }> {
+  if (!isSupabaseConfigured) return { data: [] }
+  const { data } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('followers_count', { ascending: false })
+    .limit(limit)
+  return { data: data || [] }
+}
+
+export async function getPopularGenres(limit = 12): Promise<{ data: Array<{ id: string; name: string; count: number }> }> {
+  if (!isSupabaseConfigured) return { data: [] }
+  // This would need to be implemented as a PostgreSQL function
+  // For now, return mock data
+  const mockGenres = [
+    { id: '1', name: 'House', count: 1247 },
+    { id: '2', name: 'Techno', count: 892 },
+    { id: '3', name: 'Deep House', count: 654 },
+    { id: '4', name: 'Trance', count: 543 },
+    { id: '5', name: 'Progressive', count: 432 },
+    { id: '6', name: 'Minimal', count: 321 },
+    { id: '7', name: 'Dubstep', count: 298 },
+    { id: '8', name: 'Ambient', count: 234 },
+    { id: '9', name: 'Drum & Bass', count: 187 },
+    { id: '10', name: 'Tech House', count: 156 },
+    { id: '11', name: 'Disco', count: 143 },
+    { id: '12', name: 'Electronic', count: 132 },
+  ]
+  return { data: mockGenres.slice(0, limit) }
+}
+
+export async function getRecommendedMixes(userId: string): Promise<FeedMix[]> {
+  void userId
+  if (!isSupabaseConfigured) return []
+  // This would need to be implemented as a PostgreSQL function
+  // For now, return trending mixes as a fallback
+  const res = await getTrendingMixes(10)
+  return res.data
+}
+
+export async function getTrendingGenres(limit = 10): Promise<Array<{ id: string; name: string; count: number }>> {
+  // This would need to be implemented as a PostgreSQL function
+  // For now, return mock data
+  const mockGenres = [
+    { id: '1', name: 'House', count: 1247 },
+    { id: '2', name: 'Techno', count: 892 },
+    { id: '3', name: 'Deep House', count: 654 },
+    { id: '4', name: 'Trance', count: 543 },
+    { id: '5', name: 'Progressive', count: 432 },
+    { id: '6', name: 'Minimal', count: 321 },
+    { id: '7', name: 'Dubstep', count: 298 },
+    { id: '8', name: 'Ambient', count: 234 },
+    { id: '9', name: 'Drum & Bass', count: 187 },
+    { id: '10', name: 'Tech House', count: 156 },
+  ]
+  return mockGenres.slice(0, limit)
 }
 
 // --- Helpers ---
@@ -531,5 +652,3 @@ function formatFeedMix(m: Record<string, unknown>): FeedMix {
     genre_name: genre?.name || null
   }
 }
-
-

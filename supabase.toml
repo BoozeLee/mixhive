@@ -1,0 +1,43 @@
+# Supabase Configuration for MixHive
+
+[project]
+# Project name and database configuration
+database_name = "mixhive_platform"
+database_version = "15"
+
+[database]
+# Database connection settings
+port = 54322
+schema = "public"
+
+[auth]
+# Authentication settings
+site_url = "http://localhost:5173"
+redirect_urls = ["http://localhost:5173/auth/callback"]
+
+[api]
+# API settings
+port = 54321
+
+[studio]
+# Supabase Studio settings
+port = 54323
+
+[edge_functions]
+# Edge Functions settings
+port = 54324
+
+[functions]
+# Function settings
+edge_runtime = "nodejs18"
+
+[local]
+# Local development settings
+# Database will be stored in a Docker container
+db_path = "./supabase/data"
+# JWT secret will be generated automatically
+jwt_secret = ""
+
+# Note: You'll need to run `supabase login` first to authenticate
+# Then run `supabase new` to create a new project
+# Or `supabase link` to link to an existing project

@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { usePlayer } from '../lib/playerStore'
-import { repost } from '../lib/api'
+import { repost, unrepost, hasReposted } from '../lib/api'
 import type { FeedMix } from '../lib/types'
 
 interface Props {
@@ -13,16 +13,38 @@ export function MixCard({ mix }: Props) {
   const { user } = useAuth()
   const { play, addToQueue, currentTrack } = usePlayer()
   const [reposted, setReposted] = useState(false)
+  const [repostBusy, setRepostBusy] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
 
   const isNowPlaying = currentTrack?.id === mix.id
 
+  useEffect(() => {
+    if (!user) return
+    let cancelled = false
+    hasReposted(user.id, mix.id).then(r => {
+      if (!cancelled) setReposted(r)
+    })
+    return () => { cancelled = true }
+  }, [user, mix.id])
+
   async function handleRepost(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
-    if (!user || reposted) return
-    await repost(user.id, mix.id, mix.dj_id)
-    setReposted(true)
+    if (!user || repostBusy) return
+    setRepostBusy(true)
+    const prev = reposted
+    setReposted(!prev)
+    try {
+      if (prev) {
+        await unrepost(mix.id)
+      } else {
+        await repost(user.id, mix.id, mix.dj_id)
+      }
+    } catch {
+      setReposted(prev)
+    } finally {
+      setRepostBusy(false)
+    }
   }
 
   function handlePlay(e: React.MouseEvent) {
@@ -68,6 +90,28 @@ export function MixCard({ mix }: Props) {
 
   return (
     <div style={{ position: 'relative' }}>
+      {mix.is_repost && mix.reposted_by_username && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
+          padding: '4px 14px 6px',
+          fontSize: 11,
+          color: '#888',
+        }}>
+          <span style={{ color: '#6c6', fontSize: 12, lineHeight: 1 }}>🔁</span>
+          <span>
+            Reposted by{' '}
+            <Link
+              to={`/u/${mix.reposted_by_username}`}
+              onClick={e => e.stopPropagation()}
+              style={{ color: '#aaa', textDecoration: 'none', fontWeight: 600 }}
+            >
+              @{mix.reposted_by_username}
+            </Link>
+          </span>
+        </div>
+      )}
       <Link to={`/mix/${mix.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div style={{
         display: 'flex',
@@ -149,15 +193,21 @@ export function MixCard({ mix }: Props) {
         </div>
         {user && (
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, paddingLeft: 4, position: 'relative' }}>
-            <button onClick={handleRepost} style={{
-              background: 'transparent',
-              border: 'none',
-              color: reposted ? '#6c6' : '#555',
-              cursor: reposted ? 'default' : 'pointer',
-              fontSize: 16,
-              padding: '4px',
-              lineHeight: 1,
-            }} title="Repost">
+            <button
+              onClick={handleRepost}
+              disabled={repostBusy}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: reposted ? '#6c6' : '#555',
+                cursor: repostBusy ? 'wait' : 'pointer',
+                fontSize: 16,
+                padding: '4px',
+                lineHeight: 1,
+                opacity: repostBusy ? 0.6 : 1,
+              }}
+              title={reposted ? 'Un-repost' : 'Repost'}
+            >
               {reposted ? '🔁' : '↻'}
             </button>
             <button onClick={e => { e.preventDefault(); e.stopPropagation(); setShowMenu(s => !s) }} style={{

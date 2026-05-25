@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { usePlayer } from '../lib/playerStore'
-import { getMix, getComments, createComment, like, unlike, hasLiked, incrementPlayCount, repost, getFansAlsoLiked } from '../lib/api'
+import { getMix, getComments, createComment, like, unlike, hasLiked, incrementPlayCount, repost, unrepost, hasReposted, getFansAlsoLiked } from '../lib/api'
 import { WaveformPlayer } from '../components/WaveformPlayer'
 import { SkeletonMixDetail } from '../components/Skeleton'
 import { FollowButton } from '../components/FollowButton'
@@ -35,6 +35,7 @@ export function MixDetail() {
   const [shareCopied, setShareCopied] = useState(false)
   const [showEmbed, setShowEmbed] = useState(false)
   const [reposted, setReposted] = useState(false)
+  const [repostBusy, setRepostBusy] = useState(false)
   const [showAddToPlaylist, setShowAddToPlaylist] = useState(false)
   const { play, addToQueue } = usePlayer()
   const [fansAlsoLiked, setFansAlsoLiked] = useState<FeedMix[]>([])
@@ -46,14 +47,16 @@ export function MixDetail() {
       setMix(m)
       if (m) {
         setLikeCount(m.like_count)
-        const [c, liked, f] = await Promise.all([
+        const [c, liked, f, rp] = await Promise.all([
           getComments(m.id),
           user ? hasLiked(user.id, m.id) : Promise.resolve(false),
           getFansAlsoLiked(m.id),
+          user ? hasReposted(user.id, m.id) : Promise.resolve(false),
         ])
         setComments(c)
         setFansAlsoLiked(f)
         if (typeof liked === 'boolean') setLiked(liked)
+        if (typeof rp === 'boolean') setReposted(rp)
       }
       setLoading(false)
     })
@@ -189,19 +192,36 @@ export function MixDetail() {
           {'</>'} Embed
         </button>
         {user && (
-          <button onClick={async () => {
-            if (reposted || !mix) return
-            await repost(user.id, mix.id, mix.dj_id)
-            setReposted(true)
-          }} style={{
-            background: 'transparent',
-            border: '1px solid #333',
-            color: reposted ? '#6c6' : '#888',
-            padding: '6px 14px',
-            borderRadius: 6,
-            cursor: reposted ? 'default' : 'pointer',
-            fontSize: 12,
-          }}>
+          <button
+            disabled={repostBusy}
+            onClick={async () => {
+              if (!mix || repostBusy) return
+              setRepostBusy(true)
+              const prev = reposted
+              setReposted(!prev)
+              try {
+                if (prev) {
+                  await unrepost(mix.id)
+                } else {
+                  await repost(user.id, mix.id, mix.dj_id)
+                }
+              } catch {
+                setReposted(prev)
+              } finally {
+                setRepostBusy(false)
+              }
+            }}
+            style={{
+              background: 'transparent',
+              border: '1px solid #333',
+              color: reposted ? '#6c6' : '#888',
+              padding: '6px 14px',
+              borderRadius: 6,
+              cursor: repostBusy ? 'wait' : 'pointer',
+              fontSize: 12,
+              opacity: repostBusy ? 0.6 : 1,
+            }}
+          >
             {reposted ? '✓ Reposted' : '↻ Repost'}
           </button>
         )}

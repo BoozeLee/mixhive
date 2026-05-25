@@ -79,6 +79,12 @@ export interface FeedMix extends Mix {
   dj_avatar_url: string
   weekly_plays?: number
   score?: number
+  is_repost?: boolean
+  reposted_by_id?: string | null
+  reposted_by_username?: string | null
+  reposted_by_display_name?: string | null
+  reposted_by_avatar_url?: string | null
+  feed_event_id?: string
 }
 
 export interface Playlist {

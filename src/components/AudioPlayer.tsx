@@ -110,12 +110,11 @@ export function AudioPlayer({ src, onPlay }: Props) {
     setMuted(false)
   }
 
-  function seek(e: React.MouseEvent<HTMLDivElement>) {
+  function seekTo(value: number) {
     const audio = audioRef.current
     if (!audio || !duration) return
-    const rect = e.currentTarget.getBoundingClientRect()
-    const pct = (e.clientX - rect.left) / rect.width
-    audio.currentTime = pct * duration
+    audio.currentTime = value
+    setCurrentTime(value)
   }
 
   function formatTime(s: number) {
@@ -134,9 +133,10 @@ export function AudioPlayer({ src, onPlay }: Props) {
       alignItems: 'center',
       gap: 8,
     }}>
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption -- Mix uploads are music-first audio; captions are not meaningful for instrumental sets. */}
       <audio ref={audioRef} src={src} preload="metadata" />
 
-      <button onClick={toggle} style={{
+      <button aria-label={playing ? 'Pause mix' : 'Play mix'} onClick={toggle} style={{
         width: 36,
         height: 36,
         borderRadius: '50%',
@@ -154,21 +154,22 @@ export function AudioPlayer({ src, onPlay }: Props) {
       </button>
 
       <div style={{ flex: 1 }}>
-        <div onClick={seek} style={{
-          height: 4,
-          background: '#222',
-          borderRadius: 2,
-          cursor: 'pointer',
-          position: 'relative',
-        }}>
-          <div style={{
-            height: '100%',
-            width: duration ? `${(currentTime / duration) * 100}%` : '0%',
-            background: '#f0c040',
-            borderRadius: 2,
-            transition: 'width 0.1s linear',
-          }} />
-        </div>
+        <input
+          type="range"
+          min={0}
+          max={duration || 0}
+          step={0.1}
+          value={duration ? currentTime : 0}
+          aria-label="Seek through mix"
+          onChange={e => seekTo(Number(e.target.value))}
+          style={{
+            width: '100%',
+            height: 8,
+            margin: 0,
+            accentColor: '#f0c040',
+            cursor: 'pointer',
+          }}
+        />
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#666', marginTop: 4 }}>
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(duration)}</span>

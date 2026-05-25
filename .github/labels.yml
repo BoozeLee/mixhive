@@ -1,0 +1,116 @@
+# Source of truth for repository labels.
+# Sync with: gh label create / edit (see scripts/sync-labels.sh)
+
+# Type
+- name: bug
+  color: d73a4a
+  description: Something isn't working
+- name: enhancement
+  color: a2eeef
+  description: New feature or request
+- name: task
+  color: 0e8a16
+  description: Internal implementation work
+- name: documentation
+  color: 0075ca
+  description: Improvements or additions to documentation
+- name: refactor
+  color: c5def5
+  description: Code restructure with no behaviour change
+- name: performance
+  color: fbca04
+  description: Performance improvement
+
+# Status
+- name: needs-triage
+  color: ededed
+  description: Awaiting initial review
+- name: blocked
+  color: b60205
+  description: Blocked on external dependency or decision
+- name: in-progress
+  color: 1d76db
+  description: Someone is actively working on this
+- name: ready-for-review
+  color: 0e8a16
+  description: PR or issue ready for review
+- name: wontfix
+  color: ffffff
+  description: This will not be worked on
+- name: duplicate
+  color: cfd3d7
+  description: This issue or pull request already exists
+
+# Priority
+- name: priority:critical
+  color: b60205
+  description: Drop everything
+- name: priority:high
+  color: d93f0b
+  description: Important, should be next
+- name: priority:medium
+  color: fbca04
+  description: Normal
+- name: priority:low
+  color: c2e0c6
+  description: Nice to have
+
+# Area
+- name: area:auth
+  color: 5319e7
+  description: Authentication, sessions, OAuth
+- name: area:feed
+  color: 5319e7
+  description: Feed, trending, discovery
+- name: area:player
+  color: 5319e7
+  description: Audio player, queue, waveform
+- name: area:upload
+  color: 5319e7
+  description: Mix upload, transcoding, storage
+- name: area:social
+  color: 5319e7
+  description: Follows, likes, comments, mentions, blocks
+- name: area:notifications
+  color: 5319e7
+  description: Notification triggers and UI
+- name: area:playlists
+  color: 5319e7
+  description: Playlists and ordering
+- name: area:search
+  color: 5319e7
+  description: Search and filters
+- name: area:profile
+  color: 5319e7
+  description: DJ profiles and onboarding
+- name: area:database
+  color: 5319e7
+  description: Schema, migrations, RLS
+- name: area:ui
+  color: 5319e7
+  description: General UI / styling
+- name: area:ci
+  color: 5319e7
+  description: CI / CD / tooling
+
+# Automation
+- name: dependencies
+  color: 0366d6
+  description: Pull requests that update a dependency
+- name: automated
+  color: ededed
+  description: Opened by an automated process
+- name: ci
+  color: 0366d6
+  description: Continuous integration
+- name: security
+  color: b60205
+  description: Security-related
+
+# Good first issue / community
+- name: good first issue
+  color: 7057ff
+  description: Good for newcomers
+- name: help wanted
+  color: 008672
+  description: Extra attention is needed

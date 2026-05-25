@@ -1,0 +1,34 @@
+name: Internal task
+description: Implementation work, refactor, chore, tooling
+title: "[task] "
+labels: [task, needs-triage]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How will we know this is done?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options:
+        - frontend
+        - database
+        - ci / tooling
+        - docs
+        - infra / deploy
+        - other
+    validations:
+      required: true

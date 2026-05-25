@@ -1,0 +1,74 @@
+name: Bug report
+description: Something is broken or behaving unexpectedly
+title: "[bug] "
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. Please give enough detail for us to reproduce.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear and concise description of the bug.
+      placeholder: When I click play on a mix, the global player flashes and then disappears.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to /feed
+        2. Click the play button on the first mix card
+        3. Observe the bottom player area
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options:
+        - auth
+        - feed
+        - player
+        - upload
+        - mix detail
+        - profile
+        - notifications
+        - playlists
+        - search
+        - database / RLS
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & version
+      placeholder: Chrome 124 on macOS 14.4
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit SHA or deployment URL
+      description: Helps us identify which version you were on.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console logs / network errors
+      render: shell

@@ -1,0 +1,5 @@
+@keyframes pulse {
+  0% { box-shadow: 0 0 5px #f0c040; }
+  50% { box-shadow: 0 0 15px #f0c040; }
+  100% { box-shadow: 0 0 5px #f0c040; }
+}

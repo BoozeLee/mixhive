@@ -1,0 +1,11 @@
+# MixHive code owners
+# Every PR auto-requests review from these owners.
+# More-specific paths can be added below as the team grows.
+
+*                              @BoozeLee
+
+# DB schema is sensitive — owner must approve migrations
+/supabase/migrations/          @BoozeLee
+
+# CI / repo configuration
+/.github/                      @BoozeLee

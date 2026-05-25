@@ -9,6 +9,7 @@ import { FollowButton } from '../components/FollowButton'
 import { AddToPlaylistModal } from '../components/AddToPlaylistModal'
 import { MentionRenderer } from '../components/MentionRenderer'
 import { MixCard } from '../components/MixCard'
+import { NotFoundState } from '../components/EmptyState'
 import type { Mix, Comment as CommentType, FeedMix } from '../lib/types'
 
 function timeAgo(dateStr: string): string {
@@ -95,7 +96,8 @@ export function MixDetail() {
   }
 
   if (loading) return <SkeletonMixDetail />
-  if (!mix) return <div style={{ textAlign: 'center', padding: 60, color: '#666' }}>Mix not found</div>
+  if (!mix) return <NotFoundState what="mix" />
+
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>

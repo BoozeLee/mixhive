@@ -14,7 +14,26 @@ export function EmbedMix() {
   }, [id])
 
   if (error) {
-    return <div style={{ background: '#0a0a0a', color: '#666', padding: 20, textAlign: 'center', fontFamily: 'sans-serif' }}>Mix not found</div>
+    return (
+      <div
+        role="alert"
+        style={{
+          background: '#0a0a0a',
+          color: '#888',
+          padding: 20,
+          textAlign: 'center',
+          fontFamily: 'sans-serif',
+          fontSize: 13,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <span style={{ color: '#f0c040', fontSize: 18, marginBottom: 4 }} aria-hidden="true">♪</span>
+        This mix is unavailable
+      </div>
+    )
   }
 
   if (!mix) {

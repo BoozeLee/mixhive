@@ -17,6 +17,7 @@ import { MixCard } from '../components/MixCard'
 import { PlaylistCard } from '../components/PlaylistCard'
 import { BlockButton } from '../components/BlockButton'
 import { SkeletonProfile } from '../components/Skeleton'
+import { NotFoundState } from '../components/EmptyState'
 import type { Profile as ProfileType, Mix, Playlist, ActivityEvent } from '../lib/types'
 
 export function ProfilePage() {
@@ -72,7 +73,7 @@ export function ProfilePage() {
   }
 
   if (loading) return <SkeletonProfile />
-  if (!profile) return <div style={{ textAlign: 'center', padding: 60, color: '#666' }}>DJ not found</div>
+  if (!profile) return <NotFoundState what="DJ" />
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>

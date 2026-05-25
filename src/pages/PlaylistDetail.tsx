@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { getPlaylistWithMixes, updatePlaylist, deletePlaylist, removeMixFromPlaylist } from '../lib/api'
 import { MixCard } from '../components/MixCard'
 import { SkeletonFeed } from '../components/Skeleton'
+import { NotFoundState } from '../components/EmptyState'
 import type { PlaylistWithMixes, FeedMix } from '../lib/types'
 
 export function PlaylistDetail() {
@@ -76,11 +77,7 @@ export function PlaylistDetail() {
   if (loading) return <SkeletonFeed />
 
   if (error || !playlist) {
-    return (
-      <div style={{ textAlign: 'center', padding: 60, color: '#666' }}>
-        {error || 'Playlist not found'}
-      </div>
-    )
+    return <NotFoundState what="playlist" />
   }
 
   const mixesAsFeedMix: FeedMix[] = playlist.mixes.map(m => ({

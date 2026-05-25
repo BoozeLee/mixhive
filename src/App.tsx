@@ -8,6 +8,8 @@ import { GlobalPlayer } from './components/GlobalPlayer'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { RoutePending } from './components/RoutePending'
 import { PlayerProvider } from './lib/playerStore'
+import { MobileNav } from './components/MobileNav'
+import './styles/global.css'
 
 // Routes are code-split so the initial bundle only ships what the user
 // actually opens. The Navbar / PlayerProvider / ErrorBoundary stay in the
@@ -16,6 +18,7 @@ const Landing = lazy(() => import('./pages/Landing').then(m => ({ default: m.Lan
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })))
 const Register = lazy(() => import('./pages/Register').then(m => ({ default: m.Register })))
 const Feed = lazy(() => import('./pages/Feed').then(m => ({ default: m.Feed })))
+const Discover = lazy(() => import('./pages/Discover').then(m => ({ default: m.Discover })))
 const ProfilePage = lazy(() => import('./pages/Profile').then(m => ({ default: m.ProfilePage })))
 const MixDetail = lazy(() => import('./pages/MixDetail').then(m => ({ default: m.MixDetail })))
 const Upload = lazy(() => import('./pages/Upload').then(m => ({ default: m.Upload })))
@@ -27,6 +30,7 @@ const EmbedMix = lazy(() => import('./pages/EmbedMix').then(m => ({ default: m.E
 const EditMix = lazy(() => import('./pages/EditMix').then(m => ({ default: m.EditMix })))
 const PlaylistDetail = lazy(() => import('./pages/PlaylistDetail').then(m => ({ default: m.PlaylistDetail })))
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
+const Agents = lazy(() => import('./pages/Agents').then(m => ({ default: m.Agents })))
 
 export default function App() {
   return (
@@ -66,6 +70,7 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/feed" element={<Feed />} />
+                <Route path="/discover" element={<Discover />} />
                 <Route path="/trending" element={<Feed />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
@@ -75,6 +80,7 @@ export default function App() {
                 <Route path="/mix/:id/edit" element={<ProtectedRoute><EditMix /></ProtectedRoute>} />
                 <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/agents" element={<ProtectedRoute><Agents /></ProtectedRoute>} />
                 <Route path="/embed/mix/:id" element={<EmbedMix />} />
                 <Route path="/playlist/:id" element={<PlaylistDetail />} />
                 <Route path="*" element={<NotFound />} />
@@ -83,6 +89,7 @@ export default function App() {
           </ErrorBoundary>
         </main>
         <GlobalPlayer />
+        <MobileNav />
         <Analytics />
         <SpeedInsights />
       </div>

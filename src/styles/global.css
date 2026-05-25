@@ -1,0 +1,131 @@
+/* Global responsive styles and base resets */
+
+/* Responsive containers and layouts */
+@media (max-width: 767px) {
+  /* Hide desktop-only elements */
+  .desktop-only {
+    display: none !important;
+  }
+  
+  /* Ensure mobile nav stays at bottom */
+  main {
+    padding-bottom: 70px; /* Height of mobile nav + some extra space */
+  }
+  
+  /* Full-width containers on mobile */
+  .container {
+    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Hide mobile nav on desktop */
+  .mobile-nav {
+    display: none !important;
+  }
+  
+  /* Restore container max-width on tablet+ */
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid #f0c040;
+  outline-offset: 2px;
+}
+
+/* Skip to content link styling */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  background: #f0c040;
+  color: #0a0a0a;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  z-index: 999;
+}
+
+.skip-link:focus {
+  left: 8px;
+}
+
+/* Responsive image loading */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a1a2e;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* Base styles for buttons and inputs */
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Prevent text selection on interactive elements */
+button, .clickable {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Accessibility: reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border: #000;
+    --borderStrong: #000;
+  }
+}
+
+/* Focus visible for custom components */
+.focus-visible {
+  outline: 2px solid #f0c040;
+  outline-offset: 2px;
+}

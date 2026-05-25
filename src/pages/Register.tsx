@@ -1,75 +1,121 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { Button } from '../components/ui/Button'
+import { Input } from '../components/ui/Input'
+import { RegisterSchema, formatZodError } from '../lib/schemas'
 
 export function Register() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
-  const [error, setError] = useState('')
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    display_name: ''
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [generalError, setGeneralError] = useState('')
   const { signUpWithEmail } = useAuth()
   const navigate = useNavigate()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError('')
-    const { error: err } = await signUpWithEmail(email, password, {
-      preferred_username: username
+    
+    // Validate with Zod
+    const result = RegisterSchema.safeParse(formData)
+    if (!result.success) {
+      setErrors(formatZodError(result.error))
+      setGeneralError('')
+      return
+    }
+    
+    setErrors({})
+    setGeneralError('')
+    
+    const { error: err } = await signUpWithEmail(formData.email, formData.password, {
+      preferred_username: formData.username
     })
     if (err) {
-      setError(err.message)
+      setGeneralError(err.message)
     } else {
       navigate('/feed')
     }
   }
 
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    // Clear field-specific error when user types
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }))
+    }
+  }
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 60px)', padding: 24 }}>
+    <div className="container" style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      minHeight: 'calc(100vh - 60px)', 
+      padding: '24px 16px' 
+    }}>
       <div style={{ width: '100%', maxWidth: 380 }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#eee', marginBottom: 24, textAlign: 'center' }}>
           Join Mix Hive
         </h1>
 
-        {error && (
-          <div style={{ background: '#2a1010', color: '#f55', padding: '10px 14px', borderRadius: 8, fontSize: 13, marginBottom: 16 }}>
-            {error}
+        {generalError && (
+          <div style={{ 
+            background: '#2a1010', 
+            color: '#f55', 
+            padding: '10px 14px', 
+            borderRadius: 8, 
+            fontSize: 13, 
+            marginBottom: 16 
+          }}>
+            {generalError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <input type="text" placeholder="Username" value={username}
-            onChange={e => setUsername(e.target.value)} required pattern="^[a-zA-Z0-9_]{3,20}$"
-            title="3-20 characters, letters, numbers, underscores"
-            style={{ background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <Input
+            type="text"
+            placeholder="Username"
+            value={formData.username}
+            onChange={(e) => handleInputChange('username', e.target.value)}
+            error={errors.username}
+            help="3-30 characters, letters, numbers, underscores"
           />
-          <input type="email" placeholder="Email" value={email}
-            onChange={e => setEmail(e.target.value)} required
-            style={{ background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
+          <Input
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            error={errors.email}
           />
-          <input type="password" placeholder="Password (min 6 chars)" value={password}
-            onChange={e => setPassword(e.target.value)} required minLength={6}
-            style={{ background: '#111', border: '1px solid #222', color: '#eee', padding: '10px 14px', borderRadius: 8, fontSize: 14 }}
+          <Input
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={(e) => handleInputChange('password', e.target.value)}
+            error={errors.password}
+            help="8+ characters with uppercase, lowercase, and number"
+          />
+          <Input
+            type="text"
+            placeholder="Display name"
+            value={formData.display_name}
+            onChange={(e) => handleInputChange('display_name', e.target.value)}
+            error={errors.display_name}
           />
           <p style={{ color: '#555', fontSize: 11, margin: 0 }}>
             By joining, you agree to the Terms of Service.
           </p>
-          <button type="submit" style={{
-            background: '#f0c040',
-            color: '#0a0a0a',
-            border: 'none',
-            padding: '10px',
-            borderRadius: 8,
-            fontSize: 15,
-            fontWeight: 700,
-            cursor: 'pointer',
-            marginTop: 4
-          }}>
+          <Button type="submit" variant="primary" style={{ width: '100%', marginTop: 8 }}>
             Create account
-          </button>
+          </Button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: 20, color: '#555', fontSize: 13 }}>
-          Already have an account? <Link to="/login" style={{ color: '#f0c040' }}>Sign in</Link>
+        <p style={{ textAlign: 'center', marginTop: 24, color: '#555', fontSize: 13 }}>
+          Already have an account? <Link to="/login" style={{ color: '#f0c040', textDecoration: 'none' }}>Sign in</Link>
         </p>
       </div>
     </div>

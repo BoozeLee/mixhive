@@ -1,0 +1,319 @@
+import { useEffect, useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
+import { Button, Input, Textarea } from '../components/ui'
+import { EmptyState } from '../components/EmptyState'
+import {
+  listAgents,
+  createAgent,
+  updateAgent,
+  deleteAgent,
+  listRuns,
+  testRunAgent,
+  type LuaAgent,
+  type LuaAgentRun,
+  type LuaAgentTrigger,
+} from '../lib/agents'
+import { colors, fontSize, radius, space, fontWeight } from '../styles/tokens'
+
+const TRIGGER_OPTIONS: { value: LuaAgentTrigger; label: string; description: string }[] = [
+  { value: 'on_follow',     label: 'On follow',     description: 'Fires when someone follows you.' },
+  { value: 'on_mix_upload', label: 'On mix upload', description: 'Fires when a DJ you follow publishes a mix.' },
+  { value: 'on_comment',    label: 'On comment',    description: 'Fires when someone comments on your mix.' },
+  { value: 'on_reply',      label: 'On reply',      description: 'Fires when someone replies to your comment.' },
+  { value: 'on_mention',    label: 'On mention',    description: 'Fires when you are @mentioned.' },
+  { value: 'on_like',       label: 'On like',       description: 'Fires when someone likes your mix.' },
+  { value: 'on_repost',     label: 'On repost',     description: 'Fires when someone reposts your mix.' },
+  { value: 'manual',        label: 'Manual',        description: 'Only runs from the Test button or your own scripts.' },
+]
+
+const STARTER_TEMPLATES: Record<LuaAgentTrigger, string> = {
+  on_follow: `-- Welcome new followers with an auto-comment on your latest mix.
+function on_follow(event)
+  local actor = mh.get_profile(event.actor_id)
+  mh.notify("New follower: @" .. actor.username)
+end
+`,
+  on_mix_upload: `-- Tag any new mix from a followed DJ with a personal note.
+function on_mix_upload(event)
+  local mix = mh.get_mix(event.mix_id)
+  mh.comment(mix.id, "Auto-listened by my agent ♪")
+end
+`,
+  on_comment: `-- Thank every commenter on your mixes.
+function on_comment(event)
+  local actor = mh.get_profile(event.actor_id)
+  mh.comment(event.mix_id, "Thanks for the feedback, @" .. actor.username .. "!")
+end
+`,
+  on_reply: `function on_reply(event)
+  mh.notify("@" .. event.actor_id .. " replied to your comment")
+end
+`,
+  on_mention: `function on_mention(event)
+  mh.notify("You were mentioned in " .. event.context)
+end
+`,
+  on_like: `function on_like(event)
+  mh.notify("@" .. event.actor_id .. " liked your mix")
+end
+`,
+  on_repost: `function on_repost(event)
+  mh.notify("@" .. event.actor_id .. " reposted you 🔁")
+end
+`,
+  on_schedule: `-- Runs on a cron schedule. Configure cron_expr separately.
+mh.notify("scheduled tick at " .. os.date())
+`,
+  on_unfollow: `function on_unfollow(event)
+  mh.print("lost a follower: " .. event.actor_id)
+end
+`,
+  manual: `-- Manual agents run only when you press Test or call them from code.
+mh.notify("hello from " .. mh.agent_id)
+`,
+}
+
+export function Agents() {
+  const { user } = useAuth()
+  const [agents, setAgents] = useState<LuaAgent[]>([])
+  const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState<LuaAgent | null>(null)
+  const [creating, setCreating] = useState(false)
+
+  useEffect(() => {
+    if (!user) return
+    setLoading(true)
+    listAgents().then(a => { setAgents(a); setLoading(false) }).catch(() => setLoading(false))
+  }, [user])
+
+  if (!user) {
+    return (
+      <div style={{ maxWidth: 640, margin: '0 auto', padding: '40px 16px' }}>
+        <EmptyState icon="🤖" title="Sign in to manage your agents" body="Lua agents automate your social-media reactions." actionLabel="Sign in" actionTo="/login" />
+      </div>
+    )
+  }
+
+  if (editing || creating) {
+    return (
+      <AgentEditor
+        agent={editing}
+        onCancel={() => { setEditing(null); setCreating(false) }}
+        onSaved={async () => {
+          setEditing(null); setCreating(false)
+          setAgents(await listAgents())
+        }}
+      />
+    )
+  }
+
+  return (
+    <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: space[10] }}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold }}>Lua agents</h1>
+          <p style={{ margin: '4px 0 0', color: colors.text.muted, fontSize: fontSize.md }}>
+            Tiny Lua scripts that react to events on your account.
+          </p>
+        </div>
+        <Button onClick={() => setCreating(true)}>+ New agent</Button>
+      </header>
+
+      {loading ? (
+        <div style={{ color: colors.text.muted }}>Loading…</div>
+      ) : agents.length === 0 ? (
+        <EmptyState
+          icon="🤖"
+          title="No agents yet"
+          body="Write a small Lua script that fires when something happens — auto-welcome new followers, thank commenters, schedule a weekly digest."
+          actionLabel="Create your first agent"
+          onAction={() => setCreating(true)}
+        />
+      ) : (
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: space[6] }}>
+          {agents.map(a => (
+            <li key={a.id}>
+              <AgentRow agent={a} onEdit={() => setEditing(a)} onChanged={async () => setAgents(await listAgents())} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+function AgentRow({ agent, onEdit, onChanged }: { agent: LuaAgent; onEdit: () => void; onChanged: () => Promise<void> }) {
+  const [busy, setBusy] = useState(false)
+  const errorRatio = agent.run_count === 0 ? 0 : Math.round((agent.error_count / agent.run_count) * 100)
+  return (
+    <article style={{ background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: radius.xl, padding: space[8] }}>
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: space[6] }}>
+        <div style={{ minWidth: 0 }}>
+          <h3 style={{ margin: 0, fontSize: fontSize.lg, fontWeight: fontWeight.semibold, color: colors.text.primary }}>
+            {agent.name}{' '}
+            <span style={{ color: agent.enabled ? colors.success : colors.text.dim, fontSize: fontSize.xs, marginLeft: 6 }}>
+              {agent.enabled ? '● ON' : '○ OFF'}
+            </span>
+          </h3>
+          <div style={{ marginTop: 4, color: colors.text.muted, fontSize: fontSize.sm }}>
+            {agent.trigger_type ?? 'no trigger'} · {agent.run_count} runs · {errorRatio}% errors
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: space[4] }}>
+          <Button variant="ghost" size="sm" onClick={onEdit}>Edit</Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            loading={busy}
+            onClick={async () => {
+              setBusy(true)
+              try { await updateAgent(agent.id, { enabled: !agent.enabled }); await onChanged() }
+              finally { setBusy(false) }
+            }}
+          >
+            {agent.enabled ? 'Disable' : 'Enable'}
+          </Button>
+        </div>
+      </header>
+      {agent.description && (
+        <p style={{ margin: `${space[6]}px 0 0`, color: colors.text.secondary, fontSize: fontSize.md }}>{agent.description}</p>
+      )}
+      {agent.last_error && (
+        <p style={{ margin: `${space[6]}px 0 0`, color: colors.danger, fontSize: fontSize.sm }}>
+          Last error: {agent.last_error}
+        </p>
+      )}
+    </article>
+  )
+}
+
+function AgentEditor({ agent, onCancel, onSaved }: { agent: LuaAgent | null; onCancel: () => void; onSaved: () => Promise<void> }) {
+  const [name, setName] = useState(agent?.name ?? '')
+  const [description, setDescription] = useState(agent?.description ?? '')
+  const [trigger, setTrigger] = useState<LuaAgentTrigger>(agent?.trigger_type ?? 'on_follow')
+  const [code, setCode] = useState(agent?.lua_code ?? STARTER_TEMPLATES['on_follow'])
+  const [saving, setSaving] = useState(false)
+  const [testing, setTesting] = useState(false)
+  const [testResult, setTestResult] = useState<string | null>(null)
+  const [runs, setRuns] = useState<LuaAgentRun[]>([])
+
+  useEffect(() => {
+    if (!agent) return
+    listRuns(agent.id).then(setRuns).catch(() => {})
+  }, [agent])
+
+  function pickTrigger(next: LuaAgentTrigger) {
+    setTrigger(next)
+    // Only swap in a template if the user hasn't typed anything custom.
+    const template = STARTER_TEMPLATES[next]
+    const current = code.trim()
+    const isAnyTemplate = Object.values(STARTER_TEMPLATES).some(t => t.trim() === current)
+    if (!current || isAnyTemplate) setCode(template)
+  }
+
+  async function save() {
+    setSaving(true)
+    try {
+      if (agent) {
+        await updateAgent(agent.id, { name, description, trigger_type: trigger, lua_code: code })
+      } else {
+        await createAgent({ name, description, trigger_type: trigger, lua_code: code })
+      }
+      await onSaved()
+    } finally { setSaving(false) }
+  }
+
+  async function runTest() {
+    if (!agent) return
+    setTesting(true)
+    setTestResult(null)
+    try {
+      const r = await testRunAgent(agent.id, { actor_id: agent.owner_id, _test: true })
+      setTestResult(`${r.status} in ${r.duration_ms}ms\n${(r.stdout || []).join('\n')}${r.error ? `\nERROR: ${r.error}` : ''}`)
+      setRuns(await listRuns(agent.id))
+    } catch (e) {
+      setTestResult(`request failed: ${e instanceof Error ? e.message : String(e)}`)
+    } finally { setTesting(false) }
+  }
+
+  return (
+    <div style={{ maxWidth: 820, margin: '0 auto', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: space[8] }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ margin: 0, fontSize: fontSize['2xl'], fontWeight: fontWeight.bold }}>
+          {agent ? `Edit agent — ${agent.name}` : 'New Lua agent'}
+        </h1>
+        <Button variant="ghost" onClick={onCancel}>Cancel</Button>
+      </header>
+
+      <Input label="Name" value={name} onChange={e => setName(e.target.value)} placeholder="welcome-new-followers" required />
+      <Textarea label="Description" rows={2} value={description ?? ''} onChange={e => setDescription(e.target.value)} placeholder="What this agent does, in plain English." />
+
+      <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+        <legend style={{ color: colors.text.secondary, fontSize: fontSize.sm, fontWeight: fontWeight.medium, marginBottom: space[6] }}>
+          Trigger
+        </legend>
+        <div style={{ display: 'grid', gap: space[5], gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
+          {TRIGGER_OPTIONS.map(opt => (
+            <label key={opt.value} style={{ cursor: 'pointer', padding: space[6], borderRadius: radius.lg, border: `1px solid ${trigger === opt.value ? colors.accent : colors.border}`, background: trigger === opt.value ? colors.surfaceHover : colors.bg }}>
+              <input type="radio" name="trigger" value={opt.value} checked={trigger === opt.value} onChange={() => pickTrigger(opt.value)} style={{ marginRight: 6 }} />
+              <span style={{ fontWeight: fontWeight.semibold }}>{opt.label}</span>
+              <div style={{ marginTop: 4, color: colors.text.muted, fontSize: fontSize.xs }}>{opt.description}</div>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div>
+        <label htmlFor="lua-code" style={{ color: colors.text.secondary, fontSize: fontSize.sm, fontWeight: fontWeight.medium }}>
+          Lua source
+        </label>
+        <textarea
+          id="lua-code"
+          value={code}
+          onChange={e => setCode(e.target.value)}
+          spellCheck={false}
+          style={{
+            display: 'block', width: '100%', minHeight: 280, marginTop: space[5],
+            background: colors.bg, color: colors.text.primary, border: `1px solid ${colors.borderStrong}`,
+            borderRadius: radius.md, padding: space[7], fontFamily: 'Menlo, Consolas, monospace', fontSize: fontSize.base,
+            lineHeight: 1.55, resize: 'vertical',
+          }}
+        />
+        <p style={{ margin: `${space[5]}px 0 0`, color: colors.text.dim, fontSize: fontSize.xs }}>
+          Available APIs: <code>mh.get_mix(id)</code>, <code>mh.get_profile(id)</code>, <code>mh.comment(mix_id, body)</code>,{' '}
+          <code>mh.notify(message)</code>, <code>mh.follow(user_id)</code>, <code>mh.print(...)</code>. Plus <code>math</code>, <code>string</code>, <code>table</code>.
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', gap: space[6], justifyContent: 'flex-end' }}>
+        {agent && <Button variant="danger" onClick={async () => { if (confirm('Delete this agent?')) { await deleteAgent(agent.id); await onSaved() } }}>Delete</Button>}
+        {agent && <Button variant="secondary" loading={testing} onClick={runTest}>Run test</Button>}
+        <Button onClick={save} loading={saving} disabled={!name.trim() || !code.trim()}>
+          {agent ? 'Save changes' : 'Create agent'}
+        </Button>
+      </div>
+
+      {testResult && (
+        <pre style={{ background: colors.bg, border: `1px solid ${colors.border}`, borderRadius: radius.md, padding: space[7], color: colors.text.secondary, fontSize: fontSize.sm, whiteSpace: 'pre-wrap' }}>
+          {testResult}
+        </pre>
+      )}
+
+      {agent && runs.length > 0 && (
+        <section>
+          <h3 style={{ fontSize: fontSize.lg, color: colors.text.primary, margin: `0 0 ${space[6]}px` }}>Recent runs</h3>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: space[4] }}>
+            {runs.map(r => (
+              <li key={r.id} style={{ background: colors.surfaceMuted, border: `1px solid ${colors.border}`, borderRadius: radius.md, padding: space[6], color: colors.text.secondary, fontSize: fontSize.sm }}>
+                <strong style={{ color: r.status === 'ok' ? colors.success : colors.danger }}>{r.status}</strong>{' '}
+                · {r.triggered_by} · {r.duration_ms}ms · {new Date(r.created_at).toLocaleString()}
+                {r.error_message && <div style={{ color: colors.danger, marginTop: 4 }}>{r.error_message}</div>}
+                {r.stdout && <pre style={{ marginTop: 4, color: colors.text.dim, whiteSpace: 'pre-wrap' }}>{r.stdout}</pre>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  )
+}

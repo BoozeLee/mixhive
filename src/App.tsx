@@ -1,24 +1,32 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import { Navbar } from './components/Navbar'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { GlobalPlayer } from './components/GlobalPlayer'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { RoutePending } from './components/RoutePending'
 import { PlayerProvider } from './lib/playerStore'
-import { Landing } from './pages/Landing'
-import { Login } from './pages/Login'
-import { Register } from './pages/Register'
-import { Feed } from './pages/Feed'
-import { ProfilePage } from './pages/Profile'
-import { MixDetail } from './pages/MixDetail'
-import { Upload } from './pages/Upload'
-import { Settings } from './pages/Settings'
-import { AuthCallback } from './pages/AuthCallback'
-import { NotificationsPage } from './pages/Notifications'
-import { SearchPage } from './pages/Search'
-import { EmbedMix } from './pages/EmbedMix'
-import { EditMix } from './pages/EditMix'
-import { PlaylistDetail } from './pages/PlaylistDetail'
-import { NotFound } from './pages/NotFound'
+
+// Routes are code-split so the initial bundle only ships what the user
+// actually opens. The Navbar / PlayerProvider / ErrorBoundary stay in the
+// main chunk because they wrap every screen.
+const Landing = lazy(() => import('./pages/Landing').then(m => ({ default: m.Landing })))
+const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })))
+const Register = lazy(() => import('./pages/Register').then(m => ({ default: m.Register })))
+const Feed = lazy(() => import('./pages/Feed').then(m => ({ default: m.Feed })))
+const ProfilePage = lazy(() => import('./pages/Profile').then(m => ({ default: m.ProfilePage })))
+const MixDetail = lazy(() => import('./pages/MixDetail').then(m => ({ default: m.MixDetail })))
+const Upload = lazy(() => import('./pages/Upload').then(m => ({ default: m.Upload })))
+const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })))
+const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })))
+const NotificationsPage = lazy(() => import('./pages/Notifications').then(m => ({ default: m.NotificationsPage })))
+const SearchPage = lazy(() => import('./pages/Search').then(m => ({ default: m.SearchPage })))
+const EmbedMix = lazy(() => import('./pages/EmbedMix').then(m => ({ default: m.EmbedMix })))
+const EditMix = lazy(() => import('./pages/EditMix').then(m => ({ default: m.EditMix })))
+const PlaylistDetail = lazy(() => import('./pages/PlaylistDetail').then(m => ({ default: m.PlaylistDetail })))
+const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
 
 export default function App() {
   return (
@@ -52,27 +60,31 @@ export default function App() {
         </a>
         <main id="main-content">
           <ErrorBoundary>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/feed" element={<Feed />} />
-              <Route path="/trending" element={<Feed />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/notifications" element={<NotificationsPage />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/u/:username" element={<ProfilePage />} />
-              <Route path="/mix/:id" element={<MixDetail />} />
-              <Route path="/mix/:id/edit" element={<ProtectedRoute><EditMix /></ProtectedRoute>} />
-              <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-              <Route path="/embed/mix/:id" element={<EmbedMix />} />
-              <Route path="/playlist/:id" element={<PlaylistDetail />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<RoutePending />}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/feed" element={<Feed />} />
+                <Route path="/trending" element={<Feed />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/u/:username" element={<ProfilePage />} />
+                <Route path="/mix/:id" element={<MixDetail />} />
+                <Route path="/mix/:id/edit" element={<ProtectedRoute><EditMix /></ProtectedRoute>} />
+                <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/embed/mix/:id" element={<EmbedMix />} />
+                <Route path="/playlist/:id" element={<PlaylistDetail />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </ErrorBoundary>
         </main>
         <GlobalPlayer />
+        <Analytics />
+        <SpeedInsights />
       </div>
       </PlayerProvider>
     </BrowserRouter>

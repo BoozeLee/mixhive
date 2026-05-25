@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { usePlayer } from '../lib/playerStore'
+import { supabase } from '../lib/supabase'
 import { getMix, getComments, createComment, like, unlike, hasLiked, incrementPlayCount, repost, unrepost, hasReposted, getFansAlsoLiked } from '../lib/api'
 import { WaveformPlayer } from '../components/WaveformPlayer'
 import { SkeletonMixDetail } from '../components/Skeleton'
@@ -61,6 +62,47 @@ export function MixDetail() {
       }
       setLoading(false)
     })
+  }, [id, user])
+
+  // Realtime: new comments + live like-count updates for everyone viewing
+  // this mix. Mirrors the NotificationsBell channel pattern.
+  useEffect(() => {
+    if (!id) return
+    const channel = supabase
+      .channel(`mix:${id}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'comments', filter: `mix_id=eq.${id}` },
+        () => {
+          void getComments(id).then(setComments)
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'comments', filter: `mix_id=eq.${id}` },
+        () => {
+          void getComments(id).then(setComments)
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'likes', filter: `mix_id=eq.${id}` },
+        payload => {
+          // Skip our own like — it was already counted optimistically.
+          if (user && (payload.new as { user_id?: string }).user_id === user.id) return
+          setLikeCount(prev => prev + 1)
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'likes', filter: `mix_id=eq.${id}` },
+        payload => {
+          if (user && (payload.old as { user_id?: string }).user_id === user.id) return
+          setLikeCount(prev => Math.max(prev - 1, 0))
+        },
+      )
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
   }, [id, user])
 
   function handlePlay() {

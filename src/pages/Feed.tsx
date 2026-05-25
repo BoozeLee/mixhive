@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { supabase } from '../lib/supabase'
 import { getFeed, getTrending, getRecentMixes } from '../lib/api'
 import { MixCard } from '../components/MixCard'
 import { RecommendedDJs } from '../components/RecommendedDJs'
@@ -27,6 +28,7 @@ export function Feed() {
   })
   const loadingMoreRef = useRef(false)
   const initializedRef = useRef(false)
+  const [newCount, setNewCount] = useState(0)
 
   const fetchTab = useCallback(async (t: Tab, cursor?: FeedCursor | TrendingCursor) => {
     if (t === 'feed' && !user) return
@@ -79,6 +81,31 @@ export function Feed() {
     })
   }, [tab, user, fetchTab, tabs])
 
+  // Realtime: count feed events landing for this user. When the user
+  // clicks the "show N new mixes" pill, we re-fetch the following tab.
+  useEffect(() => {
+    if (!user) return
+    const channel = supabase
+      .channel(`feed:${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'feed_events', filter: `target_id=eq.${user.id}` },
+        () => setNewCount(c => c + 1),
+      )
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [user])
+
+  const handleShowNew = async () => {
+    if (!user) return
+    setNewCount(0)
+    setTab('feed')
+    const res = await fetchTab('feed')
+    if (res) {
+      setTabs(prev => ({ ...prev, feed: { data: res.data, cursor: res.cursor, hasMore: !!res.cursor, loading: false } }))
+    }
+  }
+
   const handleLoadMore = async () => {
     const state = tabs[tab]
     if (!state.cursor || loadingMoreRef.current) return
@@ -129,6 +156,26 @@ export function Feed() {
           </button>
         ))}
       </div>
+
+      {user && newCount > 0 && tab !== 'feed' && (
+        <button
+          onClick={handleShowNew}
+          style={{
+            display: 'block',
+            margin: '0 auto 16px',
+            padding: '8px 18px',
+            background: '#f0c040',
+            color: '#0a0a0a',
+            border: 'none',
+            borderRadius: 999,
+            fontWeight: 700,
+            fontSize: 13,
+            cursor: 'pointer',
+          }}
+        >
+          ↑ Show {newCount} new mix{newCount === 1 ? '' : 'es'}
+        </button>
+      )}
 
       {user && <RecommendedDJs userId={user.id} />}
 

@@ -119,6 +119,7 @@ export function PlaylistDetail() {
               value={titleDraft}
               onChange={e => setTitleDraft(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') saveTitle(); if (e.key === 'Escape') { setEditingTitle(false); setTitleDraft(playlist.title) } }}
+              // eslint-disable-next-line jsx-a11y/no-autofocus -- Entering inline edit mode is an explicit user action; focus should move into the edit field.
               autoFocus
               style={{
                 flex: 1,
@@ -135,18 +136,38 @@ export function PlaylistDetail() {
             <button onClick={() => { setEditingTitle(false); setTitleDraft(playlist.title) }} style={{ background: 'transparent', border: '1px solid #333', color: '#888', borderRadius: 6, padding: '8px 14px', cursor: 'pointer', fontSize: 13 }}>Cancel</button>
           </div>
         ) : (
-          <h1
-            onClick={() => { if (isOwner) setEditingTitle(true) }}
-            style={{
-              fontSize: 22,
-              fontWeight: 700,
-              color: '#eee',
-              margin: '0 0 4px',
-              cursor: isOwner ? 'text' : 'default',
-            }}
-          >
-            {playlist.title}
-          </h1>
+          isOwner ? (
+            <button
+              type="button"
+              onClick={() => setEditingTitle(true)}
+              style={{
+                display: 'block',
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                fontSize: 22,
+                fontWeight: 700,
+                color: '#eee',
+                margin: '0 0 4px',
+                cursor: 'text',
+                textAlign: 'left',
+                fontFamily: 'inherit',
+              }}
+            >
+              {playlist.title}
+            </button>
+          ) : (
+            <h1
+              style={{
+                fontSize: 22,
+                fontWeight: 700,
+                color: '#eee',
+                margin: '0 0 4px',
+              }}
+            >
+              {playlist.title}
+            </h1>
+          )
         )}
 
         {editingDesc ? (
@@ -155,6 +176,7 @@ export function PlaylistDetail() {
               value={descDraft}
               onChange={e => setDescDraft(e.target.value)}
               rows={3}
+              // eslint-disable-next-line jsx-a11y/no-autofocus -- Entering inline edit mode is an explicit user action; focus should move into the edit field.
               autoFocus
               style={{
                 width: '100%',
@@ -173,18 +195,38 @@ export function PlaylistDetail() {
             </div>
           </div>
         ) : (
-          <p
-            onClick={() => { if (isOwner) setEditingDesc(true) }}
-            style={{
-              color: playlist.description ? '#777' : '#555',
-              fontSize: 14,
-              marginTop: 8,
-              cursor: isOwner ? 'text' : 'default',
-              fontStyle: playlist.description ? 'normal' : 'italic',
-            }}
-          >
-            {playlist.description || (isOwner ? 'Add a description...' : '')}
-          </p>
+          isOwner ? (
+            <button
+              type="button"
+              onClick={() => setEditingDesc(true)}
+              style={{
+                display: 'block',
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                color: playlist.description ? '#777' : '#555',
+                fontSize: 14,
+                marginTop: 8,
+                cursor: 'text',
+                fontStyle: playlist.description ? 'normal' : 'italic',
+                textAlign: 'left',
+                fontFamily: 'inherit',
+              }}
+            >
+              {playlist.description || 'Add a description...'}
+            </button>
+          ) : (
+            <p
+              style={{
+                color: playlist.description ? '#777' : '#555',
+                fontSize: 14,
+                marginTop: 8,
+                fontStyle: playlist.description ? 'normal' : 'italic',
+              }}
+            >
+              {playlist.description || ''}
+            </p>
+          )
         )}
 
         <div style={{ display: 'flex', gap: 12, marginTop: 8, fontSize: 13, color: '#888', alignItems: 'center' }}>

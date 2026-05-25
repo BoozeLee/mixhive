@@ -247,19 +247,21 @@ export function MixCard({ mix }: Props) {
               ⋯
             </button>
             {showMenu && (
-              <div style={{
+              <div
+                role="menu"
+                style={{
                 position: 'absolute', right: 0, top: '100%', zIndex: 10,
                 background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 6,
                 minWidth: 120, padding: 4,
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
-              }} onClick={e => e.stopPropagation()}>
-                <button onClick={handlePlayNext} style={{
+              }}>
+                <button role="menuitem" onClick={handlePlayNext} style={{
                   display: 'block', width: '100%', background: 'transparent', border: 'none',
                   color: colors.text.primary, padding: '6px 10px', fontSize: 12, cursor: 'pointer', textAlign: 'left',
                 }}>
                   Play Next
                 </button>
-                <button onClick={handleAddToQueue} style={{
+                <button role="menuitem" onClick={handleAddToQueue} style={{
                   display: 'block', width: '100%', background: 'transparent', border: 'none',
                   color: colors.text.primary, padding: '6px 10px', fontSize: 12, cursor: 'pointer', textAlign: 'left',
                 }}>

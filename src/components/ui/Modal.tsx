@@ -44,6 +44,7 @@ export function Modal({ open, onClose, title, description, width = 480, hideClos
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- Native <dialog> handles ESC via the cancel event; click is only for pointer backdrop dismissal.
     <dialog
       ref={dialogRef}
       aria-labelledby={title ? 'modal-title' : undefined}

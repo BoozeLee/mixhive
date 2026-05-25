@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { Button, Input, Textarea } from '../components/ui'
 import { EmptyState } from '../components/EmptyState'
@@ -13,6 +14,7 @@ import {
   type LuaAgentRun,
   type LuaAgentTrigger,
 } from '../lib/agents'
+import { defaultTemplateFor } from '../lib/starter_agents'
 import { colors, fontSize, radius, space, fontWeight } from '../styles/tokens'
 
 const TRIGGER_OPTIONS: { value: LuaAgentTrigger; label: string; description: string }[] = [
@@ -23,54 +25,15 @@ const TRIGGER_OPTIONS: { value: LuaAgentTrigger; label: string; description: str
   { value: 'on_mention',    label: 'On mention',    description: 'Fires when you are @mentioned.' },
   { value: 'on_like',       label: 'On like',       description: 'Fires when someone likes your mix.' },
   { value: 'on_repost',     label: 'On repost',     description: 'Fires when someone reposts your mix.' },
+  { value: 'on_schedule',   label: 'On schedule',   description: 'Runs on a cron schedule you configure.' },
   { value: 'manual',        label: 'Manual',        description: 'Only runs from the Test button or your own scripts.' },
 ]
 
-const STARTER_TEMPLATES: Record<LuaAgentTrigger, string> = {
-  on_follow: `-- Welcome new followers with an auto-comment on your latest mix.
-function on_follow(event)
-  local actor = mh.get_profile(event.actor_id)
-  mh.notify("New follower: @" .. actor.username)
-end
-`,
-  on_mix_upload: `-- Tag any new mix from a followed DJ with a personal note.
-function on_mix_upload(event)
-  local mix = mh.get_mix(event.mix_id)
-  mh.comment(mix.id, "Auto-listened by my agent ♪")
-end
-`,
-  on_comment: `-- Thank every commenter on your mixes.
-function on_comment(event)
-  local actor = mh.get_profile(event.actor_id)
-  mh.comment(event.mix_id, "Thanks for the feedback, @" .. actor.username .. "!")
-end
-`,
-  on_reply: `function on_reply(event)
-  mh.notify("@" .. event.actor_id .. " replied to your comment")
-end
-`,
-  on_mention: `function on_mention(event)
-  mh.notify("You were mentioned in " .. event.context)
-end
-`,
-  on_like: `function on_like(event)
-  mh.notify("@" .. event.actor_id .. " liked your mix")
-end
-`,
-  on_repost: `function on_repost(event)
-  mh.notify("@" .. event.actor_id .. " reposted you 🔁")
-end
-`,
-  on_schedule: `-- Runs on a cron schedule. Configure cron_expr separately.
-mh.notify("scheduled tick at " .. os.date())
-`,
-  on_unfollow: `function on_unfollow(event)
-  mh.print("lost a follower: " .. event.actor_id)
-end
-`,
-  manual: `-- Manual agents run only when you press Test or call them from code.
-mh.notify("hello from " .. mh.agent_id)
-`,
+const VALID_TRIGGERS: LuaAgentTrigger[] = TRIGGER_OPTIONS.map(o => o.value)
+
+function parseTriggerParam(value: string | null): LuaAgentTrigger | null {
+  if (!value) return null
+  return (VALID_TRIGGERS as string[]).includes(value) ? (value as LuaAgentTrigger) : null
 }
 
 export function Agents() {
@@ -79,12 +42,34 @@ export function Agents() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<LuaAgent | null>(null)
   const [creating, setCreating] = useState(false)
+  const [presetTrigger, setPresetTrigger] = useState<LuaAgentTrigger | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
     if (!user) return
     setLoading(true)
     listAgents().then(a => { setAgents(a); setLoading(false) }).catch(() => setLoading(false))
   }, [user])
+
+  // Deep-link from MixDetail: /agents?new=1&trigger=on_comment
+  useEffect(() => {
+    const newFlag = searchParams.get('new')
+    const trig = parseTriggerParam(searchParams.get('trigger'))
+    const editId = searchParams.get('edit')
+    if (newFlag === '1') {
+      setPresetTrigger(trig)
+      setCreating(true)
+      // Strip the params so a refresh doesn't keep re-opening the form.
+      setSearchParams({}, { replace: true })
+    } else if (editId) {
+      // Land on the editor for a freshly-forked agent.
+      listAgents().then(list => {
+        const found = list.find(a => a.id === editId)
+        if (found) setEditing(found)
+        setSearchParams({}, { replace: true })
+      })
+    }
+  }, [searchParams, setSearchParams])
 
   if (!user) {
     return (
@@ -98,9 +83,10 @@ export function Agents() {
     return (
       <AgentEditor
         agent={editing}
-        onCancel={() => { setEditing(null); setCreating(false) }}
+        presetTrigger={presetTrigger}
+        onCancel={() => { setEditing(null); setCreating(false); setPresetTrigger(null) }}
         onSaved={async () => {
-          setEditing(null); setCreating(false)
+          setEditing(null); setCreating(false); setPresetTrigger(null)
           setAgents(await listAgents())
         }}
       />
@@ -188,11 +174,22 @@ function AgentRow({ agent, onEdit, onChanged }: { agent: LuaAgent; onEdit: () =>
   )
 }
 
-function AgentEditor({ agent, onCancel, onSaved }: { agent: LuaAgent | null; onCancel: () => void; onSaved: () => Promise<void> }) {
+function AgentEditor({
+  agent,
+  presetTrigger,
+  onCancel,
+  onSaved,
+}: {
+  agent: LuaAgent | null
+  presetTrigger?: LuaAgentTrigger | null
+  onCancel: () => void
+  onSaved: () => Promise<void>
+}) {
+  const initialTrigger: LuaAgentTrigger = agent?.trigger_type ?? presetTrigger ?? 'on_follow'
   const [name, setName] = useState(agent?.name ?? '')
   const [description, setDescription] = useState(agent?.description ?? '')
-  const [trigger, setTrigger] = useState<LuaAgentTrigger>(agent?.trigger_type ?? 'on_follow')
-  const [code, setCode] = useState(agent?.lua_code ?? STARTER_TEMPLATES['on_follow'])
+  const [trigger, setTrigger] = useState<LuaAgentTrigger>(initialTrigger)
+  const [code, setCode] = useState(agent?.lua_code ?? defaultTemplateFor(initialTrigger))
   const [cronExpr, setCronExpr] = useState(agent?.cron_expr ?? '0 9 * * 1')
   const [isPublic, setIsPublic] = useState(agent?.is_public ?? false)
   const [saving, setSaving] = useState(false)
@@ -208,9 +205,12 @@ function AgentEditor({ agent, onCancel, onSaved }: { agent: LuaAgent | null; onC
   function pickTrigger(next: LuaAgentTrigger) {
     setTrigger(next)
     // Only swap in a template if the user hasn't typed anything custom.
-    const template = STARTER_TEMPLATES[next]
+    const template = defaultTemplateFor(next)
     const current = code.trim()
-    const isAnyTemplate = Object.values(STARTER_TEMPLATES).some(t => t.trim() === current)
+    // A "starter-equivalent" body is one that matches any default template
+    // for any trigger. If the user's body is one of those, it's safe to
+    // overwrite when they pick a different trigger.
+    const isAnyTemplate = VALID_TRIGGERS.some(t => defaultTemplateFor(t).trim() === current)
     if (!current || isAnyTemplate) setCode(template)
   }
 

@@ -4,7 +4,6 @@ import type { FeedMix, Mix, Comment, Profile, Notification, FeedCursor, Trending
 // Storage bucket names
 export const AUDIO_BUCKET = 'mix-audio'
 export const ARTWORK_BUCKET = 'mix-artwork'
-export const ORIGINAL_BUCKET = 'mixes-original'
 export const WAVEFORM_BUCKET = 'mix-waveforms'
 
 // --- Profiles ---
@@ -251,12 +250,21 @@ export async function getDiscovery(userId: string, limit = 20, cursor?: Trending
 // --- Reposts ---
 
 export async function repost(userId: string, mixId: string, djId: string) {
-  return supabase.from('feed_events').insert({
+  // Idempotent — unique partial index (actor_id, mix_id) WHERE type='repost'
+  // prevents duplicates; we just swallow the conflict.
+  const { error } = await supabase.from('feed_events').insert({
     actor_id: userId,
     type: 'repost',
     mix_id: mixId,
     target_id: djId,
   })
+  if (error && error.code !== '23505') throw error
+}
+
+export async function unrepost(mixId: string): Promise<boolean> {
+  const { data, error } = await supabase.rpc('unrepost', { p_mix_id: mixId })
+  if (error) throw error
+  return data === true
 }
 
 export async function hasReposted(userId: string, mixId: string): Promise<boolean> {

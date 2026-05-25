@@ -132,9 +132,7 @@ export function MixCard({ mix }: Props) {
           width: 70,
           height: 70,
           borderRadius: 8,
-          background: mix.artwork_url
-            ? `url(${mix.artwork_url}) center/cover`
-            : 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+          background: 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
           flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
@@ -142,19 +140,35 @@ export function MixCard({ mix }: Props) {
           fontSize: 24,
           color: '#f0c04044',
           position: 'relative',
+          overflow: 'hidden',
         }}>
-          {!mix.artwork_url && '♪'}
-          <button onClick={handlePlay} style={{
-            position: 'absolute', inset: 0, borderRadius: 8,
-            background: 'rgba(0,0,0,0.4)', border: 'none',
-            color: '#f0c040', fontSize: 22, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            opacity: 0, transition: 'opacity 0.2s',
-          }}
+          {mix.artwork_url ? (
+            <img
+              src={mix.artwork_url}
+              alt={`Artwork for ${mix.title}`}
+              width={70}
+              height={70}
+              loading="lazy"
+              decoding="async"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : (
+            <span aria-hidden="true">♪</span>
+          )}
+          <button
+            onClick={handlePlay}
+            aria-label={isNowPlaying ? `Restart ${mix.title}` : `Play ${mix.title}`}
+            style={{
+              position: 'absolute', inset: 0, borderRadius: 8,
+              background: 'rgba(0,0,0,0.4)', border: 'none',
+              color: '#f0c040', fontSize: 22, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: 0, transition: 'opacity 0.2s',
+            }}
             onMouseEnter={e => e.currentTarget.style.opacity = '1'}
             onMouseLeave={e => e.currentTarget.style.opacity = '0'}
           >
-            {isNowPlaying ? '▶' : '▶'}
+            <span aria-hidden="true">▶</span>
           </button>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>

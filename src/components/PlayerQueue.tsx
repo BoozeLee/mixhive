@@ -33,13 +33,24 @@ export function PlayerQueue() {
           }}>
             <div style={{
               width: 32, height: 32, borderRadius: 4, flexShrink: 0,
-              background: track.artworkUrl
-                ? `url(${track.artworkUrl}) center/cover`
-                : 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+              background: 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 12, color: '#f0c04044',
+              overflow: 'hidden',
             }}>
-              {!track.artworkUrl && '♪'}
+              {track.artworkUrl ? (
+                <img
+                  src={track.artworkUrl}
+                  alt=""
+                  width={32}
+                  height={32}
+                  loading="lazy"
+                  decoding="async"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <span aria-hidden="true">♪</span>
+              )}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{

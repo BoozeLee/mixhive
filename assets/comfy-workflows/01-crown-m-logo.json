@@ -1,0 +1,71 @@
+{
+  "_comment": "MIXHIVE crown-M logo refinement. Loads the existing public/mixhive.png as ControlNet conditioning so the iconic scratch-mark M is preserved; SDXL re-renders it in a clean transparent-background hero treatment. Output: ~/ComfyUI/output/mixhive-logo-crown-m_*.png at 2048x2048 with alpha. Copy the keeper to public/art/logo-crown-m@2x.png.",
+  "_meta": { "name": "mixhive-01-crown-m-logo", "version": 1 },
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": { "image": "mixhive-source-crown.png", "_hint": "Pre-load: cp public/mixhive.png ~/ComfyUI/input/mixhive-source-crown.png" }
+  },
+  "3": {
+    "class_type": "ControlNetLoader",
+    "inputs": { "control_net_name": "control-lora-canny-rank256.safetensors" }
+  },
+  "4": {
+    "class_type": "CannyEdgePreprocessor",
+    "inputs": { "image": ["2", 0], "low_threshold": 80, "high_threshold": 200, "resolution": 1024 }
+  },
+  "5": {
+    "class_type": "ControlNetApplyAdvanced",
+    "inputs": {
+      "positive": ["10", 0],
+      "negative": ["11", 0],
+      "control_net": ["3", 0],
+      "image": ["4", 0],
+      "strength": 0.85,
+      "start_percent": 0.0,
+      "end_percent": 1.0
+    }
+  },
+  "10": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["1", 1],
+      "text": "logotype for MIXHIVE: aggressive scratch-mark crown-letter M, four jagged spikes like a royal crown of brush strokes, neon honey gold (#f5b800) with amber (#ff8c1a) drip highlights, electric yellow inner glow, glossy resin sheen, graffiti street art × cyberpunk × luxury streetwear, isolated on pure black background, ultra clean alpha edges, professional vector-like crispness, 8k product render quality"
+    }
+  },
+  "11": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["1", 1],
+      "text": "blurry, low quality, watermark, text, words, signature, jpeg artifacts, pixelated, lowres, deformed shape, broken letters, faded colors, beige, washed out, photographic, photo realistic skin, hands, faces, people, generic logo, sans-serif font, italic"
+    }
+  },
+  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 2048, "height": 2048, "batch_size": 1 } },
+  "21": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["5", 0],
+      "negative": ["5", 1],
+      "latent_image": ["20", 0],
+      "seed": 1747364800,
+      "steps": 35,
+      "cfg": 7.5,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 1.0
+    }
+  },
+  "22": { "class_type": "VAEDecode", "inputs": { "samples": ["21", 0], "vae": ["1", 2] } },
+  "30": {
+    "class_type": "ImageScaleBy",
+    "inputs": { "image": ["22", 0], "upscale_method": "lanczos", "scale_by": 1.0 }
+  },
+  "40": {
+    "class_type": "SaveImage",
+    "inputs": { "images": ["30", 0], "filename_prefix": "mixhive-logo-crown-m" }
+  }
+}

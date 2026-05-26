@@ -1,11 +1,11 @@
 {
-  "name": "MixHive",
-  "short_name": "MixHive",
-  "description": "The social platform for DJs. Upload your mixes, build your following, connect with the scene.",
+  "name": "MIXHIVE",
+  "short_name": "MIXHIVE",
+  "description": "The Hive Never Sleeps. The internet’s first music hive city — DJs, producers, rave organizers, visual artists, and underground culture creators.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#f0c040",
+  "background_color": "#0a0806",
+  "theme_color": "#f6c400",
   "icons": [
     {
       "src": "/favicon-16x16.png",

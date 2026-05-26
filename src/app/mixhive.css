@@ -1,0 +1,396 @@
+@import "tailwindcss";
+
+/*
+ * MIXHIVE brand vocabulary
+ * ------------------------
+ * The :root block below is the canonical brand-variable surface — everything
+ * else in the stack reads from it. The @theme block re-exposes the same
+ * values to Tailwind 4 so utilities like `bg-hive-black`, `text-hive-gold`,
+ * `font-display`, `shadow-honey` resolve at build time.
+ *
+ * Brand fonts ship via next/font/google in src/app/layout.tsx; the
+ * --font-display / --font-ui / --font-mono variables come from there.
+ */
+
+:root {
+  --hive-black: #030303;
+  --hive-ink: #080806;
+  --hive-panel: rgba(7, 7, 5, 0.78);
+  --hive-panel-strong: rgba(12, 10, 3, 0.92);
+  --hive-gold: #f6c400;
+  --hive-gold-hot: #ffd84a;
+  --hive-gold-deep: #c79100;
+  --hive-amber: #ff8c1a;
+  --hive-electric: #ffd500;
+  --hive-blue: #25d9ff;
+  --hive-chrome: #d7d7c8;
+  --hive-line: rgba(246, 196, 0, 0.28);
+  --hive-line-soft: rgba(246, 196, 0, 0.12);
+  --hive-glow: rgba(246, 196, 0, 0.35);
+  --hive-glow-soft: rgba(246, 196, 0, 0.12);
+  --hive-text: #f5f3e7;
+  --hive-text-soft: #d4cdb0;
+  --hive-muted: #a9a390;
+  --hive-dim: #6a624a;
+  --hive-danger: #ff5252;
+  --hive-success: #7eed8b;
+
+  /* Audio-reactive: src/lib/audioReactive.ts writes a value 0..1 from the
+     current track's bass channel. Defaults to 0 when nothing is playing. */
+  --hive-pulse: 0;
+}
+
+@theme {
+  --color-hive-black: var(--hive-black);
+  --color-hive-ink: var(--hive-ink);
+  --color-hive-gold: var(--hive-gold);
+  --color-hive-gold-hot: var(--hive-gold-hot);
+  --color-hive-gold-deep: var(--hive-gold-deep);
+  --color-hive-amber: var(--hive-amber);
+  --color-hive-electric: var(--hive-electric);
+  --color-hive-blue: var(--hive-blue);
+  --color-hive-chrome: var(--hive-chrome);
+  --color-hive-text: var(--hive-text);
+  --color-hive-text-soft: var(--hive-text-soft);
+  --color-hive-muted: var(--hive-muted);
+  --color-hive-dim: var(--hive-dim);
+  --color-hive-line: var(--hive-line);
+  --color-hive-line-soft: var(--hive-line-soft);
+  --color-hive-danger: var(--hive-danger);
+  --color-hive-success: var(--hive-success);
+
+  --font-display: var(--font-display, 'Permanent Marker'), system-ui, sans-serif;
+  --font-ui: var(--font-ui, 'Space Grotesk'), system-ui, sans-serif;
+  --font-mono: var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace;
+
+  --shadow-honey: 0 0 24px var(--hive-glow);
+  --shadow-honey-strong: 0 0 36px var(--hive-glow), 0 0 8px var(--hive-gold);
+}
+
+html {
+  background: var(--hive-black);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(246, 196, 0, 0.12), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(37, 217, 255, 0.08), transparent 26%),
+    linear-gradient(180deg, #030303 0%, #080805 45%, #020202 100%);
+}
+
+.mixhive-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    linear-gradient(120deg, rgba(246, 196, 0, 0.05), transparent 22%),
+    linear-gradient(240deg, rgba(37, 217, 255, 0.05), transparent 24%);
+  color: var(--hive-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.mixhive-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(30deg, transparent 0 46%, var(--hive-line-soft) 47% 53%, transparent 54%),
+    linear-gradient(150deg, transparent 0 46%, var(--hive-line-soft) 47% 53%, transparent 54%),
+    linear-gradient(90deg, transparent 0 46%, rgba(246, 196, 0, 0.08) 47% 53%, transparent 54%);
+  background-size: 96px 56px;
+  opacity: 0.18;
+  mask-image: radial-gradient(circle at 50% 26%, #000 0 52%, transparent 78%);
+}
+
+.mixhive-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(246, 196, 0, 0.06), transparent),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 5px);
+  mix-blend-mode: screen;
+  opacity: 0.45;
+}
+
+.mixhive-main {
+  position: relative;
+  z-index: 1;
+}
+
+.hive-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 216, 74, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
+    var(--hive-panel);
+  border: 1px solid var(--hive-line);
+  box-shadow:
+    0 0 0 1px rgba(255, 216, 74, 0.04) inset,
+    0 18px 60px rgba(0, 0, 0, 0.5),
+    0 0 32px rgba(246, 196, 0, 0.08);
+  backdrop-filter: blur(16px) saturate(1.24);
+}
+
+.hive-title {
+  color: var(--hive-text);
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow: 0 0 26px rgba(246, 196, 0, 0.22);
+}
+
+.hive-gold-text {
+  color: var(--hive-gold);
+  text-shadow: 0 0 18px rgba(246, 196, 0, 0.32);
+}
+
+.hive-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 20px;
+  border: 1px solid rgba(246, 196, 0, 0.68);
+  border-radius: 7px;
+  background: linear-gradient(135deg, #ffde4d, #f6c400 58%, #b96a00);
+  color: #050505;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 0 26px rgba(246, 196, 0, 0.25), 0 6px 20px rgba(0, 0, 0, 0.42);
+  overflow: hidden;
+}
+
+.hive-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+  transition: transform 360ms ease;
+}
+
+.hive-button:hover::after,
+.hive-button:focus-visible::after {
+  transform: translateX(120%);
+}
+
+.hex-icon {
+  width: 66px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%);
+  border: 1px solid rgba(246, 196, 0, 0.8);
+  background: linear-gradient(145deg, rgba(246, 196, 0, 0.12), rgba(0,0,0,0.82));
+  color: var(--hive-gold);
+  font-size: 25px;
+  box-shadow: 0 0 22px rgba(246, 196, 0, 0.16) inset, 0 0 18px rgba(246, 196, 0, 0.14);
+}
+
+.waveform-gold {
+  height: 54px;
+  background:
+    linear-gradient(90deg, transparent, rgba(246, 196, 0, 0.38), transparent),
+    repeating-linear-gradient(90deg, transparent 0 7px, var(--hive-gold) 7px 9px, transparent 9px 14px);
+  mask-image: linear-gradient(180deg, transparent 0 16%, #000 17% 83%, transparent 84%);
+  filter: drop-shadow(0 0 12px rgba(246, 196, 0, 0.45));
+}
+
+.hive-landing {
+  min-height: calc(100vh - 70px);
+  padding: 38px;
+}
+
+.hive-landing__dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.6fr);
+  gap: 22px;
+  align-items: stretch;
+}
+
+.hive-landing__hero {
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.hive-landing__hero-art {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.74;
+}
+
+.hive-landing__hero-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 64% 44%, rgba(246, 196, 0, 0.22), transparent 26%),
+    linear-gradient(90deg, rgba(3, 3, 3, 0.96), rgba(3, 3, 3, 0.52) 44%, rgba(3, 3, 3, 0.2));
+}
+
+.hive-landing__hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.58fr) minmax(280px, 1fr);
+  gap: 24px;
+  min-height: inherit;
+  padding: 48px;
+  align-items: center;
+}
+
+.hive-landing__title {
+  margin: 0;
+  font-size: 62px;
+  line-height: 0.96;
+}
+
+.hive-landing__copy {
+  max-width: 390px;
+  margin: 24px 0 0;
+  color: rgba(245, 243, 231, 0.76);
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.hive-landing__mark-wrap {
+  display: grid;
+  place-items: center;
+  min-height: 330px;
+}
+
+.hive-landing__mark {
+  width: min(430px, 86%);
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 32px rgba(246, 196, 0, 0.42));
+}
+
+.hive-landing__side {
+  position: relative;
+  display: grid;
+  gap: 22px;
+}
+
+.hive-phone {
+  position: absolute;
+  right: 0;
+  bottom: -72px;
+  width: 284px;
+  padding: 22px;
+  border-radius: 34px;
+  box-shadow: 0 30px 95px rgba(0, 0, 0, 0.78);
+  transform: translateX(18%);
+}
+
+.hive-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
+  gap: 14px;
+}
+
+.hive-lower-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1fr);
+  gap: 22px;
+  margin-top: 22px;
+}
+
+.hive-explore-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(74px, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 1180px) {
+  .hive-landing__dashboard,
+  .hive-lower-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hive-phone {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: min(100%, 360px);
+    transform: none;
+    justify-self: center;
+  }
+}
+
+@media (max-width: 760px) {
+  .hive-landing {
+    padding: 14px 14px 94px;
+  }
+
+  .hive-landing__hero {
+    min-height: auto;
+  }
+
+  .hive-landing__hero-grid {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+
+  .hive-landing__title {
+    font-size: 42px;
+    color: #fff9dc;
+    text-shadow: 0 0 24px rgba(246, 196, 0, 0.38), 0 2px 18px rgba(0, 0, 0, 0.72);
+  }
+
+  .hive-landing__copy {
+    font-size: 16px;
+  }
+
+  .hive-stats-grid,
+  .hive-explore-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.hive-boot {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #030303;
+  color: var(--hive-gold);
+}
+
+.hive-boot__mark {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.hive-boot__scan {
+  position: fixed;
+  left: 25%;
+  right: 25%;
+  top: 54%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--hive-gold), transparent);
+  animation: hive-scan 1.8s ease-in-out infinite;
+}
+
+@keyframes hive-scan {
+  0%, 100% { opacity: 0.2; transform: scaleX(0.25); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hive-boot__scan,
+  .hive-button::after {
+    animation: none;
+    transition: none;
+  }
+}

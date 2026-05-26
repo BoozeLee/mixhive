@@ -1,0 +1,42 @@
+{
+  "_comment": "Sprite sheet for the cybernetic bee particle layer. 16 frames in a 4x4 grid (1024x1024 source, 256x256 per frame). SDXL renders an isolated bee on transparent black; the workflow makes 16 generations with slightly different wing-flap phases via seed walk. The runbook composites them into one PNG atlas using ImageMagick (already installed).",
+  "_meta": { "name": "mixhive-03-bee-sprite-sheet", "version": 1, "batch_size": 16 },
+  "1": { "class_type": "CheckpointLoaderSimple", "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" } },
+  "10": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["1", 1],
+      "text": "tiny cybernetic bee, chrome and matte black exoskeleton, neon honey gold (#f5b800) thorax stripes glowing, translucent holographic wings with subtle motion blur, cyan accent on the rear LED, top-down 45 degree action pose facing right, isolated on solid black background for chroma keying, sharp silhouette, no shadows, no environment, vector-game-asset clarity, single subject in frame, centered, plenty of margin"
+    }
+  },
+  "11": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["1", 1],
+      "text": "multiple bees, swarm, environment, flowers, honeycomb in frame, hands, humans, photo realism, soft focus, watercolor, painting, oversaturated, beige, brown, dusty, watermark, text"
+    }
+  },
+  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 256, "height": 256, "batch_size": 16 } },
+  "21": {
+    "_comment": "Single batch_size=16 sampler. Frame variation handled by the model's natural seed-walk inside the batch dim.",
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["10", 0],
+      "negative": ["11", 0],
+      "latent_image": ["20", 0],
+      "seed": 600100,
+      "steps": 28,
+      "cfg": 7.0,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 1.0
+    }
+  },
+  "22": { "class_type": "VAEDecode", "inputs": { "samples": ["21", 0], "vae": ["1", 2] } },
+  "40": {
+    "_comment": "Saves all 16 frames with sequential indices. Runbook step: `magick montage mixhive-bee-frame_*.png -tile 4x4 -geometry +0+0 -background none public/art/bee-swarm.png`.",
+    "class_type": "SaveImage",
+    "inputs": { "images": ["22", 0], "filename_prefix": "mixhive-bee-frame" }
+  }
+}

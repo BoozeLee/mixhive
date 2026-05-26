@@ -1,0 +1,45 @@
+{
+  "_comment": "Atmospheric hero plate for the landing. 3840x2160 (will be downscaled and progressively-encoded JPEG via squoosh in the runbook). Acts as a static fallback for the Three.js hive scene on low-RAM devices. Composition: deep underground rave hive, golden haze, hex-cell architecture in the distance.",
+  "_meta": { "name": "mixhive-05-hero-bg-plate", "version": 1 },
+  "1": { "class_type": "CheckpointLoaderSimple", "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" } },
+  "10": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["1", 1],
+      "text": "interior of a futuristic underground nightclub built inside a giant honeycomb structure, walls made of glowing hexagonal cells radiating neon honey gold light, cyberpunk rave atmosphere, dripping honey stalactites from the ceiling, atmospheric haze with golden particles suspended in mid-air, distant silhouettes of DJ booths on elevated hex platforms, deep matte black foreground, cinematic wide angle, dolly zoom perspective, premium nightclub luxury, depth of field with bokeh, professional concert photography lighting, color grade biased to amber and pure black, no humans in focus, no logos, no text"
+    }
+  },
+  "11": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["1", 1],
+      "text": "daylight, outdoor, bright, washed out, beige, brown, dust, dirt, low quality, blurry, watermark, text, signature, generic stock photo, modern office, white walls"
+    }
+  },
+  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 1536, "height": 864, "batch_size": 1 } },
+  "21": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["10", 0],
+      "negative": ["11", 0],
+      "latent_image": ["20", 0],
+      "seed": 2026052700,
+      "steps": 40,
+      "cfg": 7.5,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 1.0
+    }
+  },
+  "22": { "class_type": "VAEDecode", "inputs": { "samples": ["21", 0], "vae": ["1", 2] } },
+  "30": {
+    "_comment": "Upscale to 3840x2160 with a tile-based ESRGAN model if available, else lanczos 2.5x.",
+    "class_type": "ImageScaleBy",
+    "inputs": { "image": ["22", 0], "upscale_method": "lanczos", "scale_by": 2.5 }
+  },
+  "40": {
+    "class_type": "SaveImage",
+    "inputs": { "images": ["30", 0], "filename_prefix": "mixhive-hero-plate" }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "_comment": "Ten hex-framed navigation icons. Batch=10 with seeded prompt swap via wildcard. Each icon is generated at 512x512 on solid black; runbook post-processes through Inkscape SVG trace (potrace) for crisp vector output. Slots: hive-feed, swarm-chat, nectar-upload, queen-mode, mix-vault, vinyl-marketplace, buzz-alerts, hive-radar, beecast-live, honeydrop-nft.",
+  "_meta": {
+    "name": "mixhive-06-icon-glyphs",
+    "version": 1,
+    "slots": [
+      "hive-feed:            stylized hexagonal honeycomb cluster radiating outward, central hex filled with neon honey gold",
+      "swarm-chat:           two minimal bee silhouettes facing each other inside a hex frame, sound wave between them",
+      "nectar-upload:        upward arrow made of dripping honey, framed by a hexagon outline",
+      "queen-mode:           regal hex crown with five spikes glowing electric yellow",
+      "mix-vault:            crossfade slider knob inside a hexagonal safe door, honey gold accents",
+      "vinyl-marketplace:    vinyl record disc viewed at a 30 degree angle, framed by hex outline, soundwave grooves visible",
+      "buzz-alerts:          stylized bell shaped like a honey droplet, motion lines indicating ring, hex frame",
+      "hive-radar:           radar sweep arc made of soundwaves over a hex grid, central pulse dot",
+      "beecast-live:         microphone with bee wings inside a hex, neon honey core, glowing red live indicator",
+      "honeydrop-nft:        crystalline hexagonal gem dripping liquid honey, prismatic facets, framed by thin hex outline"
+    ]
+  },
+  "1": { "class_type": "CheckpointLoaderSimple", "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" } },
+  "10": {
+    "_comment": "Replace {SLOT} with one of the ten slot descriptions above per generation. Run the workflow ten times (one per slot) with that slot's wildcard substituted in the positive prompt below. Seed is offset by slot index so the look stays consistent.",
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["1", 1],
+      "text": "minimalist app icon, {SLOT}, neon honey gold (#f5b800) and amber (#ff8c1a) on pure black background, glossy enamel finish, hexagonal frame with chrome inner highlight, sharp vector geometry, premium streetwear iconography, perfect symmetry, isolated single subject, no text, no watermark, no shadows, no environment, 8k crisp edges"
+    }
+  },
+  "11": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["1", 1],
+      "text": "complex scene, multiple subjects, photo realism, hands, faces, text, watermark, signature, beige, brown, washed colors, gradient mush, blurry, low resolution, painterly, abstract chaos, deformed shape"
+    }
+  },
+  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 512, "height": 512, "batch_size": 1 } },
+  "21": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["10", 0],
+      "negative": ["11", 0],
+      "latent_image": ["20", 0],
+      "seed": 31400,
+      "steps": 32,
+      "cfg": 7.0,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 1.0
+    }
+  },
+  "22": { "class_type": "VAEDecode", "inputs": { "samples": ["21", 0], "vae": ["1", 2] } },
+  "40": {
+    "_comment": "Set filename_prefix per slot, e.g. mixhive-icon-hive-feed for the first slot generation.",
+    "class_type": "SaveImage",
+    "inputs": { "images": ["22", 0], "filename_prefix": "mixhive-icon-SLOT" }
+  }
+}

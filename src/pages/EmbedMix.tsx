@@ -80,6 +80,7 @@ export function EmbedMix() {
         </div>
       </div>
 
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption -- Embeds expose DJ music playback; captions are not meaningful for instrumental sets. */}
       <audio controls preload="none" style={{ height: 36, maxWidth: 200 }}>
         <source src={audioUrl} />
       </audio>

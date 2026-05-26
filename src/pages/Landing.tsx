@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { LogoStacked } from '../components/Logo'
+import heroImage from '../assets/hero.png'
 
 export function Landing() {
   const { user } = useAuth()
@@ -14,23 +15,27 @@ export function Landing() {
         justifyContent: 'center',
         textAlign: 'center',
         padding: '80px 24px',
-        minHeight: '70vh',
-        background: 'radial-gradient(ellipse at center, #0a0a1a 0%, #050505 100%)'
+        minHeight: '72vh',
+        position: 'relative',
+        overflow: 'hidden',
+        background: `linear-gradient(180deg, rgba(5,5,5,0.28), rgba(5,5,5,0.9)), url(${heroImage}) center/cover no-repeat`,
       }}>
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(240,192,64,0.14), rgba(5,5,5,0.66) 58%, #050505 100%)' }} />
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <LogoStacked />
         <h1 style={{
-          fontSize: 'clamp(40px, 8vw, 80px)',
+          fontSize: 64,
           fontWeight: 800,
           color: '#f0c040',
           margin: 0,
-          letterSpacing: -2,
+          letterSpacing: 0,
           lineHeight: 1
         }}>
           mixhive
         </h1>
         <p style={{
-          fontSize: 'clamp(16px, 3vw, 24px)',
-          color: '#888',
+          fontSize: 20,
+          color: '#ccc',
           marginTop: 16,
           maxWidth: 500,
           lineHeight: 1.5
@@ -108,6 +113,7 @@ export function Landing() {
             </div>
           </div>
         )}
+        </div>
       </section>
 
       <section style={{ padding: '60px 24px', maxWidth: 700, margin: '0 auto' }}>

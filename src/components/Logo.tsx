@@ -40,7 +40,7 @@ export function Logo({
           fontSize: currentSize.textSize,
           fontWeight: 700,
           color: colors.accent,
-          letterSpacing: -0.5,
+          letterSpacing: 0,
         }}>
           mixhive
         </span>
@@ -77,7 +77,7 @@ export function LogoStacked({ className = '' }: { className?: string }) {
         fontSize: 12,
         fontWeight: 700,
         color: colors.accent,
-        letterSpacing: -0.5,
+        letterSpacing: 0,
       }}>
         mixhive
       </span>

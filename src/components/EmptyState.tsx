@@ -27,10 +27,12 @@ export function EmptyState({ icon = '♪', title, body, actionLabel, actionTo, o
       <div
         aria-hidden="true"
         style={{
-          width: 72,
-          height: 72,
+          width: 84,
+          height: 84,
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+          background: 'radial-gradient(circle at 32% 28%, #38dfff55, transparent 28%), linear-gradient(135deg, #1a1a2e, #f0c04022)',
+          border: '1px solid #f0c04033',
+          boxShadow: '0 12px 32px rgba(0,0,0,0.28)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

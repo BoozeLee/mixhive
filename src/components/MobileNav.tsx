@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { IconButton } from './ui/IconButton'
+import { LogoIcon } from './Logo'
 import { colors, space, bp, transition, fontSize, fontWeight } from '../styles/tokens'
 
 interface NavItem {
@@ -19,9 +20,17 @@ const navItems: NavItem[] = [
   { path: '/profile', icon: '👤', label: 'Profile', ariaLabel: 'Profile' },
 ]
 
+// Logo item for mobile navigation
+const logoItem: NavItem = {
+  path: '/',
+  icon: '',
+  label: 'MixHive',
+  ariaLabel: 'MixHive Home'
+}
+
 export function MobileNav() {
   const location = useLocation()
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   
   // Hide on desktop and when not authenticated
   if (typeof window !== 'undefined' && window.innerWidth >= bp.md) return null
@@ -46,12 +55,41 @@ export function MobileNav() {
         height: 60,
       }}
     >
+      {/* Logo */}
+      <Link
+        to="/"
+        style={{
+          position: 'relative',
+          textDecoration: 'none',
+          color: location.pathname === '/' ? colors.accent : colors.text.muted,
+          transition: transition.base,
+        }}
+        aria-current={location.pathname === '/' ? 'page' : undefined}
+      >
+        <div style={{ textAlign: 'center', marginBottom: space[1] }}>
+          <LogoIcon variant="business" />
+        </div>
+        <span
+          style={{
+            display: 'block',
+            fontSize: fontSize.xs,
+            marginTop: space[1],
+            textAlign: 'center',
+            fontWeight: location.pathname === '/' ? fontWeight.semibold : fontWeight.normal,
+          }}
+        >
+          {logoItem.label}
+        </span>
+      </Link>
+
+      {/* Navigation Items */}
       {navItems.map((item) => {
-        const isActive = location.pathname === item.path
+        const path = item.path === '/profile' && profile?.username ? `/u/${profile.username}` : item.path
+        const isActive = location.pathname === path || (item.path === '/profile' && location.pathname.startsWith('/u/'))
         return (
           <Link
             key={item.path}
-            to={item.path}
+            to={path}
             style={{
               position: 'relative',
               textDecoration: 'none',

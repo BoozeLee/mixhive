@@ -143,6 +143,7 @@ export function WaveformPlayer({ src, waveformUrl, onPlay }: Props) {
       borderRadius: 10,
       padding: '12px 16px',
     }}>
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption -- Mix uploads are music-first audio; captions are not meaningful for instrumental sets. */}
       <audio ref={audioRef} src={src} preload="metadata" />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>

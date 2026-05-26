@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { NotificationsBell } from './NotificationsBell'
 import { SearchBar } from './SearchBar'
 import { Button } from './ui/Button'
+import { Logo } from './Logo'
 import { colors, space } from '../styles/tokens'
 
 export function Navbar() {
@@ -22,14 +23,8 @@ export function Navbar() {
       zIndex: 100
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: space[6] }}>
-        <Link to="/" style={{
-          fontSize: 20,
-          fontWeight: 700,
-          color: colors.accent,
-          textDecoration: 'none',
-          letterSpacing: -0.5
-        }}>
-          mixhive
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <Logo size="medium" variant="main" showText={true} />
         </Link>
         {user && (
           <div style={{ display: 'flex', gap: space[5] }}>

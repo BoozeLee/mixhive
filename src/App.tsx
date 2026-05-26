@@ -33,6 +33,7 @@ const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.N
 const Agents = lazy(() => import('./pages/Agents').then(m => ({ default: m.Agents })))
 const AgentsGallery = lazy(() => import('./pages/AgentsGallery').then(m => ({ default: m.AgentsGallery })))
 const DevLogin = lazy(() => import('./pages/DevLogin').then(m => ({ default: m.DevLogin })))
+const AdminVerification = lazy(() => import('./pages/AdminVerification').then(m => ({ default: m.AdminVerification })))
 
 export default function App() {
   return (
@@ -85,6 +86,7 @@ export default function App() {
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/agents" element={<ProtectedRoute><Agents /></ProtectedRoute>} />
                 <Route path="/agents/gallery" element={<AgentsGallery />} />
+                <Route path="/admin/verification" element={<ProtectedRoute><AdminVerification /></ProtectedRoute>} />
                 <Route path="/embed/mix/:id" element={<EmbedMix />} />
                 <Route path="/playlist/:id" element={<PlaylistDetail />} />
                 <Route path="*" element={<NotFound />} />

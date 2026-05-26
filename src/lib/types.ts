@@ -12,6 +12,10 @@ export interface Profile {
   is_dj: boolean
   verified: boolean
   is_admin?: boolean
+  onboarding_complete?: boolean
+  dj_equipment?: string[]
+  dj_daw?: string[]
+  dj_style?: string | null
   created_at: string
   updated_at: string
 }
@@ -254,4 +258,47 @@ export interface FeedResult {
 export interface TrendingResult {
   data: FeedMix[]
   cursor: TrendingCursor | null
+}
+
+// ── Buzz (short-form posts) ───────────────────────────────────────────────────
+
+export interface Buzz {
+  id: string
+  author_id: string
+  body: string
+  image_url: string | null
+  audio_url: string | null
+  video_url: string | null
+  code_snippet: string | null
+  code_language: string | null
+  attached_mix_id: string | null
+  parent_buzz_id: string | null
+  is_repost: boolean
+  original_buzz_id: string | null
+  like_count: number
+  reply_count: number
+  repost_count: number
+  created_at: string
+  updated_at: string
+  author?: Profile
+  attached_mix?: Mix
+}
+
+export interface FeedBuzz extends Buzz {
+  feed_event_id?: string
+}
+
+export type FeedItem =
+  | { type: 'mix'; data: FeedMix }
+  | { type: 'buzz'; data: FeedBuzz }
+
+export interface BuzzFeedResult {
+  data: FeedBuzz[]
+  cursor: FeedCursor | null
+}
+
+export interface MixedFeedResult {
+  data: FeedItem[]
+  mixCursor: FeedCursor | null
+  buzzCursor: FeedCursor | null
 }

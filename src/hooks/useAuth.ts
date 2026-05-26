@@ -7,6 +7,10 @@ const missingConfigError = {
   message: 'Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local to enable authentication.',
 }
 
+export function needsOnboarding(profile: Profile | null): boolean {
+  return !!profile && profile.onboarding_complete === false
+}
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)

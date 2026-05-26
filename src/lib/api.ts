@@ -2,11 +2,15 @@ import { isSupabaseConfigured, supabase } from './supabase'
 import type {
   ActivityEvent,
   AnalyticsEventType,
+  Buzz,
+  BuzzFeedResult,
   Comment,
+  FeedBuzz,
   FeedCursor,
   FeedMix,
   FeedResult,
   Mix,
+  MixedFeedResult,
   Notification,
   Playlist,
   PlaylistWithMixes,
@@ -26,6 +30,7 @@ export const ARTWORK_BUCKET = 'mix-artwork'
 export const WAVEFORM_BUCKET = 'mix-waveforms'
 export const AVATAR_BUCKET = 'profile-avatars'
 export const BANNER_BUCKET = 'profile-banners'
+export const BUZZ_MEDIA_BUCKET = 'buzz-media'
 
 function emptyFeedResult(): FeedResult {
   return { data: [], cursor: null }
@@ -851,6 +856,238 @@ export async function getHiveStats(): Promise<HiveStats> {
     plays_total:  Number(row?.plays_total  ?? 0),
     live_now:     Number(row?.live_now     ?? 0),
   }
+}
+
+// --- Buzz ---
+
+export async function uploadBuzzMedia(file: File): Promise<string | null> {
+  if (!isSupabaseConfigured) return null
+  const ext = file.name.split('.').pop()
+  const path = `${crypto.randomUUID()}.${ext}`
+  const { data } = await supabase.storage.from(BUZZ_MEDIA_BUCKET).upload(path, file, { upsert: false })
+  if (!data) return null
+  const { data: { publicUrl } } = supabase.storage.from(BUZZ_MEDIA_BUCKET).getPublicUrl(path)
+  return publicUrl
+}
+
+export async function createBuzz(
+  authorId: string,
+  body: string,
+  opts: {
+    imageFile?: File
+    audioFile?: File
+    videoFile?: File
+    codeSnippet?: string
+    codeLanguage?: string
+    attachedMixId?: string
+  } = {}
+): Promise<Buzz | null> {
+  if (!isSupabaseConfigured) return null
+  const [imageUrl, audioUrl, videoUrl] = await Promise.all([
+    opts.imageFile ? uploadBuzzMedia(opts.imageFile) : Promise.resolve(null),
+    opts.audioFile ? uploadBuzzMedia(opts.audioFile) : Promise.resolve(null),
+    opts.videoFile ? uploadBuzzMedia(opts.videoFile) : Promise.resolve(null),
+  ])
+  const { data, error } = await supabase
+    .from('buzzes')
+    .insert({
+      author_id: authorId,
+      body,
+      image_url: imageUrl,
+      audio_url: audioUrl,
+      video_url: videoUrl,
+      code_snippet: opts.codeSnippet || null,
+      code_language: opts.codeLanguage || null,
+      attached_mix_id: opts.attachedMixId || null,
+    })
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function deleteBuzz(id: string): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase.from('buzzes').delete().eq('id', id)
+}
+
+export async function getBuzz(id: string): Promise<Buzz | null> {
+  if (!isSupabaseConfigured) return null
+  const { data } = await supabase
+    .from('buzzes')
+    .select('*, profiles!buzzes_author_id_fkey(*), mixes!buzzes_attached_mix_id_fkey(*)')
+    .eq('id', id)
+    .single()
+  if (!data) return null
+  const row = data as Record<string, unknown>
+  return {
+    ...(row as unknown as Buzz),
+    author: row['profiles'] as Profile,
+    attached_mix: (row['mixes'] as Mix) || null,
+  }
+}
+
+export async function getUserBuzzes(userId: string, limit = 20, cursor?: FeedCursor): Promise<BuzzFeedResult> {
+  if (!isSupabaseConfigured) return { data: [], cursor: null }
+  let q = supabase
+    .from('buzzes')
+    .select('*, profiles!buzzes_author_id_fkey(*)')
+    .eq('author_id', userId)
+    .is('parent_buzz_id', null)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (cursor) {
+    q = q.or(`created_at.lt.${cursor.created_at},and(created_at.eq.${cursor.created_at},id.lt.${cursor.id})`)
+  }
+  const { data } = await q
+  const rows = (data || []).map(r => ({
+    ...(r as unknown as FeedBuzz),
+    author: (r as Record<string, unknown>)['profiles'] as Profile,
+  }))
+  return {
+    data: rows,
+    cursor: rows.length === limit ? { created_at: rows[rows.length - 1].created_at, id: rows[rows.length - 1].id } : null,
+  }
+}
+
+export async function getBuzzFeed(userId: string, limit = 20, cursor?: FeedCursor): Promise<BuzzFeedResult> {
+  if (!isSupabaseConfigured) return { data: [], cursor: null }
+  let q = supabase
+    .from('feed_events')
+    .select('id, buzz_id, buzzes(*, profiles!buzzes_author_id_fkey(*))')
+    .eq('target_id', userId)
+    .eq('type', 'buzz')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (cursor) {
+    q = q.or(`created_at.lt.${cursor.created_at},and(created_at.eq.${cursor.created_at},id.lt.${cursor.id})`)
+  }
+  const { data } = await q
+  const rows = (data || [])
+    .filter((r: Record<string, unknown>) => r['buzzes'])
+    .map((r: Record<string, unknown>) => {
+      const buzz = r['buzzes'] as Record<string, unknown>
+      return {
+        ...(buzz as unknown as FeedBuzz),
+        author: (buzz['profiles']) as Profile,
+        feed_event_id: r['id'] as string,
+      }
+    })
+  return {
+    data: rows,
+    cursor: rows.length === limit ? { created_at: rows[rows.length - 1].created_at, id: rows[rows.length - 1].id } : null,
+  }
+}
+
+export async function getLatestBuzzes(limit = 20, cursor?: FeedCursor): Promise<BuzzFeedResult> {
+  if (!isSupabaseConfigured) return { data: [], cursor: null }
+  let q = supabase
+    .from('buzzes')
+    .select('*, profiles!buzzes_author_id_fkey(*)')
+    .is('parent_buzz_id', null)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (cursor) {
+    q = q.or(`created_at.lt.${cursor.created_at},and(created_at.eq.${cursor.created_at},id.lt.${cursor.id})`)
+  }
+  const { data } = await q
+  const rows = (data || []).map(r => ({
+    ...(r as unknown as FeedBuzz),
+    author: (r as Record<string, unknown>)['profiles'] as Profile,
+  }))
+  return {
+    data: rows,
+    cursor: rows.length === limit ? { created_at: rows[rows.length - 1].created_at, id: rows[rows.length - 1].id } : null,
+  }
+}
+
+export async function getMixedFollowingFeed(userId: string, limit = 20, mixCursor?: FeedCursor, buzzCursor?: FeedCursor): Promise<MixedFeedResult> {
+  const [mixResult, buzzResult] = await Promise.all([
+    getFeed(userId, limit, mixCursor),
+    getBuzzFeed(userId, limit, buzzCursor),
+  ])
+  const mixes = mixResult.data.map(m => ({ type: 'mix' as const, data: m, _ts: m.created_at }))
+  const buzzes = buzzResult.data.map(b => ({ type: 'buzz' as const, data: b, _ts: b.created_at }))
+  const merged = [...mixes, ...buzzes]
+    .sort((a, b) => (a._ts < b._ts ? 1 : a._ts > b._ts ? -1 : 0))
+    .slice(0, limit)
+    .map(({ type, data }) => ({ type, data }) as MixedFeedResult['data'][number])
+  return { data: merged, mixCursor: mixResult.cursor, buzzCursor: buzzResult.cursor }
+}
+
+export async function getBuzzReplies(buzzId: string, limit = 20, cursor?: FeedCursor): Promise<BuzzFeedResult> {
+  if (!isSupabaseConfigured) return { data: [], cursor: null }
+  let q = supabase
+    .from('buzzes')
+    .select('*, profiles!buzzes_author_id_fkey(*)')
+    .eq('parent_buzz_id', buzzId)
+    .order('created_at', { ascending: true })
+    .limit(limit)
+  if (cursor) {
+    q = q.or(`created_at.gt.${cursor.created_at},and(created_at.eq.${cursor.created_at},id.gt.${cursor.id})`)
+  }
+  const { data } = await q
+  const rows = (data || []).map(r => ({
+    ...(r as unknown as FeedBuzz),
+    author: (r as Record<string, unknown>)['profiles'] as Profile,
+  }))
+  return {
+    data: rows,
+    cursor: rows.length === limit ? { created_at: rows[rows.length - 1].created_at, id: rows[rows.length - 1].id } : null,
+  }
+}
+
+export async function replyToBuzz(authorId: string, parentId: string, body: string): Promise<Buzz | null> {
+  if (!isSupabaseConfigured) return null
+  const { data, error } = await supabase
+    .from('buzzes')
+    .insert({ author_id: authorId, body, parent_buzz_id: parentId })
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function likeBuzz(userId: string, buzzId: string): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase.from('buzz_likes').insert({ user_id: userId, buzz_id: buzzId })
+}
+
+export async function unlikeBuzz(userId: string, buzzId: string): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase.from('buzz_likes').delete().match({ user_id: userId, buzz_id: buzzId })
+}
+
+export async function hasBuzzLiked(userId: string, buzzId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
+  const { data } = await supabase
+    .from('buzz_likes')
+    .select('user_id')
+    .eq('user_id', userId)
+    .eq('buzz_id', buzzId)
+    .maybeSingle()
+  return !!data
+}
+
+export async function repostBuzz(userId: string, buzzId: string): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase.from('buzz_reposts').insert({ user_id: userId, buzz_id: buzzId })
+}
+
+export async function unrepostBuzz(userId: string, buzzId: string): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase.from('buzz_reposts').delete().match({ user_id: userId, buzz_id: buzzId })
+}
+
+export async function hasBuzzReposted(userId: string, buzzId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
+  const { data } = await supabase
+    .from('buzz_reposts')
+    .select('user_id')
+    .eq('user_id', userId)
+    .eq('buzz_id', buzzId)
+    .maybeSingle()
+  return !!data
 }
 
 // --- Helpers ---

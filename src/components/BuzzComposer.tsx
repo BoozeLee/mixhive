@@ -1,0 +1,338 @@
+import { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { createBuzz } from '../lib/api'
+import { Modal } from './ui/Modal'
+import { BuzzToast } from './hive/BuzzToast'
+import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens'
+import type { Buzz } from '../lib/types'
+
+const MAX_CHARS = 280
+
+const LANGUAGES = [
+  'lua', 'javascript', 'typescript', 'python', 'bash', 'sql', 'json', 'rust', 'go',
+]
+
+interface Props {
+  onBuzzCreated?: (buzz: Buzz) => void
+  placeholder?: string
+}
+
+type AttachType = 'image' | 'audio' | 'video' | 'code' | 'mix' | null
+
+export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }: Props) {
+  const { user, profile } = useAuth()
+  const navigate = useNavigate()
+
+  const [body, setBody] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [activeAttach, setActiveAttach] = useState<AttachType>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [audioFile, setAudioFile] = useState<File | null>(null)
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [codeSnippet, setCodeSnippet] = useState('')
+  const [codeLang, setCodeLang] = useState('lua')
+  const [attachedMixUrl, setAttachedMixUrl] = useState('')
+  const [attachedMixId, setAttachedMixId] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ open: boolean; message: string; tone: 'info' | 'success' | 'danger' }>({ open: false, message: '', tone: 'info' })
+
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const audioInputRef = useRef<HTMLInputElement>(null)
+  const videoInputRef = useRef<HTMLInputElement>(null)
+
+  const remaining = MAX_CHARS - body.length
+  const canSubmit = body.trim().length > 0 && remaining >= 0 && !submitting
+
+  // Extract mix ID from MixHive URL or bare UUID
+  function parseMixId(val: string): string | null {
+    const uuidRe = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+    const m = val.match(uuidRe)
+    return m ? m[0] : null
+  }
+
+  function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) { setToast({ open: true, message: 'Please select an image file', tone: 'danger' }); return }
+    if (file.size > 50 * 1024 * 1024) { setToast({ open: true, message: 'Image must be under 50 MB', tone: 'danger' }); return }
+    setImageFile(file)
+    const reader = new FileReader()
+    reader.onload = ev => setImagePreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
+    setActiveAttach(null)
+  }
+
+  function handleAudioSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('audio/')) { setToast({ open: true, message: 'Please select an audio file', tone: 'danger' }); return }
+    if (file.size > 50 * 1024 * 1024) { setToast({ open: true, message: 'Audio must be under 50 MB', tone: 'danger' }); return }
+    setAudioFile(file)
+    setActiveAttach(null)
+  }
+
+  function handleVideoSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('video/')) { setToast({ open: true, message: 'Please select a video file', tone: 'danger' }); return }
+    if (file.size > 50 * 1024 * 1024) { setToast({ open: true, message: 'Video must be under 50 MB', tone: 'danger' }); return }
+    setVideoFile(file)
+    setActiveAttach(null)
+  }
+
+  function clearAttachment(type: 'image' | 'audio' | 'video' | 'code' | 'mix') {
+    if (type === 'image') { setImageFile(null); setImagePreview(null) }
+    if (type === 'audio') setAudioFile(null)
+    if (type === 'video') setVideoFile(null)
+    if (type === 'code') { setCodeSnippet(''); setCodeLang('lua') }
+    if (type === 'mix') { setAttachedMixUrl(''); setAttachedMixId(null) }
+  }
+
+  async function handleSubmit() {
+    if (!user || !canSubmit) return
+    setSubmitting(true)
+    try {
+      const buzz = await createBuzz(user.id, body.trim(), {
+        imageFile: imageFile ?? undefined,
+        audioFile: audioFile ?? undefined,
+        videoFile: videoFile ?? undefined,
+        codeSnippet: codeSnippet.trim() || undefined,
+        codeLanguage: codeSnippet.trim() ? codeLang : undefined,
+        attachedMixId: attachedMixId ?? undefined,
+      })
+      if (buzz) {
+        onBuzzCreated?.(buzz)
+        setBody('')
+        setImageFile(null); setImagePreview(null)
+        setAudioFile(null); setVideoFile(null)
+        setCodeSnippet(''); setAttachedMixId(null); setAttachedMixUrl('')
+        setToast({ open: true, message: 'Buzz posted! 🐝', tone: 'success' })
+      }
+    } catch {
+      setToast({ open: true, message: 'Failed to post buzz', tone: 'danger' })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (!user) {
+    return (
+      <div style={{ background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: radius.xl, padding: `${space[7]}px ${space[9]}px`, marginBottom: space[7], textAlign: 'center' }}>
+        <span style={{ color: colors.text.dim, fontSize: fontSize.base }}>
+          <button onClick={() => navigate('/login')} style={{ background: 'none', border: 'none', color: colors.accent, cursor: 'pointer', fontWeight: fontWeight.semibold, fontSize: fontSize.base }}>
+            Sign in
+          </button>
+          {' '}to post a Buzz
+        </span>
+      </div>
+    )
+  }
+
+  const avatarInitial = (profile?.display_name || profile?.username || '?')[0].toUpperCase()
+  const countColor = remaining <= 0 ? colors.danger : remaining <= 20 ? colors.warning : colors.text.dim
+
+  return (
+    <>
+      <div style={{ background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: radius.xl, padding: `${space[7]}px ${space[9]}px`, marginBottom: space[7] }}>
+        <div style={{ display: 'flex', gap: space[7] }}>
+          {/* Avatar */}
+          <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: '50%', background: colors.accentFaint, border: `2px solid ${colors.border}`, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: fontWeight.bold, color: colors.accent }}>
+            {profile?.avatar_url
+              ? <img src={profile.avatar_url} alt="You" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : avatarInitial}
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {/* Text area */}
+            <textarea
+              value={body}
+              onChange={e => setBody(e.target.value.slice(0, MAX_CHARS + 10))}
+              placeholder={placeholder}
+              rows={3}
+              aria-label="Buzz text"
+              style={{
+                width: '100%',
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+                resize: 'none',
+                color: colors.text.primary,
+                fontSize: fontSize.md,
+                lineHeight: 1.5,
+                fontFamily: 'inherit',
+                boxSizing: 'border-box',
+              }}
+            />
+
+            {/* Attachment previews */}
+            {imagePreview && (
+              <div style={{ position: 'relative', marginBottom: space[4], borderRadius: radius.lg, overflow: 'hidden', maxHeight: 200 }}>
+                <img src={imagePreview} alt="Preview" style={{ width: '100%', maxHeight: 200, objectFit: 'cover', display: 'block' }} />
+                <button onClick={() => clearAttachment('image')} aria-label="Remove image" style={{ position: 'absolute', top: 6, right: 6, background: 'rgba(0,0,0,0.7)', border: 'none', color: '#fff', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', fontSize: 14, lineHeight: 1 }}>×</button>
+              </div>
+            )}
+            {audioFile && (
+              <AttachBadge label={`🎵 ${audioFile.name}`} onRemove={() => clearAttachment('audio')} />
+            )}
+            {videoFile && (
+              <AttachBadge label={`🎬 ${videoFile.name}`} onRemove={() => clearAttachment('video')} />
+            )}
+            {codeSnippet.trim() && (
+              <AttachBadge label={`</> Code (${codeLang})`} onRemove={() => clearAttachment('code')} />
+            )}
+            {attachedMixId && (
+              <AttachBadge label={`🎧 Mix attached`} onRemove={() => clearAttachment('mix')} />
+            )}
+
+            {/* Bottom toolbar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: space[3], marginTop: space[5] }}>
+              <AttachButton label="🖼" title="Attach image" onClick={() => imageInputRef.current?.click()} />
+              <AttachButton label="🎵" title="Attach audio" onClick={() => audioInputRef.current?.click()} />
+              <AttachButton label="🎬" title="Attach video" onClick={() => videoInputRef.current?.click()} />
+              <AttachButton label="</>" title="Add code snippet" onClick={() => setActiveAttach('code')} />
+              <AttachButton label="🎧" title="Attach mix" onClick={() => setActiveAttach('mix')} />
+
+              <div style={{ flex: 1 }} />
+
+              {/* Char count */}
+              <span style={{ fontSize: fontSize.sm, color: countColor, fontVariantNumeric: 'tabular-nums' }}>
+                {remaining < 60 ? remaining : ''}
+              </span>
+
+              {/* Submit */}
+              <button
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                style={{
+                  padding: `${space[3]}px ${space[8]}px`,
+                  background: canSubmit ? colors.accent : colors.surfaceMuted,
+                  color: canSubmit ? '#0a0a0a' : colors.text.faint,
+                  border: 'none',
+                  borderRadius: radius.pill,
+                  fontWeight: fontWeight.bold,
+                  fontSize: fontSize.base,
+                  cursor: canSubmit ? 'pointer' : 'default',
+                  transition: 'background 150ms, color 150ms',
+                  display: 'flex', alignItems: 'center', gap: space[2],
+                }}
+              >
+                {submitting ? '…' : '🐝 Buzz'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hidden file inputs */}
+      <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
+      <input ref={audioInputRef} type="file" accept="audio/*" style={{ display: 'none' }} onChange={handleAudioSelect} />
+      <input ref={videoInputRef} type="file" accept="video/*" style={{ display: 'none' }} onChange={handleVideoSelect} />
+
+      {/* Code snippet modal */}
+      <Modal open={activeAttach === 'code'} onClose={() => setActiveAttach(null)} title="Add code snippet" width={560}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
+          <label style={{ display: 'block' }}>
+            <span style={{ display: 'block', fontSize: fontSize.sm, color: colors.text.muted, marginBottom: space[3] }}>Language</span>
+            <select
+              value={codeLang}
+              onChange={e => setCodeLang(e.target.value)}
+              style={{ width: '100%', padding: `${space[4]}px ${space[6]}px`, background: colors.bg, border: `1px solid ${colors.border}`, borderRadius: radius.md, color: colors.text.primary, fontSize: fontSize.base }}
+            >
+              {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+          </label>
+          <label style={{ display: 'block' }}>
+            <span style={{ display: 'block', fontSize: fontSize.sm, color: colors.text.muted, marginBottom: space[3] }}>Code</span>
+            <textarea
+              value={codeSnippet}
+              onChange={e => setCodeSnippet(e.target.value)}
+              rows={10}
+              placeholder="Paste your code here…"
+              style={{ width: '100%', background: colors.bg, border: `1px solid ${colors.border}`, borderRadius: radius.md, color: colors.text.primary, fontFamily: 'monospace', fontSize: fontSize.sm, padding: space[6], resize: 'vertical', boxSizing: 'border-box' }}
+            />
+          </label>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[6] }}>
+            <button onClick={() => setActiveAttach(null)} style={{ background: 'none', border: `1px solid ${colors.border}`, color: colors.text.muted, borderRadius: radius.md, padding: `${space[4]}px ${space[8]}px`, cursor: 'pointer', fontSize: fontSize.base }}>Cancel</button>
+            <button
+              onClick={() => { setActiveAttach(null) }}
+              disabled={!codeSnippet.trim()}
+              style={{ background: codeSnippet.trim() ? colors.accent : colors.surfaceMuted, color: codeSnippet.trim() ? '#0a0a0a' : colors.text.faint, border: 'none', borderRadius: radius.md, padding: `${space[4]}px ${space[8]}px`, fontWeight: fontWeight.semibold, cursor: codeSnippet.trim() ? 'pointer' : 'default', fontSize: fontSize.base }}
+            >
+              Attach
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Mix attach modal */}
+      <Modal open={activeAttach === 'mix'} onClose={() => setActiveAttach(null)} title="Attach a mix" width={480}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
+          <p style={{ margin: 0, color: colors.text.muted, fontSize: fontSize.base }}>
+            Paste a MixHive mix URL or mix ID.
+          </p>
+          <input
+            type="url"
+            value={attachedMixUrl}
+            onChange={e => {
+              setAttachedMixUrl(e.target.value)
+              setAttachedMixId(parseMixId(e.target.value))
+            }}
+            placeholder="https://mixhive.app/mix/…"
+            style={{ width: '100%', padding: `${space[5]}px ${space[6]}px`, background: colors.bg, border: `1px solid ${colors.border}`, borderRadius: radius.md, color: colors.text.primary, fontSize: fontSize.base, boxSizing: 'border-box' }}
+          />
+          {attachedMixId && (
+            <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.success }}>✓ Mix ID detected: {attachedMixId.slice(0, 8)}…</p>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[6] }}>
+            <button onClick={() => setActiveAttach(null)} style={{ background: 'none', border: `1px solid ${colors.border}`, color: colors.text.muted, borderRadius: radius.md, padding: `${space[4]}px ${space[8]}px`, cursor: 'pointer', fontSize: fontSize.base }}>Cancel</button>
+            <button
+              onClick={() => { setActiveAttach(null) }}
+              disabled={!attachedMixId}
+              style={{ background: attachedMixId ? colors.accent : colors.surfaceMuted, color: attachedMixId ? '#0a0a0a' : colors.text.faint, border: 'none', borderRadius: radius.md, padding: `${space[4]}px ${space[8]}px`, fontWeight: fontWeight.semibold, cursor: attachedMixId ? 'pointer' : 'default', fontSize: fontSize.base }}
+            >
+              Attach
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <BuzzToast open={toast.open} message={toast.message} tone={toast.tone} onClose={() => setToast(t => ({ ...t, open: false }))} />
+    </>
+  )
+}
+
+function AttachButton({ label, title, onClick }: { label: string; title: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      title={title}
+      onClick={onClick}
+      aria-label={title}
+      style={{
+        background: 'none',
+        border: 'none',
+        color: colors.accent,
+        cursor: 'pointer',
+        fontSize: 16,
+        padding: `${space[2]}px ${space[3]}px`,
+        borderRadius: radius.md,
+        transition: 'background 120ms',
+        lineHeight: 1,
+      }}
+      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = colors.accentFaint }}
+      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none' }}
+    >
+      {label}
+    </button>
+  )
+}
+
+function AttachBadge({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: space[3], background: colors.accentFaint, border: `1px solid ${colors.accentMuted}`, borderRadius: radius.pill, padding: `${space[2]}px ${space[5]}px`, marginBottom: space[4], fontSize: fontSize.sm, color: colors.accent }}>
+      {label}
+      <button onClick={onRemove} aria-label="Remove" style={{ background: 'none', border: 'none', color: colors.accent, cursor: 'pointer', fontSize: 14, lineHeight: 1, padding: 0 }}>×</button>
+    </div>
+  )
+}

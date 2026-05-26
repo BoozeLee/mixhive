@@ -1,3 +1,5 @@
+'use client'
+
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
@@ -9,42 +11,49 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { RoutePending } from './components/RoutePending'
 import { PlayerProvider } from './lib/playerStore'
 import { MobileNav } from './components/MobileNav'
+import { CyberHiveBackdrop } from './components/CyberHiveBackdrop'
 import './styles/global.css'
 
 // Routes are code-split so the initial bundle only ships what the user
 // actually opens. The Navbar / PlayerProvider / ErrorBoundary stay in the
 // main chunk because they wrap every screen.
-const Landing = lazy(() => import('./pages/Landing').then(m => ({ default: m.Landing })))
-const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })))
-const Register = lazy(() => import('./pages/Register').then(m => ({ default: m.Register })))
-const Feed = lazy(() => import('./pages/Feed').then(m => ({ default: m.Feed })))
-const Discover = lazy(() => import('./pages/Discover').then(m => ({ default: m.Discover })))
-const ProfilePage = lazy(() => import('./pages/Profile').then(m => ({ default: m.ProfilePage })))
-const MixDetail = lazy(() => import('./pages/MixDetail').then(m => ({ default: m.MixDetail })))
-const Upload = lazy(() => import('./pages/Upload').then(m => ({ default: m.Upload })))
-const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })))
-const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })))
-const NotificationsPage = lazy(() => import('./pages/Notifications').then(m => ({ default: m.NotificationsPage })))
-const SearchPage = lazy(() => import('./pages/Search').then(m => ({ default: m.SearchPage })))
-const EmbedMix = lazy(() => import('./pages/EmbedMix').then(m => ({ default: m.EmbedMix })))
-const EditMix = lazy(() => import('./pages/EditMix').then(m => ({ default: m.EditMix })))
-const PlaylistDetail = lazy(() => import('./pages/PlaylistDetail').then(m => ({ default: m.PlaylistDetail })))
-const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
-const Agents = lazy(() => import('./pages/Agents').then(m => ({ default: m.Agents })))
-const AgentsGallery = lazy(() => import('./pages/AgentsGallery').then(m => ({ default: m.AgentsGallery })))
-const DevLogin = lazy(() => import('./pages/DevLogin').then(m => ({ default: m.DevLogin })))
-const AdminVerification = lazy(() => import('./pages/AdminVerification').then(m => ({ default: m.AdminVerification })))
+const Landing = lazy(() => import('./views/Landing').then(m => ({ default: m.Landing })))
+const Login = lazy(() => import('./views/Login').then(m => ({ default: m.Login })))
+const Register = lazy(() => import('./views/Register').then(m => ({ default: m.Register })))
+const Feed = lazy(() => import('./views/Feed').then(m => ({ default: m.Feed })))
+const Dashboard = lazy(() => import('./views/Dashboard').then(m => ({ default: m.Dashboard })))
+const Discover = lazy(() => import('./views/Discover').then(m => ({ default: m.Discover })))
+const ProfilePage = lazy(() => import('./views/Profile').then(m => ({ default: m.ProfilePage })))
+const MixDetail = lazy(() => import('./views/MixDetail').then(m => ({ default: m.MixDetail })))
+const Upload = lazy(() => import('./views/Upload').then(m => ({ default: m.Upload })))
+const Settings = lazy(() => import('./views/Settings').then(m => ({ default: m.Settings })))
+const AuthCallback = lazy(() => import('./views/AuthCallback').then(m => ({ default: m.AuthCallback })))
+const NotificationsPage = lazy(() => import('./views/Notifications').then(m => ({ default: m.NotificationsPage })))
+const SearchPage = lazy(() => import('./views/Search').then(m => ({ default: m.SearchPage })))
+const EmbedMix = lazy(() => import('./views/EmbedMix').then(m => ({ default: m.EmbedMix })))
+const EditMix = lazy(() => import('./views/EditMix').then(m => ({ default: m.EditMix })))
+const PlaylistDetail = lazy(() => import('./views/PlaylistDetail').then(m => ({ default: m.PlaylistDetail })))
+const NotFound = lazy(() => import('./views/NotFound').then(m => ({ default: m.NotFound })))
+const Agents = lazy(() => import('./views/Agents').then(m => ({ default: m.Agents })))
+const AgentsGallery = lazy(() => import('./views/AgentsGallery').then(m => ({ default: m.AgentsGallery })))
+const DevLogin = lazy(() => import('./views/DevLogin').then(m => ({ default: m.DevLogin })))
+const AdminVerification = lazy(() => import('./views/AdminVerification').then(m => ({ default: m.AdminVerification })))
+const BuzzDetail = lazy(() => import('./views/BuzzDetail').then(m => ({ default: m.BuzzDetail })))
+const ProfileSetup = lazy(() => import('./views/ProfileSetup').then(m => ({ default: m.ProfileSetup })))
+
+function shouldLoadVercelTelemetry() {
+  if (process.env.NODE_ENV !== 'production' || typeof window === 'undefined') return false
+  return !['localhost', '127.0.0.1'].includes(window.location.hostname)
+}
 
 export default function App() {
+  const loadVercelTelemetry = shouldLoadVercelTelemetry()
+
   return (
     <BrowserRouter>
       <PlayerProvider>
-      <div style={{
-        minHeight: '100vh',
-        background: '#0a0a0a',
-        color: '#eee',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-      }}>
+      <div className="mixhive-shell">
+        <CyberHiveBackdrop />
         <Navbar />
         <a
           href="#main-content"
@@ -65,7 +74,7 @@ export default function App() {
         >
           Skip to main content
         </a>
-        <main id="main-content">
+        <main id="main-content" className="mixhive-main">
           <ErrorBoundary>
             <Suspense fallback={<RoutePending />}>
               <Routes>
@@ -74,6 +83,7 @@ export default function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/dev-login" element={<DevLogin />} />
                 <Route path="/feed" element={<Feed />} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/discover" element={<Discover />} />
                 <Route path="/trending" element={<Feed />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
@@ -89,6 +99,8 @@ export default function App() {
                 <Route path="/admin/verification" element={<ProtectedRoute><AdminVerification /></ProtectedRoute>} />
                 <Route path="/embed/mix/:id" element={<EmbedMix />} />
                 <Route path="/playlist/:id" element={<PlaylistDetail />} />
+                <Route path="/buzz/:id" element={<BuzzDetail />} />
+                <Route path="/setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
@@ -96,8 +108,8 @@ export default function App() {
         </main>
         <GlobalPlayer />
         <MobileNav />
-        <Analytics />
-        <SpeedInsights />
+        {loadVercelTelemetry && <Analytics />}
+        {loadVercelTelemetry && <SpeedInsights />}
       </div>
       </PlayerProvider>
     </BrowserRouter>

@@ -826,6 +826,33 @@ export async function getTrendingGenres(limit = 10): Promise<Array<{ id: string;
   return mockGenres.slice(0, limit)
 }
 
+// --- Landing-page stats ---
+
+export interface HiveStats {
+  mixes_total: number
+  voices_total: number
+  plays_total: number
+  live_now: number
+}
+
+/**
+ * Whole-platform aggregate counts for the landing-page stats strip.
+ * Backed by the get_hive_stats() RPC in migration 023.
+ */
+export async function getHiveStats(): Promise<HiveStats> {
+  const empty: HiveStats = { mixes_total: 0, voices_total: 0, plays_total: 0, live_now: 0 }
+  if (!isSupabaseConfigured) return empty
+  const { data, error } = await supabase.rpc('get_hive_stats')
+  if (error || !data) return empty
+  const row = Array.isArray(data) ? data[0] : data
+  return {
+    mixes_total:  Number(row?.mixes_total  ?? 0),
+    voices_total: Number(row?.voices_total ?? 0),
+    plays_total:  Number(row?.plays_total  ?? 0),
+    live_now:     Number(row?.live_now     ?? 0),
+  }
+}
+
 // --- Helpers ---
 
 function formatFeedMix(m: Record<string, unknown>): FeedMix {

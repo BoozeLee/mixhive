@@ -60,3 +60,10 @@ coverage/
 .cache/
 .parcel-cache/
 .turbo/
+
+# Local dev HTTPS proxies (contain inline private keys — never commit)
+https-server.*
+simple-https*.mjs
+
+# Supabase CLI scratch directory (re-created on `supabase link`)
+supabase/.temp/

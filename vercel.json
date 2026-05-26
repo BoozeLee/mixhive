@@ -6,7 +6,8 @@
   "functions": {
     "api/lua-agent/run.py": {
       "maxDuration": 30,
-      "memory": 512
+      "memory": 512,
+      "excludeFiles": "{node_modules,dist,src,supabase}/**"
     }
   },
   "rewrites": [

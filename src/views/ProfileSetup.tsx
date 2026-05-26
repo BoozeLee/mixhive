@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState, useRef } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
-import { AVATAR_BUCKET } from '../lib/api'
+import { AVATAR_BUCKET, hasUserAiKey } from '../lib/api'
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens'
 import { BuzzToast } from '../components/hive/BuzzToast'
 
@@ -79,6 +79,17 @@ export function ProfileSetup() {
   const [genCount, setGenCount] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // AI key / pro status
+  const [aiKeyReady, setAiKeyReady] = useState<'loading' | 'none' | 'ready'>('loading')
+
+  useEffect(() => {
+    if (!user) return
+    const isAdmin = Boolean(profile?.is_admin)
+    const isPro = Boolean(profile?.is_pro)
+    if (isAdmin || isPro) { setAiKeyReady('ready'); return }
+    hasUserAiKey(user.id).then(has => setAiKeyReady(has ? 'ready' : 'none'))
+  }, [user, profile?.is_admin, profile?.is_pro])
+
   // Bio generation state
   const [generatingBio, setGeneratingBio] = useState(false)
 
@@ -111,6 +122,24 @@ export function ProfileSetup() {
     })
   }
 
+  async function getAiRequestHeaders(): Promise<HeadersInit | null> {
+    if (!isSupabaseConfigured) {
+      setToast({ open: true, message: 'Supabase is not configured for AI requests.', tone: 'danger' })
+      return null
+    }
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.access_token) {
+      setToast({ open: true, message: 'Sign in again to use AI generation.', tone: 'danger' })
+      return null
+    }
+
+    return {
+      'Authorization': `Bearer ${session.access_token}`,
+      'Content-Type': 'application/json',
+    }
+  }
+
   // ── Step 1: Identity ──
 
   async function checkUsername(value: string) {
@@ -136,12 +165,17 @@ export function ProfileSetup() {
     setGeneratingAvatar(true)
     setGeneratedAvatars([])
     setSelectedGenerated(null)
+    const headers = await getAiRequestHeaders()
+    if (!headers) {
+      setGeneratingAvatar(false)
+      return
+    }
     setGenCount(c => c + 1)
     const results: string[] = []
     for (let i = 0; i < 4; i++) {
       const res = await fetch('/api/ai/generate-avatar', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ style: avatarStyle, prompt: avatarPrompt }),
       })
       if (res.ok) {
@@ -152,7 +186,7 @@ export function ProfileSetup() {
     }
     setGeneratingAvatar(false)
     if (results.length === 0) {
-      setToast({ open: true, message: 'Generation failed. Check OPENAI_API_KEY.', tone: 'danger' })
+      setToast({ open: true, message: 'Generation failed. Add your AI key in Settings or try again.', tone: 'danger' })
     }
   }
 
@@ -183,7 +217,7 @@ export function ProfileSetup() {
     setAvatarUploading(true)
     try {
       const ext = file.name.split('.').pop()
-      const filename = `${user.id}/avatar_${Date.now()}.${ext}`
+      const filename = `${user.id}/avatar_${crypto.randomUUID()}.${ext}`
       const { error } = await supabase.storage.from(AVATAR_BUCKET).upload(filename, file, { contentType: file.type, upsert: true })
       if (error) throw error
       const { data: { publicUrl } } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(filename)
@@ -201,9 +235,11 @@ export function ProfileSetup() {
   async function generateBio() {
     setGeneratingBio(true)
     try {
+      const headers = await getAiRequestHeaders()
+      if (!headers) return
       const res = await fetch('/api/ai/generate-bio', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           displayName: form.displayName || form.username,
           genres: form.genres,
@@ -217,7 +253,7 @@ export function ProfileSetup() {
       const { bio } = await res.json() as { bio: string }
       setField('bio', bio)
     } catch {
-      setToast({ open: true, message: 'Bio generation failed. Check OPENAI_API_KEY.', tone: 'danger' })
+      setToast({ open: true, message: 'Bio generation failed. Add your AI key in Settings or try again.', tone: 'danger' })
     } finally {
       setGeneratingBio(false)
     }
@@ -360,6 +396,24 @@ export function ProfileSetup() {
 
               {avatarMode === 'generate' && (
                 <div>
+                  {/* AI key status notice */}
+                  {aiKeyReady === 'none' && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: space[5], background: colors.surfaceMuted, border: `1px solid ${colors.border}`, borderRadius: radius.md, padding: `${space[5]}px ${space[6]}px`, marginBottom: space[7] }}>
+                      <span style={{ fontSize: 18, flexShrink: 0 }}>🔑</span>
+                      <div style={{ flex: 1, fontSize: fontSize.xs, color: colors.text.muted, lineHeight: 1.5 }}>
+                        No OpenAI key configured.{' '}
+                        <Link to="/settings#ai" style={{ color: colors.accent }}>Add your key in Settings</Link>
+                        {' '}or{' '}
+                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style={{ color: colors.accent }}>get one free</a>.
+                      </div>
+                    </div>
+                  )}
+                  {aiKeyReady === 'ready' && (
+                    <div style={{ fontSize: fontSize.xs, color: colors.success, marginBottom: space[5] }}>
+                      {profile?.is_admin ? '🔑 Admin — using MixHive AI key' : profile?.is_pro ? '🐝 MixHive Pro AI active' : '🔑 OpenAI key connected'}
+                    </div>
+                  )}
+
                   {/* Style selector */}
                   <p style={{ margin: `0 0 ${space[5]}px`, fontSize: fontSize.sm, color: colors.text.muted }}>Choose a style</p>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: space[4], marginBottom: space[7] }}>

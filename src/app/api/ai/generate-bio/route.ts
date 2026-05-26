@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { resolveAiContext, noKeyResponse } from '../_lib/auth'
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.OPENAI_API_KEY
-  if (!apiKey) {
-    return NextResponse.json({ error: 'AI generation not configured' }, { status: 503 })
+  const ctx = await resolveAiContext(req)
+  if (!ctx.openaiKey) {
+    if (ctx.error === 'Not authenticated' || ctx.error === 'Invalid session') {
+      return NextResponse.json({ error: ctx.error }, { status: 401 })
+    }
+    return noKeyResponse()
   }
+  const apiKey = ctx.openaiKey
 
   let body: {
     displayName?: string

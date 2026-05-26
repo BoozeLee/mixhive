@@ -1090,6 +1090,34 @@ export async function hasBuzzReposted(userId: string, buzzId: string): Promise<b
   return !!data
 }
 
+// ─── AI Key Management ────────────────────────────────────────────────────────
+
+/** Returns true if the user has saved an OpenAI key (never returns the key itself). */
+export async function hasUserAiKey(userId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false
+  const { data } = await supabase
+    .from('user_ai_key_status')
+    .select('has_key')
+    .eq('user_id', userId)
+    .maybeSingle()
+  return Boolean(data?.has_key)
+}
+
+/** Save (upsert) the user's own OpenAI API key. */
+export async function saveUserAiKey(userId: string, apiKey: string): Promise<void> {
+  if (!isSupabaseConfigured) return
+  const { error } = await supabase
+    .from('user_ai_keys')
+    .upsert({ user_id: userId, openai_api_key: apiKey }, { onConflict: 'user_id' })
+  if (error) throw error
+}
+
+/** Remove the user's stored OpenAI API key. */
+export async function removeUserAiKey(userId: string): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase.from('user_ai_keys').delete().eq('user_id', userId)
+}
+
 // --- Helpers ---
 
 function formatFeedMix(m: Record<string, unknown>): FeedMix {

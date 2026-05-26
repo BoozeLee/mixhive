@@ -12,6 +12,7 @@ export interface Profile {
   is_dj: boolean
   verified: boolean
   is_admin?: boolean
+  is_pro?: boolean
   onboarding_complete?: boolean
   dj_equipment?: string[]
   dj_daw?: string[]

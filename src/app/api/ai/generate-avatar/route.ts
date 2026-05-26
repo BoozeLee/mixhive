@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { resolveAiContext, noKeyResponse } from '../_lib/auth'
 
 const STYLE_PROMPTS: Record<string, string> = {
   'cyber-hive':
@@ -12,9 +13,13 @@ const STYLE_PROMPTS: Record<string, string> = {
 }
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.OPENAI_API_KEY
-  if (!apiKey) {
-    return NextResponse.json({ error: 'AI generation not configured' }, { status: 503 })
+  const ctx = await resolveAiContext(req)
+
+  if (!ctx.openaiKey) {
+    if (ctx.error === 'Not authenticated' || ctx.error === 'Invalid session') {
+      return NextResponse.json({ error: ctx.error }, { status: 401 })
+    }
+    return noKeyResponse()
   }
 
   let body: { prompt?: string; style?: string }
@@ -32,7 +37,7 @@ export async function POST(req: NextRequest) {
   const res = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      'Authorization': `Bearer ${ctx.openaiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({

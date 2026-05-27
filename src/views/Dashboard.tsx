@@ -5,6 +5,7 @@ import { listAgents, type LuaAgent } from '../lib/agents'
 import { useAuth } from '../hooks/useAuth'
 import { HiveCard, HiveStat, WaveBar } from '../components/hive'
 import { SkeletonFeed } from '../components/Skeleton'
+import { ProfileCoachPanel } from '../components/ProfileCoachPanel'
 import type { ActivityEvent, Mix, ProfileAnalytics } from '../lib/types'
 import { colors, radius, space } from '../styles/tokens'
 
@@ -128,6 +129,10 @@ export function Dashboard() {
         <HiveCard><HiveStat label="likes" value={analytics?.totalLikes ?? 0} /></HiveCard>
         <HiveCard><HiveStat label="comments" value={analytics?.totalComments ?? 0} /></HiveCard>
         <HiveCard><HiveStat label="followers" value={analytics?.followers ?? 0} /></HiveCard>
+      </section>
+
+      <section style={{ marginBottom: space[10] }}>
+        <ProfileCoachPanel />
       </section>
 
       <section style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.25fr) minmax(280px, 0.75fr)', gap: space[8], alignItems: 'start' }}>

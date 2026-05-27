@@ -18,6 +18,7 @@ const topItems: SidebarItem[] = [
   { path: '/discover', icon: '◈', label: 'Explore', ariaLabel: 'Explore MixHive' },
   { path: '/search', icon: '◇', label: 'Network', ariaLabel: 'Hive Radar' },
   { path: '/upload', icon: '+', label: 'Upload', ariaLabel: 'Nectar Upload' },
+  { path: '/agents/inbox', icon: '✦', label: 'Inbox', ariaLabel: 'Agent Inbox' },
   { path: '/agents/gallery', icon: '⬡', label: 'BeeCast', ariaLabel: 'BeeCast agents' },
 ]
 

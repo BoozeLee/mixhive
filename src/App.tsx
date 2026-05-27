@@ -41,6 +41,7 @@ const DevLogin = lazy(() => import('./views/DevLogin').then(m => ({ default: m.D
 const AdminVerification = lazy(() => import('./views/AdminVerification').then(m => ({ default: m.AdminVerification })))
 const BuzzDetail = lazy(() => import('./views/BuzzDetail').then(m => ({ default: m.BuzzDetail })))
 const ProfileSetup = lazy(() => import('./views/ProfileSetup').then(m => ({ default: m.ProfileSetup })))
+const AgentInbox = lazy(() => import('./views/AgentInbox').then(m => ({ default: m.AgentInbox })))
 
 function shouldLoadVercelTelemetry() {
   if (process.env.NODE_ENV !== 'production' || typeof window === 'undefined') return false
@@ -104,6 +105,7 @@ export default function App() {
                 <Route path="/playlist/:id" element={<PlaylistDetail />} />
                 <Route path="/buzz/:id" element={<BuzzDetail />} />
                 <Route path="/setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
+                <Route path="/agents/inbox" element={<ProtectedRoute><AgentInbox /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

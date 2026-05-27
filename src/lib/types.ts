@@ -303,3 +303,93 @@ export interface MixedFeedResult {
   mixCursor: FeedCursor | null
   buzzCursor: FeedCursor | null
 }
+
+// ── AI Infrastructure ─────────────────────────────────────────────────────────
+
+export type AISuggestionType = 'profile_bio' | 'profile_coach' | 'epk' | 'opportunity_match' | 'collab_match'
+export type AISuggestionStatus = 'pending' | 'applied' | 'rejected' | 'edited'
+export type AISuggestionSource = 'gpt' | 'claude' | 'rule'
+export type AIFeedbackOutcome = 'used' | 'modified' | 'ignored'
+export type CreatorTaskType = 'complete_profile' | 'upload_mix' | 'apply_opportunity' | 'review_suggestion'
+export type CreatorTaskStatus = 'open' | 'snoozed' | 'done'
+export type OpportunityType = 'gig' | 'grant' | 'residency' | 'contest' | 'festival' | 'collab_call' | 'radio'
+export type OpportunitySaveStatus = 'saved' | 'applied' | 'dismissed'
+
+export interface AISuggestion {
+  id: string
+  owner_id: string
+  suggestion_type: AISuggestionType
+  payload: Record<string, unknown>
+  rationale: string | null
+  confidence: number | null
+  status: AISuggestionStatus
+  source: AISuggestionSource
+  model: string | null
+  version: number
+  applied_at: string | null
+  rejected_at: string | null
+  created_at: string
+}
+
+export interface AIFeedback {
+  id: string
+  suggestion_id: string
+  owner_id: string
+  rating: number | null
+  comment: string | null
+  outcome: AIFeedbackOutcome | null
+  created_at: string
+}
+
+export interface CreatorTask {
+  id: string
+  owner_id: string
+  task_type: CreatorTaskType
+  title: string
+  priority: number
+  due_date: string | null
+  linked_entity_type: string | null
+  linked_entity_id: string | null
+  status: CreatorTaskStatus
+  created_at: string
+  updated_at: string
+}
+
+export interface Opportunity {
+  id: string
+  title: string
+  description: string | null
+  opp_type: OpportunityType
+  source: string
+  source_url: string | null
+  organizer: string | null
+  location: string | null
+  city: string | null
+  country: string
+  compensation: string | null
+  deadline: string | null
+  genres: string[]
+  roles: string[]
+  tags: string[]
+  is_active: boolean
+  created_at: string
+}
+
+export interface ArtistGoals {
+  user_id: string
+  goals: string[]
+  skills: string[]
+  travel_radius_km: number
+  base_city: string | null
+  booking_open: boolean
+  updated_at: string
+}
+
+export interface OpportunitySave {
+  id: string
+  user_id: string
+  opportunity_id: string
+  status: OpportunitySaveStatus
+  draft_text: string | null
+  created_at: string
+}

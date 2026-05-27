@@ -1,10 +1,14 @@
 import { isSupabaseConfigured, supabase } from './supabase'
 import type {
   ActivityEvent,
+  AISuggestion,
+  AISuggestionStatus,
   AnalyticsEventType,
+  ArtistGoals,
   Buzz,
   BuzzFeedResult,
   Comment,
+  CreatorTask,
   FeedBuzz,
   FeedCursor,
   FeedMix,
@@ -12,6 +16,7 @@ import type {
   Mix,
   MixedFeedResult,
   Notification,
+  Opportunity,
   Playlist,
   PlaylistWithMixes,
   Profile,
@@ -1116,6 +1121,65 @@ export async function saveUserAiKey(userId: string, apiKey: string): Promise<voi
 export async function removeUserAiKey(userId: string): Promise<void> {
   if (!isSupabaseConfigured) return
   await supabase.from('user_ai_keys').delete().eq('user_id', userId)
+}
+
+// --- AI Infrastructure ---
+
+export async function getAISuggestions(
+  userId: string,
+  status?: AISuggestionStatus,
+): Promise<AISuggestion[]> {
+  if (!isSupabaseConfigured) return []
+  let q = supabase
+    .from('ai_suggestions')
+    .select('*')
+    .eq('owner_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(20)
+  if (status) q = q.eq('status', status)
+  const { data } = await q
+  return (data ?? []) as AISuggestion[]
+}
+
+export async function getCreatorTasks(userId: string): Promise<CreatorTask[]> {
+  if (!isSupabaseConfigured) return []
+  const { data } = await supabase
+    .from('creator_tasks')
+    .select('*')
+    .eq('owner_id', userId)
+    .eq('status', 'open')
+    .order('priority', { ascending: true })
+    .order('created_at', { ascending: false })
+    .limit(20)
+  return (data ?? []) as CreatorTask[]
+}
+
+export async function getOpportunities(filters?: {
+  city?: string
+  genre?: string
+  type?: string
+  limit?: number
+}): Promise<Opportunity[]> {
+  if (!isSupabaseConfigured) return []
+  const params = new URLSearchParams()
+  if (filters?.city) params.set('city', filters.city)
+  if (filters?.genre) params.set('genre', filters.genre)
+  if (filters?.type) params.set('type', filters.type)
+  if (filters?.limit) params.set('limit', String(filters.limit))
+  const res = await fetch(`/api/opportunities?${params.toString()}`)
+  if (!res.ok) return []
+  const json = await res.json() as { opportunities?: Opportunity[] }
+  return json.opportunities ?? []
+}
+
+export async function upsertArtistGoals(
+  userId: string,
+  goals: Partial<Omit<ArtistGoals, 'user_id' | 'updated_at'>>,
+): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase
+    .from('artist_goals')
+    .upsert({ user_id: userId, ...goals, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })
 }
 
 // --- Helpers ---

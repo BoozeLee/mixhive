@@ -168,7 +168,13 @@ export async function createFromStarter(starter: {
   return created.id
 }
 
-/** Fire an agent ad-hoc with a custom event payload (the "Test run" button). */
+/** Fire an agent ad-hoc with a custom event payload (the "Test run" button).
+ *
+ * Calls the /api/agents/test-run proxy which validates the JWT and then
+ * forwards to the Python Lua runtime with the service-role secret. This
+ * avoids the 401 that occurred when the user JWT was sent directly to the
+ * Python handler (which expects RUNTIME_SHARED_SECRET / service-role key).
+ */
 export async function testRunAgent(
   agentId: string,
   event: Record<string, unknown> = {},
@@ -176,13 +182,10 @@ export async function testRunAgent(
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) throw new Error('not signed in')
 
-  const res = await fetch('/api/lua-agent/run', {
+  const res = await fetch('/api/agents/test-run', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // The function trusts SUPABASE_SERVICE_ROLE_KEY in production; in
-      // dev with the runtime-shared-secret set to the anon key we can
-      // pass the user's JWT and let the function still authenticate.
       Authorization: `Bearer ${session.access_token}`,
     },
     body: JSON.stringify({ agent_id: agentId, triggered_by: 'manual', event }),

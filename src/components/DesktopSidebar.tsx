@@ -17,6 +17,8 @@ const topItems: SidebarItem[] = [
   { path: '/feed', icon: '⌁', label: 'Feed', ariaLabel: 'Hive Feed' },
   { path: '/discover', icon: '◈', label: 'Explore', ariaLabel: 'Explore MixHive' },
   { path: '/search', icon: '◇', label: 'Network', ariaLabel: 'Hive Radar' },
+  { path: '/opportunities', icon: '◆', label: 'Opportunities', ariaLabel: 'Opportunity Hub' },
+  { path: '/epk', icon: '◩', label: 'EPK', ariaLabel: 'Press Kit Studio' },
   { path: '/upload', icon: '+', label: 'Upload', ariaLabel: 'Nectar Upload' },
   { path: '/agents/inbox', icon: '✦', label: 'Inbox', ariaLabel: 'Agent Inbox' },
   { path: '/agents/gallery', icon: '⬡', label: 'BeeCast', ariaLabel: 'BeeCast agents' },

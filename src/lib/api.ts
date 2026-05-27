@@ -1007,9 +1007,34 @@ export async function getLatestBuzzes(limit = 20, cursor?: FeedCursor): Promise<
 }
 
 export async function getMixedFollowingFeed(userId: string, limit = 20, mixCursor?: FeedCursor, buzzCursor?: FeedCursor): Promise<MixedFeedResult> {
-  const [mixResult, buzzResult] = await Promise.all([
+  // On the first page, also pull in the user's own buzzes.
+  // After migration 032 the DB trigger handles self-fanout for new buzzes,
+  // but existing buzzes have no feed_event row — the client-side merge keeps
+  // the feed correct regardless of when the migration was applied.
+  const isFirstPage = !mixCursor && !buzzCursor
+  const [mixResult, followingBuzzResult, ownBuzzResult] = await Promise.all([
     getFeed(userId, limit, mixCursor),
     getBuzzFeed(userId, limit, buzzCursor),
+    isFirstPage ? getUserBuzzes(userId, limit) : Promise.resolve({ data: [], cursor: null } as BuzzFeedResult),
+  ])
+  const seenBuzzIds = new Set(followingBuzzResult.data.map(b => b.id))
+  const allBuzzes = [
+    ...followingBuzzResult.data,
+    ...ownBuzzResult.data.filter(b => !seenBuzzIds.has(b.id)),
+  ]
+  const mixes = mixResult.data.map(m => ({ type: 'mix' as const, data: m, _ts: m.created_at }))
+  const buzzes = allBuzzes.map(b => ({ type: 'buzz' as const, data: b, _ts: b.created_at }))
+  const merged = [...mixes, ...buzzes]
+    .sort((a, b) => (a._ts < b._ts ? 1 : a._ts > b._ts ? -1 : 0))
+    .slice(0, limit)
+    .map(({ type, data }) => ({ type, data }) as MixedFeedResult['data'][number])
+  return { data: merged, mixCursor: mixResult.cursor, buzzCursor: followingBuzzResult.cursor }
+}
+
+export async function getLatestMixed(limit = 20, mixCursor?: FeedCursor, buzzCursor?: FeedCursor): Promise<MixedFeedResult> {
+  const [mixResult, buzzResult] = await Promise.all([
+    getRecentMixes(limit, mixCursor),
+    getLatestBuzzes(limit, buzzCursor),
   ])
   const mixes = mixResult.data.map(m => ({ type: 'mix' as const, data: m, _ts: m.created_at }))
   const buzzes = buzzResult.data.map(b => ({ type: 'buzz' as const, data: b, _ts: b.created_at }))

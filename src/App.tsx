@@ -42,6 +42,9 @@ const AdminVerification = lazy(() => import('./views/AdminVerification').then(m 
 const BuzzDetail = lazy(() => import('./views/BuzzDetail').then(m => ({ default: m.BuzzDetail })))
 const ProfileSetup = lazy(() => import('./views/ProfileSetup').then(m => ({ default: m.ProfileSetup })))
 const AgentInbox = lazy(() => import('./views/AgentInbox').then(m => ({ default: m.AgentInbox })))
+const Opportunities = lazy(() => import('./views/Opportunities').then(m => ({ default: m.Opportunities })))
+const PressKitStudio = lazy(() => import('./views/PressKitStudio').then(m => ({ default: m.PressKitStudio })))
+const PublicPressKit = lazy(() => import('./views/PublicPressKit').then(m => ({ default: m.PublicPressKit })))
 
 function shouldLoadVercelTelemetry() {
   if (process.env.NODE_ENV !== 'production' || typeof window === 'undefined') return false
@@ -106,6 +109,9 @@ export default function App() {
                 <Route path="/buzz/:id" element={<BuzzDetail />} />
                 <Route path="/setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
                 <Route path="/agents/inbox" element={<ProtectedRoute><AgentInbox /></ProtectedRoute>} />
+                <Route path="/opportunities" element={<ProtectedRoute><Opportunities /></ProtectedRoute>} />
+                <Route path="/epk" element={<ProtectedRoute><PressKitStudio /></ProtectedRoute>} />
+                <Route path="/epk/:slug" element={<PublicPressKit />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

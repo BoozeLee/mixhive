@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
-import { getTrending, getRecentMixes, getMixedFollowingFeed } from '../lib/api'
+import { getTrending, getMixedFollowingFeed, getLatestMixed } from '../lib/api'
 import { MixCard } from '../components/MixCard'
 import { BuzzCard } from '../components/BuzzCard'
 import { BuzzComposer } from '../components/BuzzComposer'
@@ -13,7 +13,7 @@ type Tab = 'feed' | 'trending' | 'latest'
 
 interface MixTabState {
   data: FeedMix[]
-  cursor: FeedCursor | TrendingCursor | null
+  cursor: TrendingCursor | null
   hasMore: boolean
   loading: boolean
 }
@@ -33,18 +33,11 @@ export function Feed() {
   const { user } = useAuth()
   const [tab, setTab] = useState<Tab>('trending')
   const [mixedFeed, setMixedFeed] = useState<MixedTabState>(emptyMixedTab())
-  const [tabs, setTabs] = useState<Record<'trending' | 'latest', MixTabState>>({
-    trending: emptyMixTab(),
-    latest: emptyMixTab(),
-  })
+  const [latestMixed, setLatestMixed] = useState<MixedTabState>(emptyMixedTab())
+  const [trendingTab, setTrendingTab] = useState<MixTabState>(emptyMixTab())
   const loadingMoreRef = useRef(false)
   const initializedRef = useRef(false)
   const [newCount, setNewCount] = useState(0)
-
-  const fetchMixTab = useCallback(async (t: 'trending' | 'latest', cursor?: FeedCursor | TrendingCursor) => {
-    if (t === 'trending') return getTrending(20, cursor as TrendingCursor | undefined)
-    return getRecentMixes(20, cursor as FeedCursor | undefined)
-  }, [])
 
   const fetchFollowingFeed = useCallback(async (mixCursor?: FeedCursor, buzzCursor?: FeedCursor): Promise<MixedFeedResult> => {
     if (!user) return { data: [], mixCursor: null, buzzCursor: null }
@@ -54,17 +47,18 @@ export function Feed() {
   // Initial load for all tabs
   useEffect(() => {
     if (initializedRef.current) return
-    initializedRef.current = true;
+    initializedRef.current = true
 
-    (['trending', 'latest'] as const).forEach(async t => {
-      try {
-        const res = await fetchMixTab(t)
-        if (res) {
-          setTabs(prev => ({ ...prev, [t]: { data: res.data, cursor: res.cursor, hasMore: !!res.cursor, loading: false } }))
-        }
-      } catch {
-        setTabs(prev => ({ ...prev, [t]: { ...emptyMixTab(), loading: false } }))
-      }
+    getTrending(20).then(res => {
+      setTrendingTab({ data: res.data, cursor: res.cursor as TrendingCursor | null, hasMore: !!res.cursor, loading: false })
+    }).catch(() => {
+      setTrendingTab({ ...emptyMixTab(), loading: false })
+    })
+
+    getLatestMixed(20).then(res => {
+      setLatestMixed({ data: res.data, mixCursor: res.mixCursor, buzzCursor: res.buzzCursor, hasMore: !!(res.mixCursor || res.buzzCursor), loading: false })
+    }).catch(() => {
+      setLatestMixed({ ...emptyMixedTab(), loading: false })
     })
 
     if (user) {
@@ -76,7 +70,7 @@ export function Feed() {
     } else {
       setMixedFeed({ ...emptyMixedTab(), loading: false })
     }
-  }, [user, fetchMixTab, fetchFollowingFeed])
+  }, [user, fetchFollowingFeed])
 
   // Tab switch — load if stale
   useEffect(() => {
@@ -92,18 +86,25 @@ export function Feed() {
       })
       return
     }
-    const state = tabs[tab as 'trending' | 'latest']
-    if (state.data.length > 0 || !state.hasMore) return
-    setTabs(prev => ({ ...prev, [tab]: { ...prev[tab as 'trending' | 'latest'], loading: true } }))
-
-    fetchMixTab(tab as 'trending' | 'latest').then(res => {
-      if (res) {
-        setTabs(prev => ({ ...prev, [tab]: { data: res.data, cursor: res.cursor, hasMore: !!res.cursor, loading: false } }))
-      }
+    if (tab === 'latest') {
+      if (latestMixed.data.length > 0 || !latestMixed.hasMore) return
+      setLatestMixed(prev => ({ ...prev, loading: true }))
+      getLatestMixed(20).then(res => {
+        setLatestMixed({ data: res.data, mixCursor: res.mixCursor, buzzCursor: res.buzzCursor, hasMore: !!(res.mixCursor || res.buzzCursor), loading: false })
+      }).catch(() => {
+        setLatestMixed(prev => ({ ...prev, loading: false }))
+      })
+      return
+    }
+    // trending
+    if (trendingTab.data.length > 0 || !trendingTab.hasMore) return
+    setTrendingTab(prev => ({ ...prev, loading: true }))
+    getTrending(20).then(res => {
+      setTrendingTab({ data: res.data, cursor: res.cursor as TrendingCursor | null, hasMore: !!res.cursor, loading: false })
     }).catch(() => {
-      setTabs(prev => ({ ...prev, [tab as 'trending' | 'latest']: { ...prev[tab as 'trending' | 'latest'], loading: false } }))
+      setTrendingTab(prev => ({ ...prev, loading: false }))
     })
-  }, [tab, user, fetchMixTab, fetchFollowingFeed, tabs, mixedFeed])
+  }, [tab, user, fetchFollowingFeed, latestMixed, trendingTab, mixedFeed])
 
   // Realtime: count feed events landing for this user. When the user
   // clicks the "show N new mixes" pill, we re-fetch the following tab.
@@ -152,20 +153,39 @@ export function Feed() {
       return
     }
 
-    const mt = tab as 'trending' | 'latest'
-    const state = tabs[mt]
-    if (!state.cursor) { loadingMoreRef.current = false; return }
-    setTabs(prev => ({ ...prev, [mt]: { ...prev[mt], loading: true } }))
-    try {
-      const res = await fetchMixTab(mt, state.cursor ?? undefined)
-      if (res) {
-        setTabs(prev => ({
-          ...prev,
-          [mt]: { data: [...prev[mt].data, ...res.data], cursor: res.cursor, hasMore: !!res.cursor, loading: false },
+    if (tab === 'latest') {
+      if (!latestMixed.mixCursor && !latestMixed.buzzCursor) { loadingMoreRef.current = false; return }
+      setLatestMixed(prev => ({ ...prev, loading: true }))
+      try {
+        const res = await getLatestMixed(20, latestMixed.mixCursor ?? undefined, latestMixed.buzzCursor ?? undefined)
+        setLatestMixed(prev => ({
+          data: [...prev.data, ...res.data],
+          mixCursor: res.mixCursor,
+          buzzCursor: res.buzzCursor,
+          hasMore: !!(res.mixCursor || res.buzzCursor),
+          loading: false,
         }))
+      } catch {
+        setLatestMixed(prev => ({ ...prev, loading: false }))
+      } finally {
+        loadingMoreRef.current = false
       }
+      return
+    }
+
+    // trending
+    if (!trendingTab.cursor) { loadingMoreRef.current = false; return }
+    setTrendingTab(prev => ({ ...prev, loading: true }))
+    try {
+      const res = await getTrending(20, trendingTab.cursor ?? undefined)
+      setTrendingTab(prev => ({
+        data: [...prev.data, ...res.data],
+        cursor: res.cursor as TrendingCursor | null,
+        hasMore: !!res.cursor,
+        loading: false,
+      }))
     } catch {
-      setTabs(prev => ({ ...prev, [mt]: { ...prev[mt], loading: false } }))
+      setTrendingTab(prev => ({ ...prev, loading: false }))
     } finally {
       loadingMoreRef.current = false
     }
@@ -182,28 +202,44 @@ export function Feed() {
       }
       return
     }
-    const mt = t as 'trending' | 'latest'
-    setTabs(prev => ({ ...prev, [mt]: { ...prev[mt], loading: true } }))
+    if (t === 'latest') {
+      setLatestMixed(prev => ({ ...prev, loading: true }))
+      try {
+        const res = await getLatestMixed(20)
+        setLatestMixed({ data: res.data, mixCursor: res.mixCursor, buzzCursor: res.buzzCursor, hasMore: !!(res.mixCursor || res.buzzCursor), loading: false })
+      } catch {
+        setLatestMixed(prev => ({ ...prev, loading: false }))
+      }
+      return
+    }
+    setTrendingTab(prev => ({ ...prev, loading: true }))
     try {
-      const res = await fetchMixTab(mt)
-      if (res) setTabs(prev => ({ ...prev, [mt]: { data: res.data, cursor: res.cursor, hasMore: !!res.cursor, loading: false } }))
+      const res = await getTrending(20)
+      setTrendingTab({ data: res.data, cursor: res.cursor as TrendingCursor | null, hasMore: !!res.cursor, loading: false })
     } catch {
-      setTabs(prev => ({ ...prev, [mt]: { ...prev[mt], loading: false } }))
+      setTrendingTab(prev => ({ ...prev, loading: false }))
     }
   }
 
   function handleBuzzCreated(buzz: Buzz) {
     const feedBuzz = { ...buzz, author: undefined }
     setMixedFeed(prev => ({ ...prev, data: [{ type: 'buzz' as const, data: feedBuzz }, ...prev.data] }))
-    if (tab !== 'feed') setNewCount(c => c + 1)
+    setLatestMixed(prev => ({ ...prev, data: [{ type: 'buzz' as const, data: feedBuzz }, ...prev.data] }))
+    if (tab !== 'feed' && tab !== 'latest') setNewCount(c => c + 1)
   }
 
-  const currentMixTab = tab !== 'feed' ? tabs[tab as 'trending' | 'latest'] : null
-  const currentData: FeedItem[] = tab === 'feed'
-    ? mixedFeed.data
-    : (currentMixTab?.data ?? []).map(m => ({ type: 'mix' as const, data: m }))
-  const currentLoading = tab === 'feed' ? mixedFeed.loading : (currentMixTab?.loading ?? false)
-  const currentHasMore = tab === 'feed' ? mixedFeed.hasMore : (currentMixTab?.hasMore ?? false)
+  const currentData: FeedItem[] =
+    tab === 'feed' ? mixedFeed.data :
+    tab === 'latest' ? latestMixed.data :
+    trendingTab.data.map(m => ({ type: 'mix' as const, data: m }))
+  const currentLoading =
+    tab === 'feed' ? mixedFeed.loading :
+    tab === 'latest' ? latestMixed.loading :
+    trendingTab.loading
+  const currentHasMore =
+    tab === 'feed' ? mixedFeed.hasMore :
+    tab === 'latest' ? latestMixed.hasMore :
+    trendingTab.hasMore
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>

@@ -393,3 +393,69 @@ export interface OpportunitySave {
   draft_text: string | null
   created_at: string
 }
+
+export interface RecommendationScore {
+  id: string
+  owner_id: string
+  target_type: string
+  target_id: string | null
+  target_key: string | null
+  score: number
+  rationale: string | null
+  model: string | null
+  version: number
+  metadata: Record<string, unknown>
+  created_at: string
+}
+
+export interface AIEmbedding {
+  id: string
+  owner_id: string | null
+  entity_type: string
+  entity_id: string | null
+  entity_key: string | null
+  model: string
+  version: number
+  metadata: Record<string, unknown>
+  created_at: string
+}
+
+export interface OpportunityMatch {
+  opportunity: Opportunity
+  score: number
+  rationale: string
+}
+
+export interface PressKitContent {
+  artist_name: string
+  location: string | null
+  bio: string | null
+  genres: string[]
+  website: string | null
+  social_links: Record<string, string>
+  avatar_url: string | null
+  top_mixes: Array<{
+    id: string
+    title: string
+    play_count: number
+    like_count: number
+    url_path: string
+  }>
+  booking_pitch: string
+  technical_notes: string[]
+  generated_from: string[]
+}
+
+export interface PressKit {
+  id: string
+  owner_id: string
+  public_slug: string
+  version: number
+  title: string
+  content: PressKitContent
+  pdf_url: string | null
+  is_public: boolean
+  view_count: number
+  created_at: string
+  updated_at: string
+}

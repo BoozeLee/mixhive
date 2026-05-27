@@ -79,14 +79,20 @@ export function Dashboard() {
         cta: 'Open profile',
       },
       {
-        title: 'Deploy automation bees',
-        body: agents.length === 0 ? 'Fork a starter Lua agent to welcome fans and watch activity.' : 'Review agent runs and improve your automations.',
-        to: agents.length === 0 ? '/agents/gallery' : '/agents',
-        cta: agents.length === 0 ? 'Browse agents' : 'Manage agents',
+        title: 'Build your EPK',
+        body: 'Generate a booking-ready press kit from your profile and published mixes.',
+        to: '/epk',
+        cta: 'Open EPK studio',
+      },
+      {
+        title: 'Find your next opening',
+        body: 'Review Belgian pilot gigs, grants, radio calls, and club slots ranked for your profile.',
+        to: '/opportunities',
+        cta: 'Open opportunities',
       },
     ]
     return actions
-  }, [agents.length, mixes.length, profile?.bio, profile?.username])
+  }, [mixes.length, profile?.bio, profile?.username])
 
   const topMix = analytics?.topMixes[0]
   const sparkline = analytics?.weeklyEvents.map(item => item.count) ?? [0, 0, 0, 0, 0, 0]

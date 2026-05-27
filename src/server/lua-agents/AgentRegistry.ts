@@ -8,6 +8,16 @@ import {
   DJ_SET_ANALYZER,
   SCENE_RADAR,
   NOTIFICATION_PRIORITIZER,
+  RELEASE_STRATEGY,
+  BOOKING_SCOUT,
+  COLLABORATION_MATCH,
+  FAN_INSIGHTS,
+  EVENT_ORGANIZER,
+  VENUE_FIT,
+  TREND_INTELLIGENCE,
+  LABEL_SCOUT,
+  VISUAL_IDENTITY,
+  COMMUNITY_MANAGER,
   STUB,
 } from './scripts'
 
@@ -20,6 +30,16 @@ const SCRIPT_MAP: Partial<Record<AgentId, string>> = {
   dj_set_analyzer:          DJ_SET_ANALYZER,
   scene_radar:              SCENE_RADAR,
   notification_prioritizer: NOTIFICATION_PRIORITIZER,
+  release_strategy:         RELEASE_STRATEGY,
+  booking_scout:            BOOKING_SCOUT,
+  collaboration_match:      COLLABORATION_MATCH,
+  fan_insights:             FAN_INSIGHTS,
+  event_organizer:          EVENT_ORGANIZER,
+  venue_fit:                VENUE_FIT,
+  trend_intelligence:       TREND_INTELLIGENCE,
+  label_scout:              LABEL_SCOUT,
+  visual_identity:          VISUAL_IDENTITY,
+  community_manager:        COMMUNITY_MANAGER,
 }
 
 function loadScript(agentId: AgentId): string {
@@ -136,7 +156,7 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     display_name: 'Community Manager',
     description:  'Drafts reviewed replies and community prompts.',
     tier: 'free', approval: 'on_action', timeout_ms: 20000,
-    tools: ['db.read','llm.call'],
+    tools: ['db.read_one','db.read','llm.call','llm.json'],
   },
   notification_prioritizer: {
     display_name: 'Notification Prioritizer',

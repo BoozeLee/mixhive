@@ -9,14 +9,6 @@
       "excludeFiles": "{node_modules,dist,src,supabase}/**"
     }
   },
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.mixhive.app" }],
-      "destination": "https://mixhive.app/:path*",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     { "source": "/api/lua-agent/run", "destination": "/api/lua-agent/run.py" }
   ],

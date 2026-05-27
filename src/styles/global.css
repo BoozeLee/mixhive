@@ -2,6 +2,10 @@
 
 /* Responsive containers and layouts */
 @media (max-width: 767px) {
+  :root {
+    --mixhive-player-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+
   /* Hide desktop-only elements */
   .desktop-only {
     display: none !important;
@@ -9,7 +13,7 @@
   
   /* Ensure mobile nav stays at bottom */
   main {
-    padding-bottom: 70px; /* Height of mobile nav + some extra space */
+    padding-bottom: 136px; /* Mobile nav + player clearance */
   }
   
   /* Full-width containers on mobile */

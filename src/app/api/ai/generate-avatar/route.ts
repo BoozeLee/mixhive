@@ -61,5 +61,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No image returned' }, { status: 500 })
   }
 
-  return NextResponse.json({ url })
+  const imageRes = await fetch(url)
+  if (!imageRes.ok) {
+    return NextResponse.json({ error: 'Could not retrieve generated image' }, { status: imageRes.status })
+  }
+
+  const contentType = imageRes.headers.get('content-type') || 'image/png'
+  const imageBuffer = await imageRes.arrayBuffer()
+  const base64 = Buffer.from(imageBuffer).toString('base64')
+
+  return NextResponse.json({ url: `data:${contentType};base64,${base64}` })
 }

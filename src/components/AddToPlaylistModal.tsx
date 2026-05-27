@@ -50,7 +50,6 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     // Backdrop close: the ESC + focus-trap a11y is handled by the explicit
     // Close button below; the backdrop is just an alternate dismissal route
     // for pointer users and intentionally doesn't take focus.

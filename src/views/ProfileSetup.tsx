@@ -404,7 +404,7 @@ export function ProfileSetup() {
                         No OpenAI key configured.{' '}
                         <Link to="/settings#ai" style={{ color: colors.accent }}>Add your key in Settings</Link>
                         {' '}or{' '}
-                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style={{ color: colors.accent }}>get one free</a>.
+                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style={{ color: colors.accent }}>create one</a>.
                       </div>
                     </div>
                   )}

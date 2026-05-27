@@ -106,9 +106,9 @@ export const HiveButton = forwardRef<HTMLButtonElement, Props>(function HiveButt
       <span style={{ position: 'relative', zIndex: 1 }}>{children}</span>
       {rightIcon}
 
-      {/* Honey droplets — appear on hover, fall down ~12px, fade out */}
+      {/* Honey droplets — CSS keeps SVG attributes stable during route changes. */}
       {variant === 'primary' && !isDisabled && (
-        <motion.svg
+        <svg
           aria-hidden="true"
           width="60"
           height="14"
@@ -122,25 +122,34 @@ export const HiveButton = forwardRef<HTMLButtonElement, Props>(function HiveButt
           }}
         >
           {[10, 30, 50].map((cx, i) => (
-            <motion.circle
+            <circle
               key={cx}
+              className="hive-button__droplet"
               cx={cx}
-              cy={0}
+              cy="2"
               r={2}
               fill="var(--hive-gold, #f6c400)"
-              variants={{
-                rest:  { cy: 0,  opacity: 0 },
-                hover: { cy: 10, opacity: [0, 0.85, 0] },
-              }}
-              animate="rest"
-              whileHover="hover"
-              transition={{ duration: 0.55, delay: i * 0.07 }}
+              style={{ animationDelay: `${i * 70}ms` }}
             />
           ))}
-        </motion.svg>
+        </svg>
       )}
 
-      <style>{`@keyframes mixhive-spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes mixhive-spin { to { transform: rotate(360deg); } }
+        @keyframes mixhive-drip {
+          0%, 100% { opacity: 0; transform: translateY(0); }
+          28% { opacity: 0.85; }
+          86% { opacity: 0; transform: translateY(10px); }
+        }
+        .hive-button__droplet { opacity: 0; transform-box: fill-box; transform-origin: center; }
+        button:hover .hive-button__droplet,
+        button:focus-visible .hive-button__droplet { animation: mixhive-drip 550ms ease-out both; }
+        @media (prefers-reduced-motion: reduce) {
+          button:hover .hive-button__droplet,
+          button:focus-visible .hive-button__droplet { animation: none; }
+        }
+      `}</style>
     </motion.button>
   )
 })

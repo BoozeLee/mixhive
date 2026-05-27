@@ -289,7 +289,7 @@ export function Settings() {
                   <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style={{ color: colors.accent }}>
                     platform.openai.com/api-keys
                   </a>
-                  {' '}→ Create new secret key. Free-tier usage limits apply.
+                  {' '}→ Create new secret key. Usage is billed by OpenAI.
                 </p>
               </div>
             )}

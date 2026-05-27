@@ -1,102 +1,137 @@
 # MixHive
 
-> A DJ-first social music platform — think Facebook meets SoundCloud, built for mixers.
+> A DJ-first social music platform: SoundCloud x social feed x creator growth OS for underground culture.
 
-MixHive lets DJs upload mixes with tracklists, artwork and platform links, follow each other, and discover new sound through a personalized feed, trending charts, and curated playlists. Built with React 19, Vite, and Supabase.
+MixHive lets DJs, producers, organizers, visual artists, and underground creators publish mixes, post short-form Buzz updates, follow each other, discover music scenes, automate fan workflows with Lua agents, and track creator growth from a cyber-hive dashboard.
 
 ## Stack
 
-- **Frontend** — React 19 + TypeScript 6 + Vite 8 + react-router-dom v7
-- **Backend** — Supabase (Postgres, Auth, Storage, RLS, Realtime)
-- **Deploy** — Vercel (SPA) + Supabase (managed)
+- **Frontend** - Next.js 16 App Router, React 19, TypeScript 6, React Router v7 client bridge
+- **UI** - MIXHIVE black/gold cyber-hive system, Tailwind 4 CSS entry, custom hive components
+- **Graphics** - Three.js cyber-hive backdrop with CSS fallback
+- **Backend** - Supabase Postgres, Auth, Storage, RLS, Realtime
+- **Automation** - Vercel Python serverless Lua agent runtime
+- **Deploy** - Vercel production deployments and `https://mixhive.vercel.app`
+
+The external `mixhive.app` DNS setup is intentionally deferred until the final launch step.
 
 ## Features
 
-- Email + Google OAuth, DJ profiles with onboarding
-- Mix upload with audio, artwork, tracklist, genre, tags, explicit flag, platform links
-- Custom waveform player with seek, volume, mute, keyboard shortcuts
-- Global persistent bottom player with queue
-- Social — follows, likes, threaded comments, mentions, reposts, blocks
-- Personalized feed, trending, latest, discovery, "fans also liked"
-- Playlists with drag-to-reorder
-- Notifications — likes, follows, comments, replies, mentions, mix uploads
-- Search across mixes and DJs
+- Email + Google OAuth and creator onboarding
+- DJ profiles with avatars, banners, genres, social links, badges, analytics, and activity
+- Mix upload with audio, artwork, tracklist, genre, tags, explicit flag, waveform generation, and platform links
+- Custom waveform player and global persistent bottom player
+- Buzz short-form posts with replies, likes, reposts, attachments, and attached mixes
+- Social graph with follows, likes, threaded comments, mentions, reposts, blocks, and notifications
+- Personalized following feed, trending, latest, discovery, search, and recommendations
+- Playlists with ordering
+- Creator dashboard for growth metrics, fan activity, top mix signal, and next-best actions
+- Lua automation agents with starter templates, public gallery, forking, and run logs
+- Verification requests, admin review, and profile analytics
 - Embed code generation
 
 ## Architecture
 
-```
+```text
 src/
-├── components/   # UI components (player, waveform, queue, cards, social)
-├── pages/        # Routed pages (feed, mix detail, upload, edit, profile, search)
-├── hooks/        # Custom hooks (useAuth)
-├── lib/          # API client, types, supabase, player store, waveform utils
-└── assets/
+├── app/                 # Next App Router shell and catch-all bridge
+├── views/               # React Router routed screens
+├── components/          # UI, player, hive, social, and media components
+├── hooks/               # Custom hooks
+├── lib/                 # API client, Supabase, types, agents, player store
+└── styles/              # Tokens and global responsive CSS
+
+api/
+└── lua-agent/run.py     # Vercel Python Lua worker
 
 supabase/
-└── migrations/   # SQL migrations (schema, RLS, triggers, feed RPCs)
+└── migrations/          # Numbered SQL migrations, RLS, triggers, RPCs
 ```
+
+Next serves `src/app/[[...slug]]/page.tsx`, which loads the client app from `src/MixHiveClient.tsx`. React Router owns the in-app route tree in `src/App.tsx`.
 
 ## Local Development
 
 ```bash
-# 1. Install deps
 npm install
-
-# 2. Copy env example and fill in your Supabase project credentials
 cp .env.example .env.local
-# Edit .env.local — set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
-
-# 3. Run dev server
 npm run dev
 ```
 
-The app expects an initialised Supabase project with the migrations from `supabase/migrations/` applied. Storage buckets `mix-audio`, `mix-artwork`, `mix-waveforms`, and `mixes-original` must exist (the first migration creates them).
+Set these public Supabase values in `.env.local` when using the live backend:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Optional server-side AI keys:
+
+```bash
+OPENAI_API_KEY=sk-your-platform-key
+HUGGINGFACE_API_KEY=hf_your-platform-key
+```
+
+`OPENAI_API_KEY` lets admins use hosted avatar, bio, and genre generation. Regular users can also save their own OpenAI key from Settings. `HUGGINGFACE_API_KEY` enables the Pro hosted art route.
+
+The app expects a Supabase project with migrations applied and storage buckets for audio, artwork, waveforms, profile images, and Buzz media.
 
 ## Scripts
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | Type check + production build |
+| `npm run dev` | Start the Next dev server |
+| `npm run build` | Build the production Next app |
 | `npm run lint` | Run ESLint |
-| `npm run preview` | Preview built output |
+| `npm run preview` | Serve the built app with `next start` |
+| `npm run smoke -- --mock-supabase <url>` | Run headless route/console/mobile smoke checks |
+| `npm run analyze` | Run bundle analysis build |
 | `npm run db:types` | Regenerate `src/lib/database.types.ts` from the linked Supabase project |
-| `npm run db:types:check` | Diff live schema against the committed types (CI uses this) |
+| `npm run db:types:check` | Diff live schema against committed generated types |
 
-## Database types
+## Verification
 
-Schema types in `src/lib/database.types.ts` are auto-generated from the live Supabase project. To populate or refresh them:
+Run the standard local gates before deploy:
 
 ```bash
-# one-time setup
-supabase login
-supabase link --project-ref <YOUR_PROJECT_REF>
-
-# whenever migrations change
-npm run db:types
-git add src/lib/database.types.ts
-git commit -m "chore(db): regenerate schema types"
+npx tsc --noEmit
+npm run lint
+npm run build
+npm run preview -- -p 3003
+npm run smoke -- --mock-supabase http://127.0.0.1:3003
 ```
 
-A `Schema drift` GitHub Actions job runs on PRs that touch migrations or generated types; it fails the build if the committed file is stale. The job is opt-in — set the repo variable `SCHEMA_DRIFT_ENABLED=true` and the secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF` to enable it.
+Vercel production verification:
 
-## Contributing
+```bash
+vercel deploy --prod --yes
+vercel inspect <deployment-url>
+npm run smoke -- --mock-supabase https://<deployment-url>
+curl -I https://mixhive.vercel.app
+```
 
-This repository is private during initial development. Internal contributors should branch from `main`, open a PR, and require one passing CI run before merging. Use rebase or squash — no merge commits.
+## Agent Plans
 
-See [`.github/CONTRIBUTING.md`](./.github/CONTRIBUTING.md) for details.
+- [Dual-agent build plan](./docs/AGENT_BUILD_PLAN.md)
+- [GPT next-phase task plan](./docs/GPT_TASK_PLAN.md)
+- [GPT todo checklist](./TODO_GPT_NEXT_PHASE.md)
+
+## Database Types
+
+Schema types in `src/lib/database.types.ts` are generated from the live Supabase project:
+
+```bash
+supabase login
+supabase link --project-ref <YOUR_PROJECT_REF>
+npm run db:types
+```
+
+Do not hand-edit generated database types. If migrations change, regenerate and commit the generated file.
 
 ## License & Copyright
 
-**Proprietary — All Rights Reserved.**
+**Proprietary - All Rights Reserved.**
 
-Copyright © 2026 BoozeLee (kiliaanv2@gmail.com). The source is published for
-portfolio / evaluation purposes only. You may **not** copy, redistribute,
-modify, use commercially, run in production, or use to train ML models
-without explicit prior written permission. See [LICENSE](./LICENSE) for the
-full terms and [NOTICE](./NOTICE) for the copyright notice.
+Copyright (c) 2026 BoozeLee (kiliaanv2@gmail.com). The source is published for portfolio and evaluation purposes only. You may not copy, redistribute, modify, use commercially, run in production, or use to train ML models without explicit prior written permission. See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
 
 "MixHive" is a trademark of the copyright holder.
-
-To request a license, email kiliaanv2@gmail.com with subject "MixHive — License Request".

@@ -1,99 +1,143 @@
-# CLAUDE.md — MixHive
+# CLAUDE.md - MixHive
 
 Drop-in conventions for any Claude Code session opened inside this repo.
 
 ## What this is
 
-MixHive is a DJ-first social music platform (Facebook × SoundCloud).
-React 19 + TypeScript 6 (strict) + Vite 8 + react-router-dom v7, Supabase
-(Postgres + Auth + Storage + RLS + Realtime), Vercel SPA + Vercel Python
-function for the Lua agent runtime. Proprietary licence — the repo is
-public for portfolio visibility only; see `LICENSE` and `NOTICE`.
+MixHive is a DJ-first social music platform: Facebook x SoundCloud for DJs,
+producers, rave organizers, visual artists, and underground culture creators.
+The app has been migrated from Vite to Next.js App Router. Next serves a
+catch-all bridge at `src/app/[[...slug]]/page.tsx`, then the client app uses
+React Router v7 for the existing route tree under `src/views`.
 
-## Key paths
+Current stack:
 
-- `src/lib/api.ts` — every server interaction (queries, mutations, RPCs)
-- `src/lib/types.ts` — shared types + `parseMentions()`
-- `src/lib/database.types.ts` — auto-generated from Supabase via
-  `npm run db:types`. Don't hand-edit; regenerate after any migration.
-- `src/lib/playerStore.tsx` — global persistent player context
-- `src/lib/schemas.ts` — Zod validation schemas + `formatZodError()`
-- `src/lib/agents.ts` + `src/lib/starter_agents.ts` — Lua agent client API
-- `src/styles/tokens.ts` — colour / space / radius / fontSize / shadow / z
-- `src/components/ui/` — Button, IconButton, Input, Textarea, Select,
-  FileInput, Avatar, Modal. Prefer these over raw HTML form elements.
-- `src/components/MixAgentHints.tsx` — `<details>`-based "Automate this"
-  panel that surfaces Lua agents on MixDetail
-- `supabase/migrations/NNN_*.sql` — numbered migrations, all idempotent
-- `api/lua-agent/run.py` — Vercel Python serverless, Lupa-sandboxed Lua
-- `docs/LUA_AGENTS.md` — full Lua sandbox reference (triggers, `mh.*` API,
-  cron syntax, security)
-- `docs/PATTERNS.md` — names the cookbook patterns the codebase uses
+- Next.js 16 App Router + React 19 + TypeScript 6 strict
+- React Router v7 inside the client bridge
+- Supabase for Postgres, Auth, Storage, RLS, and Realtime
+- Vercel production deploys, plus a Python serverless Lua agent runtime
+- Tailwind 4 tokens/CSS plus local cyber-hive styling in `src/app/mixhive.css`
+- Three.js backdrop with CSS fallback
+
+The external `mixhive.app` DNS task is intentionally deferred. Build and deploy
+against Vercel deployment URLs and `https://mixhive.vercel.app`.
+
+## Agent Ownership
+
+Codex owns infrastructure and integration:
+
+- `next.config.mjs`, `vercel.json`, `.github/workflows/*`
+- `src/app/*`, `src/MixHiveClient.tsx`, package scripts, smoke scripts
+- Vercel deploys, production smoke checks, and final merge/deploy review
+
+Claude Code owns product/UI polish:
+
+- `src/views/*`
+- `src/components/*`
+- `src/styles/tokens.ts`
+- user-facing docs and this file when instructions drift
+
+Shared files require coordination before edits:
+
+- `src/App.tsx`
+- `src/lib/supabase.ts`
+- `src/styles/global.css`
+
+If Claude Code finds an infra/config issue, write it down for Codex instead of
+patching infra directly.
+
+## Key Paths
+
+- `src/app/[[...slug]]/page.tsx` - Next catch-all bridge into the client app
+- `src/MixHiveClient.tsx` - client bootstrap, Sentry init, top error boundary
+- `src/App.tsx` - React Router route tree and global shell
+- `src/views/` - routed screens
+- `src/components/` - reusable UI, player, nav, hive components
+- `src/components/CyberHiveBackdrop.tsx` - Three.js backdrop and fallback
+- `src/lib/api.ts` - server interactions, queries, mutations, RPCs
+- `src/lib/types.ts` - shared app types and `parseMentions()`
+- `src/lib/database.types.ts` - generated Supabase types; do not hand-edit
+- `src/lib/playerStore.tsx` - global persistent audio player context
+- `src/lib/schemas.ts` - Zod schemas and `formatZodError()`
+- `src/lib/agents.ts` + `src/lib/starter_agents.ts` - Lua agent client API
+- `src/styles/tokens.ts` - color, space, radius, fontSize, shadow, z tokens
+- `src/app/mixhive.css` - brand shell, honeycomb, landing, and Next CSS
+- `scripts/browser_smoke.py` - headless browser route/console/overflow smoke
+- `api/lua-agent/run.py` - Vercel Python serverless Lua worker
+- `supabase/migrations/NNN_*.sql` - numbered idempotent migrations
+- `docs/LUA_AGENTS.md` - Lua sandbox reference
+- `docs/PATTERNS.md` - local cookbook patterns
 
 ## Conventions
 
-- **Styling**: tokens-only colours from `src/styles/tokens.ts`. No new
-  inline hex codes. Mobile breakpoints live in `src/styles/global.css`.
-- **Forms**: use `Input` / `Textarea` / `Select` / `FileInput` from
-  `src/components/ui/`. They bind `id` ↔ `htmlFor` via `useId()` and
-  accept `error` / `help` props that consume `formatZodError()` output.
-- **Buttons**: real `<button>` or `IconButton` (which requires `label`).
-  Never `<div onClick>`. The single seek-bar exception in `GlobalPlayer.tsx`
-  has full keyboard + ARIA-slider support; do not copy that pattern.
-- **Database**: every change ships as a new numbered migration. Idempotent
-  DDL only (`if not exists`, `drop policy if exists`, `do $$ … end$$`
-  for guarded blocks, `NOT VALID + VALIDATE` for new CHECKs). Never edit
-  an existing migration.
-- **RLS**: RLS stays on. Never disable. Service-role calls live in
-  `api/lua-agent/run.py` only.
-- **Migrations 010+ touch RLS, constraints, the Lua agent layer, and
-  scheduled / public-sharing extensions** — read the headers before
-  layering new ones in.
+- Keep UI consistent with the black/gold cyber-hive brand. Use restrained,
+  premium, high-contrast motion; avoid layout clutter and overlapping text.
+- Use tokenized colors from `src/styles/tokens.ts` or existing CSS variables in
+  `src/app/mixhive.css`. Do not introduce random one-off hex colors.
+- Use existing form components from `src/components/ui/` before raw controls.
+- Buttons must be real `<button>` elements or `IconButton` with a label.
+- Keep mobile layouts stable at 320px width. No horizontal overflow.
+- Respect `prefers-reduced-motion`; do not make WebGL required for usability.
+- Do not disable RLS or use a service-role key from browser code.
+- Do not edit existing migrations. Add a new numbered migration only if schema
+  work is explicitly required.
+- Do not commit `.env*` files except `.env.example`.
+- Do not add paid third-party APIs.
 
 ## Workflow
 
+Run checks in this order before handoff:
+
 ```bash
-# Every change, in this order:
 npx tsc --noEmit
-npm run lint        # 0 errors required; warnings are OK while we ratchet
+npm run lint
 npm run build
-git push origin main
-gh run watch        # CI must land green
+npm run smoke -- --mock-supabase http://127.0.0.1:<port>
 ```
 
-Branch protection on `main` requires 1 approving review + linear history.
-Admin bypass is on for solo work. When a non-admin contributor joins,
-they branch and PR; admins keep bypassing or open dummy PRs.
+For local production smoke:
 
-## Lua agent layer (orchestrator-workers pattern)
+```bash
+npm run build
+npm run preview -- -p 3002
+npm run smoke -- --mock-supabase http://127.0.0.1:3002
+```
 
-`dispatch_lua_event(owner_id, trigger_type, event_payload)` (defined in
-migration 013) is the **orchestrator**. It looks up every enabled
-`lua_agents` row matching `(owner_id, trigger_type)` and dispatches each
-to the **worker** at `/api/lua-agent/run.py` via pg_net, which loads the
-user-authored Lua, runs it in a Lupa sandbox, and writes the result back
-via `record_lua_agent_run()`. Triggers fire from Postgres triggers on
-follows / comments / likes / feed_events / notifications / mixes. The
-six built-in starter templates live in `src/lib/starter_agents.ts` and
-always render in `/agents/gallery` so a fresh install isn't empty.
+For Vercel production verification, Codex runs:
 
-## Don't
+```bash
+vercel deploy --prod --yes
+vercel inspect <deployment-url>
+npm run smoke -- --mock-supabase https://<deployment-url>
+curl -I https://mixhive.vercel.app
+```
 
-- Commit `.env*` (except `.env.example`).
-- Add new inline hex codes — extend `src/styles/tokens.ts` instead.
-- Disable RLS or use the service-role key from the browser.
-- Introduce paid third-party APIs (zero budget; self-host or free tier
-  only — see [[feedback_no_paid_apis]] in user memory).
-- Edit an existing migration. Always add a new numbered one.
-- Use `--no-verify` / `--force` on git without explicit instruction.
+## Claude Code Task Card
 
-## Quick commands
+When asked to continue product work, focus on:
 
-| Command          | What it does                                          |
-| ---------------- | ----------------------------------------------------- |
-| `npm run dev`    | Vite dev server on http://localhost:5173              |
-| `npm run build`  | `tsc -b && vite build`                                |
-| `npm run lint`   | ESLint flat config (warns include the open a11y list) |
-| `npm run analyze`| Bundle visualiser → `dist/bundle-stats.html`          |
-| `npm run db:types` | Regenerate `src/lib/database.types.ts` (CLI-linked) |
-| `/lint-fix`      | Slash command — group lint warnings by rule + chip    |
+- route-level UI polish in `src/views/*`
+- component accessibility and mobile overflow fixes in `src/components/*`
+- empty/loading/error states for feed, discover, search, profile, upload,
+  notifications, agents, and mix detail
+- console-warning cleanup from user-facing routes
+- documentation drift in user-facing docs
+
+Report back with:
+
+- changed files
+- user-visible behavior changes
+- routes and viewport widths tested
+- commands run and any failures
+
+## Quick Commands
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Next dev server |
+| `npm run build` | Production Next build |
+| `npm run preview` | Serve the built Next app |
+| `npm run lint` | ESLint flat config |
+| `npm run smoke -- --mock-supabase <url>` | Browser smoke across core routes/viewports |
+| `npm run analyze` | Bundle analysis build |
+| `npm run db:types` | Regenerate Supabase database types |

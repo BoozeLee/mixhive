@@ -1,7 +1,6 @@
 {
-  "framework": "vite",
+  "framework": "nextjs",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
   "installCommand": "npm install",
   "functions": {
     "api/lua-agent/run.py": {
@@ -10,9 +9,16 @@
       "excludeFiles": "{node_modules,dist,src,supabase}/**"
     }
   },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.mixhive.app" }],
+      "destination": "https://mixhive.app/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/api/lua-agent/run", "destination": "/api/lua-agent/run.py" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/api/lua-agent/run", "destination": "/api/lua-agent/run.py" }
   ],
   "headers": [
     {

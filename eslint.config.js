@@ -14,7 +14,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 // because we host instrumental DJ mixes, not narrative content).
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', '.next', 'node_modules']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

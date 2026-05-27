@@ -38,6 +38,13 @@
   /* Audio-reactive: src/lib/audioReactive.ts writes a value 0..1 from the
      current track's bass channel. Defaults to 0 when nothing is playing. */
   --hive-pulse: 0;
+  --mixhive-player-bottom: 0px;
+}
+
+.mixhive-fonts {
+  --font-display: Impact, "Arial Black", "Trebuchet MS", system-ui, sans-serif;
+  --font-ui: "Segoe UI", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", ui-monospace, monospace;
 }
 
 @theme {
@@ -87,7 +94,7 @@ body {
     linear-gradient(120deg, rgba(246, 196, 0, 0.05), transparent 22%),
     linear-gradient(240deg, rgba(37, 217, 255, 0.05), transparent 24%);
   color: var(--hive-text);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
 }
 
 .mixhive-shell::before {
@@ -121,6 +128,15 @@ body {
 .mixhive-main {
   position: relative;
   z-index: 1;
+}
+
+.cyber-hive-backdrop {
+  background:
+    radial-gradient(circle at 20% 18%, rgba(246, 196, 0, 0.12), transparent 26%),
+    radial-gradient(circle at 82% 28%, rgba(37, 217, 255, 0.08), transparent 24%),
+    linear-gradient(30deg, transparent 0 46%, rgba(246, 196, 0, 0.08) 47% 53%, transparent 54%),
+    linear-gradient(150deg, transparent 0 46%, rgba(246, 196, 0, 0.08) 47% 53%, transparent 54%);
+  background-size: auto, auto, 88px 52px, 88px 52px;
 }
 
 .hive-panel {

@@ -32,6 +32,8 @@ export function Logo({
           height: currentSize.height,
           borderRadius: size === 'small' ? 4 : 6,
           objectFit: 'cover',
+          mixBlendMode: 'screen',
+          filter: 'drop-shadow(0 0 10px rgba(240,192,64,0.32))',
           flexShrink: 0,
         }}
       />
@@ -63,6 +65,8 @@ export function LogoIcon({ variant = 'main', className = '' }: { variant?: 'main
         height: 24,
         borderRadius: 4,
         objectFit: 'cover',
+        mixBlendMode: 'screen',
+        filter: 'drop-shadow(0 0 10px rgba(240,192,64,0.32))',
       }}
     />
   )

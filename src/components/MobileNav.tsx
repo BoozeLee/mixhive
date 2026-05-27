@@ -1,8 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { IconButton } from './ui/IconButton'
 import { LogoIcon } from './Logo'
-import { colors, space, bp, transition, fontSize, fontWeight } from '../styles/tokens'
+import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens'
 
 interface NavItem {
   path: string
@@ -12,12 +11,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { path: '/feed', icon: '🎵', label: 'Feed', ariaLabel: 'Feed' },
-  { path: '/discover', icon: '⭐', label: 'Discover', ariaLabel: 'Discover' },
-  { path: '/search', icon: '🔍', label: 'Search', ariaLabel: 'Search' },
-  { path: '/upload', icon: '⬆️', label: 'Upload', ariaLabel: 'Upload mix' },
-  { path: '/notifications', icon: '🔔', label: 'Notifications', ariaLabel: 'Notifications' },
-  { path: '/profile', icon: '👤', label: 'Profile', ariaLabel: 'Profile' },
+  { path: '/dashboard', icon: '▣', label: 'Growth', ariaLabel: 'Creator dashboard' },
+  { path: '/feed', icon: '⌁', label: 'Feed', ariaLabel: 'Hive Feed' },
+  { path: '/search', icon: '◇', label: 'Radar', ariaLabel: 'Hive Radar' },
+  { path: '/upload', icon: '+', label: 'Nectar', ariaLabel: 'Nectar Upload' },
+  { path: '/profile', icon: '♕', label: 'Cell', ariaLabel: 'Profile cell' },
 ]
 
 // Logo item for mobile navigation
@@ -32,27 +30,29 @@ export function MobileNav() {
   const location = useLocation()
   const { user, profile } = useAuth()
   
-  // Hide on desktop and when not authenticated
-  if (typeof window !== 'undefined' && window.innerWidth >= bp.md) return null
   if (!user) return null
 
   return (
     <nav
+      className="mobile-nav"
       role="navigation"
       aria-label="Main navigation"
       style={{
         position: 'fixed',
-        bottom: 0,
+        bottom: 'env(safe-area-inset-bottom, 0px)',
         left: 0,
         right: 0,
-        background: colors.surface,
-        borderTop: `1px solid ${colors.border}`,
+        background: 'linear-gradient(180deg, rgba(8,8,6,0.86), rgba(2,2,2,0.98))',
+        borderTop: `1px solid ${colors.accentMuted}`,
+        boxShadow: '0 -16px 42px rgba(0,0,0,0.66), 0 0 24px rgba(240,192,64,0.1)',
+        backdropFilter: 'blur(18px)',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'center',
         padding: `${space[2]} 0`,
         zIndex: 100,
         height: 60,
+        paddingBottom: space[2],
       }}
     >
       {/* Logo */}
@@ -98,17 +98,23 @@ export function MobileNav() {
             }}
             aria-current={isActive ? 'page' : undefined}
           >
-            <IconButton
-              label={item.ariaLabel}
-              active={isActive}
-              size={24}
+            <span
+              aria-hidden="true"
               style={{
-                color: isActive ? colors.accent : colors.text.secondary,
-                fontSize: 20,
+                width: 32,
+                height: 32,
+                display: 'grid',
+                placeItems: 'center',
+                clipPath: 'polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%)',
+                background: isActive ? colors.accent : 'rgba(240,192,64,0.08)',
+                color: isActive ? colors.bg : colors.accent,
+                border: `1px solid ${isActive ? colors.accent : colors.accentMuted}`,
+                fontSize: 18,
+                fontWeight: 900,
               }}
             >
               {item.icon}
-            </IconButton>
+            </span>
             <span
               style={{
                 display: 'block',

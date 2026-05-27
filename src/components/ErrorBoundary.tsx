@@ -11,7 +11,7 @@ interface State {
 }
 
 function reportToObservability(error: Error, info: ErrorInfo) {
-  if (import.meta.env.DEV) {
+  if (process.env.NODE_ENV === 'development') {
     console.error('[ErrorBoundary]', error, info.componentStack)
   }
   Sentry.captureException(error, {
@@ -73,7 +73,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <p style={{ color: '#999', fontSize: 14, lineHeight: 1.5, margin: '0 0 20px' }}>
             We hit an unexpected error rendering this part of the page. You can try again, or head back to the feed.
           </p>
-          {import.meta.env.DEV && (
+          {process.env.NODE_ENV === 'development' && (
             <pre
               style={{
                 textAlign: 'left',

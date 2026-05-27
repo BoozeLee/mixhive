@@ -47,9 +47,9 @@ export function GlobalPlayer() {
   // Mini mode
   if (miniMode) {
     return (
-      <div style={{
+      <div className="global-player global-player--mini" style={{
         position: 'fixed',
-        bottom: 0,
+        bottom: 'var(--mixhive-player-bottom, 0px)',
         left: 0,
         right: 0,
         background: '#0f0f0f',
@@ -94,9 +94,9 @@ export function GlobalPlayer() {
   return (
     <>
       {showQueue && <PlayerQueue />}
-      <div style={{
+      <div className="global-player global-player--full" style={{
         position: 'fixed',
-        bottom: 0,
+        bottom: 'var(--mixhive-player-bottom, 0px)',
         left: 0,
         right: 0,
         background: '#0f0f0f',

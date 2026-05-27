@@ -15,10 +15,11 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "next dev",
+    "build": "next build",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "next start",
+    "smoke": "python3 scripts/browser_smoke.py",
     "analyze": "ANALYZE=true npm run build",
     "db:types": "supabase gen types typescript --linked > src/lib/database.types.ts",
     "db:types:check": "supabase gen types typescript --linked | diff - src/lib/database.types.ts"
@@ -26,13 +27,19 @@
   "dependencies": {
     "@sentry/react": "^10.53.1",
     "@supabase/supabase-js": "^2.106.1",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/three": "^0.184.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "express": "^5.2.1",
+    "framer-motion": "^12.40.0",
     "http-proxy-middleware": "^3.0.5",
+    "next": "^16.2.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.15.1",
+    "tailwindcss": "^4.3.0",
+    "three": "^0.184.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -46,7 +46,7 @@ export function ErrorComponent({
         {message}
       </h2>
       
-      {errorMessage && import.meta.env.DEV && (
+      {errorMessage && process.env.NODE_ENV === 'development' && (
         <pre
           style={{
             textAlign: 'left',

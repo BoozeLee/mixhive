@@ -9,6 +9,7 @@ const nextConfig = {
   turbopack: {
     root: appDir,
   },
+  serverExternalPackages: ['ioredis'],
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY,
@@ -17,7 +18,7 @@ const nextConfig = {
   },
   async headers() {
     // CDN-specific cache configuration
-    const getCdnHeaders = (source: string) => {
+    const getCdnHeaders = (source) => {
       const cdnUrl = process.env.NEXT_PUBLIC_CDN_BASE_URL;
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       

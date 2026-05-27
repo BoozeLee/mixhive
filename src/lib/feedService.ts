@@ -1,8 +1,8 @@
-import { supabase } from './supabase'
-import { redisCache, FeedCacheData } from './redis'
-import { realtimeManager } from './websocket'
 import { getTrending, getRecentMixes, getMixedFollowingFeed } from './api'
-import type { FeedMix, FeedCursor, TrendingCursor, MixedFeedResult } from './types'
+import type { FeedMix, FeedCursor, TrendingCursor } from './types'
+
+// Lightweight in-memory feed cache (TTL-based, cleared on page reload)
+const _memCache = new Map<string, { data: unknown; expires: number }>()
 
 export interface FeedOptions {
   type: 'trending' | 'latest' | 'following' | 'discover'
@@ -51,7 +51,7 @@ class FeedService {
     const cacheKey = this.generateCacheKey(type, userId, genre, cursor)
     
     // Try to get from cache first
-    const cachedFeed = await this.getCachedFeed(cacheKey)
+    const cachedFeed = this.getCachedFeed(cacheKey)
     if (cachedFeed) {
       return {
         items: cachedFeed.items,
@@ -104,7 +104,7 @@ class FeedService {
     }
 
     // Cache the fresh data
-    await this.setCachedFeed(cacheKey, {
+    this.setCachedFeed(cacheKey, {
       items: freshData,
       cursor: newCursor,
       hasMore,
@@ -127,44 +127,23 @@ class FeedService {
     return parts.join(':')
   }
 
-  private async getCachedFeed(cacheKey: string): Promise<{
+  private getCachedFeed(cacheKey: string): {
     items: EnhancedFeedItem[]
     cursor: string | null
     hasMore: boolean
     timestamp: number
-  } | null> {
-    try {
-      const cached = await redisCache.get<FeedCacheData>(cacheKey)
-      if (!cached) return null
-
-      // Check if cache is still fresh
-      const age = (Date.now() - cached.timestamp) / 1000
-      const ttl = this.getTTLForFeedType(cacheKey)
-      
-      if (age > ttl) {
-        await redisCache.del(cacheKey)
-        return null
-      }
-
-      return {
-        items: cached.data,
-        cursor: cached.cursor,
-        hasMore: !!cached.cursor,
-        timestamp: cached.timestamp
-      }
-    } catch (error) {
-      console.error('Failed to get cached feed:', error)
+  } | null {
+    const entry = _memCache.get(cacheKey)
+    if (!entry || Date.now() > entry.expires) {
+      _memCache.delete(cacheKey)
       return null
     }
+    return entry.data as ReturnType<FeedService['getCachedFeed']>
   }
 
-  private async setCachedFeed(cacheKey: string, data: FeedCacheData): Promise<void> {
-    try {
-      const ttl = this.getTTLForFeedType(cacheKey)
-      await redisCache.set(cacheKey, data, { ttl })
-    } catch (error) {
-      console.error('Failed to cache feed:', error)
-    }
+  private setCachedFeed(cacheKey: string, data: { items: EnhancedFeedItem[]; cursor: string | null; hasMore: boolean; timestamp: number }): void {
+    const ttl = this.getTTLForFeedType(cacheKey) * 1000
+    _memCache.set(cacheKey, { data, expires: Date.now() + ttl })
   }
 
   private getTTLForFeedType(cacheKey: string): number {
@@ -265,51 +244,18 @@ class FeedService {
     return score > 50 // Threshold for trending
   }
 
-  // Real-time feed update methods
-  async addRealTimeUpdate(userId: string, update: EnhancedFeedItem): Promise<void> {
-    try {
-      // Add to user's personal feed cache
-      const cacheKey = this.generateCacheKey('following', userId)
-      const cached = await this.getCachedFeed(cacheKey)
-      
-      if (cached) {
-        const updatedItems = [update, ...cached.items].slice(0, 50) // Keep last 50 items
-        await this.setCachedFeed(cacheKey, {
-          data: updatedItems,
-          cursor: null,
-          timestamp: Date.now()
-        })
-      }
-
-      // Broadcast via WebSocket
-      await realtimeManager.broadcastMixUpdate({
-        type: 'new_mix',
-        data: update.data,
-        mixId: update.id,
-        userId
-      })
-
-    } catch (error) {
-      console.error('Failed to add real-time update:', error)
+  addRealTimeUpdate(userId: string, update: EnhancedFeedItem): void {
+    const cacheKey = this.generateCacheKey('following', userId)
+    const cached = this.getCachedFeed(cacheKey)
+    if (cached) {
+      const updatedItems = [update, ...cached.items].slice(0, 50)
+      this.setCachedFeed(cacheKey, { items: updatedItems, cursor: null, hasMore: false, timestamp: Date.now() })
     }
   }
 
-  async invalidateUserFeed(userId: string): Promise<void> {
-    try {
-      const patterns = [
-        `feed:*:${userId}:*`,
-        `feed:following:${userId}:*`,
-        `feed:discover:${userId}:*`
-      ]
-
-      for (const pattern of patterns) {
-        const keys = await redisCache.client.keys(pattern)
-        if (keys.length > 0) {
-          await redisCache.client.del(...keys)
-        }
-      }
-    } catch (error) {
-      console.error('Failed to invalidate user feed:', error)
+  invalidateUserFeed(userId: string): void {
+    for (const key of _memCache.keys()) {
+      if (key.includes(userId)) _memCache.delete(key)
     }
   }
 }

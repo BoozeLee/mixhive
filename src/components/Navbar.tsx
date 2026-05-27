@@ -8,7 +8,7 @@ import { colors, space } from '../styles/tokens'
 
 const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/feed', label: 'Hive Feed' },
+  { to: '/feed', label: 'Feed' },
   { to: '/discover', label: 'Explore' },
   { to: '/search', label: 'Network' },
   { to: '/upload', label: 'Nectar Upload' },
@@ -80,6 +80,25 @@ export function Navbar() {
         {user ? (
           <>
             <NotificationsBell />
+            <Link
+              to="/feed?compose=1"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: space[2],
+                padding: `6px ${space[5]}px`,
+                background: colors.accent,
+                color: colors.bg,
+                borderRadius: 999,
+                fontWeight: 900,
+                fontSize: 13,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+                letterSpacing: 0.2,
+              }}
+            >
+              🐝 Buzz
+            </Link>
             <Link to={`/u/${profile?.username}`} style={{
               display: 'flex',
               alignItems: 'center',

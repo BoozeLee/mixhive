@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { createBuzz } from '../lib/api'
 import { Modal } from './ui/Modal'
@@ -23,6 +23,7 @@ type AttachType = 'image' | 'audio' | 'video' | 'code' | 'mix' | null
 export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }: Props) {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -37,9 +38,17 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
   const [attachedMixId, setAttachedMixId] = useState<string | null>(null)
   const [toast, setToast] = useState<{ open: boolean; message: string; tone: 'info' | 'success' | 'danger' }>({ open: false, message: '', tone: 'info' })
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const audioInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (searchParams.get('compose') === '1' && user && textareaRef.current) {
+      textareaRef.current.focus()
+      textareaRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [searchParams, user])
 
   const remaining = MAX_CHARS - body.length
   const canSubmit = body.trim().length > 0 && remaining >= 0 && !submitting
@@ -146,6 +155,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
           <div style={{ flex: 1, minWidth: 0 }}>
             {/* Text area */}
             <textarea
+              ref={textareaRef}
               value={body}
               onChange={e => setBody(e.target.value.slice(0, MAX_CHARS + 10))}
               placeholder={placeholder}

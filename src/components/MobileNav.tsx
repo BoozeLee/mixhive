@@ -14,7 +14,6 @@ const navItems: NavItem[] = [
   { path: '/dashboard', icon: '▣', label: 'Growth', ariaLabel: 'Creator dashboard' },
   { path: '/feed', icon: '⌁', label: 'Feed', ariaLabel: 'Hive Feed' },
   { path: '/search', icon: '◇', label: 'Radar', ariaLabel: 'Hive Radar' },
-  { path: '/upload', icon: '+', label: 'Nectar', ariaLabel: 'Nectar Upload' },
   { path: '/profile', icon: '♕', label: 'Cell', ariaLabel: 'Profile cell' },
 ]
 
@@ -79,6 +78,51 @@ export function MobileNav() {
           }}
         >
           {logoItem.label}
+        </span>
+      </Link>
+
+      {/* Compose Buzz — gold floating button in center */}
+      <Link
+        to="/feed?compose=1"
+        aria-label="Post a Buzz"
+        style={{
+          position: 'relative',
+          textDecoration: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <span
+          aria-hidden="true"
+          style={{
+            width: 44,
+            height: 44,
+            display: 'grid',
+            placeItems: 'center',
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${colors.accent}, #ffd84a)`,
+            color: colors.bg,
+            fontSize: 22,
+            fontWeight: 900,
+            boxShadow: `0 4px 18px rgba(240,192,64,0.5)`,
+            border: `2px solid ${colors.accent}`,
+            marginTop: -14,
+          }}
+        >
+          🐝
+        </span>
+        <span
+          style={{
+            display: 'block',
+            fontSize: fontSize.xs,
+            marginTop: space[1],
+            textAlign: 'center',
+            color: colors.accent,
+            fontWeight: fontWeight.bold,
+          }}
+        >
+          Buzz
         </span>
       </Link>
 

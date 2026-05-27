@@ -9,7 +9,7 @@ interface Option {
 interface Props extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'children'> {
   label?: string
   help?: ReactNode
-  error?: string
+  error?: string | undefined
   hideLabel?: boolean
   /** Options to render. Pass children to roll your own. */
   options?: Option[]

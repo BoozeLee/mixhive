@@ -5,6 +5,8 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { AVATAR_BUCKET, hasUserAiKey } from '../lib/api'
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens'
 import { BuzzToast } from '../components/hive/BuzzToast'
+import { callProfileCoach } from '../components/ProfileCoachPanel'
+import type { AISuggestion } from '../lib/types'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -92,6 +94,11 @@ export function ProfileSetup() {
 
   // Bio generation state
   const [generatingBio, setGeneratingBio] = useState(false)
+
+  // Profile coach nudge state (step 5)
+  const [coachLoading, setCoachLoading] = useState(false)
+  const [coachResult, setCoachResult] = useState<AISuggestion | null>(null)
+  const [coachNoKey, setCoachNoKey] = useState(false)
 
   const [form, setForm] = useState<SetupForm>({
     username: profile?.username || '',
@@ -493,7 +500,17 @@ export function ProfileSetup() {
                 </div>
               </div>
 
-              <button onClick={generateBio} disabled={generatingBio} style={{ ...secondaryBtnStyle, width: '100%', marginBottom: space[7], opacity: generatingBio ? 0.6 : 1 }}>
+              {aiKeyReady === 'none' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: space[5], background: colors.surfaceMuted, border: `1px solid ${colors.border}`, borderRadius: radius.md, padding: `${space[5]}px ${space[6]}px`, marginBottom: space[5] }}>
+                  <span style={{ fontSize: 18, flexShrink: 0 }}>🔑</span>
+                  <div style={{ flex: 1, fontSize: fontSize.xs, color: colors.text.muted, lineHeight: 1.5 }}>
+                    No AI key configured — bio generation is unavailable.{' '}
+                    <Link to="/settings#ai" style={{ color: colors.accent }}>Add your key in Settings</Link>
+                    {' '}to enable this feature.
+                  </div>
+                </div>
+              )}
+              <button onClick={generateBio} disabled={generatingBio || aiKeyReady === 'none'} style={{ ...secondaryBtnStyle, width: '100%', marginBottom: space[7], opacity: (generatingBio || aiKeyReady === 'none') ? 0.5 : 1 }}>
                 {generatingBio ? '✨ Writing bio…' : '✨ Write my bio with AI'}
               </button>
 
@@ -579,6 +596,95 @@ export function ProfileSetup() {
                   {saving ? 'Saving…' : 'Enter the Hive 🐝'}
                 </button>
                 <button onClick={() => setStep(4)} style={{ ...secondaryBtnStyle }}>← Go back</button>
+              </div>
+
+              {/* Profile Coach nudge */}
+              <div style={{
+                marginTop: space[9],
+                padding: `${space[7]}px`,
+                borderRadius: radius.lg,
+                background: 'linear-gradient(135deg, rgba(255,216,74,0.06), transparent 40%), rgba(7,7,5,0.78)',
+                border: `1px solid ${colors.accentMuted}`,
+                display: 'flex', flexDirection: 'column', gap: space[5],
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: space[4] }}>
+                  <div style={{
+                    width: 30, height: 30, flexShrink: 0, display: 'grid', placeItems: 'center',
+                    clipPath: 'polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%)',
+                    background: colors.accentFaint, color: colors.accent,
+                    border: `1px solid ${colors.accentMuted}`, fontSize: 13,
+                  }}>
+                    ⬡
+                  </div>
+                  <div>
+                    <div style={{ fontSize: fontSize.base, fontWeight: fontWeight.bold, color: colors.text.primary }}>Get your free AI analysis</div>
+                    <div style={{ fontSize: fontSize.xs, color: colors.text.muted }}>Run a profile coaching report to see what to improve next.</div>
+                  </div>
+                </div>
+
+                {coachNoKey && (
+                  <div style={{ fontSize: fontSize.xs, color: colors.text.muted }}>
+                    No AI key configured.{' '}
+                    <Link to="/settings#ai" style={{ color: colors.accent }}>Add one in Settings →</Link>
+                  </div>
+                )}
+
+                {coachResult && !coachLoading && (() => {
+                  const score = coachResult.payload.score as number | undefined
+                  const headline = coachResult.payload.headline as string | undefined
+                  const scoreColor = score === undefined ? colors.text.muted
+                    : score >= 70 ? colors.accent
+                    : score >= 40 ? colors.warning
+                    : colors.danger
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: space[3] }}>
+                        {score !== undefined && (
+                          <span style={{ fontSize: fontSize['2xl'], fontWeight: fontWeight.bold, color: scoreColor }}>{score}</span>
+                        )}
+                        <span style={{ fontSize: fontSize.xs, color: colors.text.dim, textTransform: 'uppercase', letterSpacing: 1 }}>
+                          /100{headline ? ` · ${headline}` : ''}
+                        </span>
+                      </div>
+                      <Link
+                        to="/agents/inbox"
+                        style={{
+                          fontSize: fontSize.sm, color: colors.accent,
+                          textDecoration: 'none', fontWeight: fontWeight.medium,
+                        }}
+                      >
+                        See full report in Agent Inbox →
+                      </Link>
+                    </div>
+                  )
+                })()}
+
+                {!coachResult && !coachNoKey && (
+                  <button
+                    disabled={coachLoading || aiKeyReady !== 'ready'}
+                    onClick={async () => {
+                      setCoachLoading(true)
+                      setCoachNoKey(false)
+                      try {
+                        const { data: { session } } = await supabase.auth.getSession()
+                        const token = session?.access_token
+                        if (!token) return
+                        const result = await callProfileCoach(token)
+                        if (!result) { setCoachNoKey(true); return }
+                        setCoachResult(result)
+                      } finally {
+                        setCoachLoading(false)
+                      }
+                    }}
+                    style={{
+                      ...secondaryBtnStyle,
+                      opacity: (coachLoading || aiKeyReady !== 'ready') ? 0.5 : 1,
+                      alignSelf: 'flex-start',
+                    }}
+                  >
+                    {coachLoading ? '⟳ Analysing…' : aiKeyReady === 'none' ? '🔑 Add AI key to analyse' : '⬡ Analyse my profile'}
+                  </button>
+                )}
               </div>
             </StepShell>
           )}

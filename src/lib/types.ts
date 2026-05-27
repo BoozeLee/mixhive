@@ -281,8 +281,8 @@ export interface Buzz {
   repost_count: number
   created_at: string
   updated_at: string
-  author?: Profile
-  attached_mix?: Mix
+  author?: Profile | undefined
+  attached_mix?: Mix | undefined
 }
 
 export interface FeedBuzz extends Buzz {

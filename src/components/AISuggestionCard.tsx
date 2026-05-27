@@ -21,9 +21,15 @@ const typeIcons: Record<string, string> = {
 
 interface Props {
   suggestion: AISuggestion
-  onApply?: (id: string) => void
+  onApply?: (id: string, editedPayload?: Record<string, unknown>) => void
   onReject?: (id: string) => void
   onRate?: (id: string, rating: number) => void
+}
+
+function getEditableText(suggestion: AISuggestion): string | null {
+  if (suggestion.suggestion_type === 'profile_bio') return (suggestion.payload.bio as string) ?? null
+  if (suggestion.suggestion_type === 'profile_coach') return (suggestion.payload.bio_rewrite as string) ?? null
+  return null
 }
 
 function ConfidenceBar({ value }: { value: number | null }) {
@@ -164,21 +170,32 @@ export function AISuggestionCard({ suggestion, onApply, onReject, onRate }: Prop
   const [showRationale, setShowRationale] = useState(false)
   const [localStatus, setLocalStatus] = useState(suggestion.status)
   const [rated, setRated] = useState(false)
+  const [editMode, setEditMode] = useState(false)
+  const [editText, setEditText] = useState(() => getEditableText(suggestion) ?? '')
 
   const isApplied = localStatus === 'applied'
   const isRejected = localStatus === 'rejected'
   const isDone = isApplied || isRejected
+  const canEdit = getEditableText(suggestion) !== null
 
   const label = typeLabels[suggestion.suggestion_type] ?? suggestion.suggestion_type
   const icon = typeIcons[suggestion.suggestion_type] ?? '✦'
 
   function handleApply() {
     setLocalStatus('applied')
-    onApply?.(suggestion.id)
+    setEditMode(false)
+    const edited = editText !== getEditableText(suggestion) ? editText : undefined
+    const editedPayload = edited !== undefined
+      ? suggestion.suggestion_type === 'profile_bio'
+        ? { ...suggestion.payload, bio: edited }
+        : { ...suggestion.payload, bio_rewrite: edited }
+      : undefined
+    onApply?.(suggestion.id, editedPayload)
   }
 
   function handleReject() {
     setLocalStatus('rejected')
+    setEditMode(false)
     onReject?.(suggestion.id)
   }
 
@@ -228,10 +245,36 @@ export function AISuggestionCard({ suggestion, onApply, onReject, onRate }: Prop
         </div>
       </div>
 
-      {/* Body */}
+      {/* Body / Edit */}
       {!isRejected && (
         <div style={{ marginBottom: space[6] }}>
-          <SuggestionBody suggestion={suggestion} />
+          {editMode ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
+              <div style={{ fontSize: fontSize.xs, color: colors.text.muted, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+                ✎ Editing suggestion
+              </div>
+              <textarea
+                value={editText}
+                onChange={e => setEditText(e.target.value)}
+                rows={6}
+                style={{
+                  width: '100%', boxSizing: 'border-box',
+                  padding: `${space[5]}px`,
+                  background: 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${colors.accentMuted}`,
+                  borderRadius: radius.md,
+                  color: colors.text.primary,
+                  fontSize: fontSize.base,
+                  lineHeight: 1.6,
+                  resize: 'vertical',
+                  fontFamily: 'inherit',
+                  outline: 'none',
+                }}
+              />
+            </div>
+          ) : (
+            <SuggestionBody suggestion={suggestion} />
+          )}
         </div>
       )}
 
@@ -265,61 +308,119 @@ export function AISuggestionCard({ suggestion, onApply, onReject, onRate }: Prop
       {/* Actions */}
       {!isDone ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: space[4], flexWrap: 'wrap' }}>
-          {suggestion.suggestion_type === 'profile_coach' && (
-            <Link
-              to="/settings"
-              style={{
-                padding: `${space[3]}px ${space[7]}px`,
-                borderRadius: radius.md,
-                background: `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
-                color: '#050505',
-                fontWeight: fontWeight.bold,
-                fontSize: fontSize.base,
-                textDecoration: 'none',
-                textTransform: 'uppercase',
-                letterSpacing: 0.5,
-              }}
-            >
-              Apply suggestions
-            </Link>
-          )}
-          {suggestion.suggestion_type !== 'profile_coach' && onApply && (
-            <button
-              onClick={handleApply}
-              style={{
-                padding: `${space[3]}px ${space[7]}px`,
-                borderRadius: radius.md,
-                background: `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
-                color: '#050505',
-                fontWeight: fontWeight.bold,
-                fontSize: fontSize.base,
-                textTransform: 'uppercase',
-                letterSpacing: 0.5,
-              }}
-            >
-              Apply
-            </button>
-          )}
-          <button
-            onClick={handleReject}
-            style={{
-              padding: `${space[3]}px ${space[6]}px`,
-              borderRadius: radius.md,
-              background: 'transparent',
-              border: `1px solid ${colors.border}`,
-              color: colors.text.muted,
-              fontWeight: fontWeight.medium,
-              fontSize: fontSize.base,
-              cursor: 'pointer',
-            }}
-          >
-            Dismiss
-          </button>
-          {!rated && onRate && (
-            <StarRating onRate={handleRate} />
-          )}
-          {rated && (
-            <span style={{ fontSize: fontSize.xs, color: colors.text.muted }}>Thanks for the feedback</span>
+          {editMode ? (
+            <>
+              <button
+                onClick={handleApply}
+                style={{
+                  padding: `${space[3]}px ${space[7]}px`,
+                  borderRadius: radius.md,
+                  background: `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
+                  color: '#050505',
+                  fontWeight: fontWeight.bold,
+                  fontSize: fontSize.base,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  cursor: 'pointer',
+                  border: 'none',
+                }}
+              >
+                Save &amp; Apply
+              </button>
+              <button
+                onClick={() => { setEditMode(false); setEditText(getEditableText(suggestion) ?? '') }}
+                style={{
+                  padding: `${space[3]}px ${space[6]}px`,
+                  borderRadius: radius.md,
+                  background: 'transparent',
+                  border: `1px solid ${colors.border}`,
+                  color: colors.text.muted,
+                  fontWeight: fontWeight.medium,
+                  fontSize: fontSize.base,
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              {suggestion.suggestion_type === 'profile_coach' && (
+                <Link
+                  to="/settings"
+                  style={{
+                    padding: `${space[3]}px ${space[7]}px`,
+                    borderRadius: radius.md,
+                    background: `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
+                    color: '#050505',
+                    fontWeight: fontWeight.bold,
+                    fontSize: fontSize.base,
+                    textDecoration: 'none',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                  }}
+                >
+                  Apply suggestions
+                </Link>
+              )}
+              {suggestion.suggestion_type !== 'profile_coach' && onApply && (
+                <button
+                  onClick={handleApply}
+                  style={{
+                    padding: `${space[3]}px ${space[7]}px`,
+                    borderRadius: radius.md,
+                    background: `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
+                    color: '#050505',
+                    fontWeight: fontWeight.bold,
+                    fontSize: fontSize.base,
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    cursor: 'pointer',
+                    border: 'none',
+                  }}
+                >
+                  Apply
+                </button>
+              )}
+              {canEdit && !isDone && (
+                <button
+                  onClick={() => setEditMode(true)}
+                  style={{
+                    padding: `${space[3]}px ${space[6]}px`,
+                    borderRadius: radius.md,
+                    background: 'transparent',
+                    border: `1px solid ${colors.accentMuted}`,
+                    color: colors.accent,
+                    fontWeight: fontWeight.medium,
+                    fontSize: fontSize.base,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Edit
+                </button>
+              )}
+              <button
+                onClick={handleReject}
+                style={{
+                  padding: `${space[3]}px ${space[6]}px`,
+                  borderRadius: radius.md,
+                  background: 'transparent',
+                  border: `1px solid ${colors.border}`,
+                  color: colors.text.muted,
+                  fontWeight: fontWeight.medium,
+                  fontSize: fontSize.base,
+                  cursor: 'pointer',
+                }}
+              >
+                Dismiss
+              </button>
+              {!rated && onRate && (
+                <StarRating onRate={handleRate} />
+              )}
+              {rated && (
+                <span style={{ fontSize: fontSize.xs, color: colors.text.muted }}>Thanks for the feedback</span>
+              )}
+            </>
           )}
         </div>
       ) : (

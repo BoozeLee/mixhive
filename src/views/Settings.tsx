@@ -390,11 +390,28 @@ export function Settings() {
         <h2 style={{ fontSize: 17, fontWeight: fontWeight.bold, color: colors.text.primary, marginBottom: space[3] }}>
           AI &amp; Creativity
         </h2>
-        <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginBottom: space[7], lineHeight: 1.5 }}>
+        <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginBottom: space[5], lineHeight: 1.5 }}>
           MixHive AI features (avatar generation, bio writing) use your own OpenAI key — it's never shared and runs entirely server-side.
           {profile?.is_admin && <span style={{ color: colors.accent }}> You have admin access — you can use AI without a personal key.</span>}
           {profile?.is_pro && !profile.is_admin && <span style={{ color: colors.success }}> ✓ MixHive Pro — built-in AI art generation is active.</span>}
         </p>
+
+        {aiKeyStatus === 'none' && !profile?.is_admin && !profile?.is_pro && (
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: space[5],
+            padding: `${space[5]}px ${space[6]}px`,
+            marginBottom: space[7],
+            borderRadius: radius.md,
+            background: 'rgba(255,216,74,0.04)',
+            border: `1px solid ${colors.accentMuted}`,
+          }}>
+            <span style={{ flexShrink: 0, fontSize: 15, color: colors.accent }}>⬡</span>
+            <p style={{ margin: 0, fontSize: fontSize.xs, color: colors.text.dim, lineHeight: 1.5 }}>
+              Without a key, AI-powered features (avatar generation, bio writing, profile coach) are unavailable.
+              All AI suggestions on MixHive are <strong style={{ color: colors.text.muted }}>assistive only</strong> — nothing changes on your profile until you review and apply each suggestion.
+            </p>
+          </div>
+        )}
 
         {/* Pro badge */}
         {profile?.is_pro && (

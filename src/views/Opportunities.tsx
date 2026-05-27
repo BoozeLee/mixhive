@@ -241,7 +241,7 @@ export function Opportunities() {
               </div>
 
               <div style={{ display: 'flex', gap: space[2], flexWrap: 'wrap', marginTop: 'auto' }}>
-                {opp.tags.slice(0, 4).map(tag => (
+                {opp.tags.slice(0, 4).map((tag: string) => (
                   <span key={tag} style={{ color: colors.text.dim, fontSize: fontSize.xs, border: `1px solid ${colors.border}`, borderRadius: radius.pill, padding: `${space[1]}px ${space[3]}px` }}>
                     {tag}
                   </span>

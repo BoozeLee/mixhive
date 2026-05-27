@@ -65,14 +65,14 @@ Legend:
 - [x] `Claude` Build reusable AI suggestion card.
 - [x] `Claude` Add Apply action state.
 - [x] `Claude` Add Reject action state.
-- [ ] `Claude` Add Edit action state.
+- [x] `Claude` Add Edit action state.
 - [x] `Claude` Add Why/rationale action state.
 - [x] `Claude` Add Rate action state.
 - [x] `Claude` Build Agent Inbox skeleton route.
 - [x] `Claude` Build pending suggestions section.
 - [x] `Claude` Build creator tasks section.
-- [ ] `Claude` Add "AI is assistive, not autonomous" trust copy.
-- [ ] `Claude` Add no-AI-key fallback states in Profile Setup and Settings.
+- [x] `Claude` Add "AI is assistive, not autonomous" trust copy.
+- [x] `Claude` Add no-AI-key fallback states in Profile Setup and Settings.
 
 ### Acceptance
 
@@ -99,8 +99,8 @@ Legend:
 
 ### UI
 
-- [ ] `Claude` Add Profile Coach panel to dashboard.
-- [ ] `Claude` Add Profile Coach panel or nudge to Profile Setup.
+- [x] `Claude` Add Profile Coach panel to dashboard.
+- [x] `Claude` Add Profile Coach panel or nudge to Profile Setup.
 - [x] `Claude` Add Generate EPK flow.
 - [ ] `Claude` Add Improve Profile flow.
 - [ ] `Claude` Add Apply Suggestion flow.

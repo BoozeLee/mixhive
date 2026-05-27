@@ -171,33 +171,19 @@ export async function getFeed(userId: string, limit = 20, cursor?: FeedCursor): 
   }
 }
 
-export async function getTrending(limit = 20, cursor?: TrendingCursor, genre?: string): Promise<TrendingResult> {
+export async function getTrending(limit = 20, cursor?: TrendingCursor, _genre?: string): Promise<TrendingResult> {
   if (!isSupabaseConfigured) return emptyTrendingResult()
   
-  // Check cache first
-  const cacheKey = genre || 'all'
-  const cachedTrending = await redisCache.getTrendingCache(cacheKey)
-  
-  if (cachedTrending) {
-    return {
-      data: cachedTrending.data,
-      cursor: cachedTrending.cursor ? { score: 0, id: cachedTrending.cursor } : null
-    }
-  }
-
   const { data } = await supabase.rpc('get_trending_cursor', {
     p_limit: limit,
     p_cursor_score: cursor?.score ?? null,
     p_cursor_id: cursor?.id ?? null
   })
   const dt = data || []
-  
-  // Cache the result
-  await redisCache.setTrendingCache(cacheKey, dt, cursor?.id || null)
-  
+  const last = dt[dt.length - 1]
   return {
     data: dt,
-    cursor: dt.length === limit ? { score: dt[dt.length - 1].score ?? 0, id: dt[dt.length - 1].id } : null
+    cursor: dt.length === limit && last ? { score: last.score ?? 0, id: last.id } : null
   }
 }
 
@@ -247,37 +233,6 @@ export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
     .insert(mix)
     .select()
     .single()
-  
-  // Broadcast real-time mix upload event
-  if (data) {
-    try {
-      // Trigger WebSocket event for real-time updates
-      const wsUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://your-domain.com/api/websocket' 
-        : 'http://localhost:3001/api/websocket'
-      
-      await fetch(wsUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'mix:upload',
-          data: { mix: data }
-        })
-      })
-      
-      // Also broadcast via Supabase realtime
-      const { channel } = supabase
-      if (channel) {
-        channel.send({
-          type: 'broadcast',
-          event: 'mix_upload',
-          payload: { mix: data }
-        })
-      }
-    } catch (error) {
-      console.error('Failed to broadcast mix upload:', error)
-    }
-  }
   
   return data
 }
@@ -817,7 +772,7 @@ export async function getProfileAnalytics(profileId: string, mixes?: Mix[]): Pro
     .filter(time => Number.isFinite(time))
     .sort((a, b) => a - b)
   const uploadFrequencyDays = createdTimes.length > 1
-    ? Math.round(((createdTimes[createdTimes.length - 1] - createdTimes[0]) / (createdTimes.length - 1)) / 86400000)
+    ? Math.round(((createdTimes[createdTimes.length - 1]! - createdTimes[0]!) / (createdTimes.length - 1)) / 86400000)
     : null
 
   let weeklyEvents: Array<{ label: string; count: number }> = []
@@ -958,35 +913,15 @@ export async function getHiveStats(): Promise<HiveStats> {
   const empty: HiveStats = { mixes_total: 0, voices_total: 0, plays_total: 0, live_now: 0 }
   if (!isSupabaseConfigured) return empty
   
-  // Check cache first
-  const cachedStats = await redisCache.getUserStatsCache('global')
-  if (cachedStats) {
-    return {
-      mixes_total: cachedStats.totalMixes,
-      voices_total: cachedStats.totalUsers,
-      plays_total: cachedStats.totalPlays,
-      live_now: cachedStats.liveNow
-    }
-  }
-
   const { data, error } = await supabase.rpc('get_hive_stats')
   if (error || !data) return empty
   const row = Array.isArray(data) ? data[0] : data
-  
-  const stats: HiveStats = {
+  return {
     mixes_total:  Number(row?.mixes_total  ?? 0),
     voices_total: Number(row?.voices_total ?? 0),
     plays_total:  Number(row?.plays_total  ?? 0),
     live_now:     Number(row?.live_now     ?? 0),
   }
-  
-  // Cache the result
-  await redisCache.setUserStatsCache('global', {
-    ...stats,
-    timestamp: Date.now()
-  })
-  
-  return stats
 }
 
 // --- Buzz ---
@@ -1010,12 +945,12 @@ export async function createBuzz(
   authorId: string,
   body: string,
   opts: {
-    imageFile?: File
-    audioFile?: File
-    videoFile?: File
-    codeSnippet?: string
-    codeLanguage?: string
-    attachedMixId?: string
+    imageFile?: File | undefined
+    audioFile?: File | undefined
+    videoFile?: File | undefined
+    codeSnippet?: string | undefined
+    codeLanguage?: string | undefined
+    attachedMixId?: string | undefined
   } = {}
 ): Promise<Buzz | null> {
   if (!isSupabaseConfigured) return null
@@ -1080,9 +1015,10 @@ export async function getUserBuzzes(userId: string, limit = 20, cursor?: FeedCur
     ...(r as unknown as FeedBuzz),
     author: (r as Record<string, unknown>)['profiles'] as Profile,
   }))
+  const lastRow = rows[rows.length - 1]
   return {
     data: rows,
-    cursor: rows.length === limit ? { created_at: rows[rows.length - 1].created_at, id: rows[rows.length - 1].id } : null,
+    cursor: rows.length === limit && lastRow ? { created_at: lastRow.created_at, id: lastRow.id } : null,
   }
 }
 
@@ -1109,9 +1045,10 @@ export async function getBuzzFeed(userId: string, limit = 20, cursor?: FeedCurso
         feed_event_id: r['id'] as string,
       }
     })
+  const lastRow = rows[rows.length - 1]
   return {
     data: rows,
-    cursor: rows.length === limit ? { created_at: rows[rows.length - 1].created_at, id: rows[rows.length - 1].id } : null,
+    cursor: rows.length === limit && lastRow ? { created_at: lastRow.created_at, id: lastRow.id } : null,
   }
 }
 
@@ -1131,9 +1068,10 @@ export async function getLatestBuzzes(limit = 20, cursor?: FeedCursor): Promise<
     ...(r as unknown as FeedBuzz),
     author: (r as Record<string, unknown>)['profiles'] as Profile,
   }))
+  const lastRow = rows[rows.length - 1]
   return {
     data: rows,
-    cursor: rows.length === limit ? { created_at: rows[rows.length - 1].created_at, id: rows[rows.length - 1].id } : null,
+    cursor: rows.length === limit && lastRow ? { created_at: lastRow.created_at, id: lastRow.id } : null,
   }
 }
 
@@ -1192,9 +1130,10 @@ export async function getBuzzReplies(buzzId: string, limit = 20, cursor?: FeedCu
     ...(r as unknown as FeedBuzz),
     author: (r as Record<string, unknown>)['profiles'] as Profile,
   }))
+  const lastRow = rows[rows.length - 1]
   return {
     data: rows,
-    cursor: rows.length === limit ? { created_at: rows[rows.length - 1].created_at, id: rows[rows.length - 1].id } : null,
+    cursor: rows.length === limit && lastRow ? { created_at: lastRow.created_at, id: lastRow.id } : null,
   }
 }
 

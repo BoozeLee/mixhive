@@ -138,7 +138,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
     )
   }
 
-  const avatarInitial = (profile?.display_name || profile?.username || '?')[0].toUpperCase()
+  const avatarInitial = (profile?.display_name || profile?.username || '?').charAt(0).toUpperCase()
   const countColor = remaining <= 0 ? colors.danger : remaining <= 20 ? colors.warning : colors.text.dim
 
   return (

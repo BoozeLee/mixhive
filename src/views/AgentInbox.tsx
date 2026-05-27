@@ -256,12 +256,27 @@ export function AgentInbox() {
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: `${space[9]}px ${space[8]}px` }}>
       {/* Page header */}
-      <div style={{ marginBottom: space[9] }}>
+      <div style={{ marginBottom: space[7] }}>
         <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold, color: colors.text.primary }}>
           Agent Inbox
         </h1>
         <p style={{ margin: `${space[3]}px 0 0`, fontSize: fontSize.base, color: colors.text.muted }}>
           Your AI suggestions, tasks, and matched opportunities.
+        </p>
+      </div>
+
+      {/* Trust statement */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: space[5],
+        padding: `${space[4]}px ${space[6]}px`,
+        marginBottom: space[8],
+        borderRadius: radius.md,
+        background: 'rgba(255,216,74,0.04)',
+        border: `1px solid ${colors.accentMuted}`,
+      }}>
+        <span style={{ flexShrink: 0, fontSize: 14, color: colors.accent }}>⬡</span>
+        <p style={{ margin: 0, fontSize: fontSize.xs, color: colors.text.dim, lineHeight: 1.5 }}>
+          AI is <strong style={{ color: colors.text.muted }}>assistive, not autonomous</strong> — every suggestion requires your review and approval before it changes anything on your profile.
         </p>
       </div>
 

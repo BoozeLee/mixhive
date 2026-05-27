@@ -19,15 +19,15 @@ export interface EnhancedFeedItem {
   timestamp: string
   score?: number
   metadata?: {
-    isNew?: boolean
-    isTrending?: boolean
-    genre?: string
+    isNew?: boolean | undefined
+    isTrending?: boolean | undefined
+    genre?: string | undefined
     dj?: {
       id: string
       username: string
       display_name: string
       avatar_url: string
-    }
+    } | undefined
   }
 }
 
@@ -67,37 +67,44 @@ class FeedService {
     let hasMore = false
 
     switch (type) {
-      case 'trending':
-        const trendingResult = await this.getTrendingWithCache(genre, limit, cursor as TrendingCursor)
+      case 'trending': {
+        const trendingCursor = cursor ? (JSON.parse(cursor) as TrendingCursor) : undefined
+        const trendingResult = await this.getTrendingWithCache(genre, limit, trendingCursor)
         freshData = trendingResult.data.map(this.enhanceFeedItem)
-        newCursor = trendingResult.cursor
+        newCursor = trendingResult.cursor ? JSON.stringify(trendingResult.cursor) : null
         hasMore = !!trendingResult.cursor
         break
+      }
 
-      case 'latest':
-        const latestResult = await this.getRecentMixesWithCache(limit, cursor as FeedCursor)
+      case 'latest': {
+        const latestCursor = cursor ? (JSON.parse(cursor) as FeedCursor) : undefined
+        const latestResult = await this.getRecentMixesWithCache(limit, latestCursor)
         freshData = latestResult.data.map(this.enhanceFeedItem)
-        newCursor = latestResult.cursor
+        newCursor = latestResult.cursor ? JSON.stringify(latestResult.cursor) : null
         hasMore = !!latestResult.cursor
         break
+      }
 
-      case 'following':
+      case 'following': {
         if (!userId) {
           throw new Error('User ID required for following feed')
         }
-        const followingResult = await this.getMixedFollowingFeedWithCache(userId, limit, cursor as FeedCursor)
-        freshData = followingResult.data.map(item => ({
-          ...this.enhanceFeedItem(item.data),
-          type: item.type
-        }))
-        newCursor = followingResult.mixCursor || followingResult.buzzCursor
+        const followingCursor = cursor ? (JSON.parse(cursor) as FeedCursor) : undefined
+        const followingResult = await this.getMixedFollowingFeedWithCache(userId, limit, followingCursor)
+        freshData = followingResult.data.map(item => {
+          if (item.type === 'mix') return this.enhanceFeedItem(item.data)
+          return { id: item.data.id, type: 'buzz' as const, data: item.data, timestamp: item.data.created_at }
+        })
+        newCursor = followingResult.mixCursor ? JSON.stringify(followingResult.mixCursor) : followingResult.buzzCursor ? JSON.stringify(followingResult.buzzCursor) : null
         hasMore = !!(followingResult.mixCursor || followingResult.buzzCursor)
         break
+      }
 
-      case 'discover':
+      case 'discover': {
         const discoverResult = await this.getDiscoverFeedWithCache(userId, genre, limit, cursor)
         freshData = discoverResult
         break
+      }
 
       default:
         throw new Error(`Unknown feed type: ${type}`)
@@ -165,24 +172,19 @@ class FeedService {
     return getMixedFollowingFeed(userId, limit, cursor)
   }
 
-  private async getDiscoverFeedWithCache(userId: string, genre?: string, limit = 20, cursor?: string) {
-    // Combine trending and recommended mixes
+  private async getDiscoverFeedWithCache(_userId: string | undefined, genre?: string, limit = 20, _cursor?: string) {
     const [trending, recommended] = await Promise.all([
       getTrending(limit / 2, undefined, genre),
-      this.getRecommendedMixes(userId, limit / 2)
+      this.getRecommendedMixes(limit / 2)
     ])
-
-    // Remove duplicates and merge
     const allMixes = [...trending.data, ...recommended]
     const uniqueMixes = this.deduplicateMixes(allMixes)
-
-    return uniqueMixes.slice(0, limit).map(this.enhanceFeedItem)
+    return uniqueMixes.slice(0, limit).map(m => this.enhanceFeedItem(m))
   }
 
-  private async getRecommendedMixes(userId: string, limit = 10): Promise<FeedMix[]> {
-    // This would use a recommendation algorithm in a real implementation
-    // For now, return trending mixes with a different scoring system
-    return getTrending(limit)
+  private async getRecommendedMixes(limit = 10): Promise<FeedMix[]> {
+    const result = await getTrending(limit)
+    return result.data
   }
 
   private deduplicateMixes(mixes: FeedMix[]): FeedMix[] {
@@ -197,7 +199,7 @@ class FeedService {
   private enhanceFeedItem(mix: FeedMix): EnhancedFeedItem {
     const now = new Date()
     const createdAt = new Date(mix.created_at)
-    const isNew = (now.getTime() - createdAt.getTime()) < 24 * 60 * 60 * 1000 // 24 hours
+    const isNew = (now.getTime() - createdAt.getTime()) < 24 * 60 * 60 * 1000
 
     return {
       id: mix.id,
@@ -208,12 +210,12 @@ class FeedService {
       metadata: {
         isNew,
         isTrending: this.isTrending(mix),
-        genre: mix.genre_name,
+        genre: mix.genre_name ?? undefined,
         dj: mix.dj ? {
           id: mix.dj.id,
           username: mix.dj.username,
-          display_name: mix.dj.display_name || mix.dj.username,
-          avatar_url: mix.dj.avatar_url
+          display_name: mix.dj.display_name ?? mix.dj.username,
+          avatar_url: mix.dj.avatar_url ?? ''
         } : undefined
       }
     }

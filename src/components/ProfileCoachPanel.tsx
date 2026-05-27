@@ -6,18 +6,18 @@ import { AISuggestionCard } from './AISuggestionCard'
 import type { AISuggestion } from '../lib/types'
 import { colors, space, radius, fontSize, fontWeight, transition } from '../styles/tokens'
 
-async function fetchSuggestions(userId: string): Promise<AISuggestion[]> {
+async function fetchSuggestions(userId: string, limit: number): Promise<AISuggestion[]> {
   const { data } = await supabase
     .from('ai_suggestions')
     .select('*')
     .eq('owner_id', userId)
     .eq('suggestion_type', 'profile_coach')
     .order('created_at', { ascending: false })
-    .limit(3)
+    .limit(limit)
   return (data ?? []) as AISuggestion[]
 }
 
-async function callProfileCoach(token: string): Promise<AISuggestion | null> {
+export async function callProfileCoach(token: string): Promise<AISuggestion | null> {
   const res = await fetch('/api/ai/profile-coach', {
     method: 'POST',
     headers: {
@@ -46,7 +46,64 @@ async function patchSuggestion(token: string, id: string, action: 'apply' | 'rej
   })
 }
 
-export function ProfileCoachPanel() {
+function CoachScoreSummary({ suggestion }: { suggestion: AISuggestion }) {
+  const p = suggestion.payload
+  const score = p.score as number | undefined
+  const headline = p.headline as string | undefined
+  const suggestions = p.suggestions as Array<{ field: string; issue: string; suggestion: string; priority: number }> | undefined
+
+  const scoreColor = score === undefined ? colors.text.muted
+    : score >= 70 ? colors.accent
+    : score >= 40 ? colors.warning
+    : colors.danger
+
+  const priority1 = suggestions?.filter(s => s.priority === 1) ?? []
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: space[5] }}>
+      {score !== undefined && (
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: space[4] }}>
+          <span style={{ fontSize: fontSize['3xl'], fontWeight: fontWeight.bold, color: scoreColor, lineHeight: 1 }}>
+            {score}
+          </span>
+          <span style={{ fontSize: fontSize.sm, color: colors.text.dim, textTransform: 'uppercase', letterSpacing: 1 }}>
+            /100{headline ? ` · ${headline}` : ''}
+          </span>
+        </div>
+      )}
+
+      {priority1.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>
+          {priority1.slice(0, 3).map((s, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: space[4] }}>
+              <span style={{
+                flexShrink: 0,
+                fontSize: fontSize.xs, fontWeight: fontWeight.bold,
+                color: colors.danger,
+                padding: `${space[1]}px ${space[3]}px`,
+                borderRadius: radius.pill,
+                background: 'rgba(255,85,85,0.08)',
+                border: '1px solid rgba(255,85,85,0.2)',
+                whiteSpace: 'nowrap',
+              }}>
+                {s.field}
+              </span>
+              <span style={{ fontSize: fontSize.sm, color: colors.text.muted, lineHeight: 1.5 }}>
+                {s.suggestion}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+interface ProfileCoachPanelProps {
+  compact?: boolean
+}
+
+export function ProfileCoachPanel({ compact = false }: ProfileCoachPanelProps) {
   const { user } = useAuth()
   const [suggestions, setSuggestions] = useState<AISuggestion[]>([])
   const [loading, setLoading] = useState(true)
@@ -57,11 +114,11 @@ export function ProfileCoachPanel() {
   useEffect(() => {
     if (!user) return
     setLoading(true)
-    fetchSuggestions(user.id)
+    fetchSuggestions(user.id, compact ? 1 : 3)
       .then(setSuggestions)
       .catch(() => setError('Could not load suggestions'))
       .finally(() => setLoading(false))
-  }, [user])
+  }, [user, compact])
 
   async function generate() {
     if (!user) return
@@ -78,7 +135,7 @@ export function ProfileCoachPanel() {
         setNoKey(true)
         return
       }
-      setSuggestions(prev => [suggestion, ...prev].slice(0, 3))
+      setSuggestions(prev => [suggestion, ...prev].slice(0, compact ? 1 : 3))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Generation failed')
     } finally {
@@ -164,6 +221,7 @@ export function ProfileCoachPanel() {
             textTransform: 'uppercase',
             letterSpacing: 0.5,
             cursor: generating ? 'default' : 'pointer',
+            border: 'none',
             transition: transition.base,
             whiteSpace: 'nowrap',
           }}
@@ -198,7 +256,7 @@ export function ProfileCoachPanel() {
               textDecoration: 'underline', textDecorationColor: colors.accentMuted,
             }}
           >
-            Settings → AI & Creativity →
+            Settings → AI &amp; Creativity →
           </Link>
         </div>
       )}
@@ -219,8 +277,26 @@ export function ProfileCoachPanel() {
         </div>
       )}
 
-      {/* Suggestion cards */}
-      {suggestions.map(s => (
+      {/* Compact score summary */}
+      {compact && !loading && suggestions.length > 0 && (
+        <>
+          <CoachScoreSummary suggestion={suggestions[0]} />
+          <Link
+            to="/agents/inbox"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: space[2],
+              fontSize: fontSize.sm, color: colors.accent,
+              textDecoration: 'none', fontWeight: fontWeight.medium,
+              alignSelf: 'flex-start',
+            }}
+          >
+            See full report in Agent Inbox →
+          </Link>
+        </>
+      )}
+
+      {/* Full suggestion cards */}
+      {!compact && suggestions.map(s => (
         <AISuggestionCard
           key={s.id}
           suggestion={s}

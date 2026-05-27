@@ -80,7 +80,7 @@ export interface AgentSuggestion {
 
 export interface AgentTask {
   title: string
-  due_date?: string
+  due_date?: string | undefined
   priority: 'low' | 'medium' | 'high'
   agent_id: AgentId
 }
@@ -89,7 +89,7 @@ export interface AgentNotification {
   channel: 'in_app' | 'email' | 'push'
   subject: string
   body: string
-  cta_url?: string
+  cta_url?: string | undefined
 }
 
 export interface ToolCatalogue {

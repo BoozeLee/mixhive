@@ -86,7 +86,7 @@ export function BuzzDetail() {
                 <div style={{ flexShrink: 0, width: 36, height: 36, borderRadius: '50%', background: colors.accentFaint, border: `2px solid ${colors.border}`, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: fontWeight.bold, color: colors.accent, fontSize: fontSize.base }}>
                   {profile?.avatar_url
                     ? <img src={profile.avatar_url} alt="You" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : (profile?.display_name || profile?.username || '?')[0].toUpperCase()}
+                    : (profile?.display_name || profile?.username || '?').charAt(0).toUpperCase()}
                 </div>
                 <div style={{ flex: 1 }}>
                   <textarea

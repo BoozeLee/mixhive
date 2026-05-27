@@ -4,7 +4,7 @@ import { colors, radius, fontSize, fontWeight, transition } from '../../styles/t
 interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string
   help?: ReactNode
-  error?: string
+  error?: string | undefined
   /** Stash file-specific accept default for callers. */
   accept?: string
 }

@@ -4,7 +4,7 @@ import { colors, radius, fontSize, fontWeight, transition } from '../../styles/t
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   help?: ReactNode
-  error?: string
+  error?: string | undefined
   /** Hide the label visually but keep it accessible to screen readers. */
   hideLabel?: boolean
 }

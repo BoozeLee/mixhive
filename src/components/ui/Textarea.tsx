@@ -4,7 +4,7 @@ import { colors, radius, fontSize, fontWeight, transition } from '../../styles/t
 interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   help?: ReactNode
-  error?: string
+  error?: string | undefined
   hideLabel?: boolean
 }
 

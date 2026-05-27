@@ -138,7 +138,7 @@ export function Dashboard() {
       </section>
 
       <section style={{ marginBottom: space[10] }}>
-        <ProfileCoachPanel />
+        <ProfileCoachPanel compact />
       </section>
 
       <section style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.25fr) minmax(280px, 0.75fr)', gap: space[8], alignItems: 'start' }}>

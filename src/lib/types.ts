@@ -459,3 +459,48 @@ export interface PressKit {
   created_at: string
   updated_at: string
 }
+
+export type AudioAnalysisStatus = 'pending' | 'processing' | 'complete' | 'failed'
+
+export interface AudioStructureSection {
+  label: string
+  start_sec: number
+  end_sec: number
+  energy: number
+}
+
+export interface AudioFeature {
+  id: string
+  mix_id: string
+  status: AudioAnalysisStatus
+  bpm: number | null
+  musical_key: string | null
+  camelot: string | null
+  mood: string | null
+  energy: number | null
+  danceability: number | null
+  structure_json: {
+    sections?: AudioStructureSection[]
+    summary?: string
+    [key: string]: unknown
+  }
+  source: string
+  model: string | null
+  confidence: number | null
+  error_message: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface MixTrack {
+  id: string
+  mix_id: string
+  title: string | null
+  artist: string | null
+  label: string | null
+  start_sec: number
+  end_sec: number | null
+  confidence: number | null
+  source: string
+  created_at: string
+}

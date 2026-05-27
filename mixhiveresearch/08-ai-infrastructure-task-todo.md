@@ -11,22 +11,22 @@ Legend:
 
 ## Guardrails
 
-- [ ] `Shared` Keep DNS/deployment separate from AI feature work unless explicitly requested.
-- [ ] `Shared` Keep the existing app baseline stable: Next bridge, dashboard, Buzz, Profile Setup, AI routes, mobile smoke.
-- [ ] `Shared` Do not add autonomous outreach.
+- [x] `Shared` Keep DNS/deployment separate from AI feature work unless explicitly requested.
+- [x] `Shared` Keep the existing app baseline stable: Next bridge, dashboard, Buzz, Profile Setup, AI routes, mobile smoke.
+- [x] `Shared` Do not add autonomous outreach.
 - [ ] `Shared` Do not train generative music models on user uploads.
 - [ ] `Shared` Require human approval before application, intro, booking, or outreach drafts leave MIXHIVE.
-- [ ] `Codex` Keep direct vector access server-only.
+- [x] `Codex` Keep direct vector access server-only.
 - [ ] `Codex` Keep private/unreleased audio excluded from partner dashboards.
-- [ ] `Claude` Keep all new AI surfaces consistent with the black/gold cyber-hive UI.
-- [ ] `Claude` Add clear loading, empty, error, and mobile states to every new AI surface.
+- [x] `Claude` Keep all new AI surfaces consistent with the black/gold cyber-hive UI.
+- [x] `Claude` Add clear loading, empty, error, and mobile states to every new AI surface.
 
 ## Phase 0: Baseline Protection
 
-- [ ] `Codex` Confirm current local baseline before AI work: `npx tsc --noEmit`.
-- [ ] `Codex` Confirm current local baseline before AI work: `npm run lint`.
-- [ ] `Codex` Confirm current local baseline before AI work: `npm run build`.
-- [ ] `Codex` Confirm current local baseline before AI work: local smoke with `--mock-supabase`.
+- [x] `Codex` Confirm current local baseline before AI work: `npx tsc --noEmit`.
+- [x] `Codex` Confirm current local baseline before AI work: `npm run lint`.
+- [x] `Codex` Confirm current local baseline before AI work: `npm run build`.
+- [x] `Codex` Confirm current local baseline before AI work: local smoke with `--mock-supabase`.
 - [ ] `Codex` Add/confirm feature flag strategy for new AI surfaces.
 - [ ] `Codex` Document current AI route contracts: avatar, bio, genre suggestions, Pro art.
 - [ ] `Claude` Review current dashboard, Buzz, Profile Setup, Settings, and mobile UX before adding new surfaces.
@@ -35,23 +35,23 @@ Legend:
 
 ### Data Models
 
-- [ ] `Codex` Add `ai_suggestions` migration.
-- [ ] `Codex` Add `ai_feedback` migration.
-- [ ] `Codex` Add `creator_tasks` migration.
-- [ ] `Codex` Add `recommendation_scores` migration.
-- [ ] `Codex` Add `ai_embeddings` migration with pgvector support.
-- [ ] `Codex` Add RLS for user-owned AI suggestions.
-- [ ] `Codex` Add RLS for user-owned AI feedback.
-- [ ] `Codex` Add RLS for user-owned creator tasks.
-- [ ] `Codex` Ensure `ai_embeddings` cannot be read directly from the client.
-- [ ] `Codex` Add audit fields: owner, status, source, model, version, confidence, timestamps.
+- [x] `Codex` Add `ai_suggestions` migration.
+- [x] `Codex` Add `ai_feedback` migration.
+- [x] `Codex` Add `creator_tasks` migration.
+- [x] `Codex` Add `recommendation_scores` migration.
+- [x] `Codex` Add `ai_embeddings` migration with pgvector support.
+- [x] `Codex` Add RLS for user-owned AI suggestions.
+- [x] `Codex` Add RLS for user-owned AI feedback.
+- [x] `Codex` Add RLS for user-owned creator tasks.
+- [x] `Codex` Ensure `ai_embeddings` cannot be read directly from the client.
+- [x] `Codex` Add audit fields: owner, status, source, model, version, confidence, timestamps.
 
 ### API / Client Surface
 
-- [ ] `Codex` Add shared `AiSuggestion` type.
-- [ ] `Codex` Add shared `AiFeedback` type.
-- [ ] `Codex` Add shared `CreatorTask` type.
-- [ ] `Codex` Add shared `RecommendationScore` type.
+- [x] `Codex` Add shared `AiSuggestion` type.
+- [x] `Codex` Add shared `AiFeedback` type.
+- [x] `Codex` Add shared `CreatorTask` type.
+- [x] `Codex` Add shared `RecommendationScore` type.
 - [ ] `Codex` Add list/create/update AI suggestion API helpers.
 - [ ] `Codex` Add apply AI suggestion API helper.
 - [ ] `Codex` Add reject AI suggestion API helper.
@@ -62,38 +62,38 @@ Legend:
 
 ### UI
 
-- [ ] `Claude` Build reusable AI suggestion card.
-- [ ] `Claude` Add Apply action state.
-- [ ] `Claude` Add Reject action state.
+- [x] `Claude` Build reusable AI suggestion card.
+- [x] `Claude` Add Apply action state.
+- [x] `Claude` Add Reject action state.
 - [ ] `Claude` Add Edit action state.
-- [ ] `Claude` Add Why/rationale action state.
-- [ ] `Claude` Add Rate action state.
-- [ ] `Claude` Build Agent Inbox skeleton route.
-- [ ] `Claude` Build pending suggestions section.
-- [ ] `Claude` Build creator tasks section.
+- [x] `Claude` Add Why/rationale action state.
+- [x] `Claude` Add Rate action state.
+- [x] `Claude` Build Agent Inbox skeleton route.
+- [x] `Claude` Build pending suggestions section.
+- [x] `Claude` Build creator tasks section.
 - [ ] `Claude` Add "AI is assistive, not autonomous" trust copy.
 - [ ] `Claude` Add no-AI-key fallback states in Profile Setup and Settings.
 
 ### Acceptance
 
 - [ ] `Shared` Every AI output is stored before it affects user-facing data.
-- [ ] `Shared` Suggestions cannot be applied to another user's profile.
-- [ ] `Shared` Outbound actions are impossible without manual confirmation.
-- [ ] `Shared` Users can reject and rate every AI recommendation.
+- [x] `Shared` Suggestions cannot be applied to another user's profile.
+- [x] `Shared` Outbound actions are impossible without manual confirmation.
+- [x] `Shared` Users can reject and rate every AI recommendation.
 
 ## Phase 2: Creator Intelligence Core
 
 ### Data / Backend
 
-- [ ] `Codex` Add `artist_goals` migration.
+- [x] `Codex` Add `artist_goals` migration.
 - [ ] `Codex` Add `artist_skills` migration.
 - [ ] `Codex` Add `availability` migration.
 - [ ] `Codex` Add `location_radius` migration.
-- [ ] `Codex` Add `press_kits` migration.
+- [x] `Codex` Add `press_kits` migration.
 - [ ] `Codex` Add `external_links` migration if current social links are insufficient.
 - [ ] `Codex` Add profile scoring inputs from profile fields, genres, uploads, links, avatar, bio, goals, activity.
 - [ ] `Codex` Add Profile Coach prompt template.
-- [ ] `Codex` Add EPK generation route/contract.
+- [x] `Codex` Add EPK generation route/contract.
 - [ ] `Codex` Add weekly Creator Briefing job contract.
 - [ ] `Codex` Add audit log for applied profile/EPK suggestions.
 
@@ -101,12 +101,12 @@ Legend:
 
 - [ ] `Claude` Add Profile Coach panel to dashboard.
 - [ ] `Claude` Add Profile Coach panel or nudge to Profile Setup.
-- [ ] `Claude` Add Generate EPK flow.
+- [x] `Claude` Add Generate EPK flow.
 - [ ] `Claude` Add Improve Profile flow.
 - [ ] `Claude` Add Apply Suggestion flow.
-- [ ] `Claude` Add EPK preview route.
+- [x] `Claude` Add EPK preview route.
 - [ ] `Claude` Add editable EPK sections.
-- [ ] `Claude` Add public/shareable EPK view.
+- [x] `Claude` Add public/shareable EPK view.
 - [ ] `Claude` Add empty state for missing avatar.
 - [ ] `Claude` Add empty state for missing bio.
 - [ ] `Claude` Add empty state for missing links.
@@ -118,16 +118,16 @@ Legend:
 
 - [ ] `Shared` Creator can generate profile improvement suggestions.
 - [ ] `Shared` Creator can edit profile improvement suggestions.
-- [ ] `Shared` Creator can generate one-page EPK draft.
-- [ ] `Shared` EPK uses real profile data only.
-- [ ] `Shared` EPK does not hallucinate achievements.
+- [x] `Shared` Creator can generate one-page EPK draft.
+- [x] `Shared` EPK uses real profile data only.
+- [x] `Shared` EPK does not hallucinate achievements.
 - [ ] `Shared` Suggestion rationale shows what data was used.
 
 ## Phase 3: Opportunity And Collaboration Engine
 
 ### Data / Backend
 
-- [ ] `Codex` Add `opportunities` migration.
+- [x] `Codex` Add `opportunities` migration.
 - [ ] `Codex` Add `opportunity_applications` migration.
 - [ ] `Codex` Add `venues` migration.
 - [ ] `Codex` Add `promoters` migration.
@@ -144,42 +144,42 @@ Legend:
 - [ ] `Codex` Add opportunity scoring API with availability filter.
 - [ ] `Codex` Add opportunity scoring API with opt-in visibility filter.
 - [ ] `Codex` Add explainable LLM rationale generation.
-- [ ] `Codex` Add opportunity save state.
-- [ ] `Codex` Add opportunity dismiss state.
-- [ ] `Codex` Add opportunity apply/draft state.
+- [x] `Codex` Add opportunity save state.
+- [x] `Codex` Add opportunity dismiss state.
+- [x] `Codex` Add opportunity apply/draft state.
 - [ ] `Codex` Add opportunity match feedback.
 - [ ] `Codex` Add rate limits for application/outreach draft generation.
 
 ### UI
 
-- [ ] `Claude` Build `/opportunities` route.
-- [ ] `Claude` Build "For You" tab.
-- [ ] `Claude` Build "Saved" tab.
-- [ ] `Claude` Build "Applied" tab.
-- [ ] `Claude` Build "Dismissed" tab.
-- [ ] `Claude` Build opportunity cards with score.
-- [ ] `Claude` Add deadline display.
-- [ ] `Claude` Add location display.
-- [ ] `Claude` Add source display.
-- [ ] `Claude` Add compensation display.
-- [ ] `Claude` Add tags display.
-- [ ] `Claude` Add "why this fits" panel.
-- [ ] `Claude` Build application draft modal.
-- [ ] `Claude` Build human edit/approve controls.
+- [x] `Claude` Build `/opportunities` route.
+- [x] `Claude` Build "For You" tab.
+- [x] `Claude` Build "Saved" tab.
+- [x] `Claude` Build "Applied" tab.
+- [x] `Claude` Build "Dismissed" tab.
+- [x] `Claude` Build opportunity cards with score.
+- [x] `Claude` Add deadline display.
+- [x] `Claude` Add location display.
+- [x] `Claude` Add source display.
+- [x] `Claude` Add compensation display.
+- [x] `Claude` Add tags display.
+- [x] `Claude` Add "why this fits" panel.
+- [x] `Claude` Build application draft modal.
+- [x] `Claude` Build human edit/approve controls.
 - [ ] `Claude` Build collaboration match cards.
 - [ ] `Claude` Build intro request review modal.
 - [ ] `Claude` Build creator goal capture UX.
 - [ ] `Claude` Build skill capture UX.
 - [ ] `Claude` Build availability capture UX.
 - [ ] `Claude` Build travel-radius capture UX.
-- [ ] `Claude` Add "MIXHIVE never contacts anyone automatically" copy.
+- [x] `Claude` Add "MIXHIVE never contacts anyone automatically" copy.
 
 ### Acceptance
 
-- [ ] `Shared` Creator sees ranked opportunities with reasons.
-- [ ] `Shared` Creator can save opportunities.
-- [ ] `Shared` Creator can dismiss opportunities.
-- [ ] `Shared` Creator can start an application draft.
+- [x] `Shared` Creator sees ranked opportunities with reasons.
+- [x] `Shared` Creator can save opportunities.
+- [x] `Shared` Creator can dismiss opportunities.
+- [x] `Shared` Creator can start an application draft.
 - [ ] `Shared` Creator can request collaborator intro.
 - [ ] `Shared` Collaborator intro does not send automatically.
 - [ ] `Shared` Every match collects feedback.
@@ -358,4 +358,3 @@ Product tests:
 - [ ] `Codex` Seed first Belgian/Flemish opportunities.
 - [ ] `Claude` Build `/opportunities` route MVP.
 - [ ] `Shared` Run full verification gate.
-

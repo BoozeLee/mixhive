@@ -12,14 +12,48 @@ Request body:
     }
 
 The function:
-  1. Authenticates the caller via the Supabase service-role key in the
-     Authorization header (only callable from inside our trusted
-     plane — either pg_net from Postgres, the Vercel cron, or our own
-     "test run" UI which proxies through the same endpoint).
+  1. Authenticates the caller via RUNTIME_SHARED_SECRET in Authorization.
   2. Loads the agent row from Supabase.
   3. Builds a restricted Lua runtime exposing only the MixHive stdlib.
   4. Calls the entry-point matching the trigger (e.g. on_follow(event)).
   5. Writes the result back via record_lua_agent_run().
+
+MixHive stdlib (mh.*):
+  -- Identity
+  mh.agent_id, mh.owner_id, mh.trigger
+
+  -- Logging
+  mh.print(...)
+
+  -- Read helpers
+  mh.get_mix(mix_id)
+  mh.get_profile(user_id)
+  mh.get_mixes_by_user(user_id, limit?)   -- up to 50
+  mh.get_followers(user_id, limit?)        -- up to 100
+  mh.get_following(user_id, limit?)        -- up to 100
+  mh.fetch_recent_mixes(limit?)            -- platform-wide, up to 50
+
+  -- Social write actions
+  mh.comment(mix_id, body)                -- max 1 comment per run, 1000 chars
+  mh.delete_comment(comment_id)           -- only your own comments on your own mixes
+  mh.post_buzz(text)                       -- max 1 buzz per run, 500 chars
+  mh.notify(message)                       -- in-app notification to yourself, 500 chars
+  mh.follow(user_id)                       -- idempotent
+  mh.unfollow(user_id)
+  mh.like(mix_id)                          -- idempotent
+  mh.unlike(mix_id)
+  mh.repost(mix_id)
+  mh.unrepost(mix_id)
+
+  -- Persistent key-value store (per-agent)
+  mh.kv_get(key)                           -- returns string or nil
+  mh.kv_set(key, value, ttl_seconds?)      -- ttl omitted = no expiry
+  mh.kv_del(key)
+  mh.kv_list()                             -- returns array of {key, value, expires_at}
+
+  -- Utilities
+  mh.json_encode(table)                    -- Lua table → JSON string
+  mh.json_decode(str)                      -- JSON string → Lua table
 
 The runtime is deliberately small and strict. The point is not to be a
 general-purpose Lua interpreter; the point is to give creators a safe
@@ -172,14 +206,36 @@ def _deny_attribute(_obj: Any, _name: str, _setting: bool = False) -> Any:
     raise AgentDeniedError(f"attribute access denied: {_name!r}")
 
 
+def _lua_table_to_python(lua_runtime: LuaRuntime, obj: Any) -> Any:
+    """Recursively convert a Lupa Lua table to plain Python dicts/lists."""
+    if obj is None:
+        return None
+    try:
+        items = list(obj.items())
+    except AttributeError:
+        return obj
+
+    # Distinguish arrays (integer 1-based keys) from maps.
+    if items and all(isinstance(k, int) for k, _ in items):
+        sorted_items = sorted(items, key=lambda kv: kv[0])
+        return [_lua_table_to_python(lua_runtime, v) for _, v in sorted_items]
+    return {str(k): _lua_table_to_python(lua_runtime, v) for k, v in items}
+
+
+def _python_to_lua_table(lua_runtime: LuaRuntime, obj: Any) -> Any:
+    """Convert a plain Python dict/list to a Lua table."""
+    if isinstance(obj, list):
+        return lua_runtime.table_from({i + 1: _python_to_lua_table(lua_runtime, v) for i, v in enumerate(obj)})
+    if isinstance(obj, dict):
+        return lua_runtime.table_from({k: _python_to_lua_table(lua_runtime, v) for k, v in obj.items()})
+    return obj
+
+
 def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
     """Construct a fresh Lupa runtime with the MixHive stdlib installed."""
     # register_eval=False         — blocks load() / loadstring()
     # register_builtins=False     — keeps Python builtins out of Lua
     # attribute_filter=_deny      — blocks Lua → Python attribute fishing
-    # attribute_handlers          — belt-and-braces: ensures no host
-    #                               attribute reads/writes succeed even
-    #                               if Lupa regresses the filter
     lua = LuaRuntime(
         unpack_returned_tuples=True,
         register_eval=False,
@@ -202,106 +258,95 @@ def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
     )
 
     owner_id: str = agent["owner_id"]
+    agent_id: str = agent["id"]
     client_owner = _client(actor_user_id=owner_id)
+    client_svc = _client()  # service-role only (for KV writes, buzz posting)
+
+    # Per-run action counters — enforce hard single-run limits.
+    _comment_count = [0]
+    _buzz_count = [0]
+
+    # -----------------------------------------------------------------
+    # Logging
+    # -----------------------------------------------------------------
 
     def lua_print(*args: Any) -> None:
         line = "\t".join(str(a) for a in args)
         stdout.append(line)
-        if sum(len(l) for l in stdout) > 8000:
+        if sum(len(line) for line in stdout) > 8000:
             raise AgentDeniedError("stdout cap exceeded (8000 chars)")
 
-    def get_mix(mix_id: str) -> dict[str, Any] | None:
+    # -----------------------------------------------------------------
+    # Read helpers
+    # -----------------------------------------------------------------
+
+    def get_mix(mix_id: str) -> Any:
         r = client_owner.get(
             _rest("/rest/v1/mixes"),
             params={"id": f"eq.{mix_id}", "select": "*", "limit": 1},
         )
         r.raise_for_status()
         rows = r.json()
-        return rows[0] if rows else None
+        if not rows:
+            return None
+        return _python_to_lua_table(lua, rows[0])
 
-    def get_profile(user_id: str) -> dict[str, Any] | None:
+    def get_profile(user_id: str) -> Any:
         r = client_owner.get(
             _rest("/rest/v1/profiles"),
             params={"id": f"eq.{user_id}", "select": "*", "limit": 1},
         )
         r.raise_for_status()
         rows = r.json()
-        return rows[0] if rows else None
+        if not rows:
+            return None
+        return _python_to_lua_table(lua, rows[0])
 
-    def comment(mix_id: str, body: str) -> dict[str, Any]:
-        body = str(body).strip()
-        if not body:
-            raise AgentDeniedError("comment body must be non-empty")
-        if len(body) > 1000:
-            raise AgentDeniedError("agent comments capped at 1000 chars")
-        r = client_owner.post(
-            _rest("/rest/v1/comments"),
-            json={"mix_id": mix_id, "user_id": owner_id, "body": body},
-            headers={**_service_headers(), "Prefer": "return=representation"},
+    def get_mixes_by_user(user_id: str, limit: int = 10) -> Any:
+        n = max(1, min(int(limit), 50))
+        r = client_owner.get(
+            _rest("/rest/v1/mixes"),
+            params={
+                "dj_id": f"eq.{user_id}",
+                "published": "eq.true",
+                "select": "id,title,dj_id,created_at,play_count,like_count",
+                "order": "created_at.desc",
+                "limit": str(n),
+            },
         )
         r.raise_for_status()
-        return r.json()[0]
+        rows = r.json()
+        return _python_to_lua_table(lua, rows)
 
-    def notify(message: str) -> None:
-        """Push a 'mention'-type notification at the agent's owner —
-        used by agents to surface results back to the user."""
-        message = str(message)[:500]
-        client_owner.post(
-            _rest("/rest/v1/notifications"),
-            json={
-                "user_id": owner_id,
-                "actor_id": owner_id,
-                "type": "mention",
-                "data": {"source": "lua_agent", "agent_id": agent["id"], "message": message},
+    def get_followers(user_id: str, limit: int = 50) -> Any:
+        n = max(1, min(int(limit), 100))
+        r = client_owner.get(
+            _rest("/rest/v1/follows"),
+            params={
+                "following_id": f"eq.{user_id}",
+                "select": "follower_id,created_at",
+                "order": "created_at.desc",
+                "limit": str(n),
             },
         )
+        r.raise_for_status()
+        return _python_to_lua_table(lua, r.json())
 
-    def follow(target_user_id: str) -> None:
-        client_owner.post(
+    def get_following(user_id: str, limit: int = 50) -> Any:
+        n = max(1, min(int(limit), 100))
+        r = client_owner.get(
             _rest("/rest/v1/follows"),
-            json={"follower_id": owner_id, "following_id": target_user_id},
-        )
-
-    def unfollow(target_user_id: str) -> None:
-        client_owner.delete(
-            _rest("/rest/v1/follows"),
-            params={"follower_id": f"eq.{owner_id}", "following_id": f"eq.{target_user_id}"},
-        )
-
-    def like(mix_id: str) -> None:
-        # Idempotent — the PK (user_id, mix_id) prevents duplicates.
-        client_owner.post(
-            _rest("/rest/v1/likes"),
-            json={"user_id": owner_id, "mix_id": mix_id},
-        )
-
-    def unlike(mix_id: str) -> None:
-        client_owner.delete(
-            _rest("/rest/v1/likes"),
-            params={"user_id": f"eq.{owner_id}", "mix_id": f"eq.{mix_id}"},
-        )
-
-    def repost(mix_id: str) -> None:
-        mix = get_mix(mix_id)
-        if not mix:
-            raise AgentDeniedError(f"mix {mix_id} not found")
-        client_owner.post(
-            _rest("/rest/v1/feed_events"),
-            json={
-                "actor_id": owner_id,
-                "type": "repost",
-                "mix_id": mix_id,
-                "target_id": mix.get("dj_id"),
+            params={
+                "follower_id": f"eq.{user_id}",
+                "select": "following_id,created_at",
+                "order": "created_at.desc",
+                "limit": str(n),
             },
         )
+        r.raise_for_status()
+        return _python_to_lua_table(lua, r.json())
 
-    def unrepost(mix_id: str) -> None:
-        client_owner.post(
-            _rest("/rest/v1/rpc/unrepost"),
-            json={"p_mix_id": mix_id},
-        )
-
-    def fetch_recent_mixes(limit: int = 10) -> list[dict[str, Any]]:
+    def fetch_recent_mixes(limit: int = 10) -> Any:
         n = max(1, min(int(limit), 50))
         r = client_owner.get(
             _rest("/rest/v1/mixes"),
@@ -313,25 +358,235 @@ def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
             },
         )
         r.raise_for_status()
-        return r.json()
+        return _python_to_lua_table(lua, r.json())
 
-    # Compose the mh.* table that user scripts call.
+    # -----------------------------------------------------------------
+    # Social write actions
+    # -----------------------------------------------------------------
+
+    def comment(mix_id: str, body: str) -> Any:
+        body_str = str(body).strip()
+        if not body_str:
+            raise AgentDeniedError("comment body must be non-empty")
+        if len(body_str) > 1000:
+            raise AgentDeniedError("agent comments capped at 1000 chars")
+        if _comment_count[0] >= 1:
+            raise AgentDeniedError("agents may post at most 1 comment per run")
+        _comment_count[0] += 1
+        r = client_svc.post(
+            _rest("/rest/v1/comments"),
+            json={"mix_id": mix_id, "user_id": owner_id, "body": body_str},
+            headers={**_service_headers(), "Prefer": "return=representation"},
+        )
+        r.raise_for_status()
+        result = r.json()
+        return _python_to_lua_table(lua, result[0] if result else {})
+
+    def delete_comment(comment_id: str) -> None:
+        # Only permitted if the agent owner wrote the comment AND it's on
+        # a mix the owner owns. We check both server-side.
+        r = client_svc.get(
+            _rest("/rest/v1/comments"),
+            params={
+                "id": f"eq.{comment_id}",
+                "user_id": f"eq.{owner_id}",
+                "select": "id,mix_id",
+                "limit": 1,
+            },
+        )
+        r.raise_for_status()
+        rows = r.json()
+        if not rows:
+            raise AgentDeniedError(f"comment {comment_id} not found or not yours")
+
+        mix_id = rows[0]["mix_id"]
+        # Verify owner owns the mix (prevents deleting comments on other people's mixes).
+        mix_r = client_owner.get(
+            _rest("/rest/v1/mixes"),
+            params={"id": f"eq.{mix_id}", "dj_id": f"eq.{owner_id}", "limit": 1, "select": "id"},
+        )
+        mix_r.raise_for_status()
+        if not mix_r.json():
+            raise AgentDeniedError("can only delete comments on your own mixes")
+
+        client_svc.delete(
+            _rest("/rest/v1/comments"),
+            params={"id": f"eq.{comment_id}"},
+        )
+
+    def post_buzz(text: str) -> Any:
+        text_str = str(text).strip()
+        if not text_str:
+            raise AgentDeniedError("buzz text must be non-empty")
+        if len(text_str) > 500:
+            raise AgentDeniedError("agent buzzes capped at 500 chars")
+        if _buzz_count[0] >= 1:
+            raise AgentDeniedError("agents may post at most 1 buzz per run")
+        _buzz_count[0] += 1
+        r = client_svc.post(
+            _rest("/rest/v1/buzzes"),
+            json={"author_id": owner_id, "text": text_str},
+            headers={**_service_headers(), "Prefer": "return=representation"},
+        )
+        r.raise_for_status()
+        result = r.json()
+        return _python_to_lua_table(lua, result[0] if result else {})
+
+    def notify(message: str) -> None:
+        msg = str(message)[:500]
+        client_svc.post(
+            _rest("/rest/v1/notifications"),
+            json={
+                "user_id": owner_id,
+                "actor_id": owner_id,
+                "type": "mention",
+                "data": {"source": "lua_agent", "agent_id": agent_id, "message": msg},
+            },
+        )
+
+    def follow(target_user_id: str) -> None:
+        if str(target_user_id) == owner_id:
+            raise AgentDeniedError("cannot follow yourself")
+        client_svc.post(
+            _rest("/rest/v1/follows"),
+            json={"follower_id": owner_id, "following_id": target_user_id},
+        )
+
+    def unfollow(target_user_id: str) -> None:
+        client_svc.delete(
+            _rest("/rest/v1/follows"),
+            params={"follower_id": f"eq.{owner_id}", "following_id": f"eq.{target_user_id}"},
+        )
+
+    def like(mix_id: str) -> None:
+        client_svc.post(
+            _rest("/rest/v1/likes"),
+            json={"user_id": owner_id, "mix_id": mix_id},
+        )
+
+    def unlike(mix_id: str) -> None:
+        client_svc.delete(
+            _rest("/rest/v1/likes"),
+            params={"user_id": f"eq.{owner_id}", "mix_id": f"eq.{mix_id}"},
+        )
+
+    def repost(mix_id: str) -> None:
+        mix_data = get_mix(mix_id)
+        if not mix_data:
+            raise AgentDeniedError(f"mix {mix_id} not found")
+        # Lua table → dict for indexing
+        try:
+            mix_dj_id = mix_data["dj_id"]
+        except (TypeError, KeyError):
+            raise AgentDeniedError("could not read dj_id from mix")
+        client_svc.post(
+            _rest("/rest/v1/feed_events"),
+            json={
+                "actor_id": owner_id,
+                "type": "repost",
+                "mix_id": mix_id,
+                "target_id": mix_dj_id,
+            },
+        )
+
+    def unrepost(mix_id: str) -> None:
+        client_svc.post(
+            _rest("/rest/v1/rpc/unrepost"),
+            json={"p_mix_id": mix_id},
+        )
+
+    # -----------------------------------------------------------------
+    # Persistent key-value store
+    # -----------------------------------------------------------------
+
+    def kv_get(key: str) -> str | None:
+        r = client_svc.post(
+            _rest("/rest/v1/rpc/agent_kv_get"),
+            json={"p_agent_id": agent_id, "p_key": str(key)[:128]},
+        )
+        r.raise_for_status()
+        return r.json()  # returns null (None) or string
+
+    def kv_set(key: str, value: str, ttl_seconds: int | None = None) -> None:
+        payload: dict[str, Any] = {
+            "p_agent_id": agent_id,
+            "p_key": str(key)[:128],
+            "p_value": str(value)[:4096],
+        }
+        if ttl_seconds is not None:
+            payload["p_ttl_seconds"] = int(ttl_seconds)
+        r = client_svc.post(_rest("/rest/v1/rpc/agent_kv_set"), json=payload)
+        r.raise_for_status()
+
+    def kv_del(key: str) -> None:
+        r = client_svc.post(
+            _rest("/rest/v1/rpc/agent_kv_del"),
+            json={"p_agent_id": agent_id, "p_key": str(key)[:128]},
+        )
+        r.raise_for_status()
+
+    def kv_list() -> Any:
+        r = client_svc.post(
+            _rest("/rest/v1/rpc/agent_kv_list"),
+            json={"p_agent_id": agent_id},
+        )
+        r.raise_for_status()
+        return _python_to_lua_table(lua, r.json() or [])
+
+    # -----------------------------------------------------------------
+    # JSON utilities
+    # -----------------------------------------------------------------
+
+    def json_encode(obj: Any) -> str:
+        try:
+            py_obj = _lua_table_to_python(lua, obj)
+            return json.dumps(py_obj, ensure_ascii=False)
+        except (TypeError, ValueError) as e:
+            raise AgentDeniedError(f"json_encode failed: {e}") from e
+
+    def json_decode(s: str) -> Any:
+        try:
+            parsed = json.loads(str(s))
+        except (ValueError, TypeError) as e:
+            raise AgentDeniedError(f"json_decode failed: {e}") from e
+        return _python_to_lua_table(lua, parsed)
+
+    # -----------------------------------------------------------------
+    # Compose the mh.* table
+    # -----------------------------------------------------------------
     mh = lua.table_from({
-        "agent_id":          agent["id"],
-        "owner_id":          owner_id,
-        "trigger":           agent.get("trigger_type"),
-        "print":             lua_print,
-        "get_mix":           get_mix,
-        "get_profile":       get_profile,
-        "comment":           comment,
-        "notify":            notify,
-        "follow":            follow,
-        "unfollow":          unfollow,
-        "like":              like,
-        "unlike":            unlike,
-        "repost":            repost,
-        "unrepost":          unrepost,
+        # Identity
+        "agent_id":           agent_id,
+        "owner_id":           owner_id,
+        "trigger":            agent.get("trigger_type"),
+        # Logging
+        "print":              lua_print,
+        # Read helpers
+        "get_mix":            get_mix,
+        "get_profile":        get_profile,
+        "get_mixes_by_user":  get_mixes_by_user,
+        "get_followers":      get_followers,
+        "get_following":      get_following,
         "fetch_recent_mixes": fetch_recent_mixes,
+        # Social write actions
+        "comment":            comment,
+        "delete_comment":     delete_comment,
+        "post_buzz":          post_buzz,
+        "notify":             notify,
+        "follow":             follow,
+        "unfollow":           unfollow,
+        "like":               like,
+        "unlike":             unlike,
+        "repost":             repost,
+        "unrepost":           unrepost,
+        # Persistent KV store
+        "kv_get":             kv_get,
+        "kv_set":             kv_set,
+        "kv_del":             kv_del,
+        "kv_list":            kv_list,
+        # JSON utilities
+        "json_encode":        json_encode,
+        "json_decode":        json_decode,
     })
     lua.globals().mh = mh
     lua.globals().print = lua_print
@@ -384,7 +639,6 @@ def _execute(payload: dict[str, Any]) -> dict[str, Any]:
     try:
         _record_run(agent_id, triggered_by, event, status, duration_ms, "\n".join(stdout), err)
     except Exception:  # noqa: BLE001
-        # Best-effort logging; never let bookkeeping failure mask the run.
         pass
 
     return {
@@ -429,4 +683,4 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel convention
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
-        self.wfile.write(b'{"ok":true,"runtime":"mixhive-lua-agent"}')
+        self.wfile.write(b'{"ok":true,"runtime":"mixhive-lua-agent","stdlib_version":"2"}')

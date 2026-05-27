@@ -57,6 +57,12 @@ export interface LuaAgentRun {
   created_at: string
 }
 
+export interface LuaAgentKvEntry {
+  key: string
+  value: string | null
+  expires_at: string | null
+}
+
 export async function listAgents(): Promise<LuaAgent[]> {
   const { data, error } = await supabase
     .from('lua_agents')
@@ -120,6 +126,16 @@ export async function listRuns(agentId: string, limit = 25): Promise<LuaAgentRun
   return (data || []) as LuaAgentRun[]
 }
 
+export async function listAgentKv(agentId: string): Promise<LuaAgentKvEntry[]> {
+  const { data, error } = await supabase
+    .from('agent_kv')
+    .select('key, value, expires_at')
+    .eq('agent_id', agentId)
+    .order('key')
+  if (error) throw error
+  return (data || []) as LuaAgentKvEntry[]
+}
+
 export async function listPublicAgents(limit = 30): Promise<PublicLuaAgent[]> {
   const { data, error } = await supabase
     .from('lua_agents')
@@ -135,7 +151,29 @@ export async function listPublicAgents(limit = 30): Promise<PublicLuaAgent[]> {
   }))
 }
 
-export async function forkAgent(sourceId: string, newName?: string): Promise<string> {
+export async function forkAgent(source: PublicLuaAgent, newName?: string): Promise<string> {
+  const forkName = newName ?? makeForkName(source.name)
+  const { data, error } = await supabase.rpc('fork_lua_agent', {
+    p_source_id: source.id,
+    p_new_name: forkName,
+  })
+  if (!error) return data as string
+
+  // Production may be ahead of the DB migration that installs
+  // fork_lua_agent(). Fall back to a normal owner-scoped insert using the
+  // public row already loaded from the gallery.
+  const created = await createAgent({
+    name: forkName,
+    description: source.description ?? undefined,
+    trigger_type: source.trigger_type ?? 'manual',
+    lua_code: source.lua_code,
+    enabled: false,
+    cron_expr: source.cron_expr ?? undefined,
+  })
+  return created.id
+}
+
+export async function forkAgentById(sourceId: string, newName?: string): Promise<string> {
   const { data, error } = await supabase.rpc('fork_lua_agent', {
     p_source_id: sourceId,
     p_new_name: newName ?? null,
@@ -158,7 +196,7 @@ export async function createFromStarter(starter: {
   cron_expr?: string
 }): Promise<string> {
   const created = await createAgent({
-    name: `${starter.name} (from starter)`,
+    name: makeForkName(starter.name),
     description: starter.description,
     trigger_type: starter.trigger_type,
     lua_code: starter.lua_code,
@@ -166,6 +204,11 @@ export async function createFromStarter(starter: {
     cron_expr: starter.cron_expr,
   })
   return created.id
+}
+
+function makeForkName(name: string): string {
+  const stamp = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 12)
+  return `${name} fork ${stamp}`
 }
 
 /** Fire an agent ad-hoc with a custom event payload (the "Test run" button).

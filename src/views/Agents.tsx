@@ -9,24 +9,27 @@ import {
   updateAgent,
   deleteAgent,
   listRuns,
+  listAgentKv,
   testRunAgent,
   type LuaAgent,
   type LuaAgentRun,
+  type LuaAgentKvEntry,
   type LuaAgentTrigger,
 } from '../lib/agents'
 import { defaultTemplateFor } from '../lib/starter_agents'
 import { colors, fontSize, radius, space, fontWeight } from '../styles/tokens'
 
 const TRIGGER_OPTIONS: { value: LuaAgentTrigger; label: string; description: string }[] = [
-  { value: 'on_follow',     label: 'On follow',     description: 'Fires when someone follows you.' },
-  { value: 'on_mix_upload', label: 'On mix upload', description: 'Fires when a DJ you follow publishes a mix.' },
-  { value: 'on_comment',    label: 'On comment',    description: 'Fires when someone comments on your mix.' },
-  { value: 'on_reply',      label: 'On reply',      description: 'Fires when someone replies to your comment.' },
-  { value: 'on_mention',    label: 'On mention',    description: 'Fires when you are @mentioned.' },
-  { value: 'on_like',       label: 'On like',       description: 'Fires when someone likes your mix.' },
-  { value: 'on_repost',     label: 'On repost',     description: 'Fires when someone reposts your mix.' },
+  { value: 'on_follow',     label: 'On follow',     description: 'Someone follows you.' },
+  { value: 'on_unfollow',   label: 'On unfollow',   description: 'Someone unfollows you.' },
+  { value: 'on_mix_upload', label: 'On mix upload', description: 'A DJ you follow publishes a mix.' },
+  { value: 'on_comment',    label: 'On comment',    description: 'Someone comments on your mix.' },
+  { value: 'on_reply',      label: 'On reply',      description: 'Someone replies to your comment.' },
+  { value: 'on_mention',    label: 'On mention',    description: 'You are @mentioned anywhere.' },
+  { value: 'on_like',       label: 'On like',       description: 'Someone likes your mix.' },
+  { value: 'on_repost',     label: 'On repost',     description: 'Someone reposts your mix.' },
   { value: 'on_schedule',   label: 'On schedule',   description: 'Runs on a cron schedule you configure.' },
-  { value: 'manual',        label: 'Manual',        description: 'Only runs from the Test button or your own scripts.' },
+  { value: 'manual',        label: 'Manual',        description: 'Only runs from the Test button.' },
 ]
 
 const VALID_TRIGGERS: LuaAgentTrigger[] = TRIGGER_OPTIONS.map(o => o.value)
@@ -196,10 +199,12 @@ function AgentEditor({
   const [testing, setTesting] = useState(false)
   const [testResult, setTestResult] = useState<string | null>(null)
   const [runs, setRuns] = useState<LuaAgentRun[]>([])
+  const [kvEntries, setKvEntries] = useState<LuaAgentKvEntry[]>([])
 
   useEffect(() => {
     if (!agent) return
     listRuns(agent.id).then(setRuns).catch(() => {})
+    listAgentKv(agent.id).then(setKvEntries).catch(() => {})
   }, [agent])
 
   function pickTrigger(next: LuaAgentTrigger) {
@@ -283,9 +288,22 @@ function AgentEditor({
             lineHeight: 1.55, resize: 'vertical',
           }}
         />
-        <p style={{ margin: `${space[5]}px 0 0`, color: colors.text.dim, fontSize: fontSize.xs }}>
-          Available APIs: <code>mh.get_mix(id)</code>, <code>mh.get_profile(id)</code>, <code>mh.comment(mix_id, body)</code>,{' '}
-          <code>mh.notify(message)</code>, <code>mh.follow(user_id)</code>, <code>mh.print(...)</code>. Plus <code>math</code>, <code>string</code>, <code>table</code>.
+        <p style={{ margin: `${space[5]}px 0 0`, color: colors.text.dim, fontSize: fontSize.xs, lineHeight: 1.6 }}>
+          <strong style={{ color: colors.text.secondary }}>Read:</strong>{' '}
+          <code>mh.get_mix(id)</code> <code>mh.get_profile(id)</code> <code>mh.get_mixes_by_user(uid, limit?)</code>{' '}
+          <code>mh.get_followers(uid, limit?)</code> <code>mh.get_following(uid, limit?)</code> <code>mh.fetch_recent_mixes(limit?)</code>
+          {'  '}
+          <strong style={{ color: colors.text.secondary }}>Write:</strong>{' '}
+          <code>mh.comment(mix_id, body)</code> <code>mh.delete_comment(id)</code> <code>mh.post_buzz(text)</code>{' '}
+          <code>mh.notify(msg)</code> <code>mh.follow(uid)</code> <code>mh.like(mix_id)</code> <code>mh.repost(mix_id)</code>
+          {'  '}
+          <strong style={{ color: colors.text.secondary }}>KV:</strong>{' '}
+          <code>mh.kv_get(key)</code> <code>mh.kv_set(key, val, ttl?)</code> <code>mh.kv_del(key)</code> <code>mh.kv_list()</code>
+          {'  '}
+          <strong style={{ color: colors.text.secondary }}>Util:</strong>{' '}
+          <code>mh.json_encode(t)</code> <code>mh.json_decode(s)</code> <code>mh.print(...)</code>
+          {'  '}Plus <code>math</code> <code>string</code> <code>table</code>.{' '}
+          <a href="/docs/LUA_AGENTS.md" target="_blank" rel="noopener noreferrer" style={{ color: colors.accent }}>Full docs →</a>
         </p>
       </div>
 
@@ -308,6 +326,20 @@ function AgentEditor({
           />
           Publish to the gallery so other DJs can fork this agent.
         </label>
+      )}
+
+      {agent && kvEntries.length > 0 && (
+        <section style={{ background: colors.surfaceMuted, border: `1px solid ${colors.border}`, borderRadius: radius.md, padding: space[6] }}>
+          <h3 style={{ margin: `0 0 ${space[4]}px`, color: colors.text.primary, fontSize: fontSize.md }}>Agent KV</h3>
+          <div style={{ display: 'grid', gap: space[3] }}>
+            {kvEntries.slice(0, 12).map(entry => (
+              <div key={entry.key} style={{ display: 'grid', gridTemplateColumns: 'minmax(80px, 0.45fr) minmax(0, 1fr)', gap: space[4], color: colors.text.muted, fontSize: fontSize.xs }}>
+                <code style={{ color: colors.accent }}>{entry.key}</code>
+                <code style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.value}</code>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       <div style={{ display: 'flex', gap: space[6], justifyContent: 'flex-end' }}>
@@ -337,6 +369,43 @@ function AgentEditor({
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {agent && kvEntries.length > 0 && (
+        <section>
+          <div style={{ display: 'flex', alignItems: 'center', gap: space[5], marginBottom: space[6] }}>
+            <h3 style={{ fontSize: fontSize.lg, color: colors.text.primary, margin: 0 }}>KV store</h3>
+            <button
+              type="button"
+              onClick={() => listAgentKv(agent.id).then(setKvEntries).catch(() => {})}
+              style={{ fontSize: fontSize.xs, color: colors.text.dim, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              ↻ refresh
+            </button>
+          </div>
+          <div style={{ overflow: 'auto', borderRadius: radius.md, border: `1px solid ${colors.border}` }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: fontSize.sm }}>
+              <thead>
+                <tr style={{ background: colors.surfaceMuted }}>
+                  {['Key', 'Value', 'Expires'].map(h => (
+                    <th key={h} style={{ padding: `${space[4]}px ${space[5]}px`, textAlign: 'left', color: colors.text.muted, fontWeight: fontWeight.semibold, borderBottom: `1px solid ${colors.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {kvEntries.map(entry => (
+                  <tr key={entry.key} style={{ borderBottom: `1px solid ${colors.border}` }}>
+                    <td style={{ padding: `${space[4]}px ${space[5]}px`, color: colors.accent, fontFamily: 'monospace', wordBreak: 'break-all' }}>{entry.key}</td>
+                    <td style={{ padding: `${space[4]}px ${space[5]}px`, color: colors.text.secondary, fontFamily: 'monospace', maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.value ?? '—'}</td>
+                    <td style={{ padding: `${space[4]}px ${space[5]}px`, color: colors.text.dim, whiteSpace: 'nowrap' }}>
+                      {entry.expires_at ? new Date(entry.expires_at).toLocaleString() : '∞'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
     </div>

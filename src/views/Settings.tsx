@@ -6,14 +6,37 @@ import { Input } from '../components/ui/Input'
 import { Textarea } from '../components/ui/Textarea'
 import { ProfilePictureUploadSmall } from '../components/ProfilePictureUploadSmall'
 import { ProfileSchema, formatZodError } from '../lib/schemas'
-import { hasUserAiKey, saveUserAiKey, removeUserAiKey } from '../lib/api'
+import { hasUserAiKey, saveUserAiKey, removeUserAiKey, getArtistGoals, upsertArtistGoals } from '../lib/api'
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens'
+import type { ArtistGoals } from '../lib/types'
 
 const GENRE_OPTIONS = [
   'House', 'Techno', 'Deep House', 'Tech House', 'Progressive House',
   'Trance', 'Drum & Bass', 'Dubstep', 'UK Garage', 'Breaks',
   'Ambient', 'Downtempo', 'Minimal', 'Electro', 'Disco',
   'Funk / Soul', 'Hip Hop', 'Jazz', 'World', 'Open Format'
+]
+
+const EQUIPMENT_OPTIONS = [
+  'Pioneer CDJ-2000NXS2', 'Pioneer CDJ-3000', 'Pioneer DJM-900NXS2', 'Pioneer DJM-V10',
+  'Traktor Kontrol S4', 'Traktor Kontrol S2', 'Rane One', 'Rane Seventy',
+  'Technics SL-1200', 'Allen & Heath Xone:96', 'Allen & Heath Xone:43',
+  'Denon DJ SC6000', 'Roland DJ-808', 'Native Instruments Maschine',
+  'Ableton Push', 'Akai MPC',
+]
+
+const DAW_OPTIONS = [
+  'Ableton Live', 'Logic Pro', 'FL Studio', 'Traktor Pro',
+  'Rekordbox', 'Serato DJ Pro', 'VirtualDJ', 'Bitwig Studio',
+  'Pro Tools', 'Reason', 'Mixxx',
+]
+
+const GOAL_OPTIONS: { value: string; label: string }[] = [
+  { value: 'get_booked', label: 'Get booked' },
+  { value: 'collaborate', label: 'Collaborate' },
+  { value: 'press', label: 'Press coverage' },
+  { value: 'grant', label: 'Apply for grants' },
+  { value: 'release', label: 'Release music' },
 ]
 
 export function Settings() {
@@ -25,8 +48,24 @@ export function Settings() {
     bio: profile?.bio || '',
     location: profile?.location || '',
     genres: profile?.genres || [] as string[],
-    social_links: profile?.social_links || {} as Record<string, string>,
+    social_links: {
+      ...(profile?.social_links || {}),
+      ...(profile?.website && !(profile?.social_links || {})['website'] ? { website: profile.website } : {}),
+    } as Record<string, string>,
+    dj_style: profile?.dj_style ?? '',
+    dj_equipment: profile?.dj_equipment ?? ([] as string[]),
+    dj_daw: profile?.dj_daw ?? ([] as string[]),
   })
+
+  const [goals, setGoals] = useState<Partial<Omit<ArtistGoals, 'user_id' | 'updated_at'>>>({
+    goals: [],
+    skills: [],
+    base_city: null,
+    travel_radius_km: 50,
+    booking_open: false,
+  })
+  const [goalsSaving, setGoalsSaving] = useState(false)
+  const [goalsMsg, setGoalsMsg] = useState('')
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
@@ -42,6 +81,9 @@ export function Settings() {
   useEffect(() => {
     if (!user) return
     hasUserAiKey(user.id).then(has => setAiKeyStatus(has ? 'saved' : 'none'))
+    getArtistGoals(user.id).then(data => {
+      if (data) setGoals({ goals: data.goals, skills: data.skills, base_city: data.base_city, travel_radius_km: data.travel_radius_km, booking_open: data.booking_open })
+    }).catch(() => undefined)
   }, [user])
 
   const handleAvatarUploadComplete = () => {
@@ -57,6 +99,30 @@ export function Settings() {
     }))
   }
 
+  function toggleMulti(field: 'dj_equipment' | 'dj_daw', value: string) {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].includes(value)
+        ? prev[field].filter((x: string) => x !== value)
+        : [...prev[field], value],
+    }))
+  }
+
+  async function handleSaveGoals() {
+    if (!user) return
+    setGoalsSaving(true)
+    setGoalsMsg('')
+    try {
+      await upsertArtistGoals(user.id, goals)
+      setGoalsMsg('Goals saved.')
+    } catch {
+      setGoalsMsg('Could not save goals.')
+    } finally {
+      setGoalsSaving(false)
+      setTimeout(() => setGoalsMsg(''), 3000)
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const result = ProfileSchema.safeParse(formData)
@@ -69,11 +135,19 @@ export function Settings() {
     setError('')
     setSaving(true)
     try {
+      const socialLinks = { ...formData.social_links }
+      const website = socialLinks.website || null
+      delete socialLinks.website
       await updateProfile({
         display_name: result.data.display_name || null,
         bio: result.data.bio || null,
         location: result.data.location || null,
-        genres: result.data.genres
+        genres: result.data.genres,
+        social_links: socialLinks,
+        website,
+        dj_style: formData.dj_style || null,
+        dj_equipment: formData.dj_equipment,
+        dj_daw: formData.dj_daw,
       })
       if (profile) navigate(`/u/${profile.username}`)
     } catch (err) {
@@ -180,6 +254,41 @@ export function Settings() {
           </div>
         </fieldset>
 
+        <Input
+          label="Performance style"
+          value={formData.dj_style}
+          onChange={e => setFormData(prev => ({ ...prev, dj_style: e.target.value }))}
+          placeholder="e.g. open format b2b, peak-time techno, vinyl-only..."
+        />
+
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Equipment</legend>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {EQUIPMENT_OPTIONS.map(item => (
+              <button key={item} type="button" onClick={() => toggleMulti('dj_equipment', item)}
+                style={{ padding: '6px 12px', borderRadius: 16, border: 'none',
+                  background: formData.dj_equipment.includes(item) ? '#f0c040' : '#1a1a2e',
+                  color: formData.dj_equipment.includes(item) ? '#0a0a0a' : '#777',
+                  fontSize: 12, cursor: 'pointer', fontWeight: formData.dj_equipment.includes(item) ? 600 : 400 }}
+              >{item}</button>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>DAW / Software</legend>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {DAW_OPTIONS.map(item => (
+              <button key={item} type="button" onClick={() => toggleMulti('dj_daw', item)}
+                style={{ padding: '6px 12px', borderRadius: 16, border: 'none',
+                  background: formData.dj_daw.includes(item) ? '#f0c040' : '#1a1a2e',
+                  color: formData.dj_daw.includes(item) ? '#0a0a0a' : '#777',
+                  fontSize: 12, cursor: 'pointer', fontWeight: formData.dj_daw.includes(item) ? 600 : 400 }}
+              >{item}</button>
+            ))}
+          </div>
+        </fieldset>
+
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Social Links</legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
@@ -208,6 +317,73 @@ export function Settings() {
           {saving ? 'Saving...' : 'Save profile'}
         </Button>
       </form>
+
+      {/* ── Artist Goals ─────────────────────────────────────────────────── */}
+      <div style={{ marginTop: space[11], borderTop: `1px solid ${colors.border}`, paddingTop: space[10] }}>
+        <h2 style={{ fontSize: 17, fontWeight: fontWeight.bold, color: colors.text.primary, marginBottom: space[3] }}>
+          Artist Goals
+        </h2>
+        <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginBottom: space[7], lineHeight: 1.5 }}>
+          Tell MIXHIVE what you're aiming for — the opportunity graph uses this to score matches.
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+            <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Goals</legend>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {GOAL_OPTIONS.map(opt => {
+                const active = (goals.goals || []).includes(opt.value)
+                return (
+                  <button key={opt.value} type="button"
+                    onClick={() => setGoals(prev => ({
+                      ...prev,
+                      goals: active
+                        ? (prev.goals || []).filter(g => g !== opt.value)
+                        : [...(prev.goals || []), opt.value],
+                    }))}
+                    style={{ padding: '6px 12px', borderRadius: 16, border: 'none',
+                      background: active ? '#f0c040' : '#1a1a2e',
+                      color: active ? '#0a0a0a' : '#777',
+                      fontSize: 12, cursor: 'pointer', fontWeight: active ? 600 : 400 }}
+                  >{opt.label}</button>
+                )
+              })}
+            </div>
+          </fieldset>
+
+          <Input
+            label="Base city"
+            value={goals.base_city || ''}
+            onChange={e => setGoals(prev => ({ ...prev, base_city: e.target.value || null }))}
+            placeholder="e.g. Brussels"
+          />
+
+          <div>
+            <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 8 }}>
+              Travel radius: {goals.travel_radius_km ?? 50} km
+            </label>
+            <input type="range" min={0} max={500} step={25}
+              value={goals.travel_radius_km ?? 50}
+              onChange={e => setGoals(prev => ({ ...prev, travel_radius_km: Number(e.target.value) }))}
+              style={{ width: '100%', accentColor: '#f0c040' }}
+            />
+          </div>
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+            <input type="checkbox" checked={goals.booking_open ?? false}
+              onChange={e => setGoals(prev => ({ ...prev, booking_open: e.target.checked }))}
+              style={{ accentColor: '#f0c040', width: 16, height: 16 }}
+            />
+            <span style={{ color: colors.text.primary, fontSize: fontSize.sm }}>Open for bookings</span>
+          </label>
+
+          <button type="button" onClick={handleSaveGoals} disabled={goalsSaving}
+            style={{ padding: '10px 20px', borderRadius: 8, background: '#f0c040', color: '#0a0a0a', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', opacity: goalsSaving ? 0.6 : 1, alignSelf: 'flex-start' }}>
+            {goalsSaving ? 'Saving…' : 'Save goals'}
+          </button>
+          {goalsMsg && <p style={{ margin: 0, fontSize: fontSize.xs, color: goalsMsg.includes('saved') ? colors.success : colors.danger }}>{goalsMsg}</p>}
+        </div>
+      </div>
 
       {/* ── AI & Creativity ─────────────────────────────────────────────────── */}
       <div id="ai" style={{ marginTop: space[11], borderTop: `1px solid ${colors.border}`, paddingTop: space[10] }}>

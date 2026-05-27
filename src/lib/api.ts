@@ -17,6 +17,8 @@ import type {
   MixedFeedResult,
   Notification,
   Opportunity,
+  OpportunitySave,
+  OpportunitySaveStatus,
   Playlist,
   PlaylistWithMixes,
   Profile,
@@ -169,14 +171,30 @@ export async function getFeed(userId: string, limit = 20, cursor?: FeedCursor): 
   }
 }
 
-export async function getTrending(limit = 20, cursor?: TrendingCursor): Promise<TrendingResult> {
+export async function getTrending(limit = 20, cursor?: TrendingCursor, genre?: string): Promise<TrendingResult> {
   if (!isSupabaseConfigured) return emptyTrendingResult()
+  
+  // Check cache first
+  const cacheKey = genre || 'all'
+  const cachedTrending = await redisCache.getTrendingCache(cacheKey)
+  
+  if (cachedTrending) {
+    return {
+      data: cachedTrending.data,
+      cursor: cachedTrending.cursor ? { score: 0, id: cachedTrending.cursor } : null
+    }
+  }
+
   const { data } = await supabase.rpc('get_trending_cursor', {
     p_limit: limit,
     p_cursor_score: cursor?.score ?? null,
     p_cursor_id: cursor?.id ?? null
   })
   const dt = data || []
+  
+  // Cache the result
+  await redisCache.setTrendingCache(cacheKey, dt, cursor?.id || null)
+  
   return {
     data: dt,
     cursor: dt.length === limit ? { score: dt[dt.length - 1].score ?? 0, id: dt[dt.length - 1].id } : null
@@ -229,6 +247,38 @@ export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
     .insert(mix)
     .select()
     .single()
+  
+  // Broadcast real-time mix upload event
+  if (data) {
+    try {
+      // Trigger WebSocket event for real-time updates
+      const wsUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://your-domain.com/api/websocket' 
+        : 'http://localhost:3001/api/websocket'
+      
+      await fetch(wsUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'mix:upload',
+          data: { mix: data }
+        })
+      })
+      
+      // Also broadcast via Supabase realtime
+      const { channel } = supabase
+      if (channel) {
+        channel.send({
+          type: 'broadcast',
+          event: 'mix_upload',
+          payload: { mix: data }
+        })
+      }
+    } catch (error) {
+      console.error('Failed to broadcast mix upload:', error)
+    }
+  }
+  
   return data
 }
 
@@ -312,7 +362,29 @@ export async function getFollowingCount(userId: string): Promise<number> {
 
 export async function like(userId: string, mixId: string) {
   if (!isSupabaseConfigured) return { error: null }
-  return supabase.from('likes').insert({ user_id: userId, mix_id: mixId })
+  const { data, error } = await supabase.from('likes').insert({ user_id: userId, mix_id: mixId }).select().single()
+  
+  // Broadcast real-time like event if successful
+  if (!error && data) {
+    try {
+      const wsUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://your-domain.com/api/websocket' 
+        : 'http://localhost:3001/api/websocket'
+      
+      await fetch(wsUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'like',
+          data: { mixId, userId, timestamp: new Date().toISOString() }
+        })
+      })
+    } catch (error) {
+      console.error('Failed to broadcast like event:', error)
+    }
+  }
+  
+  return { data, error }
 }
 
 export async function unlike(userId: string, mixId: string) {
@@ -426,11 +498,32 @@ export async function getComments(mixId: string, limit = 50, offset = 0): Promis
 
 export async function createComment(comment: Partial<Comment>): Promise<Comment | null> {
   if (!isSupabaseConfigured) return null
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('comments')
     .insert(comment)
     .select()
     .single()
+  
+  // Broadcast real-time comment event if successful
+  if (!error && data) {
+    try {
+      const wsUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://your-domain.com/api/websocket' 
+        : 'http://localhost:3001/api/websocket'
+      
+      await fetch(wsUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'comment',
+          data: { mixId: comment.mix_id, comment: data }
+        })
+      })
+    } catch (error) {
+      console.error('Failed to broadcast comment event:', error)
+    }
+  }
+  
   return data
 }
 
@@ -534,24 +627,36 @@ export async function markNotificationsRead(userId: string) {
 
 // --- Upload ---
 
+import { uploadAudioWithCDN, uploadArtworkWithCDN, uploadBuzzMediaWithCDN } from './cdnUpload'
+
 export async function uploadAudio(file: File): Promise<string | null> {
   if (!isSupabaseConfigured) return null
-  const ext = file.name.split('.').pop()
-  const path = `mixes/${crypto.randomUUID()}.${ext}`
-  const { data } = await supabase.storage.from(AUDIO_BUCKET).upload(path, file)
-  if (!data) return null
-  const { data: { publicUrl } } = supabase.storage.from(AUDIO_BUCKET).getPublicUrl(path)
-  return publicUrl
+  
+  // Enhanced upload with CDN support
+  const result = await uploadAudioWithCDN(file, {
+    enableCDN: process.env.NEXT_PUBLIC_CDN_ENABLED === 'true',
+    optimization: {
+      format: 'mp3',
+      quality: 128,
+    },
+  })
+  
+  return result?.url || null
 }
 
 export async function uploadArtwork(file: File): Promise<string | null> {
   if (!isSupabaseConfigured) return null
-  const ext = file.name.split('.').pop()
-  const path = `artwork/${crypto.randomUUID()}.${ext}`
-  const { data } = await supabase.storage.from(ARTWORK_BUCKET).upload(path, file)
-  if (!data) return null
-  const { data: { publicUrl } } = supabase.storage.from(ARTWORK_BUCKET).getPublicUrl(path)
-  return publicUrl
+  
+  // Enhanced upload with CDN support
+  const result = await uploadArtworkWithCDN(file, {
+    enableCDN: process.env.NEXT_PUBLIC_CDN_ENABLED === 'true',
+    optimization: {
+      format: 'webp',
+      quality: 85,
+    },
+  })
+  
+  return result?.url || null
 }
 
 // --- Playlists ---
@@ -852,27 +957,53 @@ export interface HiveStats {
 export async function getHiveStats(): Promise<HiveStats> {
   const empty: HiveStats = { mixes_total: 0, voices_total: 0, plays_total: 0, live_now: 0 }
   if (!isSupabaseConfigured) return empty
+  
+  // Check cache first
+  const cachedStats = await redisCache.getUserStatsCache('global')
+  if (cachedStats) {
+    return {
+      mixes_total: cachedStats.totalMixes,
+      voices_total: cachedStats.totalUsers,
+      plays_total: cachedStats.totalPlays,
+      live_now: cachedStats.liveNow
+    }
+  }
+
   const { data, error } = await supabase.rpc('get_hive_stats')
   if (error || !data) return empty
   const row = Array.isArray(data) ? data[0] : data
-  return {
+  
+  const stats: HiveStats = {
     mixes_total:  Number(row?.mixes_total  ?? 0),
     voices_total: Number(row?.voices_total ?? 0),
     plays_total:  Number(row?.plays_total  ?? 0),
     live_now:     Number(row?.live_now     ?? 0),
   }
+  
+  // Cache the result
+  await redisCache.setUserStatsCache('global', {
+    ...stats,
+    timestamp: Date.now()
+  })
+  
+  return stats
 }
 
 // --- Buzz ---
 
 export async function uploadBuzzMedia(file: File): Promise<string | null> {
   if (!isSupabaseConfigured) return null
-  const ext = file.name.split('.').pop()
-  const path = `${crypto.randomUUID()}.${ext}`
-  const { data } = await supabase.storage.from(BUZZ_MEDIA_BUCKET).upload(path, file, { upsert: false })
-  if (!data) return null
-  const { data: { publicUrl } } = supabase.storage.from(BUZZ_MEDIA_BUCKET).getPublicUrl(path)
-  return publicUrl
+  
+  // Enhanced upload with CDN support
+  const result = await uploadBuzzMediaWithCDN(file, 'image', {
+    enableCDN: process.env.NEXT_PUBLIC_CDN_ENABLED === 'true',
+    optimization: {
+      format: 'webp',
+      quality: 75,
+    },
+  })
+  
+  return result?.url || null
 }
 
 export async function createBuzz(
@@ -1195,6 +1326,31 @@ export async function getOpportunities(filters?: {
   if (!res.ok) return []
   const json = await res.json() as { opportunities?: Opportunity[] }
   return json.opportunities ?? []
+}
+
+export async function getOpportunitySaves(userId: string): Promise<OpportunitySave[]> {
+  if (!isSupabaseConfigured) return []
+  const { data } = await supabase.from('opportunity_saves').select('*').eq('user_id', userId)
+  return (data || []) as OpportunitySave[]
+}
+
+export async function upsertOpportunitySave(
+  userId: string,
+  opportunityId: string,
+  status: OpportunitySaveStatus,
+  draftText?: string,
+): Promise<void> {
+  if (!isSupabaseConfigured) return
+  await supabase.from('opportunity_saves').upsert(
+    { user_id: userId, opportunity_id: opportunityId, status, draft_text: draftText ?? null },
+    { onConflict: 'user_id,opportunity_id' },
+  )
+}
+
+export async function getArtistGoals(userId: string): Promise<ArtistGoals | null> {
+  if (!isSupabaseConfigured) return null
+  const { data } = await supabase.from('artist_goals').select('*').eq('user_id', userId).maybeSingle()
+  return data as ArtistGoals | null
 }
 
 export async function upsertArtistGoals(

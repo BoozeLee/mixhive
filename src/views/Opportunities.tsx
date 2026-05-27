@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import type { Opportunity, OpportunityMatch } from '../lib/types'
+import type { Opportunity, OpportunityMatch, OpportunitySaveStatus } from '../lib/types'
+import { getOpportunitySaves, upsertOpportunitySave } from '../lib/api'
 import { colors, fontSize, fontWeight, radius, space, transition } from '../styles/tokens'
 
 type Tab = 'for-you' | 'saved' | 'applied' | 'dismissed'
-type OpportunityAction = 'saved' | 'applied' | 'dismissed'
+type OpportunityAction = OpportunitySaveStatus
 
 const tabLabels: Record<Tab, string> = {
   'for-you': 'For You',
@@ -67,7 +68,7 @@ function draftApplication(match: OpportunityMatch, displayName: string) {
 }
 
 export function Opportunities() {
-  const { profile } = useAuth()
+  const { user, profile } = useAuth()
   const [tab, setTab] = useState<Tab>('for-you')
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
   const [actions, setActions] = useState<Record<string, OpportunityAction>>({})
@@ -97,6 +98,15 @@ export function Opportunities() {
     return () => { alive = false }
   }, [])
 
+  useEffect(() => {
+    if (!user) return
+    getOpportunitySaves(user.id).then(saves => {
+      const map: Record<string, OpportunityAction> = {}
+      saves.forEach(s => { map[s.opportunity_id] = s.status })
+      setActions(map)
+    }).catch(() => undefined)
+  }, [user])
+
   const matches = useMemo(() => {
     return opportunities
       .map(opp => scoreOpportunity(opp, profile?.genres || [], profile?.location))
@@ -109,8 +119,9 @@ export function Opportunities() {
     return status === tab
   })
 
-  function setAction(id: string, action: OpportunityAction) {
+  function setAction(id: string, action: OpportunityAction, draftText?: string) {
     setActions(prev => ({ ...prev, [id]: action }))
+    if (user) upsertOpportunitySave(user.id, id, action, draftText).catch(() => undefined)
   }
 
   function openDraft(match: OpportunityMatch) {
@@ -293,7 +304,7 @@ export function Opportunities() {
               <button
                 type="button"
                 onClick={() => {
-                  setAction(selected.opportunity.id, 'applied')
+                  setAction(selected.opportunity.id, 'applied', draft)
                   setSelected(null)
                 }}
                 style={buttonStyle('primary')}

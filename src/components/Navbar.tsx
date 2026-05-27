@@ -11,6 +11,8 @@ const navLinks = [
   { to: '/feed', label: 'Feed' },
   { to: '/discover', label: 'Explore' },
   { to: '/search', label: 'Network' },
+  { to: '/opportunities', label: 'Opportunities' },
+  { to: '/epk', label: 'EPK' },
   { to: '/upload', label: 'Nectar Upload' },
   { to: '/agents/gallery', label: 'BeeCast' },
 ]

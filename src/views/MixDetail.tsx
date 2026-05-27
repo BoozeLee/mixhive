@@ -11,6 +11,7 @@ import { AddToPlaylistModal } from '../components/AddToPlaylistModal'
 import { MentionRenderer } from '../components/MentionRenderer'
 import { MixCard } from '../components/MixCard'
 import { MixAgentHints } from '../components/MixAgentHints'
+import { MixAudioIntelligence } from '../components/MixAudioIntelligence'
 import { NotFoundState } from '../components/EmptyState'
 import type { Mix, Comment as CommentType, FeedMix } from '../lib/types'
 
@@ -365,6 +366,8 @@ export function MixDetail() {
           </div>
         </div>
       )}
+
+      <MixAudioIntelligence mix={mix} isOwner={user?.id === mix.dj_id} />
 
       <MixAgentHints mix={mix} djUsername={mix.dj?.username} />
 

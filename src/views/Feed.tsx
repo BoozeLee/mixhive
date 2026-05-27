@@ -2,6 +2,8 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { getTrending, getMixedFollowingFeed, getLatestMixed } from '../lib/api'
+import { feedService } from '../lib/feedService'
+import { useRealtime } from '../hooks/useRealtime'
 import { MixCard } from '../components/MixCard'
 import { BuzzCard } from '../components/BuzzCard'
 import { BuzzComposer } from '../components/BuzzComposer'
@@ -30,53 +32,117 @@ const emptyMixTab = (): MixTabState => ({ data: [], cursor: null, hasMore: true,
 const emptyMixedTab = (): MixedTabState => ({ data: [], mixCursor: null, buzzCursor: null, hasMore: true, loading: true })
 
 export function Feed() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [tab, setTab] = useState<Tab>('trending')
   const [mixedFeed, setMixedFeed] = useState<MixedTabState>(emptyMixedTab())
   const [latestMixed, setLatestMixed] = useState<MixedTabState>(emptyMixedTab())
   const [trendingTab, setTrendingTab] = useState<MixTabState>(emptyMixTab())
+  const [feedItems, setFeedItems] = useState<FeedItem[]>([])
+  const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [realtimeUpdates, setRealtimeUpdates] = useState<FeedItem[]>([])
   const loadingMoreRef = useRef(false)
   const initializedRef = useRef(false)
   const [newCount, setNewCount] = useState(0)
+
+  // Use real-time updates
+  const { mixUpdates, notifications, isConnected } = useRealtime(user?.id, {
+    enableMixUpdates: true,
+    enableNotifications: true
+  })
 
   const fetchFollowingFeed = useCallback(async (mixCursor?: FeedCursor, buzzCursor?: FeedCursor): Promise<MixedFeedResult> => {
     if (!user) return { data: [], mixCursor: null, buzzCursor: null }
     return getMixedFollowingFeed(user.id, 20, mixCursor, buzzCursor)
   }, [user])
 
-  // Initial load for all tabs
-  useEffect(() => {
-    if (initializedRef.current) return
-    initializedRef.current = true
+  // Load feed based on current tab
+  const loadFeed = useCallback(async () => {
+    if (!user || loading) return
 
-    getTrending(20).then(res => {
-      setTrendingTab({ data: res.data, cursor: res.cursor as TrendingCursor | null, hasMore: !!res.cursor, loading: false })
-    }).catch(() => {
-      setTrendingTab({ ...emptyMixTab(), loading: false })
-    })
+    setLoading(true)
+    try {
+      let result
+      switch (tab) {
+        case 'trending':
+          result = await feedService.getFeed({
+            type: 'trending',
+            limit: 20,
+            genre: undefined
+          })
+          setTrendingTab({ data: result.items as FeedMix[], cursor: result.cursor as TrendingCursor, hasMore: result.hasMore, loading: false })
+          break
 
-    getLatestMixed(20).then(res => {
-      setLatestMixed({ data: res.data, mixCursor: res.mixCursor, buzzCursor: res.buzzCursor, hasMore: !!(res.mixCursor || res.buzzCursor), loading: false })
-    }).catch(() => {
-      setLatestMixed({ ...emptyMixedTab(), loading: false })
-    })
+        case 'latest':
+          result = await feedService.getFeed({
+            type: 'latest',
+            limit: 20
+          })
+          setLatestMixed({ 
+            data: result.items as FeedItem[], 
+            mixCursor: result.cursor as FeedCursor, 
+            buzzCursor: null, 
+            hasMore: result.hasMore, 
+            loading: false 
+          })
+          break
 
-    if (user) {
-      fetchFollowingFeed().then(res => {
-        setMixedFeed({ data: res.data, mixCursor: res.mixCursor, buzzCursor: res.buzzCursor, hasMore: !!(res.mixCursor || res.buzzCursor), loading: false })
-      }).catch(() => {
-        setMixedFeed({ ...emptyMixedTab(), loading: false })
-      })
-    } else {
-      setMixedFeed({ ...emptyMixedTab(), loading: false })
+        case 'feed':
+        default:
+          result = await feedService.getFeed({
+            type: 'following',
+            userId: user.id,
+            limit: 20
+          })
+          setMixedFeed({ 
+            data: result.items as FeedItem[], 
+            mixCursor: result.cursor as FeedCursor, 
+            buzzCursor: null, 
+            hasMore: result.hasMore, 
+            loading: false 
+          })
+          break
+      }
+    } catch (error) {
+      console.error('Failed to load feed:', error)
+    } finally {
+      setLoading(false)
     }
-  }, [user, fetchFollowingFeed])
+  }, [tab, user, loading])
 
-  // Tab switch — load if stale
+  // Initial load and tab changes
+  useEffect(() => {
+    if (!initializedRef.current) {
+      initializedRef.current = true
+      loadFeed()
+    } else {
+      loadFeed()
+    }
+  }, [tab, user, loadFeed])
+
+  // Handle real-time updates
+  useEffect(() => {
+    if (!user || !mixUpdates.length) return
+
+    // Add new real-time updates to the top of the feed
+    const newItems = mixUpdates.map(update => ({
+      type: 'mix' as const,
+      data: update.data,
+      id: update.mixId || update.data.id,
+      created_at: update.timestamp
+    }))
+
+    setFeedItems(prev => [...newItems, ...prev].slice(0, 100)) // Keep last 100 items
+    setNewCount(prev => prev + mixUpdates.length)
+  }, [mixUpdates, user])
+
+  // Tab switch — load if the current tab has no data yet and isn't already loading.
+  // The `loading` guard prevents setState → re-run → setState loops when the
+  // state objects are in the deps array.
   useEffect(() => {
     if (!initializedRef.current) return
     if (tab === 'feed') {
-      if (mixedFeed.data.length > 0 || !mixedFeed.hasMore) return
+      if (mixedFeed.data.length > 0 || !mixedFeed.hasMore || mixedFeed.loading) return
       if (!user) return
       setMixedFeed(prev => ({ ...prev, loading: true }))
       fetchFollowingFeed().then(res => {
@@ -87,7 +153,7 @@ export function Feed() {
       return
     }
     if (tab === 'latest') {
-      if (latestMixed.data.length > 0 || !latestMixed.hasMore) return
+      if (latestMixed.data.length > 0 || !latestMixed.hasMore || latestMixed.loading) return
       setLatestMixed(prev => ({ ...prev, loading: true }))
       getLatestMixed(20).then(res => {
         setLatestMixed({ data: res.data, mixCursor: res.mixCursor, buzzCursor: res.buzzCursor, hasMore: !!(res.mixCursor || res.buzzCursor), loading: false })
@@ -97,7 +163,7 @@ export function Feed() {
       return
     }
     // trending
-    if (trendingTab.data.length > 0 || !trendingTab.hasMore) return
+    if (trendingTab.data.length > 0 || !trendingTab.hasMore || trendingTab.loading) return
     setTrendingTab(prev => ({ ...prev, loading: true }))
     getTrending(20).then(res => {
       setTrendingTab({ data: res.data, cursor: res.cursor as TrendingCursor | null, hasMore: !!res.cursor, loading: false })
@@ -115,7 +181,9 @@ export function Feed() {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'feed_events', filter: `target_id=eq.${user.id}` },
-        () => setNewCount(c => c + 1),
+        (payload: { new: Record<string, unknown> }) => {
+          if (payload.new?.actor_id !== user.id) setNewCount(c => c + 1)
+        },
       )
       .subscribe()
     return () => { supabase.removeChannel(channel) }
@@ -222,7 +290,7 @@ export function Feed() {
   }
 
   function handleBuzzCreated(buzz: Buzz) {
-    const feedBuzz = { ...buzz, author: undefined }
+    const feedBuzz = { ...buzz, author: profile ?? undefined }
     setMixedFeed(prev => ({ ...prev, data: [{ type: 'buzz' as const, data: feedBuzz }, ...prev.data] }))
     setLatestMixed(prev => ({ ...prev, data: [{ type: 'buzz' as const, data: feedBuzz }, ...prev.data] }))
     if (tab !== 'feed' && tab !== 'latest') setNewCount(c => c + 1)

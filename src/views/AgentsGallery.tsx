@@ -24,9 +24,13 @@ export function AgentsGallery() {
   }, [])
 
   async function handleFork(agent: PublicLuaAgent) {
+    if (!user) {
+      navigate(`/login?next=/agents/gallery`)
+      return
+    }
     setForking(agent.id)
     try {
-      const newId = await forkAgent(agent.id)
+      const newId = await forkAgent(agent)
       navigate(`/agents?edit=${newId}`)
     } catch (e) {
       alert(e instanceof Error ? e.message : 'fork failed')

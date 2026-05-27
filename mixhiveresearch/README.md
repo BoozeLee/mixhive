@@ -13,6 +13,7 @@ MIXHIVE AI infrastructure push.
 - `06-source-research-archive.md` - preserved source-report conclusions and decision trail.
 - `07-ai-infrastructure-master-plan.md` - canonical all-inclusive implementation plan.
 - `08-ai-infrastructure-task-todo.md` - terminal-facing phase, owner, and verification checklist.
+- `09-strategic-intelligence-report-execution-notes.md` - execution notes from the 27 May 2026 strategic intelligence report.
 
 ## Current Thesis
 

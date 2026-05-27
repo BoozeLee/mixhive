@@ -11,6 +11,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { RoutePending } from './components/RoutePending'
 import { PlayerProvider } from './lib/playerStore'
 import { MobileNav } from './components/MobileNav'
+import { DesktopSidebar } from './components/DesktopSidebar'
 import { CyberHiveBackdrop } from './components/CyberHiveBackdrop'
 import './styles/global.css'
 
@@ -74,7 +75,9 @@ export default function App() {
         >
           Skip to main content
         </a>
-        <main id="main-content" className="mixhive-main">
+        <div className="app-body">
+          <DesktopSidebar />
+          <main id="main-content" className="mixhive-main app-main">
           <ErrorBoundary>
             <Suspense fallback={<RoutePending />}>
               <Routes>
@@ -105,7 +108,8 @@ export default function App() {
               </Routes>
             </Suspense>
           </ErrorBoundary>
-        </main>
+          </main>
+        </div>
         <GlobalPlayer />
         <MobileNav />
         {loadVercelTelemetry && <Analytics />}

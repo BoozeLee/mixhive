@@ -1,6 +1,25 @@
 /* Global responsive styles and base resets */
 
-/* Responsive containers and layouts */
+/* ── App shell layout ─────────────────────────────────────────────────────── */
+
+.app-body {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Desktop sidebar: hidden by default, shown at ≥ 1024px */
+.desktop-sidebar {
+  display: none !important;
+}
+
+/* ── Breakpoints ──────────────────────────────────────────────────────────── */
+
 @media (max-width: 767px) {
   :root {
     --mixhive-player-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
@@ -10,12 +29,12 @@
   .desktop-only {
     display: none !important;
   }
-  
+
   /* Ensure mobile nav stays at bottom */
   main {
     padding-bottom: 136px; /* Mobile nav + player clearance */
   }
-  
+
   /* Full-width containers on mobile */
   .container {
     max-width: 100%;
@@ -25,11 +44,11 @@
 }
 
 @media (min-width: 768px) {
-  /* Hide mobile nav on desktop */
+  /* Hide mobile nav on tablet+ */
   .mobile-nav {
     display: none !important;
   }
-  
+
   /* Restore container max-width on tablet+ */
   .container {
     max-width: 640px;
@@ -40,6 +59,21 @@
 }
 
 @media (min-width: 1024px) {
+  /* Show desktop sidebar, shift main content right */
+  .desktop-sidebar {
+    display: flex !important;
+  }
+
+  .app-main {
+    margin-left: 220px; /* matches sidebar width */
+  }
+
+  /* Hide nav links + Buzz pill from top navbar — sidebar has them */
+  .navbar-links,
+  .navbar-buzz-pill {
+    display: none !important;
+  }
+
   .container {
     max-width: 768px;
   }

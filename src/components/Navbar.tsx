@@ -41,7 +41,7 @@ export function Navbar() {
           <Logo size="large" variant="business" showText={true} />
         </Link>
         {user && (
-          <div className="desktop-only" style={{ display: 'flex', gap: space[8], alignItems: 'center' }}>
+          <div className="desktop-only navbar-links" style={{ display: 'flex', gap: space[8], alignItems: 'center' }}>
             {navLinks.map(link => (
               <Link
                 key={link.to}
@@ -82,6 +82,7 @@ export function Navbar() {
             <NotificationsBell />
             <Link
               to="/feed?compose=1"
+              className="navbar-buzz-pill"
               style={{
                 display: 'flex',
                 alignItems: 'center',

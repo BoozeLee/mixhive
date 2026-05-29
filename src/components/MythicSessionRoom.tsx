@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from './hive/HiveButton';
 import toast from 'react-hot-toast';
-import { createClient } from '@supabase/supabase-js';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 
 interface MythicSessionRoomProps {
@@ -51,16 +51,13 @@ export function MythicSessionRoom({
   useEffect(() => {
     if (!sessionId) return;
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    if (!isSupabaseConfigured) {
+      console.error('Supabase is not configured — realtime session will not work.');
+      setIsConnected(false);
+      return;
+    }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      realtime: {
-        params: {
-          eventsPerSecond: 10,
-        },
-      },
-    });
+    // Reuse the project's centralized Supabase client (handles env fallbacks robustly)
     supabaseRef.current = supabase;
 
     const channelName = `collab-session:${sessionId}`;
@@ -228,10 +225,10 @@ export function MythicSessionRoom({
 
     // Record to session metadata so the job processor can see it for inspired_by
     try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured — cannot record stem');
+        return;
+      }
 
       const { data: currentSession } = await supabase
         .from('collab_sessions')

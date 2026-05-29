@@ -1,41 +1,41 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react'
-import * as Sentry from '@sentry/react'
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+import * as Sentry from '@sentry/nextjs';
 
 interface Props {
-  children: ReactNode
-  fallback?: (error: Error, reset: () => void) => ReactNode
+  children: ReactNode;
+  fallback?: (error: Error, reset: () => void) => ReactNode;
 }
 
 interface State {
-  error: Error | null
+  error: Error | null;
 }
 
 function reportToObservability(error: Error, info: ErrorInfo) {
   if (process.env.NODE_ENV === 'development') {
-    console.error('[ErrorBoundary]', error, info.componentStack)
+    console.error('[ErrorBoundary]', error, info.componentStack);
   }
   Sentry.captureException(error, {
     contexts: { react: { componentStack: info.componentStack } },
-  })
+  });
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = { error: null }
+  state: State = { error: null };
 
   static getDerivedStateFromError(error: Error): State {
-    return { error }
+    return { error };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    reportToObservability(error, info)
+    reportToObservability(error, info);
   }
 
-  reset = () => this.setState({ error: null })
+  reset = () => this.setState({ error: null });
 
   render() {
-    const { error } = this.state
-    if (!error) return this.props.children
-    if (this.props.fallback) return this.props.fallback(error, this.reset)
+    const { error } = this.state;
+    if (!error) return this.props.children;
+    if (this.props.fallback) return this.props.fallback(error, this.reset);
 
     return (
       <div
@@ -71,26 +71,74 @@ export class ErrorBoundary extends Component<Props, State> {
           </div>
           <h1 style={{ margin: '0 0 8px', fontSize: 20 }}>Something went wrong</h1>
           <p style={{ color: '#999', fontSize: 14, lineHeight: 1.5, margin: '0 0 20px' }}>
-            We hit an unexpected error rendering this part of the page. You can try again, or head back to the feed.
+            We hit an unexpected error rendering this part of the page. You can try again, or head
+            back to the feed.
           </p>
-          {process.env.NODE_ENV === 'development' && (
-            <pre
-              style={{
-                textAlign: 'left',
-                fontSize: 11,
-                color: '#888',
-                background: '#0a0a0a',
-                padding: 10,
-                borderRadius: 6,
-                overflow: 'auto',
-                maxHeight: 140,
-                margin: '0 0 20px',
-              }}
-            >
-              {error.message}
-              {error.stack && `\n\n${error.stack}`}
-            </pre>
+
+          {/* Always show the actual error in production for remote debugging */}
+          <div
+            style={{
+              textAlign: 'left',
+              fontSize: 12,
+              color: '#ff9999',
+              background: '#1a0a0a',
+              padding: 12,
+              borderRadius: 6,
+              margin: '0 0 16px',
+              border: '1px solid #3a1010',
+              wordBreak: 'break-word',
+            }}
+          >
+            <strong>Error:</strong> {error.message}
+          </div>
+
+          {error.stack && (
+            <details style={{ marginBottom: 16 }}>
+              <summary style={{ cursor: 'pointer', color: '#888', fontSize: 12 }}>
+                Show stack trace (click to expand)
+              </summary>
+              <pre
+                style={{
+                  textAlign: 'left',
+                  fontSize: 10,
+                  color: '#888',
+                  background: '#0a0a0a',
+                  padding: 8,
+                  borderRadius: 4,
+                  overflow: 'auto',
+                  maxHeight: 160,
+                  marginTop: 8,
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {error.stack}
+              </pre>
+            </details>
           )}
+
+          <button
+            onClick={() => {
+              const text = `Error: ${error.message}\n\n${error.stack || ''}`;
+              navigator.clipboard?.writeText(text).then(() => {
+                alert('Error details copied to clipboard');
+              }).catch(() => {
+                // fallback
+                prompt('Copy this error:', text);
+              });
+            }}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 4,
+              background: 'transparent',
+              color: '#ccc',
+              border: '1px solid #444',
+              fontSize: 12,
+              cursor: 'pointer',
+              marginBottom: 16,
+            }}
+          >
+            Copy error details
+          </button>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
             <button
               onClick={this.reset}
@@ -125,6 +173,6 @@ export class ErrorBoundary extends Component<Props, State> {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }

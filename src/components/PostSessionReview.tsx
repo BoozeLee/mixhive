@@ -103,7 +103,7 @@ export function PostSessionReview({
     setIsSubmitting(true);
 
     try {
-      const supabase = (await import('@/lib/supabase')).createClient();
+      const { supabase } = await import('@/lib/supabase');
 
       // Real update: mark selected edges as approved with user provenance
       const { error } = await supabase

@@ -1,5 +1,7 @@
 -- Venue Fit Agent
--- Scores active gig/festival/residency opportunities against the artist's profile.
+-- Scores artist-venue compatibility using find_candidate_venues RPC +
+-- active opportunity matching. The RPC gives us the venues table directly,
+-- filtered by genre overlap and city. Opportunities are then intersected.
 -- Trigger: on_demand | approval_policy: auto (pro tier)
 
 function run(ctx)
@@ -11,8 +13,17 @@ function run(ctx)
              suggestions = {}, tasks = {}, notifications = {} }
   end
 
-  local opps = mixhive["db.read"]("opportunities", { is_active = true }, 30):await()
+  -- Use find_candidate_venues RPC for genre+city filtered venue candidates
+  local city = (profile.location or ""):match("^([^,]+)") or nil
+  local venues = mixhive["db.rpc"]("find_candidate_venues", {
+    p_genres  = profile.genres or {},
+    p_city    = city,
+    p_country = "BE",
+    p_limit   = 20,
+  }):await()
 
+  -- Also pull active booking opportunities to cross-reference
+  local opps = mixhive["db.read"]("opportunities", { is_active = true }, 30):await()
   local booking_opps = {}
   for _, o in ipairs(opps) do
     local t = o.opp_type or ""
@@ -21,75 +32,84 @@ function run(ctx)
     end
   end
 
-  if #booking_opps == 0 then
-    mh_log("no active booking opportunities to score")
+  if #venues == 0 and #booking_opps == 0 then
+    mh_log("no venues or booking opportunities found")
     return { status = "ok", suggestions = {}, tasks = {}, notifications = {} }
+  end
+
+  -- Build context lines for LLM scoring
+  local venue_lines = {}
+  for i, v in ipairs(venues) do
+    if i > 15 then break end
+    table.insert(venue_lines, string.format(
+      "V%d. %s | %s | genres: %s | overlap: %d | capacity: %s",
+      i, v.name or "?", v.city or "?",
+      table.concat(v.genres or {}, ","),
+      v.genre_overlap or 0,
+      tostring(v.capacity or "?")
+    ))
   end
 
   local opp_lines = {}
   for i, o in ipairs(booking_opps) do
-    if i > 20 then break end
+    if i > 10 then break end
     table.insert(opp_lines, string.format(
-      "%d. [%s] %s | city: %s | genres: %s | compensation: %s",
-      i,
-      o.opp_type or "gig",
+      "O%d. [%s] %s | city: %s | comp: %s | deadline: %s",
+      i, o.opp_type or "gig",
       o.title or "?",
       o.city or o.location or "?",
-      table.concat(o.genres or {}, ","),
-      o.compensation or "?"
+      o.compensation or "?",
+      o.deadline or "open"
     ))
   end
 
   local score_prompt = string.format([[
-You are a DJ booking consultant scoring venue/event fit for an underground artist.
-Score based on: genre alignment, location proximity, artist career stage, compensation fairness.
+You are a DJ booking consultant scoring venue/opportunity fit for an underground electronic artist.
+Score based on: genre overlap (most important), city proximity, career stage, and compensation.
 
 Artist: %s | Location: %s | Genres: %s | Style: %s
 
-Opportunities:
+Candidate Venues (from DB):
 %s
 
-Return the top 5 by fit. JSON only:
-{"top_5":[{"index":N,"fit_score":N,"genre_match":"string","location_notes":"string"}]}
-fit_score is 0-100.
+Active Opportunities:
+%s
+
+Return top 5 combined fits. JSON only:
+{"top_5":[{"ref":"V1 or O2","name":"string","fit_score":0-100,"genre_match":"string","recommendation":"1 sentence"}]}
+fit_score: 0-100.
 ]],
     profile.display_name or profile.username or "Artist",
     profile.location or "Belgium",
     table.concat(profile.genres or {}, ", "),
     profile.dj_style or "DJ",
-    table.concat(opp_lines, "\n")
+    #venue_lines > 0 and table.concat(venue_lines, "\n") or "(none)",
+    #opp_lines > 0 and table.concat(opp_lines, "\n") or "(none)"
   )
 
   local ranked = mixhive["llm.json"](score_prompt,
-    '{"top_5":[{"index":number,"fit_score":number,"genre_match":string,"location_notes":string}]}',
+    '{"top_5":[{"ref":string,"name":string,"fit_score":number,"genre_match":string,"recommendation":string}]}',
     "haiku"
   ):await()
 
   local suggs = {}
   for _, hit in ipairs(ranked.top_5 or {}) do
-    local opp = booking_opps[hit.index]
-    if opp then
-      table.insert(suggs, suggestion(
-        "venue_fit_score",
-        {
-          opportunity_id  = opp.id,
-          title           = opp.title,
-          opp_type        = opp.opp_type,
-          city            = opp.city or opp.location,
-          fit_score       = hit.fit_score,
-          genre_match     = hit.genre_match,
-          location_notes  = hit.location_notes,
-          compensation    = opp.compensation,
-          deadline        = opp.deadline,
-        },
-        (hit.fit_score or 50) / 100,
-        "Scored by genre alignment, location, and compensation",
-        false
-      ))
-    end
+    table.insert(suggs, suggestion(
+      "venue_fit_score",
+      {
+        ref            = hit.ref,
+        name           = hit.name,
+        fit_score      = hit.fit_score,
+        genre_match    = hit.genre_match,
+        recommendation = hit.recommendation,
+      },
+      (hit.fit_score or 50) / 100,
+      hit.recommendation or "Genre and location alignment detected",
+      false
+    ))
   end
 
-  mh_log("venue_fit scored " .. #suggs .. " opportunities")
+  mh_log("venue_fit scored " .. #suggs .. " targets")
 
   return {
     status        = "ok",
@@ -97,8 +117,8 @@ fit_score is 0-100.
     tasks         = {},
     notifications = #suggs > 0 and {
       notify(
-        "Venue fit scores ready",
-        "Top match: " .. (booking_opps[1] and booking_opps[1].title or "?") .. " — check your inbox.",
+        "Venue fit analysis complete",
+        #suggs .. " venues/opportunities scored — top match: " .. (suggs[1] and suggs[1].payload.name or "?"),
         "in_app",
         "/agents/inbox"
       )

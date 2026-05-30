@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
   // TODO: check user subscription tier against agent.tier before running
 
   const origin = new URL(req.url).origin;
-  const runtimeRes = await fetch(`${origin}/api/lua-agent/run`, {
+  const runtimeRes = await fetch(`${origin}/api/lua-agent/execute`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

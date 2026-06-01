@@ -417,7 +417,7 @@ class CDNConfigManager {
   generateConfigsForAllEnvironments(): Record<string, CDNConfig> {
     const configs: Record<string, CDNConfig> = {};
 
-    for (const [env, envConfig] of Object.entries(ENVIRONMENT_CONFIGS)) {
+    for (const env of Object.keys(ENVIRONMENT_CONFIGS)) {
       configs[env] = this.loadEnvironmentConfig(env);
     }
 

@@ -98,7 +98,7 @@ export function ErrorComponent({
           </button>
         )}
         
-        {action && action}
+        {action}
       </div>
     </div>
   )
@@ -170,7 +170,7 @@ export function EmptyState({ title, description, action, icon }: EmptyStateProps
           {description}
         </p>
       )}
-      {action && action}
+      {action}
     </div>
   )
 }

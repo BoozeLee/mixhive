@@ -209,18 +209,12 @@ export const CDNAudioPlayer: React.FC<CDNAudioPlayerProps> = ({
       {/* Artwork */}
       {showArtwork && artwork && (
         <div className="relative h-48 bg-gradient-to-br from-green-400 to-blue-500">
-          {artwork ? (
-            <CDNArtwork
-              src={artwork}
-              alt={`${title} artwork`}
-              size="medium"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="flex items-center justify-center w-full h-full">
-              <div className="text-white text-4xl">🎵</div>
-            </div>
-          )}
+          <CDNArtwork
+            src={artwork}
+            alt={`${title} artwork`}
+            size="medium"
+            className="w-full h-full object-cover"
+          />
         </div>
       )}
 

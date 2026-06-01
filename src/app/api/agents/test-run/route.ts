@@ -51,8 +51,8 @@ export async function POST(req: NextRequest) {
   }
 
   // Proxy to the Python Lua runtime with the service-role secret
-  const origin = new URL(req.url).origin
-  const runtimeRes = await fetch(`${origin}/api/lua-agent/run`, {
+  const runtimeUrl = new URL('/api/lua-agent/run', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
+  const runtimeRes = await fetch(runtimeUrl.toString(), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

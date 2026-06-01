@@ -211,7 +211,7 @@ export const CDNResponsiveImage: React.FC<ResponsiveImageProps> = ({
 
     const handleResize = () => {
       const width = window.innerWidth;
-      let newSize: typeof defaultSize = 'thumbnail';
+      let newSize: typeof defaultSize;
 
       if (width >= 1024) newSize = 'large';
       else if (width >= 768) newSize = 'medium';

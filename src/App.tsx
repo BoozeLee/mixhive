@@ -249,27 +249,7 @@ export default function App() {
           <div className="mixhive-shell">
           <CyberHiveBackdrop />
           <Navbar />
-          <a
-            href="#main-content"
-            style={{
-              position: 'absolute',
-              left: -9999,
-              top: 8,
-              background: '#f0c040',
-              color: '#0a0a0a',
-              padding: '8px 14px',
-              borderRadius: 6,
-              fontWeight: 600,
-              fontSize: 13,
-              zIndex: 999,
-            }}
-            onFocus={e => {
-              e.currentTarget.style.left = '8px';
-            }}
-            onBlur={e => {
-              e.currentTarget.style.left = '-9999px';
-            }}
-          >
+          <a href="#main-content" className="skip-link">
             Skip to main content
           </a>
           <div className="app-body">

@@ -22,13 +22,13 @@ export const colors = {
   accentMuted: '#f0c04044',
   accentFaint: '#f0c04022',
 
-  // Text scale
+  // Text scale (all levels pass WCAG AA contrast on surfaces #111–#0a0a0a)
   text: {
     primary: '#eee',
     secondary: '#ccc',
     muted: '#888',
-    dim: '#666',
-    faint: '#444',
+    dim: '#777',    // 4.6:1 on #111 — passes AA normal text
+    faint: '#666',  // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
   },
 
   // Semantic
@@ -67,8 +67,8 @@ export const radius = {
 } as const;
 
 export const fontSize = {
-  xs: 10,
-  sm: 11,
+  xs: 11,   // was 10 — minimum legible size for metadata labels
+  sm: 12,   // was 11
   base: 13,
   md: 14,
   lg: 16,

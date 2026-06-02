@@ -83,7 +83,7 @@
     "react-dom": "^19.2.6",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^7.15.1",
-    "redis": "^5.12.1",
+    "redis": "^6.0.0",
     "spotify-web-api-node": "^5.0.2",
     "tailwind-merge": "^2.0.0",
     "tailwindcss": "^4.3.0",

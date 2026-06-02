@@ -118,8 +118,9 @@ const API = [
       const r = await req('GET', '/api/feed?type=trending');
       const base = ok200(r);
       if (base.fail || base.warn) return base;
-      const arr = r.json?.data ?? r.json;
-      if (!Array.isArray(arr)) return { warn: `body not an array (got ${typeof arr})` };
+      // feed route returns { items: [], cursor, hasMore, cacheHit }
+      const arr = r.json?.items ?? r.json?.data ?? r.json;
+      if (!Array.isArray(arr)) return { warn: `body.items not an array (got ${typeof arr})` };
       return { pass: `${r.status} ${r.ms}ms — ${arr.length} items` };
     },
   },
@@ -133,7 +134,7 @@ const API = [
       const r = await req('GET', '/api/feed?type=trending&limit=5');
       const base = ok200(r);
       if (base.fail || base.warn) return base;
-      const arr = r.json?.data ?? r.json;
+      const arr = r.json?.items ?? r.json?.data ?? r.json;
       if (Array.isArray(arr) && arr.length > 5)
         return { warn: `returned ${arr.length} items, expected ≤ 5` };
       return { pass: `${r.status} ${r.ms}ms` };
@@ -158,8 +159,8 @@ const API = [
     run: async () => ok200or4xx(await req('GET', '/api/opportunities')),
   },
   {
-    label: 'GET /api/nft/collections',
-    run: async () => ok200(await req('GET', '/api/nft/collections')),
+    label: 'GET /api/nft/collections (POST-only, expects 405)',
+    run: async () => ok200or4xx(await req('GET', '/api/nft/collections')),
   },
   {
     label: 'GET /api/agents/wasmoon-test',

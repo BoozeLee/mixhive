@@ -1,34 +1,37 @@
-import { getTrending, getRecentMixes, getMixedFollowingFeed } from './api'
-import type { FeedMix, FeedCursor, TrendingCursor } from './types'
+import { getTrending, getRecentMixes, getMixedFollowingFeed } from './api';
+import { supabase } from './supabase';
+import type { FeedMix, FeedCursor, TrendingCursor } from './types';
 
 // Lightweight in-memory feed cache (TTL-based, cleared on page reload)
-const _memCache = new Map<string, { data: unknown; expires: number }>()
+const _memCache = new Map<string, { data: unknown; expires: number }>();
 
 export interface FeedOptions {
-  type: 'trending' | 'latest' | 'following' | 'discover'
-  userId?: string
-  genre?: string
-  limit?: number
-  cursor?: string
+  type: 'trending' | 'latest' | 'following' | 'discover';
+  userId?: string;
+  genre?: string;
+  limit?: number;
+  cursor?: string;
 }
 
 export interface EnhancedFeedItem {
-  id: string
-  type: 'mix' | 'buzz'
-  data: any
-  timestamp: string
-  score?: number
+  id: string;
+  type: 'mix' | 'buzz';
+  data: any;
+  timestamp: string;
+  score?: number;
   metadata?: {
-    isNew?: boolean | undefined
-    isTrending?: boolean | undefined
-    genre?: string | undefined
-    dj?: {
-      id: string
-      username: string
-      display_name: string
-      avatar_url: string
-    } | undefined
-  }
+    isNew?: boolean | undefined;
+    isTrending?: boolean | undefined;
+    genre?: string | undefined;
+    dj?:
+      | {
+          id: string;
+          username: string;
+          display_name: string;
+          avatar_url: string;
+        }
+      | undefined;
+  };
 }
 
 class FeedService {
@@ -36,78 +39,91 @@ class FeedService {
     TRENDING: 600, // 10 minutes
     LATEST: 300, // 5 minutes
     FOLLOWING: 60, // 1 minute
-    DISCOVER: 1800 // 30 minutes
-  }
+    DISCOVER: 1800, // 30 minutes
+  };
 
   async getFeed(options: FeedOptions): Promise<{
-    items: EnhancedFeedItem[]
-    cursor: string | null
-    hasMore: boolean
-    cacheHit: boolean
+    items: EnhancedFeedItem[];
+    cursor: string | null;
+    hasMore: boolean;
+    cacheHit: boolean;
   }> {
-    const { type, userId, genre, limit = 20, cursor } = options
-    
+    const { type, userId, genre, limit = 20, cursor } = options;
+
     // Generate cache key
-    const cacheKey = this.generateCacheKey(type, userId, genre, cursor)
-    
-    // Try to get from cache first
-    const cachedFeed = this.getCachedFeed(cacheKey)
+    const cacheKey = this.generateCacheKey(type, userId, genre, cursor);
+
+    // In-memory cache
+    const cachedFeed = this.getCachedFeed(cacheKey);
     if (cachedFeed) {
       return {
         items: cachedFeed.items,
         cursor: cachedFeed.cursor,
         hasMore: cachedFeed.hasMore,
-        cacheHit: true
-      }
+        cacheHit: true,
+      };
     }
 
     // Fetch fresh data
-    let freshData: any[] = []
-    let newCursor: string | null = null
-    let hasMore = false
+    let freshData: any[] = [];
+    let newCursor: string | null = null;
+    let hasMore = false;
 
     switch (type) {
       case 'trending': {
-        const trendingCursor = cursor ? (JSON.parse(cursor) as TrendingCursor) : undefined
-        const trendingResult = await this.getTrendingWithCache(genre, limit, trendingCursor)
-        freshData = trendingResult.data.map(this.enhanceFeedItem)
-        newCursor = trendingResult.cursor ? JSON.stringify(trendingResult.cursor) : null
-        hasMore = !!trendingResult.cursor
-        break
+        const trendingCursor = cursor ? (JSON.parse(cursor) as TrendingCursor) : undefined;
+        const trendingResult = await this.getTrendingWithCache(genre, limit, trendingCursor);
+        freshData = trendingResult.data.map(this.enhanceFeedItem);
+        newCursor = trendingResult.cursor ? JSON.stringify(trendingResult.cursor) : null;
+        hasMore = !!trendingResult.cursor;
+        break;
       }
 
       case 'latest': {
-        const latestCursor = cursor ? (JSON.parse(cursor) as FeedCursor) : undefined
-        const latestResult = await this.getRecentMixesWithCache(limit, latestCursor)
-        freshData = latestResult.data.map(this.enhanceFeedItem)
-        newCursor = latestResult.cursor ? JSON.stringify(latestResult.cursor) : null
-        hasMore = !!latestResult.cursor
-        break
+        const latestCursor = cursor ? (JSON.parse(cursor) as FeedCursor) : undefined;
+        const latestResult = await this.getRecentMixesWithCache(limit, latestCursor);
+        freshData = latestResult.data.map(this.enhanceFeedItem);
+        newCursor = latestResult.cursor ? JSON.stringify(latestResult.cursor) : null;
+        hasMore = !!latestResult.cursor;
+        break;
       }
 
       case 'following': {
         if (!userId) {
-          throw new Error('User ID required for following feed')
+          throw new Error('User ID required for following feed');
         }
-        const followingCursor = cursor ? (JSON.parse(cursor) as FeedCursor) : undefined
-        const followingResult = await this.getMixedFollowingFeedWithCache(userId, limit, followingCursor)
+        const followingCursor = cursor ? (JSON.parse(cursor) as FeedCursor) : undefined;
+        const followingResult = await this.getMixedFollowingFeedWithCache(
+          userId,
+          limit,
+          followingCursor
+        );
         freshData = followingResult.data.map(item => {
-          if (item.type === 'mix') return this.enhanceFeedItem(item.data)
-          return { id: item.data.id, type: 'buzz' as const, data: item.data, timestamp: item.data.created_at }
-        })
-        newCursor = followingResult.mixCursor ? JSON.stringify(followingResult.mixCursor) : followingResult.buzzCursor ? JSON.stringify(followingResult.buzzCursor) : null
-        hasMore = !!(followingResult.mixCursor || followingResult.buzzCursor)
-        break
+          if (item.type === 'mix') return this.enhanceFeedItem(item.data);
+          return {
+            id: item.data.id,
+            type: 'buzz' as const,
+            data: item.data,
+            timestamp: item.data.created_at,
+          };
+        });
+        newCursor = followingResult.mixCursor
+          ? JSON.stringify(followingResult.mixCursor)
+          : followingResult.buzzCursor
+            ? JSON.stringify(followingResult.buzzCursor)
+            : null;
+        hasMore = !!(followingResult.mixCursor || followingResult.buzzCursor);
+        break;
       }
 
       case 'discover': {
-        const discoverResult = await this.getDiscoverFeedWithCache(userId, genre, limit, cursor)
-        freshData = discoverResult
-        break
+        const discoverResult = await this.getDiscoverFeedWithCache(userId, genre, limit, cursor);
+        freshData = discoverResult;
+        break;
       }
 
       default:
-        throw new Error(`Unknown feed type: ${type}`)
+        throw new Error(`Unknown feed type: ${type}`);
     }
 
     // Cache the fresh data
@@ -115,91 +131,136 @@ class FeedService {
       items: freshData,
       cursor: newCursor,
       hasMore,
-      timestamp: Date.now()
-    })
+      timestamp: Date.now(),
+    });
 
     return {
       items: freshData,
       cursor: newCursor,
       hasMore,
-      cacheHit: false
-    }
+      cacheHit: false,
+    };
   }
 
   private generateCacheKey(type: string, userId?: string, genre?: string, cursor?: string): string {
-    const parts = ['feed', type]
-    if (userId) parts.push(userId)
-    if (genre) parts.push(genre)
-    if (cursor) parts.push(cursor)
-    return parts.join(':')
+    const parts = ['feed', type];
+    if (userId) parts.push(userId);
+    if (genre) parts.push(genre);
+    if (cursor) parts.push(cursor);
+    return parts.join(':');
   }
 
   private getCachedFeed(cacheKey: string): {
-    items: EnhancedFeedItem[]
-    cursor: string | null
-    hasMore: boolean
-    timestamp: number
+    items: EnhancedFeedItem[];
+    cursor: string | null;
+    hasMore: boolean;
+    timestamp: number;
   } | null {
-    const entry = _memCache.get(cacheKey)
+    const entry = _memCache.get(cacheKey);
     if (!entry || Date.now() > entry.expires) {
-      _memCache.delete(cacheKey)
-      return null
+      _memCache.delete(cacheKey);
+      return null;
     }
-    return entry.data as ReturnType<FeedService['getCachedFeed']>
+    return entry.data as ReturnType<FeedService['getCachedFeed']>;
   }
 
-  private setCachedFeed(cacheKey: string, data: { items: EnhancedFeedItem[]; cursor: string | null; hasMore: boolean; timestamp: number }): void {
-    const ttl = this.getTTLForFeedType(cacheKey) * 1000
-    _memCache.set(cacheKey, { data, expires: Date.now() + ttl })
+  private setCachedFeed(
+    cacheKey: string,
+    data: { items: EnhancedFeedItem[]; cursor: string | null; hasMore: boolean; timestamp: number }
+  ): void {
+    const ttl = this.getTTLForFeedType(cacheKey) * 1000;
+    _memCache.set(cacheKey, { data, expires: Date.now() + ttl });
   }
 
   private getTTLForFeedType(cacheKey: string): number {
-    if (cacheKey.includes('trending')) return this.CACHE_TTL.TRENDING
-    if (cacheKey.includes('latest')) return this.CACHE_TTL.LATEST
-    if (cacheKey.includes('following')) return this.CACHE_TTL.FOLLOWING
-    return this.CACHE_TTL.DISCOVER
+    if (cacheKey.includes('trending')) return this.CACHE_TTL.TRENDING;
+    if (cacheKey.includes('latest')) return this.CACHE_TTL.LATEST;
+    if (cacheKey.includes('following')) return this.CACHE_TTL.FOLLOWING;
+    return this.CACHE_TTL.DISCOVER;
   }
 
   private async getTrendingWithCache(genre?: string, limit = 20, cursor?: TrendingCursor) {
-    return getTrending(limit, cursor, genre)
+    // In the browser, delegate to the server-side route for Redis L1 cache.
+    // Only first-page requests are cached (cursor = undefined).
+    if (typeof window !== 'undefined' && !cursor) {
+      try {
+        const params = new URLSearchParams({ type: 'trending', genre: genre ?? 'all', limit: String(limit) });
+        const res = await fetch(`/api/feed?${params}`);
+        if (res.ok) {
+          const json = await res.json() as { items: FeedMix[]; cursor: string | null; hasMore: boolean };
+          const parsedCursor = json.cursor ? (JSON.parse(json.cursor) as TrendingCursor) : null;
+          return { data: json.items, cursor: parsedCursor };
+        }
+      } catch {
+        // fall through to direct call
+      }
+    }
+    return getTrending(limit, cursor, genre);
   }
 
   private async getRecentMixesWithCache(limit = 20, cursor?: FeedCursor) {
-    return getRecentMixes(limit, cursor)
+    return getRecentMixes(limit, cursor);
   }
 
   private async getMixedFollowingFeedWithCache(userId: string, limit = 20, cursor?: FeedCursor) {
-    return getMixedFollowingFeed(userId, limit, cursor)
+    // In the browser, delegate to the server-side route for Redis L1 cache.
+    // Only first-page requests are cached.
+    if (typeof window !== 'undefined' && !cursor) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
+        const params = new URLSearchParams({ type: 'following', userId, limit: String(limit) });
+        const res = await fetch(`/api/feed?${params}`, { headers });
+        if (res.ok) {
+          const json = await res.json() as { items: unknown[]; cursor: string | null; mixCursor?: string | null; hasMore: boolean };
+          const mixCursor = json.cursor ? (JSON.parse(json.cursor) as FeedCursor) : null;
+          return {
+            data: json.items as ReturnType<typeof getMixedFollowingFeed> extends Promise<infer R> ? R['data'] : never,
+            mixCursor,
+            buzzCursor: null as FeedCursor | null,
+          };
+        }
+      } catch {
+        // fall through to direct call
+      }
+    }
+    return getMixedFollowingFeed(userId, limit, cursor);
   }
 
-  private async getDiscoverFeedWithCache(_userId: string | undefined, genre?: string, limit = 20, _cursor?: string) {
+  private async getDiscoverFeedWithCache(
+    _userId: string | undefined,
+    genre?: string,
+    limit = 20,
+    _cursor?: string
+  ) {
     const [trending, recommended] = await Promise.all([
       getTrending(limit / 2, undefined, genre),
-      this.getRecommendedMixes(limit / 2)
-    ])
-    const allMixes = [...trending.data, ...recommended]
-    const uniqueMixes = this.deduplicateMixes(allMixes)
-    return uniqueMixes.slice(0, limit).map(m => this.enhanceFeedItem(m))
+      this.getRecommendedMixes(limit / 2),
+    ]);
+    const allMixes = [...trending.data, ...recommended];
+    const uniqueMixes = this.deduplicateMixes(allMixes);
+    return uniqueMixes.slice(0, limit).map(m => this.enhanceFeedItem(m));
   }
 
   private async getRecommendedMixes(limit = 10): Promise<FeedMix[]> {
-    const result = await getTrending(limit)
-    return result.data
+    const result = await getTrending(limit);
+    return result.data;
   }
 
   private deduplicateMixes(mixes: FeedMix[]): FeedMix[] {
-    const seen = new Set()
+    const seen = new Set();
     return mixes.filter(mix => {
-      if (seen.has(mix.id)) return false
-      seen.add(mix.id)
-      return true
-    })
+      if (seen.has(mix.id)) return false;
+      seen.add(mix.id);
+      return true;
+    });
   }
 
   private enhanceFeedItem(mix: FeedMix): EnhancedFeedItem {
-    const now = new Date()
-    const createdAt = new Date(mix.created_at)
-    const isNew = (now.getTime() - createdAt.getTime()) < 24 * 60 * 60 * 1000
+    const now = new Date();
+    const createdAt = new Date(mix.created_at);
+    const isNew = now.getTime() - createdAt.getTime() < 24 * 60 * 60 * 1000;
 
     return {
       id: mix.id,
@@ -211,56 +272,71 @@ class FeedService {
         isNew,
         isTrending: this.isTrending(mix),
         genre: mix.genre_name ?? undefined,
-        dj: mix.dj ? {
-          id: mix.dj.id,
-          username: mix.dj.username,
-          display_name: mix.dj.display_name ?? mix.dj.username,
-          avatar_url: mix.dj.avatar_url ?? ''
-        } : undefined
-      }
-    }
+        dj: mix.dj
+          ? {
+              id: mix.dj.id,
+              username: mix.dj.username,
+              display_name: mix.dj.display_name ?? mix.dj.username,
+              avatar_url: mix.dj.avatar_url ?? '',
+            }
+          : undefined,
+      },
+    };
   }
 
   private calculateFeedScore(mix: FeedMix): number {
-    const playWeight = (mix.play_count || 0) * 0.1
-    const likeWeight = (mix.like_count || 0) * 1.0
-    const commentWeight = (mix.comment_count || 0) * 2.0
-    const recencyWeight = this.getRecencyScore(mix.created_at)
-    
-    return playWeight + likeWeight + commentWeight + recencyWeight
+    const playWeight = (mix.play_count || 0) * 0.1;
+    const likeWeight = (mix.like_count || 0) * 1.0;
+    const commentWeight = (mix.comment_count || 0) * 2.0;
+    const recencyWeight = this.getRecencyScore(mix.created_at);
+
+    return playWeight + likeWeight + commentWeight + recencyWeight;
   }
 
   private getRecencyScore(timestamp: string): number {
-    const now = new Date()
-    const created = new Date(timestamp)
-    const hoursDiff = (now.getTime() - created.getTime()) / (1000 * 60 * 60)
-    
-    if (hoursDiff < 1) return 10 // Last hour
-    if (hoursDiff < 24) return 5 // Last day
-    if (hoursDiff < 72) return 2 // Last 3 days
-    return 1 // Older
+    const now = new Date();
+    const created = new Date(timestamp);
+    const hoursDiff = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
+
+    if (hoursDiff < 1) return 10; // Last hour
+    if (hoursDiff < 24) return 5; // Last day
+    if (hoursDiff < 72) return 2; // Last 3 days
+    return 1; // Older
   }
 
   private isTrending(mix: FeedMix): boolean {
-    const score = this.calculateFeedScore(mix)
-    return score > 50 // Threshold for trending
+    const score = this.calculateFeedScore(mix);
+    return score > 50; // Threshold for trending
   }
 
   addRealTimeUpdate(userId: string, update: EnhancedFeedItem): void {
-    const cacheKey = this.generateCacheKey('following', userId)
-    const cached = this.getCachedFeed(cacheKey)
+    const cacheKey = this.generateCacheKey('following', userId);
+    const cached = this.getCachedFeed(cacheKey);
     if (cached) {
-      const updatedItems = [update, ...cached.items].slice(0, 50)
-      this.setCachedFeed(cacheKey, { items: updatedItems, cursor: null, hasMore: false, timestamp: Date.now() })
+      const updatedItems = [update, ...cached.items].slice(0, 50);
+      this.setCachedFeed(cacheKey, {
+        items: updatedItems,
+        cursor: null,
+        hasMore: false,
+        timestamp: Date.now(),
+      });
     }
   }
 
   invalidateUserFeed(userId: string): void {
     for (const key of _memCache.keys()) {
-      if (key.includes(userId)) _memCache.delete(key)
+      if (key.includes(userId)) _memCache.delete(key);
+    }
+    // Fire-and-forget server-side cache invalidation
+    if (typeof window !== 'undefined') {
+      fetch('/api/cache/invalidate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      }).catch(() => {});
     }
   }
 }
 
 // Global feed service instance
-export const feedService = new FeedService()
+export const feedService = new FeedService();

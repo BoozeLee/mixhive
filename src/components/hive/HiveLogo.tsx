@@ -1,19 +1,19 @@
-import { ImageWithFallback } from '../../lib/assetUrl'
+import { ImageWithFallback } from '../../lib/assetUrl';
 
-type Variant = 'horizontal' | 'stacked' | 'icon'
-type Size = 'sm' | 'md' | 'lg' | 'hero'
+type Variant = 'horizontal' | 'stacked' | 'icon';
+type Size = 'sm' | 'md' | 'lg' | 'hero';
 
 const sizes: Record<Size, { mark: number; text: number; gap: number }> = {
-  sm:   { mark: 28,  text: 14, gap: 8  },
-  md:   { mark: 40,  text: 18, gap: 10 },
-  lg:   { mark: 64,  text: 28, gap: 14 },
+  sm: { mark: 28, text: 14, gap: 8 },
+  md: { mark: 40, text: 18, gap: 10 },
+  lg: { mark: 64, text: 28, gap: 14 },
   hero: { mark: 128, text: 48, gap: 18 },
-}
+};
 
 interface Props {
-  variant?: Variant
-  size?: Size
-  className?: string
+  variant?: Variant;
+  size?: Size;
+  className?: string;
 }
 
 /**
@@ -22,9 +22,9 @@ interface Props {
  * `variant="icon"` renders just the mark, no wordmark text.
  */
 export function HiveLogo({ variant = 'horizontal', size = 'md', className }: Props) {
-  const s = sizes[size]
-  const showText = variant !== 'icon'
-  const stacked = variant === 'stacked'
+  const s = sizes[size];
+  const showText = variant !== 'icon';
+  const stacked = variant === 'stacked';
 
   return (
     <div
@@ -65,5 +65,5 @@ export function HiveLogo({ variant = 'horizontal', size = 'md', className }: Pro
         </span>
       )}
     </div>
-  )
+  );
 }

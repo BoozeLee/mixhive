@@ -10,7 +10,8 @@
     }
   },
   "rewrites": [
-    { "source": "/api/lua-agent/run", "destination": "/api/lua-agent/run.py" }
+    { "source": "/api/lua-agent/run", "destination": "/api/lua-agent/run.py" },
+    { "source": "/api/trpc/:path*", "destination": "http://localhost:3000/api/trpc/:path*" }
   ],
   "headers": [
     {
@@ -67,6 +68,75 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    },
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/mix-audio/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Accept-Ranges",
+          "value": "bytes"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/cdn/(.*)",
+      "dest": "/api/cdn/$1"
+    },
+    {
+      "src": "/ws/(.*)",
+      "dest": "/api/websocket/$1"
+    },
+    {
+      "src": "/embed/:path*",
+      "dest": "/api/embed/:path*"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cleanup",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/analytics/daily",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/strategic-agents",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/notification-prioritizer",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/nft-sync",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/embed-refresh",
+      "schedule": "0 3 * * *"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/dashboard",
+      "destination": "/feed",
+      "permanent": true
     }
   ]
 }

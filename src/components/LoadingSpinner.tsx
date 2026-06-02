@@ -1,27 +1,27 @@
-import React from 'react'
-import { colors, space } from '../styles/tokens'
+import React from 'react';
+import { colors, space } from '../styles/tokens';
 
 interface LoadingSpinnerProps {
-  size?: 'small' | 'medium' | 'large'
-  message?: string
-  overlay?: boolean
-  className?: string
+  size?: 'small' | 'medium' | 'large';
+  message?: string;
+  overlay?: boolean;
+  className?: string;
 }
 
-export function LoadingSpinner({ 
-  size = 'medium', 
-  message = 'Loading...', 
+export function LoadingSpinner({
+  size = 'medium',
+  message = 'Loading...',
   overlay = false,
-  className = ''
+  className = '',
 }: LoadingSpinnerProps) {
   const sizeStyles = {
     small: { width: 16, height: 16, strokeWidth: 2 },
     medium: { width: 24, height: 24, strokeWidth: 3 },
-    large: { width: 40, height: 40, strokeWidth: 4 }
-  }
+    large: { width: 40, height: 40, strokeWidth: 4 },
+  };
 
-  const currentSize = sizeStyles[size]
-  
+  const currentSize = sizeStyles[size];
+
   const spinner = (
     <svg
       className={className}
@@ -61,7 +61,7 @@ export function LoadingSpinner({
         />
       </circle>
     </svg>
-  )
+  );
 
   if (overlay) {
     return (
@@ -82,61 +82,69 @@ export function LoadingSpinner({
         <div style={{ textAlign: 'center' }}>
           {spinner}
           {message && (
-            <p style={{ 
-              marginTop: space[4], 
-              color: colors.text.muted, 
-              fontSize: 14 
-            }}>
+            <p
+              style={{
+                marginTop: space[4],
+                color: colors.text.muted,
+                fontSize: 14,
+              }}
+            >
               {message}
             </p>
           )}
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      padding: space[6],
-      minHeight: 200,
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: space[6],
+        minHeight: 200,
+      }}
+    >
       {spinner}
       {message && (
-        <p style={{ 
-          marginTop: space[3], 
-          color: colors.text.muted, 
-          fontSize: 14 
-        }}>
+        <p
+          style={{
+            marginTop: space[3],
+            color: colors.text.muted,
+            fontSize: 14,
+          }}
+        >
           {message}
         </p>
       )}
     </div>
-  )
+  );
 }
 
 // Page level loading component
 export function PageLoading({ message = 'Loading...' }: { message?: string }) {
   return (
-    <div style={{
-      minHeight: '60vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+    <div
+      style={{
+        minHeight: '60vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <LoadingSpinner size="large" message={message} />
     </div>
-  )
+  );
 }
 
 // Button loading component
 interface ButtonLoadingProps {
-  loading: boolean
-  children: React.ReactNode
-  disabled?: boolean
+  loading: boolean;
+  children: React.ReactNode;
+  disabled?: boolean;
 }
 
 export function ButtonLoading({ loading, children, disabled }: ButtonLoadingProps) {
@@ -161,92 +169,100 @@ export function ButtonLoading({ loading, children, disabled }: ButtonLoadingProp
         transition: 'all 0.2s',
       }}
     >
-      {loading && (
-        <LoadingSpinner size="small" />
-      )}
+      {loading && <LoadingSpinner size="small" />}
       {children}
     </button>
-  )
+  );
 }
 
 // Content loading state
 interface ContentLoadingProps {
-  count?: number
-  skeleton?: React.ReactNode
-  message?: string
+  count?: number;
+  skeleton?: React.ReactNode;
+  message?: string;
 }
 
 export function ContentLoading({ count = 3, skeleton, message }: ContentLoadingProps) {
   const defaultSkeleton = (
-    <div style={{
-      display: 'flex',
-      gap: space[4],
-      padding: space[4],
-      background: colors.surface,
-      borderRadius: 10,
-      border: `1px solid ${colors.border}`,
-    }}>
-      <div style={{
-        width: 80,
-        height: 80,
-        background: colors.surfaceHover,
-        borderRadius: 8,
-        flexShrink: 0,
-        animation: 'pulse 2s infinite',
-      }} />
+    <div
+      style={{
+        display: 'flex',
+        gap: space[4],
+        padding: space[4],
+        background: colors.surface,
+        borderRadius: 10,
+        border: `1px solid ${colors.border}`,
+      }}
+    >
+      <div
+        style={{
+          width: 80,
+          height: 80,
+          background: colors.surfaceHover,
+          borderRadius: 8,
+          flexShrink: 0,
+          animation: 'pulse 2s infinite',
+        }}
+      />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: space[2] }}>
-        <div style={{
-          height: 16,
-          background: colors.surfaceHover,
-          borderRadius: 4,
-          animation: 'pulse 2s infinite',
-        }} />
-        <div style={{
-          height: 14,
-          width: '70%',
-          background: colors.surfaceHover,
-          borderRadius: 4,
-          animation: 'pulse 2s infinite',
-        }} />
-        <div style={{
-          height: 12,
-          width: '50%',
-          background: colors.surfaceHover,
-          borderRadius: 4,
-          animation: 'pulse 2s infinite',
-        }} />
+        <div
+          style={{
+            height: 16,
+            background: colors.surfaceHover,
+            borderRadius: 4,
+            animation: 'pulse 2s infinite',
+          }}
+        />
+        <div
+          style={{
+            height: 14,
+            width: '70%',
+            background: colors.surfaceHover,
+            borderRadius: 4,
+            animation: 'pulse 2s infinite',
+          }}
+        />
+        <div
+          style={{
+            height: 12,
+            width: '50%',
+            background: colors.surfaceHover,
+            borderRadius: 4,
+            animation: 'pulse 2s infinite',
+          }}
+        />
       </div>
     </div>
-  )
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i}>
-          {skeleton || defaultSkeleton}
-        </div>
+        <div key={i}>{skeleton || defaultSkeleton}</div>
       ))}
       {message && (
-        <p style={{ 
-          textAlign: 'center', 
-          color: colors.text.muted, 
-          fontSize: 14,
-          marginTop: space[4]
-        }}>
+        <p
+          style={{
+            textAlign: 'center',
+            color: colors.text.muted,
+            fontSize: 14,
+            marginTop: space[4],
+          }}
+        >
           {message}
         </p>
       )}
     </div>
-  )
+  );
 }
 
 // Add the spin animation to global CSS
 if (typeof document !== 'undefined') {
-  const style = document.createElement('style')
+  const style = document.createElement('style');
   style.textContent = `
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-  `
-  document.head.appendChild(style)
+  `;
+  document.head.appendChild(style);
 }

@@ -1,149 +1,149 @@
-import { useState, useRef } from 'react'
-import { isSupabaseConfigured, supabase } from '../lib/supabase'
-import { AVATAR_BUCKET } from '../lib/api'
-import type { Profile } from '../lib/types'
+import { useState, useRef } from 'react';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { AVATAR_BUCKET } from '../lib/api';
+import type { Profile } from '../lib/types';
 
 interface ProfilePictureUploadProps {
-  profile: Profile | null
-  currentUserId: string
-  onUploadComplete: (url: string) => void
-  className?: string
-  size?: 'small' | 'medium' | 'large'
+  profile: Profile | null;
+  currentUserId: string;
+  onUploadComplete: (url: string) => void;
+  className?: string;
+  size?: 'small' | 'medium' | 'large';
 }
 
 const sizeClasses = {
   small: 'w-16 h-16 text-sm',
   medium: 'w-24 h-24 text-base',
-  large: 'w-32 h-32 text-lg'
-}
+  large: 'w-32 h-32 text-lg',
+};
 
-export function ProfilePictureUpload({ 
-  profile, 
-  currentUserId, 
-  onUploadComplete, 
-  className = '', 
-  size = 'medium' 
+export function ProfilePictureUpload({
+  profile,
+  currentUserId,
+  onUploadComplete,
+  className = '',
+  size = 'medium',
 }: ProfilePictureUploadProps) {
-  const [uploading, setUploading] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [dragActive, setDragActive] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (file: File) => {
-    if (!file || !currentUserId) return
+    if (!file || !currentUserId) return;
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file')
-      return
+      alert('Please select an image file');
+      return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB')
-      return
+      alert('File size must be less than 5MB');
+      return;
     }
 
     // Create preview
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      setPreviewUrl(e.target?.result as string)
-    }
-    reader.readAsDataURL(file)
+    const reader = new FileReader();
+    reader.onload = e => {
+      setPreviewUrl(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
 
     // Upload to Supabase
-    setUploading(true)
+    setUploading(true);
     try {
       if (!isSupabaseConfigured) {
-        alert('Supabase is not configured')
-        return
+        alert('Supabase is not configured');
+        return;
       }
 
       // Generate filename
-      const timestamp = Date.now()
-      const fileExtension = file.name.split('.').pop()
-      const filename = `${currentUserId}/avatar_${timestamp}.${fileExtension}`
+      const timestamp = Date.now();
+      const fileExtension = file.name.split('.').pop();
+      const filename = `${currentUserId}/avatar_${timestamp}.${fileExtension}`;
 
       // Upload file
       const { error: uploadError } = await supabase.storage
         .from(AVATAR_BUCKET)
         .upload(filename, file, {
           contentType: file.type,
-          upsert: true
-        })
+          upsert: true,
+        });
 
       if (uploadError) {
-        throw uploadError
+        throw uploadError;
       }
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from(AVATAR_BUCKET)
-        .getPublicUrl(filename)
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(filename);
 
       // Update profile with new avatar URL
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ 
+        .update({
           avatar_url: publicUrl,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', currentUserId)
+        .eq('id', currentUserId);
 
       if (updateError) {
-        throw updateError
+        throw updateError;
       }
 
-      onUploadComplete(publicUrl)
-      setPreviewUrl(null)
+      onUploadComplete(publicUrl);
+      setPreviewUrl(null);
     } catch (error) {
-      console.error('Error uploading profile picture:', error)
-      alert('Failed to upload profile picture')
+      console.error('Error uploading profile picture:', error);
+      alert('Failed to upload profile picture');
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setDragActive(false)
-    const files = e.dataTransfer.files
+    e.preventDefault();
+    setDragActive(false);
+    const files = e.dataTransfer.files;
     if (files.length > 0) {
-      handleFileSelect(files[0])
+      handleFileSelect(files[0]);
     }
-  }
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setDragActive(true)
-  }
+    e.preventDefault();
+    setDragActive(true);
+  };
 
   const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault()
-    setDragActive(false)
-  }
+    e.preventDefault();
+    setDragActive(false);
+  };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+    const files = e.target.files;
     if (files && files.length > 0) {
-      handleFileSelect(files[0])
+      handleFileSelect(files[0]);
     }
-  }
+  };
 
   const handleClick = () => {
-    if (!showUploadInterface || uploading) return
-    fileInputRef.current?.click()
-  }
+    if (!showUploadInterface || uploading) return;
+    fileInputRef.current?.click();
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleClick()
+      e.preventDefault();
+      handleClick();
     }
-  }
+  };
 
-  const currentAvatar = profile?.avatar_url || null
-  const showUploadInterface = profile?.id === currentUserId
+  const currentAvatar = profile?.avatar_url || null;
+  const showUploadInterface = profile?.id === currentUserId;
 
   return (
     <div className={`relative ${className}`}>
@@ -171,24 +171,20 @@ export function ProfilePictureUpload({
             src={currentAvatar}
             alt="Profile"
             className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              target.style.display = 'none'
+            onError={e => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
             }}
           />
         ) : (
-          <div className="text-gray-400">
-            🎧
-          </div>
+          <div className="text-gray-400">🎧</div>
         )}
 
         {showUploadInterface && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <div className="text-center text-white">
               <div className="text-lg mb-1">📷</div>
-              <div className="text-xs">
-                {uploading ? 'Uploading...' : 'Change'}
-              </div>
+              <div className="text-xs">{uploading ? 'Uploading...' : 'Change'}</div>
             </div>
           </div>
         )}
@@ -217,11 +213,9 @@ export function ProfilePictureUpload({
 
       {showUploadInterface && !uploading && (
         <div className="absolute -bottom-8 left-0 right-0 text-center">
-          <p className="text-xs text-gray-400">
-            Click to upload profile picture
-          </p>
+          <p className="text-xs text-gray-400">Click to upload profile picture</p>
         </div>
       )}
     </div>
-  )
+  );
 }

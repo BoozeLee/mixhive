@@ -1,32 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { resolveAiContext, noKeyResponse } from '../_lib/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { resolveAiContext, noKeyResponse } from '../_lib/auth';
 
 export async function POST(req: NextRequest) {
-  const ctx = await resolveAiContext(req)
+  const ctx = await resolveAiContext(req);
   if (!ctx.openaiKey) {
     if (ctx.error === 'Not authenticated' || ctx.error === 'Invalid session') {
-      return NextResponse.json({ error: ctx.error }, { status: 401 })
+      return NextResponse.json({ error: ctx.error }, { status: 401 });
     }
-    return noKeyResponse()
+    return noKeyResponse();
   }
-  const apiKey = ctx.openaiKey
+  const apiKey = ctx.openaiKey;
 
-  let body: { style?: string; influences?: string; equipment?: string[] }
+  let body: { style?: string; influences?: string; equipment?: string[] };
   try {
-    body = await req.json()
+    body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const lines: string[] = []
-  if (body.style) lines.push(`Style: ${body.style}`)
-  if (body.influences) lines.push(`Influences: ${body.influences}`)
-  if (body.equipment?.length) lines.push(`Equipment: ${body.equipment.join(', ')}`)
+  const lines: string[] = [];
+  if (body.style) lines.push(`Style: ${body.style}`);
+  if (body.influences) lines.push(`Influences: ${body.influences}`);
+  if (body.equipment?.length) lines.push(`Equipment: ${body.equipment.join(', ')}`);
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -43,21 +43,24 @@ export async function POST(req: NextRequest) {
       temperature: 0.5,
       response_format: { type: 'json_object' },
     }),
-  })
+  });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return NextResponse.json({ error: (err as Record<string, unknown>)?.error ?? 'Generation failed' }, { status: res.status })
+    const err = await res.json().catch(() => ({}));
+    return NextResponse.json(
+      { error: (err as Record<string, unknown>)?.error ?? 'Generation failed' },
+      { status: res.status }
+    );
   }
 
-  const result = await res.json() as { choices: Array<{ message: { content: string } }> }
-  const raw = result.choices?.[0]?.message?.content?.trim()
+  const result = (await res.json()) as { choices: Array<{ message: { content: string } }> };
+  const raw = result.choices?.[0]?.message?.content?.trim();
 
   try {
-    const parsed = JSON.parse(raw ?? '{}') as Record<string, unknown>
-    const genres = (parsed.genres ?? parsed.result ?? Object.values(parsed)[0]) as string[]
-    return NextResponse.json({ genres: Array.isArray(genres) ? genres.slice(0, 5) : [] })
+    const parsed = JSON.parse(raw ?? '{}') as Record<string, unknown>;
+    const genres = (parsed.genres ?? parsed.result ?? Object.values(parsed)[0]) as string[];
+    return NextResponse.json({ genres: Array.isArray(genres) ? genres.slice(0, 5) : [] });
   } catch {
-    return NextResponse.json({ genres: [] })
+    return NextResponse.json({ genres: [] });
   }
 }

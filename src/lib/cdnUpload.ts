@@ -1,25 +1,28 @@
 /**
  * Enhanced CDN Upload Functions
- * 
+ *
  * Provides CDN-aware upload functionality with fallback mechanisms,
  * progress tracking, and optimization features.
  */
 
 import { supabase } from './supabase';
-import { 
-  cdnUploadManager, 
-  getOptimizedMediaUrl, 
-  getCDNCacheHeaders 
-} from './cdn';
-import type { 
-  UploadProgress, 
-  CDNOptimizationParams,
-  MediaBucket 
-} from './cdn';
-import type { AudioOptimizationParams, ImageOptimizationParams, VideoOptimizationParams } from './cdnUrlTransformers';
+import { cdnUploadManager, getOptimizedMediaUrl, getCDNCacheHeaders } from './cdn';
+import type { UploadProgress, CDNOptimizationParams, MediaBucket } from './cdn';
+import type {
+  AudioOptimizationParams,
+  ImageOptimizationParams,
+  VideoOptimizationParams,
+} from './cdnUrlTransformers';
 
 // Export bucket constants for consistency
-export { AUDIO_BUCKET, ARTWORK_BUCKET, WAVEFORM_BUCKET, AVATAR_BUCKET, BANNER_BUCKET, BUZZ_MEDIA_BUCKET } from './api';
+export {
+  AUDIO_BUCKET,
+  ARTWORK_BUCKET,
+  WAVEFORM_BUCKET,
+  AVATAR_BUCKET,
+  BANNER_BUCKET,
+  BUZZ_MEDIA_BUCKET,
+} from './api';
 
 interface UploadOptions {
   onProgress?: (progress: UploadProgress) => void;
@@ -82,15 +85,13 @@ export async function uploadAudioWithCDN(
     }
 
     // Fallback to Supabase upload
-    const { data } = await supabase.storage
-      .from(bucket)
-      .upload(path, file, { upsert: false });
-    
+    const { data } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
+
     if (!data) return null;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(path);
 
     return {
       url: publicUrl,
@@ -155,15 +156,13 @@ export async function uploadArtworkWithCDN(
     }
 
     // Fallback to Supabase upload
-    const { data } = await supabase.storage
-      .from(bucket)
-      .upload(path, file, { upsert: false });
-    
+    const { data } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
+
     if (!data) return null;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(path);
 
     return {
       url: publicUrl,
@@ -203,7 +202,7 @@ export async function uploadBuzzMediaWithCDN(
 
         // Get optimization based on media type
         let optimization: CDNOptimizationParams = {};
-        
+
         switch (mediaType) {
           case 'image':
             optimization = {
@@ -249,15 +248,13 @@ export async function uploadBuzzMediaWithCDN(
     }
 
     // Fallback to Supabase upload
-    const { data } = await supabase.storage
-      .from(bucket)
-      .upload(path, file, { upsert: false });
-    
+    const { data } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
+
     if (!data) return null;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(path);
 
     return {
       url: publicUrl,
@@ -324,15 +321,13 @@ export async function uploadAvatarWithCDN(
     }
 
     // Fallback to Supabase upload
-    const { data } = await supabase.storage
-      .from(bucket)
-      .upload(path, file, { upsert: false });
-    
+    const { data } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
+
     if (!data) return null;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(path);
 
     return {
       url: publicUrl,
@@ -399,15 +394,13 @@ export async function uploadBannerWithCDN(
     }
 
     // Fallback to Supabase upload
-    const { data } = await supabase.storage
-      .from(bucket)
-      .upload(path, file, { upsert: false });
-    
+    const { data } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
+
     if (!data) return null;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(path);
 
     return {
       url: publicUrl,
@@ -474,15 +467,13 @@ export async function uploadWaveformWithCDN(
     }
 
     // Fallback to Supabase upload
-    const { data } = await supabase.storage
-      .from(bucket)
-      .upload(path, file, { upsert: false });
-    
+    const { data } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
+
     if (!data) return null;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(path);
 
     return {
       url: publicUrl,
@@ -511,13 +502,13 @@ export async function batchUploadWithCDN(
 
   for (let i = 0; i < files.length; i++) {
     const { file, type, mediaType = 'image' } = files[i];
-    
+
     // Update progress if callback provided
     if (options.onProgress) {
       options.onProgress({
         progress: (i / totalFiles) * 100,
         speed: 0,
-        eta: ((totalFiles - i) * 2), // Mock ETA
+        eta: (totalFiles - i) * 2, // Mock ETA
         status: 'uploading',
       });
     }
@@ -570,9 +561,12 @@ export async function batchUploadWithCDN(
 
 // File validation utilities
 export const validateUploadFile = (file: File, type: 'audio' | 'image' | 'video'): boolean => {
-  const maxSize = type === 'audio' ? 100 * 1024 * 1024 : // 100MB for audio
-                  type === 'video' ? 500 * 1024 * 1024 : // 500MB for video
-                  10 * 1024 * 1024; // 10MB for images
+  const maxSize =
+    type === 'audio'
+      ? 100 * 1024 * 1024 // 100MB for audio
+      : type === 'video'
+        ? 500 * 1024 * 1024 // 500MB for video
+        : 10 * 1024 * 1024; // 10MB for images
 
   if (file.size > maxSize) {
     console.error(`File ${file.name} exceeds maximum size of ${maxSize} bytes`);
@@ -599,7 +593,8 @@ export const getUploadRecommendations = (file: File, type: 'audio' | 'image' | '
   const recommendations = [];
 
   // Size recommendations
-  if (file.size > 50 * 1024 * 1024) { // 50MB
+  if (file.size > 50 * 1024 * 1024) {
+    // 50MB
     recommendations.push('Consider compressing the file for faster upload and better performance');
   }
 
@@ -613,7 +608,8 @@ export const getUploadRecommendations = (file: File, type: 'audio' | 'image' | '
   }
 
   // CDN optimization recommendations
-  if (file.size > 10 * 1024 * 1024) { // 10MB
+  if (file.size > 10 * 1024 * 1024) {
+    // 10MB
     recommendations.push('Large files benefit significantly from CDN optimization');
   }
 

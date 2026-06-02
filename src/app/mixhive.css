@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /*
  * MIXHIVE brand vocabulary
@@ -43,9 +43,10 @@
 }
 
 .mixhive-fonts {
-  --font-display: Impact, "Arial Black", "Trebuchet MS", system-ui, sans-serif;
-  --font-ui: "Segoe UI", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", ui-monospace, monospace;
+  --font-display: Impact, 'Arial Black', 'Trebuchet MS', system-ui, sans-serif;
+  --font-ui:
+    'Segoe UI', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', ui-monospace, monospace;
 }
 
 @theme {
@@ -99,7 +100,7 @@ body {
 }
 
 .mixhive-shell::before {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -114,14 +115,14 @@ body {
 }
 
 .mixhive-shell::after {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
   background:
     linear-gradient(90deg, transparent, rgba(246, 196, 0, 0.06), transparent),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 5px);
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 5px);
   mix-blend-mode: screen;
   opacity: 0.45;
 }
@@ -137,14 +138,17 @@ body {
     radial-gradient(circle at 82% 28%, rgba(37, 217, 255, 0.08), transparent 24%),
     linear-gradient(30deg, transparent 0 46%, rgba(246, 196, 0, 0.08) 47% 53%, transparent 54%),
     linear-gradient(150deg, transparent 0 46%, rgba(246, 196, 0, 0.08) 47% 53%, transparent 54%);
-  background-size: auto, auto, 88px 52px, 88px 52px;
+  background-size:
+    auto,
+    auto,
+    88px 52px,
+    88px 52px;
 }
 
 .hive-panel {
   background:
     linear-gradient(135deg, rgba(255, 216, 74, 0.08), transparent 32%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
-    var(--hive-panel);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent), var(--hive-panel);
   border: 1px solid var(--hive-line);
   box-shadow:
     0 0 0 1px rgba(255, 216, 74, 0.04) inset,
@@ -180,16 +184,18 @@ body {
   font-weight: 900;
   text-transform: uppercase;
   text-decoration: none;
-  box-shadow: 0 0 26px rgba(246, 196, 0, 0.25), 0 6px 20px rgba(0, 0, 0, 0.42);
+  box-shadow:
+    0 0 26px rgba(246, 196, 0, 0.25),
+    0 6px 20px rgba(0, 0, 0, 0.42);
   overflow: hidden;
 }
 
 .hive-button::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   transform: translateX(-120%);
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
   transition: transform 360ms ease;
 }
 
@@ -205,17 +211,24 @@ body {
   place-items: center;
   clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%);
   border: 1px solid rgba(246, 196, 0, 0.8);
-  background: linear-gradient(145deg, rgba(246, 196, 0, 0.12), rgba(0,0,0,0.82));
+  background: linear-gradient(145deg, rgba(246, 196, 0, 0.12), rgba(0, 0, 0, 0.82));
   color: var(--hive-gold);
   font-size: 25px;
-  box-shadow: 0 0 22px rgba(246, 196, 0, 0.16) inset, 0 0 18px rgba(246, 196, 0, 0.14);
+  box-shadow:
+    0 0 22px rgba(246, 196, 0, 0.16) inset,
+    0 0 18px rgba(246, 196, 0, 0.14);
 }
 
 .waveform-gold {
   height: 54px;
   background:
     linear-gradient(90deg, transparent, rgba(246, 196, 0, 0.38), transparent),
-    repeating-linear-gradient(90deg, transparent 0 7px, var(--hive-gold) 7px 9px, transparent 9px 14px);
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 7px,
+      var(--hive-gold) 7px 9px,
+      transparent 9px 14px
+    );
   mask-image: linear-gradient(180deg, transparent 0 16%, #000 17% 83%, transparent 84%);
   filter: drop-shadow(0 0 12px rgba(246, 196, 0, 0.45));
 }
@@ -248,7 +261,7 @@ body {
 }
 
 .hive-landing__hero-art::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   background:
@@ -362,7 +375,9 @@ body {
   .hive-landing__title {
     font-size: 42px;
     color: #fff9dc;
-    text-shadow: 0 0 24px rgba(246, 196, 0, 0.38), 0 2px 18px rgba(0, 0, 0, 0.72);
+    text-shadow:
+      0 0 24px rgba(246, 196, 0, 0.38),
+      0 2px 18px rgba(0, 0, 0, 0.72);
   }
 
   .hive-landing__copy {
@@ -400,8 +415,15 @@ body {
 }
 
 @keyframes hive-scan {
-  0%, 100% { opacity: 0.2; transform: scaleX(0.25); }
-  50% { opacity: 1; transform: scaleX(1); }
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scaleX(0.25);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -410,4 +432,109 @@ body {
     animation: none;
     transition: none;
   }
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface, #111) 25%,
+    var(--color-surface-hover, #1a1a2e) 50%,
+    var(--color-surface, #111) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--color-surface, #111);
+  }
+}
+
+@keyframes toastIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes toastOut {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(120%); opacity: 0; }
+}
+
+.toast-enter { animation: toastIn  200ms ease-out forwards; }
+.toast-exit  { animation: toastOut 150ms ease-in  forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-enter,
+  .toast-exit { animation: none; }
+}
+
+@keyframes panelSlide {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0);    }
+}
+
+.panel-enter { animation: panelSlide 150ms ease-out forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-enter { animation: none; }
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.page-enter { animation: pageIn 150ms ease-out forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter { animation: none; }
+}
+
+@keyframes eq-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50%       { transform: scaleY(1.0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-bar { animation: none !important; }
+}
+
+@keyframes suggestionIn {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+.suggestion-enter {
+  animation: suggestionIn 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggestion-enter { animation-duration: 0.01ms; }
+}
+
+/* Filter chips in Hive Composer */
+.filter-chip {
+  padding: 3px 10px;
+  background: rgba(240, 192, 64, 0.12);
+  border: 1px solid rgba(240, 192, 64, 0.35);
+  border-radius: 999px;
+  color: #f0c040;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  background: rgba(240, 192, 64, 0.22);
+  border-color: rgba(240, 192, 64, 0.6);
 }

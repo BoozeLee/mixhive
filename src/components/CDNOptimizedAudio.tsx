@@ -1,15 +1,12 @@
 /**
  * CDN-Optimized Audio Component
- * 
+ *
  * React component that uses CDN-optimized audio files
  * with lazy loading, preload support, and error handling.
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  getOptimizedAudioUrl, 
-  preloadAudio 
-} from '../lib/cdnUrlTransformers';
+import { getOptimizedAudioUrl, preloadAudio } from '../lib/cdnUrlTransformers';
 import type { AudioOptimizationParams } from '../lib/cdnUrlTransformers';
 
 interface CDNAudioProps {
@@ -73,7 +70,7 @@ export const CDNAudio: React.FC<CDNAudioProps> = ({
       try {
         const bucket = determineBucketFromUrl(src);
         const result = await getOptimizedAudioUrl(src, bucket, optimization);
-        
+
         setCdnUrl(result.url);
         setIsOptimized(result.source === 'cdn');
         setIsLoading(false);
@@ -113,17 +110,20 @@ export const CDNAudio: React.FC<CDNAudioProps> = ({
     onEnded?.();
   }, [onEnded]);
 
-  const handleError = useCallback((e: React.SyntheticEvent<HTMLAudioElement>) => {
-    setError(true);
-    setIsLoading(false);
-    setIsPlaying(false);
-    onError?.(e);
-    
-    // Try fallback if available
-    if (fallback) {
-      setCdnUrl(fallback);
-    }
-  }, [onError, fallback]);
+  const handleError = useCallback(
+    (e: React.SyntheticEvent<HTMLAudioElement>) => {
+      setError(true);
+      setIsLoading(false);
+      setIsPlaying(false);
+      onError?.(e);
+
+      // Try fallback if available
+      if (fallback) {
+        setCdnUrl(fallback);
+      }
+    },
+    [onError, fallback]
+  );
 
   return (
     <div className={`relative ${className}`}>
@@ -248,7 +248,7 @@ export const CDNAudioPlayer: React.FC<CDNAudioPlayerProps> = ({
             max="1"
             step="0.1"
             value={volume}
-            onChange={(e) => setVolume(parseFloat(e.target.value))}
+            onChange={e => setVolume(parseFloat(e.target.value))}
             className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
         </div>
@@ -268,7 +268,7 @@ export const CDNAudioPlayer: React.FC<CDNAudioPlayerProps> = ({
 };
 
 // Lazy audio component that loads on interaction
-export const CDNLazyAudio: React.FC<CDNAudioProps> = (props) => {
+export const CDNLazyAudio: React.FC<CDNAudioProps> = props => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -405,9 +405,11 @@ export const CDNPlaylist: React.FC<{
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium truncate ${
-                    index === currentTrackIndex ? 'text-green-600' : 'text-gray-900'
-                  }`}>
+                  <p
+                    className={`text-sm font-medium truncate ${
+                      index === currentTrackIndex ? 'text-green-600' : 'text-gray-900'
+                    }`}
+                  >
                     {track.title}
                   </p>
                   <p className="text-xs text-gray-500 truncate">{track.artist}</p>

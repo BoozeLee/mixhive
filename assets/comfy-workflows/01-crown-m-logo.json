@@ -7,7 +7,10 @@
   },
   "2": {
     "class_type": "LoadImage",
-    "inputs": { "image": "mixhive-source-crown.png", "_hint": "Pre-load: cp public/mixhive.png ~/ComfyUI/input/mixhive-source-crown.png" }
+    "inputs": {
+      "image": "mixhive-source-crown.png",
+      "_hint": "Pre-load: cp public/mixhive.png ~/ComfyUI/input/mixhive-source-crown.png"
+    }
   },
   "3": {
     "class_type": "ControlNetLoader",
@@ -43,7 +46,10 @@
       "text": "blurry, low quality, watermark, text, words, signature, jpeg artifacts, pixelated, lowres, deformed shape, broken letters, faded colors, beige, washed out, photographic, photo realistic skin, hands, faces, people, generic logo, sans-serif font, italic"
     }
   },
-  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 2048, "height": 2048, "batch_size": 1 } },
+  "20": {
+    "class_type": "EmptyLatentImage",
+    "inputs": { "width": 2048, "height": 2048, "batch_size": 1 }
+  },
   "21": {
     "class_type": "KSampler",
     "inputs": {

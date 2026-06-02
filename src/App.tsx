@@ -1,7 +1,7 @@
 'use client';
 
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Navbar } from './components/Navbar';
@@ -72,6 +72,167 @@ const PressKitStudio = lazy(() =>
 const PublicPressKit = lazy(() =>
   import('./views/PublicPressKit').then(m => ({ default: m.PublicPressKit }))
 );
+const SceneRadar = lazy(() =>
+  import('./views/SceneRadar').then(m => ({ default: m.SceneRadar }))
+);
+const CollabSessionRoom = lazy(() =>
+  import('./views/CollabSessionRoom').then(m => ({ default: m.CollabSessionRoom }))
+);
+const HiveComposer = lazy(() =>
+  import('./views/HiveComposer').then(m => ({ default: m.HiveComposer }))
+);
+// SessionFab is small and always available to authenticated users — not lazy-loaded
+import { SessionFab } from './components/SessionFab';
+
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <div key={location.pathname} className="page-enter">
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dev-login" element={<DevLogin />} />
+        <Route path="/feed" element={<Feed />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/discover" element={<Discover />} />
+        <Route path="/trending" element={<Feed />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/u/:username" element={<ProfilePage />} />
+        <Route path="/mix/:id" element={<MixDetail />} />
+        <Route
+          path="/mix/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditMix />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <Upload />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agents"
+          element={
+            <ProtectedRoute>
+              <Agents />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/agents/gallery" element={<AgentsGallery />} />
+        <Route
+          path="/admin/verification"
+          element={
+            <ProtectedRoute>
+              <AdminVerification />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/embed/mix/:id" element={<EmbedMix />} />
+        <Route path="/playlist/:id" element={<PlaylistDetail />} />
+        <Route path="/buzz/:id" element={<BuzzDetail />} />
+        <Route
+          path="/setup"
+          element={
+            <ProtectedRoute>
+              <ProfileSetup />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agents/inbox"
+          element={
+            <ProtectedRoute>
+              <AgentInbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/opportunities"
+          element={
+            <ProtectedRoute>
+              <Opportunities />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quests/:id"
+          element={
+            <ProtectedRoute>
+              <QuestDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quests"
+          element={
+            <ProtectedRoute>
+              <QuestsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/epk"
+          element={
+            <ProtectedRoute>
+              <PressKitStudio />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/epk/:slug" element={<PublicPressKit />} />
+        <Route
+          path="/scene-radar"
+          element={
+            <ProtectedRoute>
+              <SceneRadar />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/session/:id"
+          element={
+            <ProtectedRoute>
+              <CollabSessionRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/composer"
+          element={
+            <ProtectedRoute>
+              <HiveComposer />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
+  );
+}
 
 function shouldLoadVercelTelemetry() {
   if (process.env.NODE_ENV !== 'production' || typeof window === 'undefined') return false;
@@ -116,130 +277,14 @@ export default function App() {
             <main id="main-content" className="mixhive-main app-main">
               <ErrorBoundary>
                 <Suspense fallback={<RoutePending />}>
-                  <Routes>
-                    <Route path="/" element={<Landing />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/dev-login" element={<DevLogin />} />
-                    <Route path="/feed" element={<Feed />} />
-                    <Route
-                      path="/dashboard"
-                      element={
-                        <ProtectedRoute>
-                          <Dashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/discover" element={<Discover />} />
-                    <Route path="/trending" element={<Feed />} />
-                    <Route path="/auth/callback" element={<AuthCallback />} />
-                    <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/auth/reset-password" element={<ResetPassword />} />
-                    <Route path="/notifications" element={<NotificationsPage />} />
-                    <Route path="/search" element={<SearchPage />} />
-                    <Route path="/u/:username" element={<ProfilePage />} />
-                    <Route path="/mix/:id" element={<MixDetail />} />
-                    <Route
-                      path="/mix/:id/edit"
-                      element={
-                        <ProtectedRoute>
-                          <EditMix />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/upload"
-                      element={
-                        <ProtectedRoute>
-                          <Upload />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/settings"
-                      element={
-                        <ProtectedRoute>
-                          <Settings />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/agents"
-                      element={
-                        <ProtectedRoute>
-                          <Agents />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/agents/gallery" element={<AgentsGallery />} />
-                    <Route
-                      path="/admin/verification"
-                      element={
-                        <ProtectedRoute>
-                          <AdminVerification />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/embed/mix/:id" element={<EmbedMix />} />
-                    <Route path="/playlist/:id" element={<PlaylistDetail />} />
-                    <Route path="/buzz/:id" element={<BuzzDetail />} />
-                    <Route
-                      path="/setup"
-                      element={
-                        <ProtectedRoute>
-                          <ProfileSetup />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/agents/inbox"
-                      element={
-                        <ProtectedRoute>
-                          <AgentInbox />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/opportunities"
-                      element={
-                        <ProtectedRoute>
-                          <Opportunities />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/quests/:id"
-                      element={
-                        <ProtectedRoute>
-                          <QuestDetail />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/quests"
-                      element={
-                        <ProtectedRoute>
-                          <QuestsList />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/epk"
-                      element={
-                        <ProtectedRoute>
-                          <PressKitStudio />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/epk/:slug" element={<PublicPressKit />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
+                  <AnimatedRoutes />
                 </Suspense>
               </ErrorBoundary>
             </main>
           </div>
           <GlobalPlayer />
           <MobileNav />
+          <SessionFab />
         {loadVercelTelemetry && <Analytics />}
         {loadVercelTelemetry && <SpeedInsights />}
       </div>

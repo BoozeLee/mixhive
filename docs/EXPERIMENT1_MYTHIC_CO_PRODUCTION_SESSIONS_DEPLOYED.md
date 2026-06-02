@@ -141,6 +141,15 @@ The final "deploy plan all questions all tasks" tranche completed every item fro
 
 **Production URL**: https://vercel.mixhive.app (or the custom domain if configured)
 
+**Live Preview Deployed 2026-05-29** (test immediately):
+https://mixhive-ozb71h3qp-boozelees-projects.vercel.app
+
+**Production promotion** (after you validate the preview):
+```bash
+cd /home/kilisan/dj-nef-website/mixhive
+npx vercel --prod
+```
+
 **Rollback**: Revert the small set of files in the tranche commit. All behavior is additive or corrective.
 
 ---

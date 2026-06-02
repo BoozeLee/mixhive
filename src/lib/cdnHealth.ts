@@ -1,6 +1,6 @@
 /**
  * Enhanced CDN Health Monitoring System
- * 
+ *
  * Provides comprehensive health monitoring, failover mechanisms,
  * and performance tracking for CDN services.
  */
@@ -82,12 +82,15 @@ const DEFAULT_ALERT_CONFIG: AlertConfig = {
 class CDNHealthMonitor {
   private healthStatus: Map<string, CDNHealthStatus> = new Map();
   private performanceMetrics: Map<string, CDNPerformanceMetrics> = new Map();
-  private circuitBreakerState: Map<string, {
-    state: 'closed' | 'open' | 'half-open';
-    failureCount: number;
-    lastFailure: Date;
-    nextAttempt: Date;
-  }> = new Map();
+  private circuitBreakerState: Map<
+    string,
+    {
+      state: 'closed' | 'open' | 'half-open';
+      failureCount: number;
+      lastFailure: Date;
+      nextAttempt: Date;
+    }
+  > = new Map();
 
   private healthCheckInterval: NodeJS.Timeout | null = null;
   private config: HealthCheckConfig;
@@ -129,7 +132,7 @@ class CDNHealthMonitor {
   // Perform health checks for all configured endpoints
   private async performHealthChecks(): Promise<void> {
     const endpoints = this.config.endpoints;
-    
+
     for (const endpoint of endpoints) {
       try {
         await this.checkEndpointHealth(endpoint);
@@ -178,7 +181,7 @@ class CDNHealthMonitor {
     if (cdnConfig.baseUrl) {
       return `${cdnConfig.baseUrl}${endpoint}`;
     }
-    
+
     // Fallback to Supabase health endpoint
     return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1${endpoint}`;
   }
@@ -220,7 +223,8 @@ class CDNHealthMonitor {
     const lastFailure = new Date();
 
     this.healthStatus.set(endpoint, {
-      status: failureCount > this.failoverStrategy.circuitBreaker.failureThreshold ? 'down' : 'degraded',
+      status:
+        failureCount > this.failoverStrategy.circuitBreaker.failureThreshold ? 'down' : 'degraded',
       latency: currentStatus.latency,
       lastCheck: lastFailure,
       error: `Health check failed after ${failureCount} attempts`,
@@ -235,7 +239,7 @@ class CDNHealthMonitor {
   // Update circuit breaker state
   private updateCircuitBreaker(endpoint: string, failureCount: number, lastFailure: Date): void {
     const circuitBreaker = this.failoverStrategy.circuitBreaker;
-    
+
     if (failureCount >= circuitBreaker.failureThreshold) {
       this.circuitBreakerState.set(endpoint, {
         state: 'open',
@@ -273,7 +277,11 @@ class CDNHealthMonitor {
     const { thresholds } = this.alertConfig;
 
     if (status.latency > thresholds.latency) {
-      this.triggerAlert(endpoint, 'HIGH_LATENCY', `Latency ${status.latency}ms exceeds threshold ${thresholds.latency}ms`);
+      this.triggerAlert(
+        endpoint,
+        'HIGH_LATENCY',
+        `Latency ${status.latency}ms exceeds threshold ${thresholds.latency}ms`
+      );
     }
 
     if (status.status === 'down') {
@@ -283,7 +291,11 @@ class CDNHealthMonitor {
     // Check uptime based on recent health checks
     const uptime = this.calculateUptime(endpoint);
     if (uptime < thresholds.uptime) {
-      this.triggerAlert(endpoint, 'LOW_UPTIME', `Uptime ${uptime}% is below threshold ${thresholds.uptime}%`);
+      this.triggerAlert(
+        endpoint,
+        'LOW_UPTIME',
+        `Uptime ${uptime}% is below threshold ${thresholds.uptime}%`
+      );
     }
   }
 
@@ -372,7 +384,7 @@ class CDNHealthMonitor {
       const status = this.healthStatus.get(endpoint);
       if (status) {
         totalLatency += status.latency;
-        
+
         switch (status.status) {
           case 'healthy':
             healthyCount++;
@@ -396,7 +408,7 @@ class CDNHealthMonitor {
     // Determine trend
     let trend: 'improving' | 'stable' | 'degrading' = 'stable';
     const previousMetrics = this.performanceMetrics.get('global');
-    
+
     if (previousMetrics) {
       if (successRate > previousMetrics.successRate) {
         trend = 'improving';
@@ -418,11 +430,13 @@ class CDNHealthMonitor {
   // Get current health status
   getHealthStatus(endpoint?: string): CDNHealthStatus | Map<string, CDNHealthStatus> {
     if (endpoint) {
-      return this.healthStatus.get(endpoint) || {
-        status: 'unknown',
-        latency: 0,
-        lastCheck: new Date(),
-      };
+      return (
+        this.healthStatus.get(endpoint) || {
+          status: 'unknown',
+          latency: 0,
+          lastCheck: new Date(),
+        }
+      );
     }
     return this.healthStatus;
   }
@@ -440,7 +454,7 @@ class CDNHealthMonitor {
   // Check if CDN is healthy for a specific operation
   async isHealthyForOperation(operation: string): Promise<boolean> {
     const healthStatus = this.getHealthStatus();
-    
+
     if (healthStatus instanceof Map) {
       // Check all endpoints
       for (const [endpoint, status] of healthStatus.entries()) {
@@ -464,7 +478,7 @@ class CDNHealthMonitor {
   ): Promise<T> {
     // Check circuit breaker state
     const circuitState = this.getCircuitBreakerState('global');
-    
+
     if (circuitState?.state === 'open') {
       console.warn(`Circuit breaker is open for ${operationName}, using fallback`);
       return fallback();
@@ -473,7 +487,7 @@ class CDNHealthMonitor {
     try {
       // Check if CDN is healthy
       const isHealthy = await this.isHealthyForOperation(operationName);
-      
+
       if (isHealthy) {
         return await operation();
       } else {
@@ -482,10 +496,10 @@ class CDNHealthMonitor {
       }
     } catch (error) {
       console.error(`Operation ${operationName} failed:`, error);
-      
+
       // Update circuit breaker state
       this.recordFailure('global');
-      
+
       // Try fallback
       return fallback();
     }

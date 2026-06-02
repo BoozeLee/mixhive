@@ -1,6 +1,6 @@
 /**
  * CDN Integration Module for MixHive
- * 
+ *
  * Provides comprehensive CDN integration with multiple providers,
  * fallback mechanisms, and optimization features for media files.
  */
@@ -49,12 +49,12 @@ export interface CDNOptimizationParams {
   compression?: number;
 }
 
-export type MediaBucket = 
-  | 'mix-audio' 
-  | 'mix-artwork' 
-  | 'mix-waveforms' 
-  | 'profile-avatars' 
-  | 'profile-banners' 
+export type MediaBucket =
+  | 'mix-audio'
+  | 'mix-artwork'
+  | 'mix-waveforms'
+  | 'profile-avatars'
+  | 'profile-banners'
   | 'buzz-media';
 
 const DEFAULT_CDN_CONFIG: CDNConfig = {
@@ -110,7 +110,7 @@ const DEFAULT_CDN_CONFIG: CDNConfig = {
 // Environment-specific configurations
 export const getCDNConfig = (): CDNConfig => {
   const env = process.env.NODE_ENV || 'development';
-  
+
   if (env === 'development') {
     return {
       ...DEFAULT_CDN_CONFIG,
@@ -168,11 +168,11 @@ export const transformCDNUrl = (
     const url = new URL(supabaseUrl);
     const pathParts = url.pathname.split('/');
     const fileName = pathParts[pathParts.length - 1];
-    
+
     // Extract file extension and optimize format if needed
     const fileExt = fileName.split('.').pop()?.toLowerCase() || '';
     let optimizedFormat = optimization?.format;
-    
+
     if (cdnConfig.optimization.formatOptimization) {
       if (fileExt.startsWith('jp') && optimizedFormat !== 'png') {
         optimizedFormat = 'webp'; // Convert JPG to WebP
@@ -183,18 +183,18 @@ export const transformCDNUrl = (
 
     // Build CDN URL
     let cdnPath = `/${bucket}/`;
-    
+
     // Add optimization parameters
     const searchParams = new URLSearchParams();
-    
+
     if (cdnConfig.optimization.qualitySelection && optimization?.quality) {
       searchParams.set('q', optimization.quality.toString());
     }
-    
+
     if (cdnConfig.optimization.compression && optimization?.compression) {
       searchParams.set('cmp', optimization.compression.toString());
     }
-    
+
     if (optimizedFormat && optimizedFormat !== fileExt) {
       searchParams.set('fmt', optimizedFormat);
       // Remove original extension and add optimized one
@@ -206,7 +206,7 @@ export const transformCDNUrl = (
 
     const optimizedParams = searchParams.toString();
     const cdnUrl = `${cdnConfig.baseUrl}${cdnPath}${optimizedParams ? `?${optimizedParams}` : ''}`;
-    
+
     return cdnUrl;
   } catch (error) {
     console.warn('Failed to transform CDN URL:', error);
@@ -217,7 +217,7 @@ export const transformCDNUrl = (
 // Get CDN cache headers for specific media type
 export const getCDNCacheHeaders = (bucket: MediaBucket): Record<string, string> => {
   const cacheConfig = cdnConfig.cacheSettings[bucket];
-  
+
   const headers: Record<string, string> = {
     'Cache-Control': `public, max-age=${cacheConfig.maxAge}${cacheConfig.immutable ? ', immutable' : ''}`,
   };
@@ -255,25 +255,25 @@ export const checkCDNHealth = async (): Promise<CDNHealthStatus> => {
 
   try {
     const startTime = Date.now();
-    
+
     // Use a lightweight endpoint to check CDN health
-    const healthUrl = cdnConfig.baseUrl 
+    const healthUrl = cdnConfig.baseUrl
       ? `${cdnConfig.baseUrl}/health`
       : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/health`;
-    
+
     const response = await fetch(healthUrl, {
       method: 'HEAD',
       timeout: 5000,
     });
-    
+
     const latency = Date.now() - startTime;
-    
+
     healthStatus = {
       status: response.ok ? 'healthy' : 'degraded',
       latency,
       lastCheck: new Date(),
     };
-    
+
     return healthStatus;
   } catch (error) {
     healthStatus = {
@@ -298,7 +298,7 @@ export const getOptimizedMediaUrl = async (
 
   // Check CDN health
   const health = await checkCDNHealth();
-  
+
   if (health.status === 'down' && cdnConfig.fallbackToSupabase) {
     return { url: supabaseUrl, source: 'supabase' };
   }
@@ -343,11 +343,11 @@ export class CDNUploadManager {
     }
 
     const uploadId = crypto.randomUUID();
-    
+
     try {
       // Simulate CDN upload (in real implementation, this would use actual CDN API)
       const cdnUrl = await this.performCDNUpload(file, bucket, path, uploadId, onProgress);
-      
+
       if (cdnUrl) {
         return { url: cdnUrl, source: 'cdn' };
       } else if (cdnConfig.fallbackToSupabase) {
@@ -362,7 +362,7 @@ export class CDNUploadManager {
         eta: 0,
         status: 'failed',
       });
-      
+
       if (cdnConfig.fallbackToSupabase) {
         return this.uploadToSupabase(file, bucket, path);
       }
@@ -380,31 +380,31 @@ export class CDNUploadManager {
     // This is a mock implementation - in real scenario, this would use actual CDN API
     const totalSize = file.size;
     let uploadedSize = 0;
-    
+
     // Simulate chunked upload
     const chunkSize = Math.min(totalSize / 10, 1024 * 1024); // 1MB chunks or 10 chunks
     const chunks = Math.ceil(totalSize / chunkSize);
-    
+
     for (let i = 0; i < chunks; i++) {
       await new Promise(resolve => setTimeout(resolve, 100)); // Simulate upload delay
-      
+
       uploadedSize = Math.min((i + 1) * chunkSize, totalSize);
       const progress = (uploadedSize / totalSize) * 100;
       const speed = chunkSize / 0.1; // Mock speed calculation
-      const eta = ((totalSize - uploadedSize) / speed) / 1000; // Mock ETA
-      
+      const eta = (totalSize - uploadedSize) / speed / 1000; // Mock ETA
+
       this.updateUploadProgress(uploadId, {
         progress,
         speed,
         eta,
         status: 'uploading',
       });
-      
+
       if (onProgress) {
         onProgress(this.getUploadProgress(uploadId));
       }
     }
-    
+
     // Generate CDN URL
     const cdnUrl = `${cdnConfig.baseUrl}/${bucket}/${path}`;
     this.updateUploadProgress(uploadId, {
@@ -413,7 +413,7 @@ export class CDNUploadManager {
       eta: 0,
       status: 'completed',
     });
-    
+
     return cdnUrl;
   }
 

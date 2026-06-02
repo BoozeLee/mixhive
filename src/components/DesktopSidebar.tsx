@@ -1,14 +1,14 @@
-import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import { Logo } from './Logo'
-import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens'
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { Logo } from './Logo';
+import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens';
 
 interface SidebarItem {
-  path: string
-  icon: string
-  label: string
-  ariaLabel: string
-  highlight?: boolean
+  path: string;
+  icon: string;
+  label: string;
+  ariaLabel: string;
+  highlight?: boolean;
 }
 
 const topItems: SidebarItem[] = [
@@ -22,22 +22,25 @@ const topItems: SidebarItem[] = [
   { path: '/upload', icon: '+', label: 'Upload', ariaLabel: 'Nectar Upload' },
   { path: '/agents/inbox', icon: '✦', label: 'Inbox', ariaLabel: 'Agent Inbox' },
   { path: '/agents/gallery', icon: '⬡', label: 'BeeCast', ariaLabel: 'BeeCast agents' },
-]
+  { path: '/quests', icon: '⚔', label: 'Quests', ariaLabel: 'Mythic Quest Lines' },
+  { path: '/scene-radar', icon: '📡', label: 'Radar', ariaLabel: 'Scene Radar' },
+  { path: '/composer', icon: '⬡', label: 'Composer', ariaLabel: 'Hive Composer' },
+];
 
 function isActive(itemPath: string, currentPath: string): boolean {
-  const path = itemPath.split('?')[0]
-  if (path === '/feed') return currentPath === '/feed' || currentPath === '/trending'
-  if (path === '/feed?compose=1') return false
-  return currentPath === path || currentPath.startsWith(path + '/')
+  const path = itemPath.split('?')[0];
+  if (path === '/feed') return currentPath === '/feed' || currentPath === '/trending';
+  if (path === '/feed?compose=1') return false;
+  return currentPath === path || currentPath.startsWith(path + '/');
 }
 
 export function DesktopSidebar() {
-  const location = useLocation()
-  const { user, profile } = useAuth()
+  const location = useLocation();
+  const { user, profile } = useAuth();
 
-  if (!user) return null
+  if (!user) return null;
 
-  const profilePath = profile?.username ? `/u/${profile.username}` : '/settings'
+  const profilePath = profile?.username ? `/u/${profile.username}` : '/settings';
 
   return (
     <aside
@@ -68,9 +71,17 @@ export function DesktopSidebar() {
       </div>
 
       {/* Nav items */}
-      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: space[1], padding: `0 ${space[5]}px` }}>
-        {topItems.map((item) => {
-          const active = isActive(item.path, location.pathname)
+      <nav
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: space[1],
+          padding: `0 ${space[5]}px`,
+        }}
+      >
+        {topItems.map(item => {
+          const active = isActive(item.path, location.pathname);
           if (item.highlight) {
             return (
               <Link
@@ -93,10 +104,12 @@ export function DesktopSidebar() {
                   transition: transition.base,
                 }}
               >
-                <span aria-hidden="true" style={{ fontSize: 20, lineHeight: 1 }}>{item.icon}</span>
+                <span aria-hidden="true" style={{ fontSize: 20, lineHeight: 1 }}>
+                  {item.icon}
+                </span>
                 {item.label}
               </Link>
-            )
+            );
           }
           return (
             <Link
@@ -119,14 +132,14 @@ export function DesktopSidebar() {
               }}
               onMouseEnter={e => {
                 if (!active) {
-                  e.currentTarget.style.background = 'rgba(240,192,64,0.06)'
-                  e.currentTarget.style.color = colors.text.secondary
+                  e.currentTarget.style.background = 'rgba(240,192,64,0.06)';
+                  e.currentTarget.style.color = colors.text.secondary;
                 }
               }}
               onMouseLeave={e => {
                 if (!active) {
-                  e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.color = colors.text.muted
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = colors.text.muted;
                 }
               }}
             >
@@ -150,12 +163,18 @@ export function DesktopSidebar() {
               </span>
               <span>{item.label}</span>
             </Link>
-          )
+          );
         })}
       </nav>
 
       {/* Profile at bottom */}
-      <div style={{ padding: `${space[5]}px ${space[5]}px 0`, borderTop: `1px solid ${colors.border}`, marginTop: space[5] }}>
+      <div
+        style={{
+          padding: `${space[5]}px ${space[5]}px 0`,
+          borderTop: `1px solid ${colors.border}`,
+          marginTop: space[5],
+        }}
+      >
         <Link
           to={profilePath}
           style={{
@@ -167,8 +186,12 @@ export function DesktopSidebar() {
             textDecoration: 'none',
             transition: transition.base,
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(240,192,64,0.06)' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(240,192,64,0.06)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'transparent';
+          }}
         >
           <div
             style={{
@@ -176,17 +199,36 @@ export function DesktopSidebar() {
               height: 34,
               borderRadius: '50%',
               flexShrink: 0,
-              background: profile?.avatar_url ? `url(${profile.avatar_url}) center/cover` : colors.surface,
+              background: profile?.avatar_url
+                ? `url(${profile.avatar_url}) center/cover`
+                : colors.surface,
               border: `1px solid ${colors.accentMuted}`,
               backgroundSize: 'cover',
             }}
           />
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: fontSize.base, fontWeight: fontWeight.semibold, color: colors.text.primary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div
+              style={{
+                fontSize: fontSize.base,
+                fontWeight: fontWeight.semibold,
+                color: colors.text.primary,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {profile?.display_name || profile?.username || 'Profile'}
             </div>
             {profile?.username && (
-              <div style={{ fontSize: fontSize.xs, color: colors.text.dim, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div
+                style={{
+                  fontSize: fontSize.xs,
+                  color: colors.text.dim,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 @{profile.username}
               </div>
             )}
@@ -194,5 +236,5 @@ export function DesktopSidebar() {
         </Link>
       </div>
     </aside>
-  )
+  );
 }

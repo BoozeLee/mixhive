@@ -16,7 +16,10 @@
       "honeydrop-nft:        crystalline hexagonal gem dripping liquid honey, prismatic facets, framed by thin hex outline"
     ]
   },
-  "1": { "class_type": "CheckpointLoaderSimple", "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" } },
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" }
+  },
   "10": {
     "_comment": "Replace {SLOT} with one of the ten slot descriptions above per generation. Run the workflow ten times (one per slot) with that slot's wildcard substituted in the positive prompt below. Seed is offset by slot index so the look stays consistent.",
     "class_type": "CLIPTextEncode",
@@ -32,7 +35,10 @@
       "text": "complex scene, multiple subjects, photo realism, hands, faces, text, watermark, signature, beige, brown, washed colors, gradient mush, blurry, low resolution, painterly, abstract chaos, deformed shape"
     }
   },
-  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 512, "height": 512, "batch_size": 1 } },
+  "20": {
+    "class_type": "EmptyLatentImage",
+    "inputs": { "width": 512, "height": 512, "batch_size": 1 }
+  },
   "21": {
     "class_type": "KSampler",
     "inputs": {

@@ -1,18 +1,18 @@
 interface Props {
-  label: string
-  value: string | number
+  label: string;
+  value: string | number;
   /** Percentage change vs previous window. Renders ▲ / ▼ accent. */
-  delta?: number
+  delta?: number;
   /** Tiny inline sparkline series (0..1 values). 8–24 points works well. */
-  sparkline?: number[]
-  icon?: string
+  sparkline?: number[];
+  icon?: string;
 }
 
 function format(value: string | number): string {
-  if (typeof value === 'string') return value
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`
-  if (value >= 1_000)     return `${(value / 1_000).toFixed(1)}K`
-  return String(value)
+  if (typeof value === 'string') return value;
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
+  return String(value);
 }
 
 /**
@@ -21,12 +21,13 @@ function format(value: string | number): string {
  * are decorative for now.
  */
 export function HiveStat({ label, value, delta, sparkline, icon }: Props) {
-  const deltaSign = delta == null ? null : delta >= 0 ? '▲' : '▼'
-  const deltaColor = delta == null
-    ? undefined
-    : delta >= 0
-      ? 'var(--hive-success, #7eed8b)'
-      : 'var(--hive-danger, #ff5252)'
+  const deltaSign = delta == null ? null : delta >= 0 ? '▲' : '▼';
+  const deltaColor =
+    delta == null
+      ? undefined
+      : delta >= 0
+        ? 'var(--hive-success, #7eed8b)'
+        : 'var(--hive-danger, #ff5252)';
 
   return (
     <div style={{ padding: '6px 12px 10px', display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -72,21 +73,19 @@ export function HiveStat({ label, value, delta, sparkline, icon }: Props) {
           </span>
         )}
       </div>
-      {sparkline && sparkline.length > 1 && (
-        <Sparkline values={sparkline} />
-      )}
+      {sparkline && sparkline.length > 1 && <Sparkline values={sparkline} />}
     </div>
-  )
+  );
 }
 
 function Sparkline({ values }: { values: number[] }) {
-  const max = Math.max(...values, 1)
-  const w = 100
-  const h = 24
-  const step = w / Math.max(1, values.length - 1)
+  const max = Math.max(...values, 1);
+  const w = 100;
+  const h = 24;
+  const step = w / Math.max(1, values.length - 1);
   const path = values
     .map((v, i) => `${i === 0 ? 'M' : 'L'} ${i * step} ${h - (v / max) * h}`)
-    .join(' ')
+    .join(' ');
 
   return (
     <svg
@@ -105,5 +104,5 @@ function Sparkline({ values }: { values: number[] }) {
         style={{ filter: 'drop-shadow(0 0 3px rgba(246,196,0,0.5))' }}
       />
     </svg>
-  )
+  );
 }

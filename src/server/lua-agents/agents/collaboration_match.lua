@@ -18,6 +18,15 @@ function run(ctx)
     profile.location or ""
   )
 
+  -- Load own structured skills for richer matching context
+  local own_skills = mixhive["db.read"]("artist_skills",
+    { user_id = ctx.profile_id }, 20
+  ):await()
+  local skill_names = {}
+  for _, sk in ipairs(own_skills or {}) do
+    table.insert(skill_names, sk.skill_name)
+  end
+
   local similar = mixhive["vector.search"](bio_text, "profile", 10):await()
 
   -- Filter out own profile
@@ -48,6 +57,10 @@ function run(ctx)
     ))
   end
 
+  local skills_note = #skill_names > 0
+    and ("Skills: " .. table.concat(skill_names, ", "))
+    or  ""
+
   local intro_prompt = string.format([[
 You are a music community connector for underground electronic music.
 Draft a warm, direct intro message from one artist to another — no hype, authentic underground tone.
@@ -55,6 +68,7 @@ Max 80 words each. Personalise each to the candidate's genre/location.
 
 Sender: %s | %s | %s
 Genres: %s
+%s
 
 Candidates:
 %s
@@ -66,6 +80,7 @@ Return JSON only:
     profile.location or "Belgium",
     profile.dj_style or "DJ",
     table.concat(profile.genres or {}, ", "),
+    skills_note,
     table.concat(candidate_lines, "\n")
   )
 
@@ -92,6 +107,38 @@ Return JSON only:
   end
 
   mh_log("collaboration_match found " .. #suggs .. " matches")
+
+  if not ctx.dry_run then
+    for _, sugg in ipairs(suggs) do
+      local p = sugg.payload
+      if p and p.to_profile_id then
+        local ok, err = pcall(function()
+          local from_node = mixhive["mythic.node.find_or_create"]({
+            node_type    = "artist_profile",
+            source_table = "profiles",
+            source_id    = ctx.profile_id,
+            title        = "Artist",
+            owner_id     = ctx.profile_id,
+          }):await()
+          local to_node = mixhive["mythic.node.find_or_create"]({
+            node_type    = "artist_profile",
+            source_table = "profiles",
+            source_id    = p.to_profile_id,
+            title        = p.to_name or "Collaborator",
+            owner_id     = ctx.profile_id,
+          }):await()
+          mixhive["mythic.edge.create"]({
+            from_node_id = from_node,
+            to_node_id   = to_node,
+            edge_type    = "collab_with",
+            weight       = p.similarity or 0.5,
+            source_event = "collaboration_match",
+          }):await()
+        end)
+        if not ok then mh_log("mythic edge error: " .. tostring(err)) end
+      end
+    end
+  end
 
   return {
     status        = #suggs > 0 and "needs_approval" or "ok",

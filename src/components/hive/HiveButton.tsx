@@ -1,24 +1,24 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
-import { motion } from 'framer-motion'
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { motion } from 'framer-motion';
 
-type Variant = 'primary' | 'ghost' | 'glass' | 'danger'
-type Size = 'sm' | 'md' | 'lg'
+type Variant = 'primary' | 'ghost' | 'glass' | 'danger';
+type Size = 'sm' | 'md' | 'lg';
 
 interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
-  variant?: Variant
-  size?: Size
-  loading?: boolean
-  fullWidth?: boolean
-  leftIcon?: ReactNode
-  rightIcon?: ReactNode
-  children?: ReactNode
+  variant?: Variant;
+  size?: Size;
+  loading?: boolean;
+  fullWidth?: boolean;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  children?: ReactNode;
 }
 
 const sizeStyle: Record<Size, React.CSSProperties> = {
   sm: { padding: '6px 14px', fontSize: 12, minHeight: 30 },
   md: { padding: '10px 20px', fontSize: 14, minHeight: 38 },
   lg: { padding: '14px 28px', fontSize: 16, minHeight: 48 },
-}
+};
 
 const variantStyle: Record<Variant, React.CSSProperties> = {
   primary: {
@@ -26,8 +26,7 @@ const variantStyle: Record<Variant, React.CSSProperties> = {
       'linear-gradient(135deg, var(--hive-gold-hot, #ffd84a) 0%, var(--hive-gold, #f6c400) 55%, var(--hive-amber, #ff8c1a) 100%)',
     color: 'var(--hive-black, #030303)',
     border: '1px solid transparent',
-    boxShadow:
-      '0 0 0 1px rgba(255,216,74,0.4) inset, 0 8px 24px rgba(246,196,0,0.25)',
+    boxShadow: '0 0 0 1px rgba(255,216,74,0.4) inset, 0 8px 24px rgba(246,196,0,0.25)',
   },
   ghost: {
     background: 'transparent',
@@ -45,17 +44,28 @@ const variantStyle: Record<Variant, React.CSSProperties> = {
     color: 'var(--hive-danger, #ff5252)',
     border: '1px solid rgba(255,82,82,0.5)',
   },
-}
+};
 
 /**
  * MIXHIVE primary CTA. Honey-gradient fill, three honey droplets drop from the
  * bottom edge on hover via Framer Motion. Respects prefers-reduced-motion.
  */
 export const HiveButton = forwardRef<HTMLButtonElement, Props>(function HiveButton(
-  { variant = 'primary', size = 'md', loading, fullWidth, leftIcon, rightIcon, disabled, style, children, ...rest },
-  ref,
+  {
+    variant = 'primary',
+    size = 'md',
+    loading,
+    fullWidth,
+    leftIcon,
+    rightIcon,
+    disabled,
+    style,
+    children,
+    ...rest
+  },
+  ref
 ) {
-  const isDisabled = disabled || loading
+  const isDisabled = disabled || loading;
 
   return (
     <motion.button
@@ -102,7 +112,9 @@ export const HiveButton = forwardRef<HTMLButtonElement, Props>(function HiveButt
             animation: 'mixhive-spin 0.7s linear infinite',
           }}
         />
-      ) : leftIcon}
+      ) : (
+        leftIcon
+      )}
       <span style={{ position: 'relative', zIndex: 1 }}>{children}</span>
       {rightIcon}
 
@@ -151,5 +163,5 @@ export const HiveButton = forwardRef<HTMLButtonElement, Props>(function HiveButt
         }
       `}</style>
     </motion.button>
-  )
-})
+  );
+});

@@ -1,13 +1,13 @@
-import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import { LogoIcon } from './Logo'
-import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens'
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { LogoIcon } from './Logo';
+import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens';
 
 interface NavItem {
-  path: string
-  icon: string
-  label: string
-  ariaLabel: string
+  path: string;
+  icon: string;
+  label: string;
+  ariaLabel: string;
 }
 
 const navItems: NavItem[] = [
@@ -15,21 +15,21 @@ const navItems: NavItem[] = [
   { path: '/feed', icon: '⌁', label: 'Feed', ariaLabel: 'Hive Feed' },
   { path: '/search', icon: '◇', label: 'Radar', ariaLabel: 'Hive Radar' },
   { path: '/profile', icon: '♕', label: 'Cell', ariaLabel: 'Profile cell' },
-]
+];
 
 // Logo item for mobile navigation
 const logoItem: NavItem = {
   path: '/',
   icon: '',
   label: 'MixHive',
-  ariaLabel: 'MixHive Home'
-}
+  ariaLabel: 'MixHive Home',
+};
 
 export function MobileNav() {
-  const location = useLocation()
-  const { user, profile } = useAuth()
-  
-  if (!user) return null
+  const location = useLocation();
+  const { user, profile } = useAuth();
+
+  if (!user) return null;
 
   return (
     <nav
@@ -127,9 +127,12 @@ export function MobileNav() {
       </Link>
 
       {/* Navigation Items */}
-      {navItems.map((item) => {
-        const path = item.path === '/profile' && profile?.username ? `/u/${profile.username}` : item.path
-        const isActive = location.pathname === path || (item.path === '/profile' && location.pathname.startsWith('/u/'))
+      {navItems.map(item => {
+        const path =
+          item.path === '/profile' && profile?.username ? `/u/${profile.username}` : item.path;
+        const isActive =
+          location.pathname === path ||
+          (item.path === '/profile' && location.pathname.startsWith('/u/'));
         return (
           <Link
             key={item.path}
@@ -171,8 +174,8 @@ export function MobileNav() {
               {item.label}
             </span>
           </Link>
-        )
+        );
       })}
     </nav>
-  )
+  );
 }

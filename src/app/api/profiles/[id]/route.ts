@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { moderateContent } from '@/lib/moderation';
+import { embedAndStoreEntity } from '@/lib/embed-entity';
 
 export async function PATCH(
   req: NextRequest,
@@ -73,6 +74,26 @@ export async function PATCH(
     // Trigger moderation if bio changed
     if (bio !== undefined && bio !== existing.bio) {
       await moderateContent('profiles', id, bio);
+    }
+
+    // Fire-and-forget embedding refresh on bio/genre changes
+    if (bio !== undefined || display_name !== undefined) {
+      const { data: fullProfile } = await sb
+        .from('profiles')
+        .select('bio, genre_tags, scene_tags, city')
+        .eq('id', id)
+        .single();
+      if (fullProfile) {
+        const parts: string[] = [];
+        if (fullProfile.bio) parts.push(String(fullProfile.bio));
+        if (Array.isArray(fullProfile.genre_tags)) parts.push(fullProfile.genre_tags.join(' '));
+        if (Array.isArray(fullProfile.scene_tags)) parts.push(fullProfile.scene_tags.join(' '));
+        if (fullProfile.city) parts.push(String(fullProfile.city));
+        const text = parts.join(' ').trim();
+        if (text) {
+          embedAndStoreEntity('profile', id, text, id).catch(() => {});
+        }
+      }
     }
 
     return NextResponse.json(profile);

@@ -1,7 +1,10 @@
 {
   "_comment": "12-frame honey drip sequence for page-transition wipe. Each frame is a 1920x256 strip (full-width banner). Heavy denoise + low cfg gives the gooey liquid look; sequential seeds walk the drip lower each frame. Runbook step composites into a Lottie JSON OR a 12-step SVG path-morph via lottiefiles cli.",
   "_meta": { "name": "mixhive-04-honey-drip-frames", "version": 1, "batch_size": 12 },
-  "1": { "class_type": "CheckpointLoaderSimple", "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" } },
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" }
+  },
   "10": {
     "class_type": "CLIPTextEncode",
     "inputs": {
@@ -16,7 +19,10 @@
       "text": "rising upward, splashing sideways, water, milk, paint, blood, beige, brown, opaque, dry, cracked, dusty, watermark, text, hands, faces"
     }
   },
-  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 1920, "height": 256, "batch_size": 12 } },
+  "20": {
+    "class_type": "EmptyLatentImage",
+    "inputs": { "width": 1920, "height": 256, "batch_size": 12 }
+  },
   "21": {
     "class_type": "KSampler",
     "inputs": {

@@ -1,13 +1,13 @@
-import { Link } from 'react-router-dom'
-import { parseMentions } from '../lib/types'
-import type { MentionPart } from '../lib/types'
+import { Link } from 'react-router-dom';
+import { parseMentions } from '../lib/types';
+import type { MentionPart } from '../lib/types';
 
 interface Props {
-  body: string
+  body: string;
 }
 
 export function MentionRenderer({ body }: Props) {
-  const parts: MentionPart[] = parseMentions(body)
+  const parts: MentionPart[] = parseMentions(body);
 
   return (
     <span>
@@ -26,5 +26,5 @@ export function MentionRenderer({ body }: Props) {
         )
       )}
     </span>
-  )
+  );
 }

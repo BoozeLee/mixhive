@@ -1,28 +1,28 @@
-import { useEffect, useState } from 'react'
-import { Button } from './ui/Button'
-import { clearSearchHistory, getSearchHistory } from '../lib/search'
-import type { SearchHistoryItem } from '../lib/search'
-import { colors, radius, shadow, space } from '../styles/tokens'
+import { useEffect, useState } from 'react';
+import { Button } from './ui/Button';
+import { clearSearchHistory, getSearchHistory } from '../lib/search';
+import type { SearchHistoryItem } from '../lib/search';
+import { colors, radius, shadow, space } from '../styles/tokens';
 
 interface SearchHistoryProps {
-  onSelect: (query: string) => void
-  maxItems?: number
+  onSelect: (query: string) => void;
+  maxItems?: number;
 }
 
 export function SearchHistory({ onSelect, maxItems = 8 }: SearchHistoryProps) {
-  const [history, setHistory] = useState<SearchHistoryItem[]>([])
-  const [open, setOpen] = useState(false)
+  const [history, setHistory] = useState<SearchHistoryItem[]>([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    setHistory(getSearchHistory().slice(0, maxItems))
-  }, [maxItems])
+    setHistory(getSearchHistory().slice(0, maxItems));
+  }, [maxItems]);
 
-  if (history.length === 0) return null
+  if (history.length === 0) return null;
 
   function clear() {
-    clearSearchHistory()
-    setHistory([])
-    setOpen(false)
+    clearSearchHistory();
+    setHistory([]);
+    setOpen(false);
   }
 
   return (
@@ -46,7 +46,16 @@ export function SearchHistory({ onSelect, maxItems = 8 }: SearchHistoryProps) {
             overflow: 'hidden',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: space[8], padding: space[8], borderBottom: `1px solid ${colors.border}` }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: space[8],
+              padding: space[8],
+              borderBottom: `1px solid ${colors.border}`,
+            }}
+          >
             <strong style={{ color: colors.text.secondary, fontSize: 13 }}>Recent searches</strong>
             <Button type="button" variant="ghost" size="sm" onClick={clear}>
               Clear
@@ -57,8 +66,8 @@ export function SearchHistory({ onSelect, maxItems = 8 }: SearchHistoryProps) {
               key={`${item.query}-${item.timestamp}`}
               type="button"
               onClick={() => {
-                onSelect(item.query)
-                setOpen(false)
+                onSelect(item.query);
+                setOpen(false);
               }}
               style={{
                 width: '100%',
@@ -81,5 +90,5 @@ export function SearchHistory({ onSelect, maxItems = 8 }: SearchHistoryProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

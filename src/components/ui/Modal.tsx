@@ -1,47 +1,55 @@
-import { useEffect, useRef, type ReactNode } from 'react'
-import { colors, radius, shadow, z, fontSize, fontWeight, space } from '../../styles/tokens'
+import { useEffect, useRef, type ReactNode } from 'react';
+import { colors, radius, shadow, z, fontSize, fontWeight, space } from '../../styles/tokens';
 
 interface Props {
-  open: boolean
-  onClose: () => void
-  title?: string
-  description?: string
+  open: boolean;
+  onClose: () => void;
+  title?: string;
+  description?: string;
   /** Max width in pixels. Defaults to 480. */
-  width?: number
+  width?: number;
   /** Hide the close X in the corner. */
-  hideCloseButton?: boolean
-  children: ReactNode
+  hideCloseButton?: boolean;
+  children: ReactNode;
 }
 
-export function Modal({ open, onClose, title, description, width = 480, hideCloseButton, children }: Props) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
+export function Modal({
+  open,
+  onClose,
+  title,
+  description,
+  width = 480,
+  hideCloseButton,
+  children,
+}: Props) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Sync open prop with native dialog state. <dialog> gives us native focus
   // trap + inert background + ESC handling for free.
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
+    const dialog = dialogRef.current;
+    if (!dialog) return;
     if (open && !dialog.open) {
-      dialog.showModal()
+      dialog.showModal();
     } else if (!open && dialog.open) {
-      dialog.close()
+      dialog.close();
     }
-  }, [open])
+  }, [open]);
 
   // The native dialog fires 'cancel' on ESC and 'close' when the user
   // dismisses it. Bridge both back to React state.
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    const handleClose = () => onClose()
-    dialog.addEventListener('close', handleClose)
-    return () => dialog.removeEventListener('close', handleClose)
-  }, [onClose])
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const handleClose = () => onClose();
+    dialog.addEventListener('close', handleClose);
+    return () => dialog.removeEventListener('close', handleClose);
+  }, [onClose]);
 
   // Backdrop click on the dialog element itself (not its content).
   const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (e.target === dialogRef.current) onClose()
-  }
+    if (e.target === dialogRef.current) onClose();
+  };
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- Native <dialog> handles ESC via the cancel event; click is only for pointer backdrop dismissal.
@@ -71,15 +79,34 @@ export function Modal({ open, onClose, title, description, width = 480, hideClos
         }}
       >
         {(title || !hideCloseButton) && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: space[7], marginBottom: title || description ? space[8] : 0 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: space[7],
+              marginBottom: title || description ? space[8] : 0,
+            }}
+          >
             <div style={{ minWidth: 0 }}>
               {title && (
-                <h2 id="modal-title" style={{ margin: 0, fontSize: fontSize.xl, fontWeight: fontWeight.bold, color: colors.text.primary }}>
+                <h2
+                  id="modal-title"
+                  style={{
+                    margin: 0,
+                    fontSize: fontSize.xl,
+                    fontWeight: fontWeight.bold,
+                    color: colors.text.primary,
+                  }}
+                >
                   {title}
                 </h2>
               )}
               {description && (
-                <p id="modal-description" style={{ margin: '4px 0 0', fontSize: fontSize.md, color: colors.text.muted }}>
+                <p
+                  id="modal-description"
+                  style={{ margin: '4px 0 0', fontSize: fontSize.md, color: colors.text.muted }}
+                >
                   {description}
                 </p>
               )}
@@ -112,5 +139,5 @@ export function Modal({ open, onClose, title, description, width = 480, hideClos
         }
       `}</style>
     </dialog>
-  )
+  );
 }

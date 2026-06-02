@@ -42,17 +42,48 @@ Signals:
   local digest = mixhive["llm.call"](digest_prompt, "sonnet"):await()
 
   mh_log("digest generated")
+
+  local suggestions = {
+    suggestion(
+      "scene_digest",
+      { city = city, digest = digest },
+      0.75,
+      "Weekly platform-wide underground scene intelligence",
+      false
+    )
+  }
+
+  -- Web3 branch: propose supporter pass for a high-play mix with no collection
+  local my_mixes = mixhive["db.read"]("mixes", { dj_id = ctx.profile_id, published = true }, 10):await() or {}
+  for _, mx in ipairs(my_mixes) do
+    local play_count = mx.play_count or 0
+    if play_count > 300 then
+      local existing = mixhive["db.read"]("nft_collections", {
+        owner_id = ctx.profile_id, mix_id = mx.id
+      }, 1):await() or {}
+      if #existing == 0 then
+        table.insert(suggestions, suggestion(
+          "web3_proposal",
+          {
+            action = "create_pass",
+            source_type = "mix",
+            source_id = mx.id,
+            reason_template = "Your mix has {play_count} plays and no supporter pass yet.",
+            estimated_supply = 50,
+            context_stats = { play_count = play_count }
+          },
+          0.8,
+          "Mix '" .. (mx.title or "?") .. "' has " .. play_count .. " plays with no supporter pass",
+          true
+        ))
+        break
+      end
+    end
+  end
+
   return {
     status = "ok",
-    suggestions = {
-      suggestion(
-        "scene_digest",
-        { city = city, digest = digest },
-        0.75,
-        "Weekly platform-wide underground scene intelligence",
-        false
-      )
-    },
+    suggestions = suggestions,
     tasks = {},
     notifications = {
       notify(

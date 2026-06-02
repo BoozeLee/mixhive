@@ -1,19 +1,19 @@
 /**
  * CDN-Optimized Image Component
- * 
+ *
  * React component that automatically uses CDN-optimized images
  * with lazy loading, responsive loading, and fallback support.
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { 
-  getOptimizedImageUrl, 
-  getOptimizedAvatarUrl, 
-  getOptimizedBannerUrl, 
+import {
+  getOptimizedImageUrl,
+  getOptimizedAvatarUrl,
+  getOptimizedBannerUrl,
   getOptimizedArtworkUrl,
   lazyLoader,
-  preloadImage 
+  preloadImage,
 } from '../lib/cdnUrlTransformers';
 import type { ImageOptimizationParams } from '../lib/cdnUrlTransformers';
 
@@ -89,7 +89,7 @@ export const CDNImage: React.FC<CDNImageProps> = ({
       try {
         const bucket = determineBucketFromUrl(src);
         const result = await getOptimizedImageUrl(src, bucket, optimizedParams);
-        
+
         setCdnUrl(result.url);
         setIsOptimized(result.source === 'cdn');
         setIsLoading(false);
@@ -117,7 +117,7 @@ export const CDNImage: React.FC<CDNImageProps> = ({
     setError(true);
     setIsLoading(false);
     onError?.();
-    
+
     // Try fallback if available
     if (fallback) {
       setCdnUrl(fallback);
@@ -171,7 +171,7 @@ export const CDNImage: React.FC<CDNImageProps> = ({
           CDN
         </div>
       )}
-      
+
       <Image
         ref={imgRef}
         src={cdnUrl}
@@ -231,7 +231,7 @@ export const CDNResponsiveImage: React.FC<ResponsiveImageProps> = ({
     const fetchResponsiveUrl = async () => {
       try {
         let result;
-        
+
         switch (defaultSize) {
           case 'avatar':
             result = await getOptimizedAvatarUrl(src, currentSize, optimization);
@@ -244,7 +244,11 @@ export const CDNResponsiveImage: React.FC<ResponsiveImageProps> = ({
             break;
           default:
             const bucket = determineBucketFromUrl(src);
-            const sizeOpt = { ...optimization, width: getSizeWidth(currentSize), height: getSizeHeight(currentSize) };
+            const sizeOpt = {
+              ...optimization,
+              width: getSizeWidth(currentSize),
+              height: getSizeHeight(currentSize),
+            };
             result = await getOptimizedImageUrl(src, bucket, sizeOpt);
         }
 
@@ -354,7 +358,7 @@ export const CDNArtwork: React.FC<{
 };
 
 // Lazy CDN image component with intersection observer
-export const CDNLazyImage: React.FC<CDNImageProps> = (props) => {
+export const CDNLazyImage: React.FC<CDNImageProps> = props => {
   const [isVisible, setIsVisible] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -439,3 +443,5 @@ export const CDN_IMAGE_COMPONENTS = {
   CDNArtwork,
   CDNLazyImage,
 } as const;
+
+export const CDNOptimizedImage = CDNImage;

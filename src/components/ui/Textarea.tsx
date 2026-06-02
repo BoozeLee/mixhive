@@ -1,22 +1,22 @@
-import { forwardRef, useId, type TextareaHTMLAttributes, type ReactNode } from 'react'
-import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens'
+import { forwardRef, useId, type TextareaHTMLAttributes, type ReactNode } from 'react';
+import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens';
 
 interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  label?: string
-  help?: ReactNode
-  error?: string | undefined
-  hideLabel?: boolean
+  label?: string;
+  help?: ReactNode;
+  error?: string | undefined;
+  hideLabel?: boolean;
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea(
   { label, help, error, hideLabel, id, style, disabled, rows = 4, ...rest },
-  ref,
+  ref
 ) {
-  const reactId = useId()
-  const inputId = id || reactId
-  const helpId = help ? `${inputId}-help` : undefined
-  const errorId = error ? `${inputId}-error` : undefined
-  const describedBy = [errorId, helpId].filter(Boolean).join(' ') || undefined
+  const reactId = useId();
+  const inputId = id || reactId;
+  const helpId = help ? `${inputId}-help` : undefined;
+  const errorId = error ? `${inputId}-error` : undefined;
+  const describedBy = [errorId, helpId].filter(Boolean).join(' ') || undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -25,8 +25,22 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea
           htmlFor={inputId}
           style={
             hideLabel
-              ? { position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }
-              : { color: colors.text.secondary, fontSize: fontSize.sm, fontWeight: fontWeight.medium }
+              ? {
+                  position: 'absolute',
+                  width: 1,
+                  height: 1,
+                  padding: 0,
+                  margin: -1,
+                  overflow: 'hidden',
+                  clip: 'rect(0,0,0,0)',
+                  whiteSpace: 'nowrap',
+                  border: 0,
+                }
+              : {
+                  color: colors.text.secondary,
+                  fontSize: fontSize.sm,
+                  fontWeight: fontWeight.medium,
+                }
           }
         >
           {label}
@@ -54,14 +68,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea
           ...style,
         }}
         onFocus={e => {
-          e.currentTarget.style.borderColor = error ? colors.danger : colors.accent
-          e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? colors.dangerBg : colors.accentFaint}`
-          rest.onFocus?.(e)
+          e.currentTarget.style.borderColor = error ? colors.danger : colors.accent;
+          e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? colors.dangerBg : colors.accentFaint}`;
+          rest.onFocus?.(e);
         }}
         onBlur={e => {
-          e.currentTarget.style.borderColor = error ? colors.danger : colors.borderStrong
-          e.currentTarget.style.boxShadow = 'none'
-          rest.onBlur?.(e)
+          e.currentTarget.style.borderColor = error ? colors.danger : colors.borderStrong;
+          e.currentTarget.style.boxShadow = 'none';
+          rest.onBlur?.(e);
         }}
         {...rest}
       />
@@ -76,5 +90,5 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea
         </span>
       )}
     </div>
-  )
-})
+  );
+});

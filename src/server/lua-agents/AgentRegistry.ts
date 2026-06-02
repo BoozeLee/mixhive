@@ -23,6 +23,7 @@ import {
   MYTHIC_COLLAB_WEAVER,
   MYTHIC_NARRATOR,
   MYTHIC_YIELD_ANALYST,
+  MYTHIC_STRATEGIST,
 } from './scripts';
 
 const SCRIPT_MAP: Partial<Record<AgentId, string>> = {
@@ -49,6 +50,7 @@ const SCRIPT_MAP: Partial<Record<AgentId, string>> = {
   mythic_collab_weaver: MYTHIC_COLLAB_WEAVER,
   mythic_narrator: MYTHIC_NARRATOR,
   mythic_yield_analyst: MYTHIC_YIELD_ANALYST,
+  mythic_strategist: MYTHIC_STRATEGIST,
 };
 
 function loadScript(agentId: AgentId): string {
@@ -87,7 +89,7 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     tier: 'free',
     approval: 'on_action',
     timeout_ms: 30000,
-    tools: ['db.read_one', 'db.read', 'db.rpc', 'vector.embed', 'vector.search', 'llm.call', 'llm.json'],
+    tools: ['db.read_one', 'db.read', 'db.rpc', 'vector.embed', 'vector.search', 'llm.call', 'llm.json', 'mythic.node.find_or_create', 'mythic.edge.create'],
   },
   opportunity_match: {
     display_name: 'Opportunity Match',
@@ -95,7 +97,7 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     tier: 'free',
     approval: 'auto',
     timeout_ms: 30000,
-    tools: ['db.read_one', 'db.read', 'vector.embed', 'vector.search', 'llm.call', 'llm.json'],
+    tools: ['db.read_one', 'db.read', 'db.rpc', 'vector.embed', 'vector.search', 'llm.call', 'llm.json'],
   },
   collaboration_match: {
     display_name: 'Collaboration Match',
@@ -103,7 +105,7 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     tier: 'free',
     approval: 'on_action',
     timeout_ms: 30000,
-    tools: ['db.read_one', 'db.read', 'vector.embed', 'vector.search', 'llm.call', 'llm.json'],
+    tools: ['db.read_one', 'db.read', 'vector.embed', 'vector.search', 'llm.call', 'llm.json', 'mythic.node.find_or_create', 'mythic.edge.create'],
   },
   scene_radar: {
     display_name: 'Scene Radar',
@@ -127,7 +129,7 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     tier: 'partner',
     approval: 'always',
     timeout_ms: 30000,
-    tools: ['db.read', 'db.insert', 'vector.embed', 'vector.search', 'llm.call', 'llm.json'],
+    tools: ['db.read', 'db.insert', 'vector.embed', 'vector.search', 'llm.call', 'llm.json', 'mythic.node.find_or_create', 'mythic.edge.create'],
   },
   venue_fit: {
     display_name: 'Venue Fit',
@@ -251,6 +253,14 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     approval: 'always',
     timeout_ms: 40000,
     tools: ['db.read_one', 'db.read', 'llm.json', 'mythic.yield.get_summary', 'mythic.graph.query'],
+  },
+  mythic_strategist: {
+    display_name: 'Mythic Strategist',
+    description: 'Weekly strategy pass: 3 collab targets, 3 venue approaches, 2 content ideas from the MythicNode graph.',
+    tier: 'free',
+    approval: 'on_action',
+    timeout_ms: 45000,
+    tools: ['db.read_one', 'db.read', 'llm.call', 'llm.json', 'mythic.graph.query', 'mythic.quest.get_active', 'mythic.edge.create'],
   },
 };
 

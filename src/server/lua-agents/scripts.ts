@@ -43,6 +43,19 @@ function run(ctx)
     end
   end
 
+  -- Load structured availability windows for this artist
+  local avail = mixhive["db.rpc"]("get_artist_availability",
+    { p_profile_id = ctx.profile_id, p_type = "gig" }
+  ):await()
+  local has_availability = #(avail or {}) > 0 or (profile.booking_open == true)
+
+  -- Find promoters active in artist's city / genres
+  local artist_city    = (profile.location or ""):match("^([^,]+)")
+  local artist_genres  = profile.genres or {}
+  local promoters = mixhive["db.rpc"]("find_candidate_promoters",
+    { p_genres = artist_genres, p_city = artist_city, p_country = "BE", p_limit = 10 }
+  ):await()
+
   -- Fetch active booking opportunities
   local opps = mixhive["db.read"]("opportunities", { is_active = true }, 30):await()
   local booking_opps = {}
@@ -73,12 +86,32 @@ function run(ctx)
     ))
   end
 
+  local promoter_lines = {}
+  for i, p in ipairs(promoters or {}) do
+    if i > 5 then break end
+    table.insert(promoter_lines, string.format(
+      "- %s (%s) | genres: %s | verified: %s",
+      p.name or "?",
+      p.city or "?",
+      table.concat(p.genres or {}, ","),
+      tostring(p.is_verified or false)
+    ))
+  end
+
+  local avail_note = has_availability
+    and "Artist has open availability slots for gigs."
+    or  "No explicit availability set — mention general openness."
+
   local fit_prompt = string.format([[
 You are a booking agent for underground electronic music.
 Score which of these opportunities best fit this artist. Return top 5 only.
 
 Artist: %s | Location: %s | Genres: %s | Style: %s
 Recent mixes: %d uploaded
+%s
+
+Local promoters (context for outreach hooks):
+%s
 
 Opportunities:
 %s
@@ -92,6 +125,8 @@ fit_score is 0-100. outreach_hook is 1 sentence the artist can use to open the c
     table.concat(profile.genres or {}, ", "),
     profile.dj_style or "DJ",
     #mixes,
+    avail_note,
+    #promoter_lines > 0 and table.concat(promoter_lines, "\\n") or "None found nearby.",
     table.concat(opp_lines, "\\n")
   )
 
@@ -127,6 +162,38 @@ fit_score is 0-100. outreach_hook is 1 sentence the artist can use to open the c
   end
 
   mh_log("booking_scout found " .. #suggs .. " leads")
+
+  if not ctx.dry_run then
+    for _, sugg in ipairs(suggs) do
+      local p = sugg.payload
+      if p and p.opportunity_id then
+        local ok, err = pcall(function()
+          local profile_node = mixhive["mythic.node.find_or_create"]({
+            node_type    = "artist_profile",
+            source_table = "profiles",
+            source_id    = ctx.profile_id,
+            title        = "Artist",
+            owner_id     = ctx.profile_id,
+          }):await()
+          local opp_node = mixhive["mythic.node.find_or_create"]({
+            node_type    = "opportunity",
+            source_table = "opportunities",
+            source_id    = p.opportunity_id,
+            title        = p.title or "Opportunity",
+            owner_id     = ctx.profile_id,
+          }):await()
+          mixhive["mythic.edge.create"]({
+            from_node_id = profile_node,
+            to_node_id   = opp_node,
+            edge_type    = "submitted_to",
+            weight       = sugg.confidence or 0.5,
+            source_event = "booking_scout",
+          }):await()
+        end)
+        if not ok then mh_log("mythic edge error: " .. tostring(err)) end
+      end
+    end
+  end
 
   return {
     status        = #suggs > 0 and "needs_approval" or "ok",
@@ -165,6 +232,15 @@ function run(ctx)
     profile.location or ""
   )
 
+  -- Load own structured skills for richer matching context
+  local own_skills = mixhive["db.read"]("artist_skills",
+    { user_id = ctx.profile_id }, 20
+  ):await()
+  local skill_names = {}
+  for _, sk in ipairs(own_skills or {}) do
+    table.insert(skill_names, sk.skill_name)
+  end
+
   local similar = mixhive["vector.search"](bio_text, "profile", 10):await()
 
   -- Filter out own profile
@@ -195,6 +271,10 @@ function run(ctx)
     ))
   end
 
+  local skills_note = #skill_names > 0
+    and ("Skills: " .. table.concat(skill_names, ", "))
+    or  ""
+
   local intro_prompt = string.format([[
 You are a music community connector for underground electronic music.
 Draft a warm, direct intro message from one artist to another — no hype, authentic underground tone.
@@ -202,6 +282,7 @@ Max 80 words each. Personalise each to the candidate's genre/location.
 
 Sender: %s | %s | %s
 Genres: %s
+%s
 
 Candidates:
 %s
@@ -213,6 +294,7 @@ Return JSON only:
     profile.location or "Belgium",
     profile.dj_style or "DJ",
     table.concat(profile.genres or {}, ", "),
+    skills_note,
     table.concat(candidate_lines, "\\n")
   )
 
@@ -239,6 +321,38 @@ Return JSON only:
   end
 
   mh_log("collaboration_match found " .. #suggs .. " matches")
+
+  if not ctx.dry_run then
+    for _, sugg in ipairs(suggs) do
+      local p = sugg.payload
+      if p and p.to_profile_id then
+        local ok, err = pcall(function()
+          local from_node = mixhive["mythic.node.find_or_create"]({
+            node_type    = "artist_profile",
+            source_table = "profiles",
+            source_id    = ctx.profile_id,
+            title        = "Artist",
+            owner_id     = ctx.profile_id,
+          }):await()
+          local to_node = mixhive["mythic.node.find_or_create"]({
+            node_type    = "artist_profile",
+            source_table = "profiles",
+            source_id    = p.to_profile_id,
+            title        = p.to_name or "Collaborator",
+            owner_id     = ctx.profile_id,
+          }):await()
+          mixhive["mythic.edge.create"]({
+            from_node_id = from_node,
+            to_node_id   = to_node,
+            edge_type    = "collab_with",
+            weight       = p.similarity or 0.5,
+            source_event = "collaboration_match",
+          }):await()
+        end)
+        if not ok then mh_log("mythic edge error: " .. tostring(err)) end
+      end
+    end
+  end
 
   return {
     status        = #suggs > 0 and "needs_approval" or "ok",
@@ -1144,6 +1258,31 @@ Return JSON:
     ))
   end
 
+  -- Web3 branch: propose quest backing for active quests with no collection yet
+  local quests = mixhive["db.read"]("quests", { owner_id = ctx.profile_id, status = "active" }, 3):await() or {}
+  for _, q in ipairs(quests) do
+    local existing = mixhive["db.read"]("nft_collections", {
+      owner_id = ctx.profile_id, quest_id = q.id
+    }, 1):await() or {}
+    if #existing == 0 then
+      table.insert(suggestions, suggestion(
+        "web3_proposal",
+        {
+          action = "open_quest_backing",
+          source_type = "quest",
+          source_id = q.id,
+          reason_template = "Your quest has engaged followers — consider opening it for backing.",
+          estimated_supply = 20,
+          context_stats = { quest_title = q.title or "?" }
+        },
+        0.7,
+        "Active quest '" .. (q.title or "?") .. "' has no backing collection",
+        true
+      ))
+      break
+    end
+  end
+
   return {
     status = "ok",
     suggestions = suggestions,
@@ -1321,6 +1460,137 @@ function error_response(msg)
   }
 end`;
 
+export const MYTHIC_STRATEGIST = `
+-- Mythic Strategist (Strategic)
+-- Weekly strategy pass: reads the MythicNode graph, surfaces 3 collab targets,
+-- 3 venue/promoter approaches, and 2 content ideas.  Outputs structured JSON
+-- for the UI to render as an actionable weekly brief.
+
+function run(ctx)
+  mh_log("mythic_strategist start", ctx.profile_id)
+
+  local profile = mixhive["db.read_one"]("profiles", { id = ctx.profile_id }):await()
+  if not profile then
+    return { status = "error", message = "profile not found",
+             suggestions = {}, tasks = {}, notifications = {} }
+  end
+
+  -- Graph: similar artists (collab candidates)
+  local similar = mixhive["mythic.graph.query"]({
+    root_id   = ctx.profile_id,
+    edge_type = "similar_artist",
+    depth     = 1,
+    limit     = 10,
+  }):await() or {}
+
+  -- Active quests to anchor suggestions
+  local quests = mixhive["mythic.quest.get_active"](ctx.profile_id):await() or {}
+  local quest_summary = {}
+  for _, q in ipairs(quests) do
+    table.insert(quest_summary, q.title or "")
+  end
+
+  -- Open opportunities (gigs + venues)
+  local opps = mixhive["db.read"]("opportunities", { is_active = true }, 20):await() or {}
+  local venue_opps = {}
+  for _, o in ipairs(opps) do
+    if o.opp_type == "gig" or o.opp_type == "festival" or o.opp_type == "residency" then
+      table.insert(venue_opps, o)
+    end
+    if #venue_opps >= 10 then break end
+  end
+
+  local collab_names = {}
+  for i, n in ipairs(similar) do
+    if i > 5 then break end
+    table.insert(collab_names, (n.display_name or n.username or n.id or "?"))
+  end
+
+  local opp_lines = {}
+  for i, o in ipairs(venue_opps) do
+    if i > 8 then break end
+    table.insert(opp_lines, string.format("%s (%s, %s)", o.title or "?", o.opp_type or "?", o.city or "?"))
+  end
+
+  local prompt = string.format([[
+You are the Mythic Strategist, an incisive AI career advisor for underground music creators.
+
+Artist: %s
+Bio: %s
+Active quests: %s
+
+Graph-similar artists available for collaboration: %s
+Open venue/gig opportunities: %s
+
+Return a concise weekly strategy brief as JSON:
+{
+  "collab_targets":   [{"name": string, "rationale": string, "action": string}],  // 3 items
+  "venue_approaches": [{"venue": string, "angle": string, "next_step": string}],  // 3 items
+  "content_ideas":    [{"idea": string, "format": string}]                        // 2 items
+}
+Be direct and specific. Prioritize actions the artist can take THIS week.
+]],
+    profile.display_name or "artist",
+    profile.bio or "no bio",
+    table.concat(quest_summary, "; "),
+    table.concat(collab_names, ", "),
+    table.concat(opp_lines, " | ")
+  )
+
+  local brief = mixhive["llm.json"](prompt, nil, "sonnet"):await()
+
+  local suggestions = {}
+
+  local function add_suggestions(list, stype)
+    for _, item in ipairs(list or {}) do
+      table.insert(suggestions, {
+        type              = stype,
+        payload           = item,
+        confidence        = 0.72,
+        rationale         = item.rationale or item.angle or item.idea or "",
+        requires_approval = true,
+      })
+    end
+  end
+
+  add_suggestions(brief.collab_targets,   "collab_target")
+  add_suggestions(brief.venue_approaches, "venue_approach")
+  add_suggestions(brief.content_ideas,    "content_idea")
+
+  -- Store brief in the graph as a recommended_by_agent edge for each collab target
+  for _, item in ipairs(brief.collab_targets or {}) do
+    local target = nil
+    for _, n in ipairs(similar) do
+      if (n.display_name or n.username or "") == (item.name or "") then
+        target = n
+        break
+      end
+    end
+    if target and target.id then
+      mixhive["mythic.edge.create"]({
+        from_id   = ctx.profile_id,
+        to_id     = target.id,
+        edge_type = "recommended_by_agent",
+        meta      = { agent_id = ctx.agent_id, rationale = item.rationale },
+      }):await()
+    end
+  end
+
+  return {
+    status        = "ok",
+    suggestions   = suggestions,
+    tasks         = {},
+    notifications = {
+      {
+        channel  = "in_app",
+        subject  = "Weekly Strategy Brief",
+        body     = "Your Mythic Strategist has prepared " .. #suggestions .. " actions for this week.",
+        cta_url  = "/agents",
+      }
+    },
+  }
+end`;
+
 export const MYTHIC_YIELD_ANALYST = `
 -- Mythic Yield Analyst (Strategic)
 -- The "Career Scientist" — surfaces which actions actually produced real outcomes using MythicNode attribution.
@@ -1466,6 +1736,12 @@ function run(ctx)
   if not profile then return { status = "error", message = "profile not found",
     suggestions = {}, tasks = {}, notifications = {} } end
 
+  -- Load artist's open availability windows to filter deadlines
+  local avail = mixhive["db.rpc"]("get_artist_availability",
+    { p_profile_id = ctx.profile_id }
+  ):await()
+  local has_open_slots = #(avail or {}) > 0
+
   -- Load open opportunities
   local opps = mixhive["db.read"]("opportunities", { is_active = true }, 20):await()
 
@@ -1480,14 +1756,17 @@ function run(ctx)
   for _, opp in ipairs(opps) do
     if count >= 8 then break end
 
+    local avail_note = has_open_slots and "has open availability slots" or "availability not set"
+
     local rationale_prompt = string.format([[
-In 1 sentence, explain why "%s" (genres: %s, location: %s) fits this opportunity:
+In 1 sentence, explain why "%s" (genres: %s, location: %s, %s) fits this opportunity:
 "%s" — %s
 Be specific. Max 20 words.
 ]],
       profile.display_name or "this artist",
       table.concat(profile.genres or {}, ", "),
       profile.location or "Belgium",
+      avail_note,
       opp.title or "opportunity",
       (opp.description or ""):sub(1, 150)
     )
@@ -1520,6 +1799,34 @@ Be specific. Max 20 words.
       "in_app",
       "/agents/inbox"
     ))
+  end
+
+  -- Web3 branch: propose gig proof if recent performed_at edge exists with no proof collection
+  local gig_edges = mixhive["db.read"]("mythic_edges", {
+    from_node_id = ctx.profile_id, edge_type = "performed_at"
+  }, 3):await() or {}
+  if #gig_edges > 0 then
+    local existing_proofs = mixhive["db.read"]("nft_collections", {
+      owner_id = ctx.profile_id, soulbound = true
+    }, 1):await() or {}
+    if #existing_proofs == 0 then
+      local event_node_id = gig_edges[1] and gig_edges[1].to_node_id or nil
+      if event_node_id then
+        table.insert(suggestions, suggestion(
+          "web3_proposal",
+          {
+            action = "check_gig_proof",
+            source_type = "event",
+            source_id = event_node_id,
+            reason_template = "You've performed recently — mint a permanent on-chain gig proof.",
+            context_stats = {}
+          },
+          0.75,
+          "Recent gig logged with no on-chain participation proof",
+          true
+        ))
+      end
+    end
   end
 
   mh_log("done — " .. #suggestions .. " matches")
@@ -1879,17 +2186,48 @@ Signals:
   local digest = mixhive["llm.call"](digest_prompt, "sonnet"):await()
 
   mh_log("digest generated")
+
+  local suggestions = {
+    suggestion(
+      "scene_digest",
+      { city = city, digest = digest },
+      0.75,
+      "Weekly platform-wide underground scene intelligence",
+      false
+    )
+  }
+
+  -- Web3 branch: propose supporter pass for a high-play mix with no collection
+  local my_mixes = mixhive["db.read"]("mixes", { dj_id = ctx.profile_id, published = true }, 10):await() or {}
+  for _, mx in ipairs(my_mixes) do
+    local play_count = mx.play_count or 0
+    if play_count > 300 then
+      local existing = mixhive["db.read"]("nft_collections", {
+        owner_id = ctx.profile_id, mix_id = mx.id
+      }, 1):await() or {}
+      if #existing == 0 then
+        table.insert(suggestions, suggestion(
+          "web3_proposal",
+          {
+            action = "create_pass",
+            source_type = "mix",
+            source_id = mx.id,
+            reason_template = "Your mix has {play_count} plays and no supporter pass yet.",
+            estimated_supply = 50,
+            context_stats = { play_count = play_count }
+          },
+          0.8,
+          "Mix '" .. (mx.title or "?") .. "' has " .. play_count .. " plays with no supporter pass",
+          true
+        ))
+        break
+      end
+    end
+  end
+
   return {
     status = "ok",
-    suggestions = {
-      suggestion(
-        "scene_digest",
-        { city = city, digest = digest },
-        0.75,
-        "Weekly platform-wide underground scene intelligence",
-        false
-      )
-    },
+    suggestions = suggestions,
     tasks = {},
     notifications = {
       notify(
@@ -1899,6 +2237,104 @@ Signals:
         "/dashboard"
       )
     },
+  }
+end
+`;
+
+export const SET_COMPOSER_AGENT = `
+-- set_composer_agent.lua
+-- On-demand agent for the Hive Composer "Analyse my set" panel.
+-- Trigger: manual   Approval: on_action
+-- Input: ctx.event.mix_ids (array), ctx.event.bpm_map ({mix_id → bpm})
+
+local function suggestion(stype, payload, confidence, description, requires_action)
+  return {
+    suggestion_type = stype,
+    payload         = payload,
+    confidence      = confidence,
+    description     = description,
+    requires_action = requires_action or false,
+  }
+end
+
+function run(ctx)
+  local mix_ids = ctx.event and ctx.event.mix_ids or {}
+  local bpm_map = ctx.event and ctx.event.bpm_map or {}
+
+  if #mix_ids < 3 then
+    return { status = "ok", suggestions = {}, tasks = {}, notifications = {} }
+  end
+
+  -- Collect BPM values
+  local bpm_values = {}
+  for i, mix_id in ipairs(mix_ids) do
+    local bpm = bpm_map[mix_id]
+    if bpm and type(bpm) == "number" then
+      bpm_values[#bpm_values + 1] = bpm
+    else
+      bpm_values[#bpm_values + 1] = 128  -- fallback
+    end
+  end
+
+  -- Compute BPM range
+  local bpm_min = bpm_values[1]
+  local bpm_max = bpm_values[1]
+  for _, v in ipairs(bpm_values) do
+    if v < bpm_min then bpm_min = v end
+    if v > bpm_max then bpm_max = v end
+  end
+  local bpm_range = bpm_max - bpm_min
+
+  local arc_desc
+  if bpm_range <= 5 then
+    arc_desc = "steady tempo"
+  elseif bpm_range <= 15 then
+    arc_desc = "gradual build"
+  else
+    arc_desc = "dramatic sweep"
+  end
+
+  -- Use vector similarity to derive genre context for the first track
+  local genre_hint = ""
+  if mix_ids[1] then
+    local similar = mh.find_similar_mixes(mix_ids[1], 3)
+    if similar and #similar > 0 and similar[1] then
+      genre_hint = " The opening track has a strong vector signature."
+    end
+  end
+
+  -- Build LLM prompt
+  local prompt = string.format(
+    "Analyse this %d-track DJ set with a %s BPM arc (%d→%d BPM).%s " ..
+    "Give 1-2 specific observations about the set's flow in plain language. Max 40 words.",
+    #mix_ids, arc_desc, bpm_min, bpm_max, genre_hint
+  )
+
+  local analysis = ""
+  if mh.llm and mh.llm.call then
+    analysis = mh.llm.call(prompt, "haiku") or ""
+  end
+
+  if analysis == "" then
+    analysis = string.format(
+      "Your set spans %d BPM with a %s arc over %d tracks.",
+      bpm_range, arc_desc, #mix_ids
+    )
+  end
+
+  return {
+    status = "ok",
+    suggestions = {
+      suggestion(
+        "set_analysis",
+        { analysis = analysis, mix_count = #mix_ids, bpm_min = bpm_min, bpm_max = bpm_max },
+        0.85,
+        analysis,
+        false
+      )
+    },
+    tasks         = {},
+    notifications = {},
   }
 end
 `;

@@ -134,13 +134,16 @@ button {
   font-family: inherit;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   font-family: inherit;
   font-size: inherit;
 }
 
 /* Prevent text selection on interactive elements */
-button, .clickable {
+button,
+.clickable {
   user-select: none;
   -webkit-user-select: none;
 }

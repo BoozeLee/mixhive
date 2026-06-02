@@ -1,24 +1,24 @@
-import { forwardRef, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react'
-import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens'
+import { forwardRef, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react';
+import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
-type Size = 'sm' | 'md' | 'lg'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type Size = 'sm' | 'md' | 'lg';
 
 interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
-  variant?: Variant
-  size?: Size
-  loading?: boolean
-  fullWidth?: boolean
-  leftIcon?: ReactNode
-  rightIcon?: ReactNode
-  children?: ReactNode
+  variant?: Variant;
+  size?: Size;
+  loading?: boolean;
+  fullWidth?: boolean;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  children?: ReactNode;
 }
 
 const sizes: Record<Size, CSSProperties> = {
   sm: { padding: '6px 12px', fontSize: fontSize.sm, height: 28 },
   md: { padding: '8px 18px', fontSize: fontSize.md, height: 36 },
   lg: { padding: '12px 22px', fontSize: fontSize.lg, height: 44 },
-}
+};
 
 const variants: Record<Variant, CSSProperties> = {
   primary: {
@@ -45,13 +45,24 @@ const variants: Record<Variant, CSSProperties> = {
     border: `1px solid ${colors.danger}`,
     fontWeight: fontWeight.semibold,
   },
-}
+};
 
 export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
-  { variant = 'primary', size = 'md', loading, fullWidth, leftIcon, rightIcon, disabled, style, children, ...rest },
-  ref,
+  {
+    variant = 'primary',
+    size = 'md',
+    loading,
+    fullWidth,
+    leftIcon,
+    rightIcon,
+    disabled,
+    style,
+    children,
+    ...rest
+  },
+  ref
 ) {
-  const isDisabled = disabled || loading
+  const isDisabled = disabled || loading;
   return (
     <button
       ref={ref}
@@ -75,11 +86,25 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
       {...rest}
     >
       {loading ? (
-        <span aria-hidden="true" style={{ display: 'inline-block', width: 12, height: 12, border: `2px solid currentColor`, borderRightColor: 'transparent', borderRadius: '50%', animation: 'mixhive-spin 0.7s linear infinite' }} />
-      ) : leftIcon}
+        <span
+          role="status"
+          aria-label="Loading"
+          style={{
+            display: 'inline-block',
+            width: 12,
+            height: 12,
+            border: `2px solid currentColor`,
+            borderRightColor: 'transparent',
+            borderRadius: '50%',
+            animation: 'mixhive-spin 0.7s linear infinite',
+          }}
+        />
+      ) : (
+        leftIcon
+      )}
       <span>{children}</span>
       {rightIcon}
       <style>{`@keyframes mixhive-spin { to { transform: rotate(360deg); } }`}</style>
     </button>
-  )
-})
+  );
+});

@@ -1,10 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import { NotificationsBell } from './NotificationsBell'
-import { SearchBar } from './SearchBar'
-import { Button } from './ui/Button'
-import { Logo } from './Logo'
-import { colors, space } from '../styles/tokens'
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { NotificationsBell } from './NotificationsBell';
+import { SearchBar } from './SearchBar';
+import { Button } from './ui/Button';
+import { Logo } from './Logo';
+import { colors, space } from '../styles/tokens';
 
 const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -15,11 +15,11 @@ const navLinks = [
   { to: '/epk', label: 'EPK' },
   { to: '/upload', label: 'Nectar Upload' },
   { to: '/agents/gallery', label: 'BeeCast' },
-]
+];
 
 export function Navbar() {
-  const { user, profile, signOut } = useAuth()
-  const navigate = useNavigate()
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <nav
@@ -30,12 +30,13 @@ export function Navbar() {
         justifyContent: 'space-between',
         gap: space[8],
         padding: `12px clamp(14px, 4vw, 48px)`,
-        background: 'linear-gradient(90deg, rgba(3,3,3,0.92), rgba(13,10,2,0.82), rgba(3,3,3,0.92))',
+        background:
+          'linear-gradient(90deg, rgba(3,3,3,0.92), rgba(13,10,2,0.82), rgba(3,3,3,0.92))',
         borderWidth: '0 0 1px',
         borderRadius: 0,
         position: 'sticky',
         top: 0,
-        zIndex: 100
+        zIndex: 100,
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: space[10], minWidth: 0 }}>
@@ -43,7 +44,10 @@ export function Navbar() {
           <Logo size="large" variant="business" showText={true} />
         </Link>
         {user && (
-          <div className="desktop-only navbar-links" style={{ display: 'flex', gap: space[8], alignItems: 'center' }}>
+          <div
+            className="desktop-only navbar-links"
+            style={{ display: 'flex', gap: space[8], alignItems: 'center' }}
+          >
             {navLinks.map(link => (
               <Link
                 key={link.to}
@@ -59,12 +63,12 @@ export function Navbar() {
                   borderBottom: '2px solid transparent',
                 }}
                 onMouseEnter={event => {
-                  event.currentTarget.style.color = colors.accent
-                  event.currentTarget.style.borderBottomColor = colors.accent
+                  event.currentTarget.style.color = colors.accent;
+                  event.currentTarget.style.borderBottomColor = colors.accent;
                 }}
                 onMouseLeave={event => {
-                  event.currentTarget.style.color = colors.text.secondary
-                  event.currentTarget.style.borderBottomColor = 'transparent'
+                  event.currentTarget.style.color = colors.text.secondary;
+                  event.currentTarget.style.borderBottomColor = 'transparent';
                 }}
               >
                 {link.label}
@@ -102,41 +106,67 @@ export function Navbar() {
             >
               🐝 Buzz
             </Link>
-            <Link to={`/u/${profile?.username}`} style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: space[2],
-              color: colors.text.secondary,
-              textDecoration: 'none',
-              fontSize: 13,
-              textTransform: 'uppercase',
-              fontWeight: 800,
-            }}>
-              <div style={{
-                width: 34,
-                height: 34,
-                borderRadius: '50%',
-                background: profile?.avatar_url ? `url(${profile.avatar_url}) center/cover` : colors.surface,
-                border: `1px solid ${colors.accent}`,
-                boxShadow: '0 0 18px rgba(240,192,64,0.2)',
-              }} />
+            <Link
+              to={`/u/${profile?.username}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: space[2],
+                color: colors.text.secondary,
+                textDecoration: 'none',
+                fontSize: 13,
+                textTransform: 'uppercase',
+                fontWeight: 800,
+              }}
+            >
+              <div
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  background: profile?.avatar_url
+                    ? `url(${profile.avatar_url}) center/cover`
+                    : colors.surface,
+                  border: `1px solid ${colors.accent}`,
+                  boxShadow: '0 0 18px rgba(240,192,64,0.2)',
+                }}
+              />
               {profile?.display_name || profile?.username}
             </Link>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
-              onClick={() => { signOut(); navigate('/') }}
+              onClick={() => {
+                signOut();
+                navigate('/');
+              }}
             >
               Sign out
             </Button>
           </>
         ) : (
           <>
-            <Link to="/login" style={{ color: colors.text.secondary, textDecoration: 'none', fontSize: 13, fontWeight: 800, textTransform: 'uppercase' }}>Sign in</Link>
-            <Button 
+            <Link
+              to="/login"
+              style={{
+                color: colors.text.secondary,
+                textDecoration: 'none',
+                fontSize: 13,
+                fontWeight: 800,
+                textTransform: 'uppercase',
+              }}
+            >
+              Sign in
+            </Link>
+            <Button
               size="sm"
               onClick={() => navigate('/register')}
-              style={{ background: colors.accent, color: colors.bg, fontWeight: 900, textTransform: 'uppercase' }}
+              style={{
+                background: colors.accent,
+                color: colors.bg,
+                fontWeight: 900,
+                textTransform: 'uppercase',
+              }}
             >
               Join the Hive
             </Button>
@@ -144,5 +174,5 @@ export function Navbar() {
         )}
       </div>
     </nav>
-  )
+  );
 }

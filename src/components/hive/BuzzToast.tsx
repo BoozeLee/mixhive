@@ -1,22 +1,37 @@
-import { useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-type Tone = 'info' | 'success' | 'danger'
+type Tone = 'info' | 'success' | 'danger';
 
 interface Props {
-  open: boolean
-  message: string
-  tone?: Tone
+  open: boolean;
+  message: string;
+  tone?: Tone;
   /** Auto-dismiss after this many ms. 0 = sticky until onClose. */
-  duration?: number
-  onClose?: () => void
+  duration?: number;
+  onClose?: () => void;
 }
 
 const toneStyle: Record<Tone, { bg: string; border: string; fg: string; glyph: string }> = {
-  info:    { bg: 'rgba(7,7,5,0.92)',  border: 'var(--hive-gold, #f6c400)',     fg: 'var(--hive-gold-hot, #ffd84a)', glyph: '🐝' },
-  success: { bg: 'rgba(7,30,12,0.92)', border: 'var(--hive-success, #7eed8b)', fg: 'var(--hive-success, #7eed8b)',  glyph: '✓'  },
-  danger:  { bg: 'rgba(40,8,8,0.92)',  border: 'var(--hive-danger, #ff5252)',  fg: 'var(--hive-danger, #ff5252)',   glyph: '!'  },
-}
+  info: {
+    bg: 'rgba(7,7,5,0.92)',
+    border: 'var(--hive-gold, #f6c400)',
+    fg: 'var(--hive-gold-hot, #ffd84a)',
+    glyph: '🐝',
+  },
+  success: {
+    bg: 'rgba(7,30,12,0.92)',
+    border: 'var(--hive-success, #7eed8b)',
+    fg: 'var(--hive-success, #7eed8b)',
+    glyph: '✓',
+  },
+  danger: {
+    bg: 'rgba(40,8,8,0.92)',
+    border: 'var(--hive-danger, #ff5252)',
+    fg: 'var(--hive-danger, #ff5252)',
+    glyph: '!',
+  },
+};
 
 /**
  * Bee-flying-in toast. Arcs in from the upper-right corner, settles in the
@@ -24,12 +39,12 @@ const toneStyle: Record<Tone, { bg: string; border: string; fg: string; glyph: s
  */
 export function BuzzToast({ open, message, tone = 'info', duration = 4000, onClose }: Props) {
   useEffect(() => {
-    if (!open || !duration || !onClose) return
-    const t = setTimeout(onClose, duration)
-    return () => clearTimeout(t)
-  }, [open, duration, onClose])
+    if (!open || !duration || !onClose) return;
+    const t = setTimeout(onClose, duration);
+    return () => clearTimeout(t);
+  }, [open, duration, onClose]);
 
-  const cfg = toneStyle[tone]
+  const cfg = toneStyle[tone];
 
   return (
     <AnimatePresence>
@@ -38,8 +53,8 @@ export function BuzzToast({ open, message, tone = 'info', duration = 4000, onClo
           role="status"
           aria-live="polite"
           initial={{ x: 120, y: -40, rotate: 12, opacity: 0 }}
-          animate={{ x: 0,   y: 0,   rotate: 0,  opacity: 1 }}
-          exit={{    x: 80,  y: -20, rotate: 8,  opacity: 0 }}
+          animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
+          exit={{ x: 80, y: -20, rotate: 8, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 380, damping: 22 }}
           style={{
             position: 'fixed',
@@ -61,7 +76,9 @@ export function BuzzToast({ open, message, tone = 'info', duration = 4000, onClo
             fontFamily: 'var(--font-ui)',
           }}
         >
-          <span aria-hidden="true" style={{ color: cfg.fg, fontSize: 18, lineHeight: 1 }}>{cfg.glyph}</span>
+          <span aria-hidden="true" style={{ color: cfg.fg, fontSize: 18, lineHeight: 1 }}>
+            {cfg.glyph}
+          </span>
           <span style={{ flex: 1, fontSize: 13, lineHeight: 1.4 }}>{message}</span>
           {onClose && (
             <button
@@ -84,5 +101,5 @@ export function BuzzToast({ open, message, tone = 'info', duration = 4000, onClo
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

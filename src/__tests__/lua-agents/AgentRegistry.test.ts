@@ -22,6 +22,7 @@ const KNOWN_TOOLS = new Set([
   'audio.features', 'audio.tracklist', 'audio.trigger_analysis',
   'http.get', 'http.post',
   'mythic.quest.get_active', 'mythic.graph.query', 'mythic.yield.get_summary',
+  'mythic.node.find_or_create', 'mythic.edge.create',
   'runtime.allowed_tools',
 ]);
 

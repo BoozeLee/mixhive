@@ -13,14 +13,14 @@
 //     <img onError> trigger so the swap is automatic when production prebuilds
 //     and the asset hasn't landed yet.
 
-import { useState, type ImgHTMLAttributes } from 'react'
+import { useState, type ImgHTMLAttributes } from 'react';
 
 export type BrandAsset =
   | 'logo-crown-m'
   | 'honeycomb-tile'
   | 'bee-swarm'
   | 'hero-plate'
-  | `icon-${IconName}`
+  | `icon-${IconName}`;
 
 export type IconName =
   | 'hive-feed'
@@ -32,31 +32,31 @@ export type IconName =
   | 'buzz-alerts'
   | 'hive-radar'
   | 'beecast-live'
-  | 'honeydrop-nft'
+  | 'honeydrop-nft';
 
 /** Canonical primary URL for each branded asset. */
 export function assetUrl(name: BrandAsset): string {
-  if (name === 'logo-crown-m')    return '/art/logo-crown-m@2x.png'
-  if (name === 'honeycomb-tile')  return '/art/honeycomb-tile.png'
-  if (name === 'bee-swarm')       return '/art/bee-swarm.png'
-  if (name === 'hero-plate')      return '/art/hero-plate@3x.jpg'
+  if (name === 'logo-crown-m') return '/art/logo-crown-m@2x.png';
+  if (name === 'honeycomb-tile') return '/art/honeycomb-tile.png';
+  if (name === 'bee-swarm') return '/art/bee-swarm.png';
+  if (name === 'hero-plate') return '/art/hero-plate@3x.jpg';
   // icon-<slug>
-  const slug = name.slice('icon-'.length)
-  return `/art/icons/${slug}.svg`
+  const slug = name.slice('icon-'.length);
+  return `/art/icons/${slug}.svg`;
 }
 
 /** Always-shipping fallback URL or null (caller renders an inline SVG marker). */
 export function assetFallback(name: BrandAsset): string | null {
-  if (name === 'logo-crown-m')   return '/mixhive.png'
-  if (name === 'honeycomb-tile') return null   // CSS @utility hive-honeycomb handles it
-  if (name === 'bee-swarm')      return null
-  if (name === 'hero-plate')     return null
+  if (name === 'logo-crown-m') return '/mixhive.png';
+  if (name === 'honeycomb-tile') return null; // CSS @utility hive-honeycomb handles it
+  if (name === 'bee-swarm') return null;
+  if (name === 'hero-plate') return null;
   // icons fall back to inline SVG (HexIcon owns that)
-  return null
+  return null;
 }
 
 interface ImgFbProps extends ImgHTMLAttributes<HTMLImageElement> {
-  asset: BrandAsset
+  asset: BrandAsset;
 }
 
 /**
@@ -65,10 +65,10 @@ interface ImgFbProps extends ImgHTMLAttributes<HTMLImageElement> {
  * (alt text remains for a11y).
  */
 export function ImageWithFallback({ asset, alt = '', ...rest }: ImgFbProps) {
-  const primary = assetUrl(asset)
-  const fb = assetFallback(asset)
-  const [src, setSrc] = useState(primary)
-  const [stage, setStage] = useState<'primary' | 'fallback' | 'gone'>('primary')
+  const primary = assetUrl(asset);
+  const fb = assetFallback(asset);
+  const [src, setSrc] = useState(primary);
+  const [stage, setStage] = useState<'primary' | 'fallback' | 'gone'>('primary');
 
   return (
     <img
@@ -76,10 +76,10 @@ export function ImageWithFallback({ asset, alt = '', ...rest }: ImgFbProps) {
       alt={alt}
       onError={() => {
         if (stage === 'primary' && fb) {
-          setSrc(fb)
-          setStage('fallback')
+          setSrc(fb);
+          setStage('fallback');
         } else {
-          setStage('gone')
+          setStage('gone');
         }
       }}
       style={{
@@ -88,5 +88,5 @@ export function ImageWithFallback({ asset, alt = '', ...rest }: ImgFbProps) {
       }}
       {...rest}
     />
-  )
+  );
 }

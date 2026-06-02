@@ -1,6 +1,6 @@
 /**
  * CDN Cost Optimization Features
- * 
+ *
  * Provides utilities for optimizing CDN costs through lazy loading,
  * quality selection, format optimization, and bandwidth monitoring.
  */
@@ -224,7 +224,7 @@ class CDNCostOptimizer {
   // Get format optimization settings
   private getFormatOptimization(contentType: string): Partial<CDNOptimizationParams> {
     const preferredFormat = this.formatConfig.preferredFormats[contentType];
-    
+
     if (!preferredFormat) {
       return {};
     }
@@ -237,7 +237,7 @@ class CDNCostOptimizer {
   // Get compression settings
   private getCompressionSettings(contentType: string): Partial<CDNOptimizationParams> {
     const compressionLevel = this.formatConfig.compressionLevels[contentType];
-    
+
     if (!compressionLevel) {
       return {};
     }
@@ -282,8 +282,8 @@ class CDNCostOptimizer {
     }
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             const element = entry.target;
             if (element instanceof HTMLElement) {
@@ -334,24 +334,46 @@ class CDNCostOptimizer {
   // Check cost thresholds and trigger alerts
   private checkCostThresholds(): void {
     const { costThresholds } = this.config;
-    
-    if (this.bandwidthMetrics.currentBandwidthGB >= costThresholds.maxBandwidthGB * (costThresholds.alertThreshold / 100)) {
-      this.triggerCostAlert('bandwidth', this.bandwidthMetrics.currentBandwidthGB, costThresholds.maxBandwidthGB);
+
+    if (
+      this.bandwidthMetrics.currentBandwidthGB >=
+      costThresholds.maxBandwidthGB * (costThresholds.alertThreshold / 100)
+    ) {
+      this.triggerCostAlert(
+        'bandwidth',
+        this.bandwidthMetrics.currentBandwidthGB,
+        costThresholds.maxBandwidthGB
+      );
     }
 
-    if (this.bandwidthMetrics.requestsThisMinute >= costThresholds.maxRequestsPerMinute * (costThresholds.alertThreshold / 100)) {
-      this.triggerCostAlert('requests', this.bandwidthMetrics.requestsThisMinute, costThresholds.maxRequestsPerMinute);
+    if (
+      this.bandwidthMetrics.requestsThisMinute >=
+      costThresholds.maxRequestsPerMinute * (costThresholds.alertThreshold / 100)
+    ) {
+      this.triggerCostAlert(
+        'requests',
+        this.bandwidthMetrics.requestsThisMinute,
+        costThresholds.maxRequestsPerMinute
+      );
     }
   }
 
   // Trigger cost alert
-  private triggerCostAlert(type: 'bandwidth' | 'requests', current: number, threshold: number): void {
+  private triggerCostAlert(
+    type: 'bandwidth' | 'requests',
+    current: number,
+    threshold: number
+  ): void {
     const percentage = (current / threshold) * 100;
-    console.warn(`CDN Cost Alert - ${type.toUpperCase()}: ${percentage.toFixed(1)}% of threshold used (${current}/${threshold})`);
+    console.warn(
+      `CDN Cost Alert - ${type.toUpperCase()}: ${percentage.toFixed(1)}% of threshold used (${current}/${threshold})`
+    );
 
     // In a real implementation, this would send alerts to monitoring systems
     if (percentage >= 100) {
-      console.error(`CDN Cost Threshold Exceeded - ${type.toUpperCase()}: ${current} exceeds threshold of ${threshold}`);
+      console.error(
+        `CDN Cost Threshold Exceeded - ${type.toUpperCase()}: ${current} exceeds threshold of ${threshold}`
+      );
       this.bandwidthMetrics.costOptimizationActive = false;
     }
   }
@@ -408,18 +430,18 @@ class CDNCostOptimizer {
   // Detect content type from URL
   private detectContentType(url: string): string {
     const extension = url.split('.').pop()?.toLowerCase();
-    
+
     const mimeTypes: Record<string, string> = {
-      'jpg': 'image/jpeg',
-      'jpeg': 'image/jpeg',
-      'png': 'image/png',
-      'gif': 'image/gif',
-      'webp': 'image/webp',
-      'mp3': 'audio/mpeg',
-      'wav': 'audio/wav',
-      'aac': 'audio/aac',
-      'mp4': 'video/mp4',
-      'webm': 'video/webm',
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      gif: 'image/gif',
+      webp: 'image/webp',
+      mp3: 'audio/mpeg',
+      wav: 'audio/wav',
+      aac: 'audio/aac',
+      mp4: 'video/mp4',
+      webm: 'video/webm',
     };
 
     return mimeTypes[extension || ''] || 'application/octet-stream';
@@ -433,10 +455,13 @@ class CDNCostOptimizer {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    const connection =
+      (navigator as any).connection ||
+      (navigator as any).mozConnection ||
+      (navigator as any).webkitConnection;
 
     let networkType: QualitySelectionConfig['networkType'] = 'wifi';
-    
+
     if (connection) {
       switch (connection.effectiveType) {
         case 'slow-2g':
@@ -573,8 +598,4 @@ export type {
   FormatOptimizationConfig,
 };
 
-export {
-  DEFAULT_COST_OPTIMIZATION_CONFIG,
-  DEFAULT_FORMAT_OPTIMIZATION_CONFIG,
-  CDNCostOptimizer,
-};
+export { DEFAULT_COST_OPTIMIZATION_CONFIG, DEFAULT_FORMAT_OPTIMIZATION_CONFIG, CDNCostOptimizer };

@@ -1,39 +1,39 @@
-import { ProfilePictureUpload } from './ProfilePictureUpload'
-import { ProfileBannerUpload } from './ProfileBannerUpload'
-import { useAuth } from '../hooks/useAuth'
-import type { Profile } from '../lib/types'
+import { ProfilePictureUpload } from './ProfilePictureUpload';
+import { ProfileBannerUpload } from './ProfileBannerUpload';
+import { useAuth } from '../hooks/useAuth';
+import type { Profile } from '../lib/types';
 
 interface EnhancedProfileHeaderProps {
-  profile: Profile | null
-  followersCount: number
-  followingCount: number
-  mixesCount: number
-  isOwnProfile: boolean
+  profile: Profile | null;
+  followersCount: number;
+  followingCount: number;
+  mixesCount: number;
+  isOwnProfile: boolean;
 }
 
-export function EnhancedProfileHeader({ 
-  profile, 
-  followersCount, 
-  followingCount, 
-  mixesCount, 
-  isOwnProfile 
+export function EnhancedProfileHeader({
+  profile,
+  followersCount,
+  followingCount,
+  mixesCount,
+  isOwnProfile,
 }: EnhancedProfileHeaderProps) {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const handleBannerUploadComplete = () => {
     // Update the profile with new banner URL
     if (user && profile) {
-      window.location.reload() // Simple way to refresh and show updated banner
+      window.location.reload(); // Simple way to refresh and show updated banner
     }
-  }
+  };
 
   const handleAvatarUploadComplete = () => {
     // Update the profile with new avatar URL
     if (profile) {
-      window.location.reload() // Simple way to refresh and show updated avatar
+      window.location.reload(); // Simple way to refresh and show updated avatar
     }
-  }
+  };
 
-  if (!profile) return null
+  if (!profile) return null;
 
   return (
     <div className="relative">
@@ -44,9 +44,9 @@ export function EnhancedProfileHeader({
             src={profile.banner_url}
             alt="Profile Banner"
             className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              target.style.display = 'none'
+            onError={e => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
             }}
           />
         ) : (
@@ -102,22 +102,16 @@ export function EnhancedProfileHeader({
             <div className="flex-1">
               <h1 className="flex items-center gap-3 text-2xl font-bold text-white mb-2">
                 <span>{profile.display_name || profile.username}</span>
-                {profile.verified && (
-                  <span className="text-blue-400 text-xl">✓</span>
-                )}
+                {profile.verified && <span className="text-blue-400 text-xl">✓</span>}
               </h1>
               <p className="text-gray-400 text-sm mb-3">@{profile.username}</p>
-              
+
               {profile.bio && (
-                <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                  {profile.bio}
-                </p>
+                <p className="text-gray-300 text-sm mb-4 leading-relaxed">{profile.bio}</p>
               )}
 
               {profile.location && (
-                <p className="text-gray-500 text-sm mb-3">
-                  📍 {profile.location}
-                </p>
+                <p className="text-gray-500 text-sm mb-3">📍 {profile.location}</p>
               )}
 
               {/* Genre Tags */}
@@ -203,7 +197,7 @@ export function EnhancedProfileHeader({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function getPlatformIcon(platform: string): string {
@@ -219,7 +213,7 @@ function getPlatformIcon(platform: string): string {
     facebook: '📘',
     website: '🌐',
     bandcamp: '🎸',
-    beatport: '🎵'
-  }
-  return icons[platform.toLowerCase()] || '🔗'
+    beatport: '🎵',
+  };
+  return icons[platform.toLowerCase()] || '🔗';
 }

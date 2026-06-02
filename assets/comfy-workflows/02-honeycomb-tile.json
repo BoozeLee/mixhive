@@ -1,7 +1,10 @@
 {
   "_comment": "Seamless 512x512 honeycomb tile for use as a CSS background-image. Low-opacity gold-on-near-black; the page-side CSS controls opacity. Generates with tileable=true via the SDXL CFG-rescale + seamless approach. Output: ~/ComfyUI/output/mixhive-honeycomb-tile_*.png. Copy to public/art/honeycomb-tile.png.",
   "_meta": { "name": "mixhive-02-honeycomb-tile", "version": 1 },
-  "1": { "class_type": "CheckpointLoaderSimple", "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" } },
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" }
+  },
   "10": {
     "class_type": "CLIPTextEncode",
     "inputs": {
@@ -16,7 +19,10 @@
       "text": "irregular cells, broken honeycomb, asymmetric, gradient lighting, vignette, watermark, signature, text, photography, organic shapes, perspective view, depth, shadow, glow, soft focus, color variation, beige, cream"
     }
   },
-  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 1024, "height": 1024, "batch_size": 1 } },
+  "20": {
+    "class_type": "EmptyLatentImage",
+    "inputs": { "width": 1024, "height": 1024, "batch_size": 1 }
+  },
   "21": {
     "class_type": "KSampler",
     "inputs": {

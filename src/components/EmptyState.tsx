@@ -1,13 +1,13 @@
-import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Props {
-  icon?: string
-  title: string
-  body?: ReactNode
-  actionLabel?: string
-  actionTo?: string
-  onAction?: () => void
+  icon?: string;
+  title: string;
+  body?: ReactNode;
+  actionLabel?: string;
+  actionTo?: string;
+  onAction?: () => void;
 }
 
 export function EmptyState({ icon = '♪', title, body, actionLabel, actionTo, onAction }: Props) {
@@ -30,7 +30,8 @@ export function EmptyState({ icon = '♪', title, body, actionLabel, actionTo, o
           width: 84,
           height: 84,
           borderRadius: '50%',
-          background: 'radial-gradient(circle at 32% 28%, #38dfff55, transparent 28%), linear-gradient(135deg, #1a1a2e, #f0c04022)',
+          background:
+            'radial-gradient(circle at 32% 28%, #38dfff55, transparent 28%), linear-gradient(135deg, #1a1a2e, #f0c04022)',
           border: '1px solid #f0c04033',
           boxShadow: '0 12px 32px rgba(0,0,0,0.28)',
           display: 'flex',
@@ -45,8 +46,9 @@ export function EmptyState({ icon = '♪', title, body, actionLabel, actionTo, o
       </div>
       <h2 style={{ margin: 0, color: '#eee', fontSize: 18, fontWeight: 600 }}>{title}</h2>
       {body && <div style={{ marginTop: 8, maxWidth: 380, lineHeight: 1.5 }}>{body}</div>}
-      {actionLabel && (actionTo || onAction) && (
-        actionTo ? (
+      {actionLabel &&
+        (actionTo || onAction) &&
+        (actionTo ? (
           <Link
             to={actionTo}
             style={{
@@ -79,13 +81,20 @@ export function EmptyState({ icon = '♪', title, body, actionLabel, actionTo, o
           >
             {actionLabel}
           </button>
-        )
-      )}
+        ))}
     </div>
-  )
+  );
 }
 
-export function NotFoundState({ what = 'item', backTo = '/feed', backLabel = 'Back to feed' }: { what?: string; backTo?: string; backLabel?: string }) {
+export function NotFoundState({
+  what = 'item',
+  backTo = '/feed',
+  backLabel = 'Back to feed',
+}: {
+  what?: string;
+  backTo?: string;
+  backLabel?: string;
+}) {
   return (
     <EmptyState
       icon="?"
@@ -94,5 +103,5 @@ export function NotFoundState({ what = 'item', backTo = '/feed', backLabel = 'Ba
       actionLabel={backLabel}
       actionTo={backTo}
     />
-  )
+  );
 }

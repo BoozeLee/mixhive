@@ -1,6 +1,6 @@
 /**
  * CDN Testing API Endpoint
- * 
+ *
  * Provides testing functionality for CDN integration including
  * URL transformation, fallback validation, and performance testing.
  */
@@ -26,17 +26,11 @@ export async function GET(request: NextRequest) {
       case 'cache':
         return await handleCacheTest();
       default:
-        return NextResponse.json(
-          { error: 'Invalid test type' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid test type' }, { status: 400 });
     }
   } catch (error) {
     console.error('CDN test error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -57,17 +51,11 @@ export async function POST(request: NextRequest) {
       case 'batch':
         return await handleBatchTest(testParams);
       default:
-        return NextResponse.json(
-          { error: 'Invalid test type' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid test type' }, { status: 400 });
     }
   } catch (error) {
     console.error('CDN test error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -109,7 +97,10 @@ async function handleHealthTest() {
     });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Health test failed', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Health test failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -158,7 +149,10 @@ async function handleConfigurationTest() {
     });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Configuration test failed', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Configuration test failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -179,12 +173,12 @@ async function handlePerformanceTest() {
       try {
         const startTime = Date.now();
         const bucket = url.includes('mix-artwork') ? 'mix-artwork' : 'mix-audio';
-        
+
         // Test URL transformation
         const result = await getOptimizedMediaUrl(url, bucket);
-        
+
         const duration = Date.now() - startTime;
-        
+
         results.push({
           url,
           source: result.source,
@@ -201,9 +195,9 @@ async function handlePerformanceTest() {
     }
 
     const successRate = results.filter(r => r.success).length / results.length;
-    const averageDuration = results
-      .filter(r => r.success)
-      .reduce((sum, r) => sum + r.duration, 0) / results.filter(r => r.success).length;
+    const averageDuration =
+      results.filter(r => r.success).reduce((sum, r) => sum + r.duration, 0) /
+      results.filter(r => r.success).length;
 
     return NextResponse.json({
       status: 'ok',
@@ -217,7 +211,10 @@ async function handlePerformanceTest() {
     });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Performance test failed', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Performance test failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -236,13 +233,13 @@ async function handleCacheTest() {
     for (const url of testUrls) {
       try {
         const startTime = Date.now();
-        
+
         // Test cache headers
         const bucket = url.includes('mix-artwork') ? 'mix-artwork' : 'mix-audio';
         const result = await getOptimizedMediaUrl(url, bucket);
-        
+
         const duration = Date.now() - startTime;
-        
+
         results.push({
           url,
           source: result.source,
@@ -265,26 +262,33 @@ async function handleCacheTest() {
       summary: {
         totalTests: results.length,
         successCount: results.filter(r => r.success).length,
-        averageDuration: results
-          .filter(r => r.success)
-          .reduce((sum, r) => sum + r.duration, 0) / results.filter(r => r.success).length,
+        averageDuration:
+          results.filter(r => r.success).reduce((sum, r) => sum + r.duration, 0) /
+          results.filter(r => r.success).length,
       },
     });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Cache test failed', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Cache test failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
 }
 
 // URL transformation test
-async function handleTransformTest(params: { url: string; bucket: string; optimization?: CDNOptimizationParams }) {
+async function handleTransformTest(params: {
+  url: string;
+  bucket: string;
+  optimization?: CDNOptimizationParams;
+}) {
   try {
     const { url, bucket, optimization } = params;
-    
+
     const result = await getOptimizedMediaUrl(url, bucket, optimization);
-    
+
     return NextResponse.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -295,10 +299,10 @@ async function handleTransformTest(params: { url: string; bucket: string; optimi
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        error: 'URL transformation failed', 
+      {
+        error: 'URL transformation failed',
         originalUrl: params.url,
-        details: error instanceof Error ? error.message : 'Unknown error' 
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -309,7 +313,7 @@ async function handleTransformTest(params: { url: string; bucket: string; optimi
 async function handleUploadTest(params: { file?: any; bucket: string; simulateFailure?: boolean }) {
   try {
     const { file, bucket, simulateFailure } = params;
-    
+
     if (simulateFailure) {
       return NextResponse.json({
         status: 'error',
@@ -321,7 +325,7 @@ async function handleUploadTest(params: { file?: any; bucket: string; simulateFa
 
     // Create a test file if none provided
     const testFile = file || new File(['test content'], 'test.jpg', { type: 'image/jpeg' });
-    
+
     // Validate file
     const isValid = validateUploadFile(testFile, 'image');
     if (!isValid) {
@@ -336,7 +340,7 @@ async function handleUploadTest(params: { file?: any; bucket: string; simulateFa
       testFile,
       bucket as any,
       `test-${Date.now()}`,
-      (progress) => {
+      progress => {
         console.log('Upload progress:', progress);
       }
     );
@@ -352,10 +356,10 @@ async function handleUploadTest(params: { file?: any; bucket: string; simulateFa
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        error: 'Upload test failed', 
+      {
+        error: 'Upload test failed',
         bucket: params.bucket,
-        details: error instanceof Error ? error.message : 'Unknown error' 
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -366,7 +370,7 @@ async function handleUploadTest(params: { file?: any; bucket: string; simulateFa
 async function handleFallbackTest(params: { simulateCdnFailure?: boolean }) {
   try {
     const { simulateCdnFailure } = params;
-    
+
     if (simulateCdnFailure) {
       // Simulate CDN failure by returning failure
       return NextResponse.json({
@@ -382,7 +386,7 @@ async function handleFallbackTest(params: { simulateCdnFailure?: boolean }) {
     // Test normal operation
     const testUrl = 'https://example.supabase.co/storage/v1/object/public/mix-artwork/test.jpg';
     const result = await getOptimizedMediaUrl(testUrl, 'mix-artwork');
-    
+
     return NextResponse.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -392,9 +396,9 @@ async function handleFallbackTest(params: { simulateCdnFailure?: boolean }) {
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        error: 'Fallback test failed', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        error: 'Fallback test failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -405,7 +409,7 @@ async function handleFallbackTest(params: { simulateCdnFailure?: boolean }) {
 async function handleCostOptimizationTest(params: { testSize?: string; networkType?: string }) {
   try {
     const { testSize = 'medium', networkType = '4g' } = params;
-    
+
     // Simulate different network conditions
     const optimizationParams = {
       format: 'webp',
@@ -416,7 +420,7 @@ async function handleCostOptimizationTest(params: { testSize?: string; networkTy
 
     const testUrl = 'https://example.supabase.co/storage/v1/object/public/mix-artwork/test.jpg';
     const result = await getOptimizedMediaUrl(testUrl, 'mix-artwork', optimizationParams);
-    
+
     return NextResponse.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -431,9 +435,9 @@ async function handleCostOptimizationTest(params: { testSize?: string; networkTy
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        error: 'Cost optimization test failed', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        error: 'Cost optimization test failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -449,7 +453,7 @@ async function handleBatchTest(params: { tests: Array<{ type: string; params: an
     for (const test of tests) {
       try {
         let result;
-        
+
         switch (test.type) {
           case 'transform':
             result = await handleTransformTest(test.params);
@@ -466,7 +470,7 @@ async function handleBatchTest(params: { tests: Array<{ type: string; params: an
               { status: 400 }
             );
         }
-        
+
         results.push({
           type: test.type,
           success: result.status === 200,
@@ -482,7 +486,7 @@ async function handleBatchTest(params: { tests: Array<{ type: string; params: an
     }
 
     const successRate = results.filter(r => r.success).length / results.length;
-    
+
     return NextResponse.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -495,9 +499,9 @@ async function handleBatchTest(params: { tests: Array<{ type: string; params: an
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        error: 'Batch test failed', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        error: 'Batch test failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

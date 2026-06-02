@@ -38,5 +38,5 @@ export function RoutePending() {
         }
       `}</style>
     </div>
-  )
+  );
 }

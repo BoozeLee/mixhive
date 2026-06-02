@@ -1,25 +1,25 @@
-import { colors, radius } from '../../styles/tokens'
+import { colors, radius } from '../../styles/tokens';
 
 interface Props {
-  src?: string | null
-  name?: string | null
-  size?: number
+  src?: string | null;
+  name?: string | null;
+  size?: number;
   /** When false, render a square instead of a circle (e.g. mix artwork). */
-  rounded?: boolean
-  alt?: string
+  rounded?: boolean;
+  alt?: string;
 }
 
 function initialsFor(name: string | null | undefined): string {
-  if (!name) return '?'
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return '?'
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
 export function Avatar({ src, name, size = 40, rounded = true, alt }: Props) {
-  const dim = { width: size, height: size }
-  const altText = alt ?? (name ? `${name}'s avatar` : '')
+  const dim = { width: size, height: size };
+  const altText = alt ?? (name ? `${name}'s avatar` : '');
 
   if (src) {
     return (
@@ -38,7 +38,7 @@ export function Avatar({ src, name, size = 40, rounded = true, alt }: Props) {
           flexShrink: 0,
         }}
       />
-    )
+    );
   }
 
   return (
@@ -61,5 +61,5 @@ export function Avatar({ src, name, size = 40, rounded = true, alt }: Props) {
     >
       {initialsFor(name)}
     </div>
-  )
+  );
 }

@@ -1,26 +1,26 @@
-import { colors, space } from '../styles/tokens'
+import { colors, space } from '../styles/tokens';
 
 interface LogoProps {
-  size?: 'small' | 'medium' | 'large'
-  variant?: 'main' | 'business'
-  showText?: boolean
-  className?: string
+  size?: 'small' | 'medium' | 'large';
+  variant?: 'main' | 'business';
+  showText?: boolean;
+  className?: string;
 }
 
-export function Logo({ 
-  size = 'medium', 
-  variant = 'main', 
-  showText = true, 
-  className = '' 
+export function Logo({
+  size = 'medium',
+  variant = 'main',
+  showText = true,
+  className = '',
 }: LogoProps) {
   const sizeStyles = {
     small: { width: 24, height: 24, textSize: 16 },
     medium: { width: 32, height: 32, textSize: 20 },
-    large: { width: 48, height: 48, textSize: 24 }
-  }
+    large: { width: 48, height: 48, textSize: 24 },
+  };
 
-  const currentSize = sizeStyles[size]
-  const logoSrc = variant === 'business' ? '/mixhivebusinesslogo.png' : '/mixhive.png'
+  const currentSize = sizeStyles[size];
+  const logoSrc = variant === 'business' ? '/mixhivebusinesslogo.png' : '/mixhive.png';
 
   return (
     <div className={className} style={{ display: 'flex', alignItems: 'center', gap: space[2] }}>
@@ -38,23 +38,31 @@ export function Logo({
         }}
       />
       {showText && (
-        <span style={{
-          fontSize: currentSize.textSize,
-          fontWeight: 700,
-          color: colors.accent,
-          letterSpacing: 0,
-        }}>
+        <span
+          style={{
+            fontSize: currentSize.textSize,
+            fontWeight: 700,
+            color: colors.accent,
+            letterSpacing: 0,
+          }}
+        >
           mixhive
         </span>
       )}
     </div>
-  )
+  );
 }
 
 // Icon-only logo for small spaces
-export function LogoIcon({ variant = 'main', className = '' }: { variant?: 'main' | 'business', className?: string }) {
-  const logoSrc = variant === 'business' ? '/mixhivebusinesslogo.png' : '/mixhive.png'
-  
+export function LogoIcon({
+  variant = 'main',
+  className = '',
+}: {
+  variant?: 'main' | 'business';
+  className?: string;
+}) {
+  const logoSrc = variant === 'business' ? '/mixhivebusinesslogo.png' : '/mixhive.png';
+
   return (
     <img
       src={logoSrc}
@@ -69,22 +77,27 @@ export function LogoIcon({ variant = 'main', className = '' }: { variant?: 'main
         filter: 'drop-shadow(0 0 10px rgba(240,192,64,0.32))',
       }}
     />
-  )
+  );
 }
 
 // Stacked logo for special branding
 export function LogoStacked({ className = '' }: { className?: string }) {
   return (
-    <div className={className} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+    <div
+      className={className}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}
+    >
       <LogoIcon variant="business" />
-      <span style={{
-        fontSize: 12,
-        fontWeight: 700,
-        color: colors.accent,
-        letterSpacing: 0,
-      }}>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          color: colors.accent,
+          letterSpacing: 0,
+        }}
+      >
         mixhive
       </span>
     </div>
-  )
+  );
 }

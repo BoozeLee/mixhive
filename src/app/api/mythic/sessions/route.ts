@@ -3,6 +3,7 @@ import { createServerClient } from '@/lib/supabase';
 import { create_collab_session, end_collab_session } from '@/lib/database-queries';
 import { z } from 'zod';
 import { handleApiError, unauthorized, badRequest } from '@/lib/api-errors';
+import { getUserVariant } from '@/lib/experiments';
 
 const CreateSessionSchema = z.object({
   title: z.string().min(1).max(200),
@@ -30,6 +31,15 @@ export async function POST(request: NextRequest) {
       title: parsed.data.title,
       description: parsed.data.description,
       isPublic: parsed.data.isPublic,
+    });
+
+    // Fire-and-forget experiment event
+    void supabase.from('experiment_events').insert({
+      profile_id: user.id,
+      event_type: 'collab_session_started',
+      feature: 'collab_sessions',
+      variant: getUserVariant(user.id, 'collab_sessions'),
+      properties: { session_id: session.id, participant_count: 1 },
     });
 
     return NextResponse.json(session, { status: 201 });

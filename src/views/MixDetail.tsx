@@ -26,8 +26,12 @@ import { MixAgentHints } from '../components/MixAgentHints';
 import { MixAudioIntelligence } from '../components/MixAudioIntelligence';
 import { NotFoundState } from '../components/EmptyState';
 import { StartMythicSessionModal } from '../components/StartMythicSessionModal';
+import { NftMintModal } from '../components/NftMintModal';
 import { HiveButton } from '../components/hive/HiveButton';
+import { SimilarMixesPanel } from '../components/SimilarMixesPanel';
 import type { Mix, Comment as CommentType, FeedMix } from '../lib/types';
+
+const WEB3_ENABLED = process.env.NEXT_PUBLIC_WEB3_EXPERIMENTS_ENABLED === 'true';
 
 function timeAgo(dateStr: string): string {
   const now = Date.now();
@@ -56,6 +60,7 @@ export function MixDetail() {
   const [repostBusy, setRepostBusy] = useState(false);
   const [showAddToPlaylist, setShowAddToPlaylist] = useState(false);
   const [showMythicSession, setShowMythicSession] = useState(false);
+  const [showMintModal, setShowMintModal] = useState(false);
   const { play, addToQueue } = usePlayer();
   const [fansAlsoLiked, setFansAlsoLiked] = useState<FeedMix[]>([]);
 
@@ -399,6 +404,22 @@ export function MixDetail() {
             ✎ Edit
           </Link>
         )}
+        {WEB3_ENABLED && user && mix.dj_id === user.id && (
+          <button
+            onClick={() => setShowMintModal(true)}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(240,192,64,0.35)',
+              color: '#f0c040',
+              padding: '6px 14px',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontSize: 12,
+            }}
+          >
+            ◈ Create supporter pass
+          </button>
+        )}
       </div>
 
       {showEmbed && (
@@ -483,6 +504,8 @@ export function MixDetail() {
           </div>
         </div>
       )}
+
+      <SimilarMixesPanel mixId={mix.id} />
 
       <div style={{ marginTop: 32 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, color: '#ccc', marginBottom: 12 }}>
@@ -644,6 +667,16 @@ export function MixDetail() {
         isOpen={showMythicSession}
         onClose={() => setShowMythicSession(false)}
       />
+
+      {WEB3_ENABLED && mix && (
+        <NftMintModal
+          isOpen={showMintModal}
+          onClose={() => setShowMintModal(false)}
+          sourceType="mix"
+          sourceId={mix.id}
+          defaultConfig={{ name: `${mix.title} — supporter pass` }}
+        />
+      )}
     </div>
   );
 }

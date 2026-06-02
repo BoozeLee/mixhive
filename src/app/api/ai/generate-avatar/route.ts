@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { resolveAiContext, noKeyResponse } from '../_lib/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { resolveAiContext, noKeyResponse } from '../_lib/auth';
 
 const STYLE_PROMPTS: Record<string, string> = {
   'cyber-hive':
@@ -8,36 +8,35 @@ const STYLE_PROMPTS: Record<string, string> = {
     'A clean, minimalist DJ avatar with a dark background, subtle gold line-art details, and a modern geometric style. Simple, bold, professional.',
   abstract:
     'An abstract representation of a DJ — swirling sound waves, golden frequency patterns, and rich dark purples and blacks. Dynamic, energetic, artistic.',
-  neon:
-    'A vibrant neon-lit DJ scene with electric gold and cyan highlights against a deep black background. Cyberpunk aesthetic, glowing edges, futuristic.',
-}
+  neon: 'A vibrant neon-lit DJ scene with electric gold and cyan highlights against a deep black background. Cyberpunk aesthetic, glowing edges, futuristic.',
+};
 
 export async function POST(req: NextRequest) {
-  const ctx = await resolveAiContext(req)
+  const ctx = await resolveAiContext(req);
 
   if (!ctx.openaiKey) {
     if (ctx.error === 'Not authenticated' || ctx.error === 'Invalid session') {
-      return NextResponse.json({ error: ctx.error }, { status: 401 })
+      return NextResponse.json({ error: ctx.error }, { status: 401 });
     }
-    return noKeyResponse()
+    return noKeyResponse();
   }
 
-  let body: { prompt?: string; style?: string }
+  let body: { prompt?: string; style?: string };
   try {
-    body = await req.json()
+    body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const styleKey = (body.style && STYLE_PROMPTS[body.style]) ? body.style : 'cyber-hive'
-  const basePrompt = STYLE_PROMPTS[styleKey]
-  const userHint = body.prompt?.trim() ? ` Additional style: ${body.prompt.slice(0, 200)}.` : ''
-  const finalPrompt = `${basePrompt}${userHint}`
+  const styleKey = body.style && STYLE_PROMPTS[body.style] ? body.style : 'cyber-hive';
+  const basePrompt = STYLE_PROMPTS[styleKey];
+  const userHint = body.prompt?.trim() ? ` Additional style: ${body.prompt.slice(0, 200)}.` : '';
+  const finalPrompt = `${basePrompt}${userHint}`;
 
   const res = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${ctx.openaiKey}`,
+      Authorization: `Bearer ${ctx.openaiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -48,27 +47,33 @@ export async function POST(req: NextRequest) {
       quality: 'standard',
       response_format: 'url',
     }),
-  })
+  });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return NextResponse.json({ error: (err as Record<string, unknown>)?.error ?? 'Generation failed' }, { status: res.status })
+    const err = await res.json().catch(() => ({}));
+    return NextResponse.json(
+      { error: (err as Record<string, unknown>)?.error ?? 'Generation failed' },
+      { status: res.status }
+    );
   }
 
-  const result = await res.json() as { data: Array<{ url: string }> }
-  const url = result.data?.[0]?.url
+  const result = (await res.json()) as { data: Array<{ url: string }> };
+  const url = result.data?.[0]?.url;
   if (!url) {
-    return NextResponse.json({ error: 'No image returned' }, { status: 500 })
+    return NextResponse.json({ error: 'No image returned' }, { status: 500 });
   }
 
-  const imageRes = await fetch(url)
+  const imageRes = await fetch(url);
   if (!imageRes.ok) {
-    return NextResponse.json({ error: 'Could not retrieve generated image' }, { status: imageRes.status })
+    return NextResponse.json(
+      { error: 'Could not retrieve generated image' },
+      { status: imageRes.status }
+    );
   }
 
-  const contentType = imageRes.headers.get('content-type') || 'image/png'
-  const imageBuffer = await imageRes.arrayBuffer()
-  const base64 = Buffer.from(imageBuffer).toString('base64')
+  const contentType = imageRes.headers.get('content-type') || 'image/png';
+  const imageBuffer = await imageRes.arrayBuffer();
+  const base64 = Buffer.from(imageBuffer).toString('base64');
 
-  return NextResponse.json({ url: `data:${contentType};base64,${base64}` })
+  return NextResponse.json({ url: `data:${contentType};base64,${base64}` });
 }

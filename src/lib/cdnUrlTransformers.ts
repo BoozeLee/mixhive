@@ -1,16 +1,11 @@
 /**
  * Specialized CDN URL Transformation Utilities
- * 
+ *
  * Provides media-specific URL transformations with optimization
  * for different types of content in MixHive.
  */
 
-import { 
-  transformCDNUrl, 
-  getOptimizedMediaUrl, 
-  CDN_OPTIMIZATION_PARAMS,
-  MediaBucket 
-} from './cdn';
+import { transformCDNUrl, getOptimizedMediaUrl, CDN_OPTIMIZATION_PARAMS, MediaBucket } from './cdn';
 import type { CDNOptimizationParams } from './cdn';
 
 export interface AudioOptimizationParams extends CDNOptimizationParams {
@@ -32,15 +27,15 @@ export interface ImageOptimizationParams extends CDNOptimizationParams {
 export interface VideoOptimizationParams extends CDNOptimizationParams {
   codec?: 'h264' | 'hevc' | 'vp8' | 'vp9';
   fps?: number;
-    bitrate?: number;
-    duration?: number;
-    watermark?: string;
-    crop?: {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
+  bitrate?: number;
+  duration?: number;
+  watermark?: string;
+  crop?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 }
 
 export interface WaveformOptimizationParams extends CDNOptimizationParams {
@@ -71,7 +66,7 @@ export const getOptimizedAudioUrl = async (
   };
 
   const mergedOptimization = { ...audioDefaults, ...optimization };
-  
+
   return getOptimizedMediaUrl(supabaseUrl, bucket, mergedOptimization);
 };
 
@@ -117,7 +112,7 @@ export const getOptimizedImageUrl = async (
   };
 
   const mergedOptimization = { ...imageDefaults[bucket], ...optimization };
-  
+
   return getOptimizedMediaUrl(supabaseUrl, bucket, mergedOptimization);
 };
 
@@ -141,7 +136,7 @@ export const getOptimizedVideoUrl = async (
   };
 
   const mergedOptimization = { ...videoDefaults, ...optimization };
-  
+
   return getOptimizedMediaUrl(supabaseUrl, bucket, mergedOptimization);
 };
 
@@ -168,7 +163,7 @@ export const getOptimizedWaveformUrl = async (
   };
 
   const mergedOptimization = { ...waveformDefaults, ...optimization };
-  
+
   return getOptimizedMediaUrl(supabaseUrl, bucket, mergedOptimization);
 };
 
@@ -177,7 +172,7 @@ export const getOptimizedAvatarUrl = async (
   supabaseUrl: string,
   size: 'small' | 'medium' | 'large' = 'medium',
   optimization?: ImageOptimizationParams
-): Promise<{ url: string; source: 'cdn' | 'supabase' }> {
+): Promise<{ url: string; source: 'cdn' | 'supabase' }> => {
   const sizeDefaults: Record<string, { width: number; height: number; quality: number }> = {
     small: { width: 40, height: 40, quality: 70 },
     medium: { width: 100, height: 100, quality: 80 },
@@ -200,7 +195,7 @@ export const getOptimizedBannerUrl = async (
   supabaseUrl: string,
   size: 'small' | 'medium' | 'large' | 'featured' = 'medium',
   optimization?: ImageOptimizationParams
-): Promise<{ url: string; source: 'cdn' | 'supabase' }> {
+): Promise<{ url: string; source: 'cdn' | 'supabase' }> => {
   const sizeDefaults: Record<string, { width: number; height: number; quality: number }> = {
     small: { width: 400, height: 200, quality: 70 },
     medium: { width: 800, height: 400, quality: 80 },
@@ -224,7 +219,7 @@ export const getOptimizedArtworkUrl = async (
   supabaseUrl: string,
   size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'medium',
   optimization?: ImageOptimizationParams
-): Promise<{ url: string; source: 'cdn' | 'supabase' }> {
+): Promise<{ url: string; source: 'cdn' | 'supabase' }> => {
   const sizeDefaults: Record<string, { width: number; height: number; quality: number }> = {
     thumbnail: { width: 80, height: 80, quality: 70 },
     small: { width: 200, height: 200, quality: 75 },
@@ -262,7 +257,7 @@ export const getOptimizedBuzzMediaUrl = async (
       } as ImageOptimizationParams;
       optimizedUrl = await getOptimizedImageUrl(supabaseUrl, 'buzz-media', imageOpt);
       break;
-    
+
     case 'audio':
       const audioOpt: AudioOptimizationParams = {
         format: 'mp3',
@@ -272,7 +267,7 @@ export const getOptimizedBuzzMediaUrl = async (
       } as AudioOptimizationParams;
       optimizedUrl = await getOptimizedAudioUrl(supabaseUrl, 'buzz-media', audioOpt);
       break;
-    
+
     case 'video':
       const videoOpt: VideoOptimizationParams = {
         format: 'webm',
@@ -283,7 +278,7 @@ export const getOptimizedBuzzMediaUrl = async (
       } as VideoOptimizationParams;
       optimizedUrl = await getOptimizedVideoUrl(supabaseUrl, 'buzz-media', videoOpt);
       break;
-    
+
     default:
       throw new Error(`Unsupported media type for buzz optimization: ${mediaType}`);
   }
@@ -302,7 +297,7 @@ export const getResponsiveImageUrls = async (
 
   for (const size of sizes) {
     let sizeOptimization: ImageOptimizationParams | undefined;
-    
+
     if (size === 'thumbnail') {
       sizeOptimization = { width: 80, height: 80, quality: 70 };
     } else if (size === 'small') {
@@ -315,7 +310,7 @@ export const getResponsiveImageUrls = async (
 
     const mergedOptimization = { ...sizeOptimization, ...optimization };
     const optimizedUrl = await getOptimizedImageUrl(supabaseUrl, bucket, mergedOptimization);
-    
+
     responsiveUrls.push({
       size,
       url: optimizedUrl.url,
@@ -340,13 +335,14 @@ export const createLazyLoader = () => {
   if (typeof window === 'undefined') {
     return {
       loadImage: (url: string, options?: LazyLoadOptions) => Promise.resolve(url),
-      loadImageElement: (element: HTMLImageElement, options?: LazyLoadOptions) => Promise.resolve(true),
+      loadImageElement: (element: HTMLImageElement, options?: LazyLoadOptions) =>
+        Promise.resolve(true),
     };
   }
 
   const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
+    entries => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
           const img = entry.target as HTMLImageElement;
           const src = img.dataset.src;
@@ -381,7 +377,7 @@ export const createLazyLoader = () => {
     },
 
     loadImageElement: (element: HTMLImageElement, options?: LazyLoadOptions): Promise<boolean> => {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         const src = element.dataset.src;
         if (!src) {
           resolve(false);
@@ -410,7 +406,7 @@ export const createLazyLoader = () => {
         // If element is in viewport, load immediately
         const rect = element.getBoundingClientRect();
         const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
-        
+
         if (isVisible) {
           element.src = src;
           element.removeAttribute('data-src');

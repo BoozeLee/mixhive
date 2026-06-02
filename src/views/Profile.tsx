@@ -36,6 +36,8 @@ import type {
   VerificationBadge,
 } from '../lib/types';
 import { colors, radius, space } from '../styles/tokens';
+import { HiveStory } from '../views/HiveStory';
+import { SimilarArtistsPanel } from '../components/SimilarArtistsPanel';
 
 function timeAgo(dateStr: string): string {
   const now = Date.now();
@@ -87,7 +89,7 @@ export function ProfilePage() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [activity, setActivity] = useState<ActivityEvent[]>([]);
   const [buzzes, setBuzzes] = useState<import('../lib/types').FeedBuzz[]>([]);
-  const [profileTab, setProfileTab] = useState<'mixes' | 'buzzes' | 'playlists'>('mixes');
+  const [profileTab, setProfileTab] = useState<'mixes' | 'buzzes' | 'playlists' | 'story'>('mixes');
   const [following, setFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
@@ -514,6 +516,8 @@ export function ProfilePage() {
         </section>
       )}
 
+      <SimilarArtistsPanel profileId={profile.id} />
+
       {/* Content tabs: Mixes / Buzzes / Playlists */}
       <section>
         <div
@@ -526,7 +530,7 @@ export function ProfilePage() {
             padding: 4,
           }}
         >
-          {(['mixes', 'buzzes', 'playlists'] as const).map(t => (
+          {(['mixes', 'buzzes', 'playlists', 'story'] as const).map(t => (
             <button
               key={t}
               onClick={() => setProfileTab(t)}
@@ -547,7 +551,9 @@ export function ProfilePage() {
                 ? `Mixes (${mixes.length})`
                 : t === 'buzzes'
                   ? `Buzzes (${buzzes.length})`
-                  : `Playlists (${playlists.length})`}
+                  : t === 'playlists'
+                    ? `Playlists (${playlists.length})`
+                    : 'Story'}
             </button>
           ))}
         </div>
@@ -624,6 +630,14 @@ export function ProfilePage() {
               ))}
             </div>
           ))}
+
+        {profileTab === 'story' && (
+          <HiveStory
+            profileId={profile.id}
+            showJourney={(profile as unknown as Record<string, unknown>)?.show_journey as boolean ?? false}
+            isOwn={isOwn}
+          />
+        )}
       </section>
 
       <StartMythicSessionModal

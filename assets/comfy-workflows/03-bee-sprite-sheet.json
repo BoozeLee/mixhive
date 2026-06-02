@@ -1,7 +1,10 @@
 {
   "_comment": "Sprite sheet for the cybernetic bee particle layer. 16 frames in a 4x4 grid (1024x1024 source, 256x256 per frame). SDXL renders an isolated bee on transparent black; the workflow makes 16 generations with slightly different wing-flap phases via seed walk. The runbook composites them into one PNG atlas using ImageMagick (already installed).",
   "_meta": { "name": "mixhive-03-bee-sprite-sheet", "version": 1, "batch_size": 16 },
-  "1": { "class_type": "CheckpointLoaderSimple", "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" } },
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" }
+  },
   "10": {
     "class_type": "CLIPTextEncode",
     "inputs": {
@@ -16,7 +19,10 @@
       "text": "multiple bees, swarm, environment, flowers, honeycomb in frame, hands, humans, photo realism, soft focus, watercolor, painting, oversaturated, beige, brown, dusty, watermark, text"
     }
   },
-  "20": { "class_type": "EmptyLatentImage", "inputs": { "width": 256, "height": 256, "batch_size": 16 } },
+  "20": {
+    "class_type": "EmptyLatentImage",
+    "inputs": { "width": 256, "height": 256, "batch_size": 16 }
+  },
   "21": {
     "_comment": "Single batch_size=16 sampler. Frame variation handled by the model's natural seed-walk inside the batch dim.",
     "class_type": "KSampler",

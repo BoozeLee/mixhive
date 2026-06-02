@@ -55,7 +55,12 @@ export const dbTools = {
   },
 
   'db.rpc': async (fn: string, params: Record<string, unknown> = {}) => {
-    const ALLOWLISTED_RPCS = new Set(['find_candidate_venues', 'match_ai_embeddings']);
+    const ALLOWLISTED_RPCS = new Set([
+      'find_candidate_venues',
+      'match_ai_embeddings',
+      'find_candidate_promoters',
+      'get_artist_availability',
+    ]);
     if (!ALLOWLISTED_RPCS.has(fn)) {
       throw new Error(`db.rpc: "${fn}" is not in the allowed RPC list`);
     }

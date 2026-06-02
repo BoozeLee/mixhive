@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
-import { Button } from './ui/Button'
-import { Input } from './ui/Input'
-import type { SearchFilters as SearchFiltersValue } from '../lib/search'
-import { colors, radius, space } from '../styles/tokens'
+import { useEffect, useState } from 'react';
+import { Button } from './ui/Button';
+import { Input } from './ui/Input';
+import type { SearchFilters as SearchFiltersValue } from '../lib/search';
+import { colors, radius, space } from '../styles/tokens';
 
 interface SearchFiltersProps {
-  filters: SearchFiltersValue
-  onFiltersChange: (filters: SearchFiltersValue) => void
-  onApply: () => void
-  onReset: () => void
-  isLoading?: boolean
+  filters: SearchFiltersValue;
+  onFiltersChange: (filters: SearchFiltersValue) => void;
+  onApply: () => void;
+  onReset: () => void;
+  isLoading?: boolean;
 }
 
 const genres = [
@@ -27,7 +27,7 @@ const genres = [
   'Hard Dance',
   'UK Garage',
   'Breakbeat',
-]
+];
 
 export function SearchFilters({
   filters,
@@ -36,31 +36,31 @@ export function SearchFilters({
   onReset,
   isLoading = false,
 }: SearchFiltersProps) {
-  const [localFilters, setLocalFilters] = useState<SearchFiltersValue>(filters)
+  const [localFilters, setLocalFilters] = useState<SearchFiltersValue>(filters);
 
   useEffect(() => {
-    setLocalFilters(filters)
-  }, [filters])
+    setLocalFilters(filters);
+  }, [filters]);
 
   function update(next: Partial<SearchFiltersValue>) {
-    const updated = { ...localFilters, ...next }
-    setLocalFilters(updated)
-    onFiltersChange(updated)
+    const updated = { ...localFilters, ...next };
+    setLocalFilters(updated);
+    onFiltersChange(updated);
   }
 
   function reset() {
-    const resetFilters: SearchFiltersValue = { type: 'mixes' }
-    setLocalFilters(resetFilters)
-    onFiltersChange(resetFilters)
-    onReset()
+    const resetFilters: SearchFiltersValue = { type: 'mixes' };
+    setLocalFilters(resetFilters);
+    onFiltersChange(resetFilters);
+    onReset();
   }
 
   const hasActiveFilters = Boolean(
     localFilters.genre ||
-      localFilters.duration ||
-      localFilters.explicit !== undefined ||
-      localFilters.type !== 'mixes',
-  )
+    localFilters.duration ||
+    localFilters.explicit !== undefined ||
+    localFilters.type !== 'mixes'
+  );
 
   return (
     <section
@@ -73,10 +73,26 @@ export function SearchFilters({
         marginBottom: space[10],
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: space[8], marginBottom: space[9] }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text.primary, margin: 0 }}>Filters</h2>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: space[8],
+          marginBottom: space[9],
+        }}
+      >
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text.primary, margin: 0 }}>
+          Filters
+        </h2>
         <div style={{ display: 'flex', gap: space[6] }}>
-          <Button type="button" variant="ghost" size="sm" onClick={reset} disabled={!hasActiveFilters || isLoading}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={reset}
+            disabled={!hasActiveFilters || isLoading}
+          >
             Reset
           </Button>
           <Button type="button" size="sm" onClick={onApply} loading={isLoading}>
@@ -85,9 +101,22 @@ export function SearchFilters({
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: space[9] }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+          gap: space[9],
+        }}
+      >
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
+          <legend
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: colors.text.muted,
+              marginBottom: space[5],
+            }}
+          >
             Content
           </legend>
           <div style={{ display: 'flex', gap: space[4] }}>
@@ -107,7 +136,16 @@ export function SearchFilters({
         </fieldset>
 
         <div>
-          <label htmlFor="search-genre" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
+          <label
+            htmlFor="search-genre"
+            style={{
+              display: 'block',
+              fontSize: 12,
+              fontWeight: 600,
+              color: colors.text.muted,
+              marginBottom: space[5],
+            }}
+          >
             Genre
           </label>
           <select
@@ -135,7 +173,14 @@ export function SearchFilters({
         </div>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
+          <legend
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: colors.text.muted,
+              marginBottom: space[5],
+            }}
+          >
             Duration
           </legend>
           <div style={{ display: 'flex', alignItems: 'center', gap: space[5] }}>
@@ -144,12 +189,14 @@ export function SearchFilters({
               min={0}
               placeholder="Min"
               value={localFilters.duration?.min ?? ''}
-              onChange={event => update({
-                duration: {
-                  min: event.target.value ? Number(event.target.value) : 0,
-                  max: localFilters.duration?.max ?? 0,
-                },
-              })}
+              onChange={event =>
+                update({
+                  duration: {
+                    min: event.target.value ? Number(event.target.value) : 0,
+                    max: localFilters.duration?.max ?? 0,
+                  },
+                })
+              }
               style={{ width: 76 }}
             />
             <span style={{ color: colors.text.dim, fontSize: 12 }}>to</span>
@@ -158,34 +205,59 @@ export function SearchFilters({
               min={0}
               placeholder="Max"
               value={localFilters.duration?.max ?? ''}
-              onChange={event => update({
-                duration: {
-                  min: localFilters.duration?.min ?? 0,
-                  max: event.target.value ? Number(event.target.value) : 0,
-                },
-              })}
+              onChange={event =>
+                update({
+                  duration: {
+                    min: localFilters.duration?.min ?? 0,
+                    max: event.target.value ? Number(event.target.value) : 0,
+                  },
+                })
+              }
               style={{ width: 76 }}
             />
           </div>
         </fieldset>
-        </div>
+      </div>
 
-        <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
-          <legend style={{ display: 'block', fontSize: 12, fontWeight: 600, color: colors.text.muted, marginBottom: space[5] }}>
+      <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
+        <legend
+          style={{
+            display: 'block',
+            fontSize: 12,
+            fontWeight: 600,
+            color: colors.text.muted,
+            marginBottom: space[5],
+          }}
+        >
+          Explicit
+        </legend>
+        <div style={{ display: 'flex', gap: space[4] }}>
+          <Button
+            type="button"
+            variant={localFilters.explicit === undefined ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={() => update({ explicit: undefined })}
+          >
+            All
+          </Button>
+          <Button
+            type="button"
+            variant={localFilters.explicit === false ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={() => update({ explicit: false })}
+          >
+            Clean
+          </Button>
+          <Button
+            type="button"
+            variant={localFilters.explicit === true ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={() => update({ explicit: true })}
+          >
             Explicit
-          </legend>
-          <div style={{ display: 'flex', gap: space[4] }}>
-            <Button type="button" variant={localFilters.explicit === undefined ? 'primary' : 'secondary'} size="sm" onClick={() => update({ explicit: undefined })}>
-              All
-            </Button>
-            <Button type="button" variant={localFilters.explicit === false ? 'primary' : 'secondary'} size="sm" onClick={() => update({ explicit: false })}>
-              Clean
-            </Button>
-            <Button type="button" variant={localFilters.explicit === true ? 'primary' : 'secondary'} size="sm" onClick={() => update({ explicit: true })}>
-              Explicit
-            </Button>
-          </div>
-        </fieldset>
+          </Button>
+        </div>
+      </fieldset>
     </section>
-  )
+  );
 }

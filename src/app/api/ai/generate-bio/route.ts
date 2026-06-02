@@ -1,44 +1,44 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { resolveAiContext, noKeyResponse } from '../_lib/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { resolveAiContext, noKeyResponse } from '../_lib/auth';
 
 export async function POST(req: NextRequest) {
-  const ctx = await resolveAiContext(req)
+  const ctx = await resolveAiContext(req);
   if (!ctx.openaiKey) {
     if (ctx.error === 'Not authenticated' || ctx.error === 'Invalid session') {
-      return NextResponse.json({ error: ctx.error }, { status: 401 })
+      return NextResponse.json({ error: ctx.error }, { status: 401 });
     }
-    return noKeyResponse()
+    return noKeyResponse();
   }
-  const apiKey = ctx.openaiKey
+  const apiKey = ctx.openaiKey;
 
   let body: {
-    displayName?: string
-    genres?: string[]
-    equipment?: string[]
-    daw?: string[]
-    style?: string
-    influences?: string
-  }
+    displayName?: string;
+    genres?: string[];
+    equipment?: string[];
+    daw?: string[];
+    style?: string;
+    influences?: string;
+  };
   try {
-    body = await req.json()
+    body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const lines: string[] = []
-  if (body.displayName) lines.push(`DJ name: ${body.displayName}`)
-  if (body.genres?.length) lines.push(`Genres: ${body.genres.join(', ')}`)
-  if (body.equipment?.length) lines.push(`Equipment: ${body.equipment.join(', ')}`)
-  if (body.daw?.length) lines.push(`Production software: ${body.daw.join(', ')}`)
-  if (body.style) lines.push(`Style / vibe: ${body.style}`)
-  if (body.influences) lines.push(`Influences: ${body.influences}`)
+  const lines: string[] = [];
+  if (body.displayName) lines.push(`DJ name: ${body.displayName}`);
+  if (body.genres?.length) lines.push(`Genres: ${body.genres.join(', ')}`);
+  if (body.equipment?.length) lines.push(`Equipment: ${body.equipment.join(', ')}`);
+  if (body.daw?.length) lines.push(`Production software: ${body.daw.join(', ')}`);
+  if (body.style) lines.push(`Style / vibe: ${body.style}`);
+  if (body.influences) lines.push(`Influences: ${body.influences}`);
 
-  const userContent = lines.join('\n') || 'A DJ on MixHive'
+  const userContent = lines.join('\n') || 'A DJ on MixHive';
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -54,18 +54,21 @@ export async function POST(req: NextRequest) {
       max_tokens: 120,
       temperature: 0.8,
     }),
-  })
+  });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    return NextResponse.json({ error: (err as Record<string, unknown>)?.error ?? 'Generation failed' }, { status: res.status })
+    const err = await res.json().catch(() => ({}));
+    return NextResponse.json(
+      { error: (err as Record<string, unknown>)?.error ?? 'Generation failed' },
+      { status: res.status }
+    );
   }
 
-  const result = await res.json() as { choices: Array<{ message: { content: string } }> }
-  const bio = result.choices?.[0]?.message?.content?.trim()
+  const result = (await res.json()) as { choices: Array<{ message: { content: string } }> };
+  const bio = result.choices?.[0]?.message?.content?.trim();
   if (!bio) {
-    return NextResponse.json({ error: 'No bio returned' }, { status: 500 })
+    return NextResponse.json({ error: 'No bio returned' }, { status: 500 });
   }
 
-  return NextResponse.json({ bio })
+  return NextResponse.json({ bio });
 }

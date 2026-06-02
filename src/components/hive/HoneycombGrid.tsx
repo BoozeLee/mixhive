@@ -1,16 +1,16 @@
-import { useState, type CSSProperties } from 'react'
-import { assetUrl } from '../../lib/assetUrl'
+import { useState, type CSSProperties } from 'react';
+import { assetUrl } from '../../lib/assetUrl';
 
-type Density = 'low' | 'mid' | 'high'
+type Density = 'low' | 'mid' | 'high';
 
 interface Props {
-  density?: Density
-  glow?: boolean
-  className?: string
-  style?: CSSProperties
+  density?: Density;
+  glow?: boolean;
+  className?: string;
+  style?: CSSProperties;
 }
 
-const densitySize: Record<Density, number> = { low: 96, mid: 64, high: 40 }
+const densitySize: Record<Density, number> = { low: 96, mid: 64, high: 40 };
 
 /**
  * Background honeycomb grid. Uses the ComfyUI-generated seamless tile when
@@ -21,18 +21,18 @@ const densitySize: Record<Density, number> = { low: 96, mid: 64, high: 40 }
  * we drop into the fallback class.
  */
 export function HoneycombGrid({ density = 'mid', glow = false, className, style }: Props) {
-  const [hasTile, setHasTile] = useState<boolean | null>(null)
+  const [hasTile, setHasTile] = useState<boolean | null>(null);
 
   // Probe once (effect-free; this runs on render but only the first one
   // matters because setState short-circuits subsequent renders).
   if (hasTile === null && typeof window !== 'undefined') {
-    const probe = new window.Image()
-    probe.onload = () => setHasTile(true)
-    probe.onerror = () => setHasTile(false)
-    probe.src = assetUrl('honeycomb-tile')
+    const probe = new window.Image();
+    probe.onload = () => setHasTile(true);
+    probe.onerror = () => setHasTile(false);
+    probe.src = assetUrl('honeycomb-tile');
   }
 
-  const sizePx = densitySize[density]
+  const sizePx = densitySize[density];
 
   const tiledStyle: CSSProperties = hasTile
     ? {
@@ -40,7 +40,7 @@ export function HoneycombGrid({ density = 'mid', glow = false, className, style 
         backgroundRepeat: 'repeat',
         backgroundSize: `${sizePx}px ${sizePx}px`,
       }
-    : {}
+    : {};
 
   return (
     <div
@@ -56,5 +56,5 @@ export function HoneycombGrid({ density = 'mid', glow = false, className, style 
         ...style,
       }}
     />
-  )
+  );
 }

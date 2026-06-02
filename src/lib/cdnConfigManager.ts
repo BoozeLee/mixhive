@@ -1,6 +1,6 @@
 /**
  * CDN Configuration Management
- * 
+ *
  * Manages CDN configuration across different environments
  * and provides utilities for configuration validation and updates.
  */
@@ -232,7 +232,7 @@ class CDNConfigManager {
   private loadEnvironmentConfig(environment: string): CDNConfig {
     const envConfig = ENVIRONMENT_CONFIGS[environment] || ENVIRONMENT_CONFIGS.development;
     const baseConfig = cdnConfig;
-    
+
     // Merge environment-specific config with base config
     return {
       ...baseConfig,
@@ -246,37 +246,37 @@ class CDNConfigManager {
       {
         key: 'provider',
         required: true,
-        validator: (value) => ['cloudflare', 'aws-cloudfront', 'custom', 'supabase'].includes(value),
+        validator: value => ['cloudflare', 'aws-cloudfront', 'custom', 'supabase'].includes(value),
         message: 'CDN provider must be one of: cloudflare, aws-cloudfront, custom, supabase',
       },
       {
         key: 'enabled',
         required: true,
-        validator: (value) => typeof value === 'boolean',
+        validator: value => typeof value === 'boolean',
         message: 'CDN enabled must be a boolean',
       },
       {
         key: 'fallbackToSupabase',
         required: true,
-        validator: (value) => typeof value === 'boolean',
+        validator: value => typeof value === 'boolean',
         message: 'Fallback to Supabase must be a boolean',
       },
       {
         key: 'baseUrl',
         required: false,
-        validator: (value) => !value || typeof value === 'string',
+        validator: value => !value || typeof value === 'string',
         message: 'CDN base URL must be a string',
       },
       {
         key: 'cacheSettings',
         required: true,
-        validator: (value) => typeof value === 'object',
+        validator: value => typeof value === 'object',
         message: 'Cache settings must be an object',
       },
       {
         key: 'optimization',
         required: true,
-        validator: (value) => typeof value === 'object',
+        validator: value => typeof value === 'object',
         message: 'Optimization settings must be an object',
       },
     ];
@@ -313,7 +313,7 @@ class CDNConfigManager {
 
     for (const rule of this.validationRules) {
       const value = config[rule.key];
-      
+
       if (rule.required && (value === undefined || value === null)) {
         errors.push(`Missing required configuration: ${rule.key}`);
         continue;
@@ -388,9 +388,9 @@ class CDNConfigManager {
   getCacheTTL(bucket: string): number {
     const envConfig = ENVIRONMENT_CONFIGS[this.currentEnvironment];
     const cacheSettings = envConfig?.cdn?.cacheSettings;
-    
+
     if (!cacheSettings) return 3600; // Default 1 hour
-    
+
     const bucketConfig = cacheSettings[bucket as keyof typeof cacheSettings];
     return bucketConfig?.maxAge || 3600;
   }
@@ -426,34 +426,40 @@ class CDNConfigManager {
 
   // Export configuration
   exportConfiguration(): string {
-    return JSON.stringify({
-      environment: this.currentEnvironment,
-      config: this.currentConfig,
-      featureFlags: this.getFeatureFlags(),
-      performance: this.getPerformanceSettings(),
-      exportedAt: new Date().toISOString(),
-    }, null, 2);
+    return JSON.stringify(
+      {
+        environment: this.currentEnvironment,
+        config: this.currentConfig,
+        featureFlags: this.getFeatureFlags(),
+        performance: this.getPerformanceSettings(),
+        exportedAt: new Date().toISOString(),
+      },
+      null,
+      2
+    );
   }
 
   // Import configuration
   importConfiguration(configJson: string): void {
     try {
       const imported = JSON.parse(configJson);
-      
+
       if (imported.environment) {
         this.switchEnvironment(imported.environment);
       }
-      
+
       if (imported.config) {
         const validation = this.validateConfiguration(imported.config);
         if (!validation.valid) {
           throw new Error(`Invalid configuration: ${validation.errors.join(', ')}`);
         }
-        
+
         this.currentConfig = { ...this.currentConfig, ...imported.config };
       }
     } catch (error) {
-      throw new Error(`Failed to import configuration: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to import configuration: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -506,7 +512,9 @@ export const getCDNConfigForEnvironment = (environment: string): CDNConfig | nul
   return cdnConfigManager.getEnvironmentConfig(environment)?.cdn || null;
 };
 
-export const validateCDNConfig = (config: Partial<CDNConfig>): { valid: boolean; errors: string[] } => {
+export const validateCDNConfig = (
+  config: Partial<CDNConfig>
+): { valid: boolean; errors: string[] } => {
   return cdnConfigManager.validateConfiguration(config);
 };
 
@@ -529,16 +537,16 @@ export const importCDNConfig = (configJson: string): void => {
 // Environment detection utilities
 export const detectEnvironment = (): string => {
   const nodeEnv = process.env.NODE_ENV || 'development';
-  
+
   // Override for specific conditions
   if (process.env.VERCEL_ENV === 'production') {
     return 'production';
   }
-  
+
   if (process.env.VERCEL_ENV === 'preview') {
     return 'staging';
   }
-  
+
   return nodeEnv;
 };
 

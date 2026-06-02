@@ -1,7 +1,10 @@
 {
   "_comment": "img2img stylizer for DJ avatars / hero portraits. Takes any user-uploaded reference at ~/ComfyUI/input/user-portrait.png and re-renders in the MIXHIVE house style (golden rim light, cyberpunk grading, hex-framed crop). Denoise 0.6 keeps recognisable likeness. Runbook will eventually point this at a user-uploaded asset; for v1 the slot is reusable for the founder portrait on the About page.",
   "_meta": { "name": "mixhive-07-dj-portrait-style", "version": 1 },
-  "1": { "class_type": "CheckpointLoaderSimple", "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" } },
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" }
+  },
   "2": { "class_type": "LoadImage", "inputs": { "image": "user-portrait.png" } },
   "5": { "class_type": "VAEEncode", "inputs": { "pixels": ["2", 0], "vae": ["1", 2] } },
   "10": {

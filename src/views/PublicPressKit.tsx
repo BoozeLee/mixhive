@@ -1,77 +1,143 @@
-import { useEffect, useState } from 'react'
-import type { CSSProperties, ReactNode } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import type { PressKit } from '../lib/types'
-import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens'
+import { useEffect, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import type { PressKit } from '../lib/types';
+import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 
 export function PublicPressKit() {
-  const { slug } = useParams()
-  const [kit, setKit] = useState<PressKit | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { slug } = useParams();
+  const [kit, setKit] = useState<PressKit | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!slug) return
-    let alive = true
+    if (!slug) return;
+    let alive = true;
     fetch(`/api/epk/${slug}`)
       .then(async response => {
-        const body = await response.json()
-        if (!response.ok) throw new Error(body.error || 'Press kit not found')
-        return body.press_kit as PressKit
+        const body = await response.json();
+        if (!response.ok) throw new Error(body.error || 'Press kit not found');
+        return body.press_kit as PressKit;
       })
       .then(data => {
-        if (alive) setKit(data)
+        if (alive) setKit(data);
       })
       .catch(err => {
-        if (alive) setError(err instanceof Error ? err.message : 'Press kit not found')
+        if (alive) setError(err instanceof Error ? err.message : 'Press kit not found');
       })
       .finally(() => {
-        if (alive) setLoading(false)
-      })
-    return () => { alive = false }
-  }, [slug])
+        if (alive) setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [slug]);
 
   if (loading) {
-    return <div style={{ maxWidth: 880, margin: '0 auto', padding: space[10], color: colors.text.muted }}>Loading EPK...</div>
+    return (
+      <div
+        style={{ maxWidth: 880, margin: '0 auto', padding: space[10], color: colors.text.muted }}
+      >
+        Loading EPK...
+      </div>
+    );
   }
 
   if (error || !kit) {
     return (
-      <div style={{ maxWidth: 720, margin: '0 auto', padding: space[10], color: colors.text.muted, textAlign: 'center' }}>
+      <div
+        style={{
+          maxWidth: 720,
+          margin: '0 auto',
+          padding: space[10],
+          color: colors.text.muted,
+          textAlign: 'center',
+        }}
+      >
         <h1 style={{ color: colors.text.primary }}>EPK not found</h1>
         <p>{error || 'This press kit is private or unavailable.'}</p>
-        <Link to="/" style={{ color: colors.accent }}>Back to MIXHIVE</Link>
+        <Link to="/" style={{ color: colors.accent }}>
+          Back to MIXHIVE
+        </Link>
       </div>
-    )
+    );
   }
 
-  const content = kit.content
+  const content = kit.content;
   return (
-    <main style={{ maxWidth: 980, margin: '0 auto', padding: `${space[9]}px ${space[8]}px ${space[12]}px` }}>
-      <section style={{ border: `1px solid ${colors.accentMuted}`, borderRadius: radius.xl, overflow: 'hidden', background: 'rgba(7,7,5,0.9)' }}>
-        <div style={{ padding: `clamp(${space[8]}px, 7vw, ${space[12]}px)`, background: 'linear-gradient(135deg, rgba(240,192,64,0.2), rgba(7,7,5,0.3))' }}>
+    <main
+      style={{
+        maxWidth: 980,
+        margin: '0 auto',
+        padding: `${space[9]}px ${space[8]}px ${space[12]}px`,
+      }}
+    >
+      <section
+        style={{
+          border: `1px solid ${colors.accentMuted}`,
+          borderRadius: radius.xl,
+          overflow: 'hidden',
+          background: 'rgba(7,7,5,0.9)',
+        }}
+      >
+        <div
+          style={{
+            padding: `clamp(${space[8]}px, 7vw, ${space[12]}px)`,
+            background: 'linear-gradient(135deg, rgba(240,192,64,0.2), rgba(7,7,5,0.3))',
+          }}
+        >
           <div style={{ display: 'flex', gap: space[7], alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{
-              width: 112,
-              height: 112,
-              borderRadius: '50%',
-              background: content.avatar_url ? `url(${content.avatar_url}) center/cover` : colors.surface,
-              border: `1px solid ${colors.accent}`,
-              boxShadow: '0 0 32px rgba(240,192,64,0.24)',
-            }} />
+            <div
+              style={{
+                width: 112,
+                height: 112,
+                borderRadius: '50%',
+                background: content.avatar_url
+                  ? `url(${content.avatar_url}) center/cover`
+                  : colors.surface,
+                border: `1px solid ${colors.accent}`,
+                boxShadow: '0 0 32px rgba(240,192,64,0.24)',
+              }}
+            />
             <div>
-              <p style={{ margin: `0 0 ${space[2]}px`, color: colors.accent, fontSize: fontSize.xs, fontWeight: fontWeight.bold, textTransform: 'uppercase', letterSpacing: 1 }}>
+              <p
+                style={{
+                  margin: `0 0 ${space[2]}px`,
+                  color: colors.accent,
+                  fontSize: fontSize.xs,
+                  fontWeight: fontWeight.bold,
+                  textTransform: 'uppercase',
+                  letterSpacing: 1,
+                }}
+              >
                 MIXHIVE Electronic Press Kit
               </p>
-              <h1 style={{ margin: 0, color: colors.text.primary, fontSize: 'clamp(36px, 8vw, 72px)', lineHeight: 0.95 }}>{content.artist_name}</h1>
+              <h1
+                style={{
+                  margin: 0,
+                  color: colors.text.primary,
+                  fontSize: 'clamp(36px, 8vw, 72px)',
+                  lineHeight: 0.95,
+                }}
+              >
+                {content.artist_name}
+              </h1>
               <p style={{ margin: `${space[4]}px 0 0`, color: colors.text.secondary }}>
-                {[content.location, content.genres.slice(0, 5).join(' / ')].filter(Boolean).join(' · ')}
+                {[content.location, content.genres.slice(0, 5).join(' / ')]
+                  .filter(Boolean)
+                  .join(' · ')}
               </p>
             </div>
           </div>
         </div>
 
-        <div style={{ padding: `clamp(${space[7]}px, 5vw, ${space[10]}px)`, display: 'grid', gap: space[8] }}>
+        <div
+          style={{
+            padding: `clamp(${space[7]}px, 5vw, ${space[10]}px)`,
+            display: 'grid',
+            gap: space[8],
+          }}
+        >
           <Block title="Booking Pitch">{content.booking_pitch}</Block>
           {content.bio && <Block title="Bio">{content.bio}</Block>}
           <section>
@@ -81,22 +147,53 @@ export function PublicPressKit() {
             ) : (
               <div style={{ display: 'grid', gap: space[4] }}>
                 {content.top_mixes.map(mix => (
-                  <Link key={mix.id} to={mix.url_path} style={{ display: 'flex', justifyContent: 'space-between', gap: space[4], textDecoration: 'none', color: colors.text.secondary, border: `1px solid ${colors.border}`, borderRadius: radius.md, padding: space[5] }}>
+                  <Link
+                    key={mix.id}
+                    to={mix.url_path}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: space[4],
+                      textDecoration: 'none',
+                      color: colors.text.secondary,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: radius.md,
+                      padding: space[5],
+                    }}
+                  >
                     <strong style={{ color: colors.text.primary }}>{mix.title}</strong>
-                    <span style={{ color: colors.text.dim, fontSize: fontSize.xs }}>{mix.play_count} plays</span>
+                    <span style={{ color: colors.text.dim, fontSize: fontSize.xs }}>
+                      {mix.play_count} plays
+                    </span>
                   </Link>
                 ))}
               </div>
             )}
           </section>
-          <footer style={{ display: 'flex', justifyContent: 'space-between', gap: space[5], flexWrap: 'wrap', borderTop: `1px solid ${colors.border}`, paddingTop: space[7], color: colors.text.dim, fontSize: fontSize.xs }}>
+          <footer
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              gap: space[5],
+              flexWrap: 'wrap',
+              borderTop: `1px solid ${colors.border}`,
+              paddingTop: space[7],
+              color: colors.text.dim,
+              fontSize: fontSize.xs,
+            }}
+          >
             <span>Generated from verified MIXHIVE profile data.</span>
-            <Link to="/" style={{ color: colors.accent, textDecoration: 'none', fontWeight: fontWeight.bold }}>mixhive.app</Link>
+            <Link
+              to="/"
+              style={{ color: colors.accent, textDecoration: 'none', fontWeight: fontWeight.bold }}
+            >
+              mixhive.app
+            </Link>
           </footer>
         </div>
       </section>
     </main>
-  )
+  );
 }
 
 function Block({ title, children }: { title: string; children: ReactNode }) {
@@ -105,7 +202,7 @@ function Block({ title, children }: { title: string; children: ReactNode }) {
       <h2 style={titleStyle}>{title}</h2>
       <p style={bodyStyle}>{children}</p>
     </section>
-  )
+  );
 }
 
 const titleStyle: CSSProperties = {
@@ -115,11 +212,11 @@ const titleStyle: CSSProperties = {
   fontWeight: fontWeight.bold,
   textTransform: 'uppercase',
   letterSpacing: 0.8,
-}
+};
 
 const bodyStyle: CSSProperties = {
   margin: 0,
   color: colors.text.secondary,
   fontSize: fontSize.base,
   lineHeight: 1.75,
-}
+};

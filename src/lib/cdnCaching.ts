@@ -1,6 +1,6 @@
 /**
  * CDN Caching Configuration and Optimization
- * 
+ *
  * Provides CDN-specific cache headers, cache key generation,
  * and optimization strategies for different media types.
  */
@@ -105,19 +105,19 @@ export class CacheKeyGenerator {
     } = {}
   ): string {
     let key = this.generateBaseKey(bucket, path);
-    
+
     if (options.version) {
       key = this.generateVersionKey(key, options.version);
     }
-    
+
     if (options.userId) {
       key = this.generateUserKey(key, options.userId);
     }
-    
+
     if (options.timestamp) {
       key = this.generateTimestampKey(key);
     }
-    
+
     return key;
   }
 
@@ -166,15 +166,15 @@ export class CacheManager {
 
   private static buildCacheControl(strategy: CacheConfig, options?: CacheOptions): string {
     let cacheControl = `public, max-age=${options?.maxAge || strategy.maxAge}`;
-    
+
     if (strategy.immutable) {
       cacheControl += ', immutable';
     }
-    
+
     if (strategy.sMaxAge) {
       cacheControl += `, s-maxage=${strategy.sMaxAge}`;
     }
-    
+
     if (strategy.staleWhileRevalidate || options?.staleWhileRevalidate) {
       const staleTime = strategy.staleWhileRevalidate || options!.staleWhileRevalidate!;
       cacheControl += `, stale-while-revalidate=${staleTime}`;
@@ -190,11 +190,11 @@ export class CacheManager {
 
   private static buildCDNCacheControl(strategy: CacheConfig): string {
     let cdnCacheControl = 'public';
-    
+
     if (strategy.immutable) {
       cdnCacheControl += ', immutable';
     }
-    
+
     if (strategy.sMaxAge) {
       cdnCacheControl += ', s-maxage=' + strategy.sMaxAge;
     }
@@ -203,8 +203,9 @@ export class CacheManager {
   }
 
   private static buildCSP(bucket: MediaBucket): string {
-    const cspBase = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';";
-    
+    const cspBase =
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';";
+
     switch (bucket) {
       case 'mix-audio':
         return `${cspBase} media-src 'self' blob: ${cdnConfig.baseUrl}; connect-src 'self' wss: ${cdnConfig.baseUrl};`;
@@ -266,37 +267,37 @@ export class CacheManager {
 export class CacheOptimizer {
   public static optimizeForDelivery(bucket: MediaBucket): CacheHeaders {
     const headers = CacheManager.getCacheHeaders(bucket);
-    
+
     // Optimize for fast delivery
     headers['Cache-Control'] = headers['Cache-Control'].replace(/max-age=\d+/, 'max-age=3600'); // 1 hour for delivery optimization
-    
+
     return headers;
   }
 
   public static optimizeForStaticAssets(bucket: MediaBucket): CacheHeaders {
     const headers = CacheManager.getCacheHeaders(bucket);
-    
+
     // Optimize for static assets (long cache)
     headers['Cache-Control'] = headers['Cache-Control'].replace(/max-age=\d+/, 'max-age=31536000'); // 1 year
-    
+
     return headers;
   }
 
   public static optimizeForUserContent(bucket: MediaBucket): CacheHeaders {
     const headers = CacheManager.getCacheHeaders(bucket);
-    
+
     // Shorter cache for user-generated content
     headers['Cache-Control'] = headers['Cache-Control'].replace(/max-age=\d+/, 'max-age=1800'); // 30 minutes
-    
+
     return headers;
   }
 
   public static optimizeForRealTimeUpdates(bucket: MediaBucket): CacheHeaders {
     const headers = CacheManager.getCacheHeaders(bucket);
-    
+
     // Very short cache for real-time content
     headers['Cache-Control'] = headers['Cache-Control'].replace(/max-age=\d+/, 'max-age=60'); // 1 minute
-    
+
     return headers;
   }
 }
@@ -326,8 +327,8 @@ export class CacheValidator {
   public static generateValidationHeaders(): CacheHeaders {
     return {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
+      Pragma: 'no-cache',
+      Expires: '0',
     };
   }
 }
@@ -366,8 +367,14 @@ export class CacheAnalytics {
     hitRate: number;
   } {
     const totalHits = Array.from(this.cacheHits.values()).reduce((sum, count) => sum + count, 0);
-    const totalMisses = Array.from(this.cacheMisses.values()).reduce((sum, count) => sum + count, 0);
-    const totalErrors = Array.from(this.cacheErrors.values()).reduce((sum, count) => sum + count, 0);
+    const totalMisses = Array.from(this.cacheMisses.values()).reduce(
+      (sum, count) => sum + count,
+      0
+    );
+    const totalErrors = Array.from(this.cacheErrors.values()).reduce(
+      (sum, count) => sum + count,
+      0
+    );
     const hitRate = totalHits + totalMisses > 0 ? totalHits / (totalHits + totalMisses) : 0;
 
     return {

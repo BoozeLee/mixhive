@@ -1,17 +1,17 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
-import { colors, radius, transition } from '../../styles/tokens'
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { colors, radius, transition } from '../../styles/tokens';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Required — assistive tech reads this. */
-  label: string
-  size?: number
-  active?: boolean
-  children: ReactNode
+  label: string;
+  size?: number;
+  active?: boolean;
+  children: ReactNode;
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, Props>(function IconButton(
   { label, size = 32, active, disabled, style, children, ...rest },
-  ref,
+  ref
 ) {
   return (
     <button
@@ -39,5 +39,5 @@ export const IconButton = forwardRef<HTMLButtonElement, Props>(function IconButt
     >
       <span aria-hidden="true">{children}</span>
     </button>
-  )
-})
+  );
+});

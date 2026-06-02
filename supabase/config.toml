@@ -17,5 +17,33 @@ port = 54324
 
 [auth]
 enabled = true
+site_url = "https://mixhive.vercel.app"
+additional_redirect_urls = [
+  "https://mixhive.vercel.app",
+  "https://mixhive.vercel.app/auth/callback",
+  "https://mixhive.vercel.app/auth/reset-password",
+  "https://mixhive.app",
+  "https://mixhive.app/auth/callback",
+  "https://mixhive.app/auth/reset-password",
+  "https://www.mixhive.app",
+  "https://www.mixhive.app/auth/callback",
+  "https://www.mixhive.app/auth/reset-password",
+  "https://mixhive-*.vercel.app",
+  "https://mixhive-*.vercel.app/auth/callback",
+  "https://mixhive-*.vercel.app/auth/reset-password",
+  "https://*.mixhive.vercel.app/auth/callback",
+  "https://wlfjbzdzmrqiiguyoulj.supabase.co/auth/v1/callback",
+  "http://localhost:3000",
+  "http://localhost:3000/auth/callback",
+  "http://localhost:3000/auth/reset-password",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3000/auth/callback",
+]
+
+[auth.external.google]
+enabled = true
+client_id = "783905427337-iq3juomf8tr5k64pf259u6flqb13krrn.apps.googleusercontent.com"
+secret = "env(GOOGLE_CLIENT_SECRET)"
+redirect_uri = "https://wlfjbzdzmrqiiguyoulj.supabase.co/auth/v1/callback"
 
 [functions]

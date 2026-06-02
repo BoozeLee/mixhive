@@ -1,48 +1,48 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { MixCard } from './MixCard'
-import { Button } from './ui/Button'
-import type { Mix } from '../lib/types'
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { MixCard } from './MixCard';
+import { Button } from './ui/Button';
+import type { Mix } from '../lib/types';
 
 interface MixGalleryProps {
-  mixes: Mix[]
-  currentUserId?: string
-  showControls?: boolean
-  className?: string
+  mixes: Mix[];
+  currentUserId?: string;
+  showControls?: boolean;
+  className?: string;
 }
 
-export function MixGallery({ 
-  mixes, 
-  currentUserId, 
+export function MixGallery({
+  mixes,
+  currentUserId,
   showControls = true,
-  className = '' 
+  className = '',
 }: MixGalleryProps) {
-  const [filter, setFilter] = useState<'all' | 'published' | 'recent'>('all')
-  const [sortBy, setSortBy] = useState<'date' | 'plays' | 'likes'>('date')
+  const [filter, setFilter] = useState<'all' | 'published' | 'recent'>('all');
+  const [sortBy, setSortBy] = useState<'date' | 'plays' | 'likes'>('date');
 
   // Filter mixes based on current filter
   const filteredMixes = mixes.filter(mix => {
-    if (filter === 'published') return mix.published
+    if (filter === 'published') return mix.published;
     if (filter === 'recent') {
-      const sevenDaysAgo = new Date()
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-      return new Date(mix.created_at) >= sevenDaysAgo
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      return new Date(mix.created_at) >= sevenDaysAgo;
     }
-    return true
-  })
+    return true;
+  });
 
   // Sort mixes based on current sort
   const sortedMixes = [...filteredMixes].sort((a, b) => {
     switch (sortBy) {
       case 'plays':
-        return (b.play_count || 0) - (a.play_count || 0)
+        return (b.play_count || 0) - (a.play_count || 0);
       case 'likes':
-        return (b.like_count || 0) - (a.like_count || 0)
+        return (b.like_count || 0) - (a.like_count || 0);
       case 'date':
       default:
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     }
-  })
+  });
 
   if (mixes.length === 0) {
     return (
@@ -50,15 +50,20 @@ export function MixGallery({
         <div className="text-6xl mb-4">🎵</div>
         <h3 className="text-xl font-semibold text-gray-400 mb-2">No mixes yet</h3>
         <p className="text-gray-500 text-sm">
-          {currentUserId ? "Start sharing your mixes with the community!" : "This DJ hasn't uploaded any mixes yet."}
+          {currentUserId
+            ? 'Start sharing your mixes with the community!'
+            : "This DJ hasn't uploaded any mixes yet."}
         </p>
         {currentUserId && (
-          <Link to="/upload" className="inline-block mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+          <Link
+            to="/upload"
+            className="inline-block mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+          >
             Upload Your First Mix
           </Link>
         )}
       </div>
-    )
+    );
   }
 
   return (
@@ -86,11 +91,15 @@ export function MixGallery({
               size="sm"
               onClick={() => setFilter('recent')}
             >
-              Recent Week ({mixes.filter(m => {
-                const sevenDaysAgo = new Date()
-                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-                return new Date(m.created_at) >= sevenDaysAgo
-              }).length})
+              Recent Week (
+              {
+                mixes.filter(m => {
+                  const sevenDaysAgo = new Date();
+                  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                  return new Date(m.created_at) >= sevenDaysAgo;
+                }).length
+              }
+              )
             </Button>
           </div>
 
@@ -98,7 +107,7 @@ export function MixGallery({
             <span className="text-sm text-gray-400">Sort by:</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'date' | 'plays' | 'likes')}
+              onChange={e => setSortBy(e.target.value as 'date' | 'plays' | 'likes')}
               className="bg-gray-700 text-white text-sm rounded px-3 py-1 border border-gray-600 focus:border-purple-500 focus:outline-none"
             >
               <option value="date">Newest</option>
@@ -112,11 +121,7 @@ export function MixGallery({
       {/* Mix Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {sortedMixes.map(mix => (
-          <Link
-            key={mix.id}
-            to={`/mix/${mix.id}`}
-            className="group block"
-          >
+          <Link key={mix.id} to={`/mix/${mix.id}`} className="group block">
             <MixCard
               mix={{
                 ...mix,
@@ -124,7 +129,7 @@ export function MixGallery({
                 dj_display_name: mix.dj?.display_name || mix.dj?.username || 'Unknown DJ',
                 dj_avatar_url: mix.dj?.avatar_url || '',
                 genre_name: mix.genre_name,
-                weekly_plays: mix.weekly_plays || 0
+                weekly_plays: mix.weekly_plays || 0,
               }}
             />
           </Link>
@@ -134,15 +139,11 @@ export function MixGallery({
       {/* Load More Button */}
       {showControls && filteredMixes.length > 8 && (
         <div className="text-center">
-          <Button
-            variant="secondary"
-            size="lg"
-            className="w-full sm:w-auto"
-          >
+          <Button variant="secondary" size="lg" className="w-full sm:w-auto">
             Load More Mixes
           </Button>
         </div>
       )}
     </div>
-  )
+  );
 }

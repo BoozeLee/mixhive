@@ -2,6 +2,18 @@
 
 Terminal-facing checklist derived from `07-ai-infrastructure-master-plan.md`.
 
+Next social-platform scale phase is tracked in
+`10-social-platform-scale-architecture.md`.
+
+Google OAuth recovery is complete except for one Google Cloud Console
+verification step — see "Google OAuth Recovery — Completed" in
+`10-social-platform-scale-architecture.md`.
+
+Completed: `getAuthRedirectTo()` fix in `useAuth.ts`, Vercel production env
+`NEXT_PUBLIC_SUPABASE_URL`/`ANON_KEY`, Supabase Auth URL config + Google
+provider verified via Management API. Only manual step left: verify OAuth
+redirect URI and consent screen in Google Cloud Console.
+
 Legend:
 
 - `[ ]` not started

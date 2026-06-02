@@ -1,6 +1,6 @@
 /**
  * CDN Testing and Validation Utilities
- * 
+ *
  * Provides comprehensive testing tools for CDN integration,
  * including performance tests, fallback validation, and monitoring.
  */
@@ -75,15 +75,15 @@ const CDN_TEST_CASES: TestCase[] = [
     timeout: 10000,
     execute: async () => {
       const startTime = Date.now();
-      
+
       try {
         const health = await cdnHealthMonitor.getHealthStatus();
         const duration = Date.now() - startTime;
-        
+
         if (health instanceof Map) {
           const statuses = Array.from(health.values());
           const allHealthy = statuses.every(status => status.status === 'healthy');
-          
+
           return {
             passed: allHealthy,
             duration,
@@ -116,7 +116,7 @@ const CDN_TEST_CASES: TestCase[] = [
     execute: async () => {
       const testUrl = 'https://example.supabase.co/storage/v1/object/public/mix-artwork/test.jpg';
       const startTime = Date.now();
-      
+
       try {
         // Test URL transformation
         const { url: transformedUrl, source } = await fetch('/api/cdn/transform', {
@@ -126,7 +126,7 @@ const CDN_TEST_CASES: TestCase[] = [
         }).then(res => res.json());
 
         const duration = Date.now() - startTime;
-        
+
         return {
           passed: transformedUrl && source,
           duration,
@@ -150,7 +150,7 @@ const CDN_TEST_CASES: TestCase[] = [
     category: 'fallback',
     execute: async () => {
       const startTime = Date.now();
-      
+
       try {
         // Simulate CDN failure
         const result = await fetch('/api/cdn/test-fallback', {
@@ -160,7 +160,7 @@ const CDN_TEST_CASES: TestCase[] = [
         }).then(res => res.json());
 
         const duration = Date.now() - startTime;
-        
+
         return {
           passed: result.fallbackUsed && result.success,
           duration,
@@ -186,7 +186,7 @@ const CDN_TEST_CASES: TestCase[] = [
     execute: async () => {
       const startTime = Date.now();
       const testFile = new File(['test content'], 'test.jpg', { type: 'image/jpeg' });
-      
+
       try {
         const result = await fetch('/api/cdn/upload', {
           method: 'POST',
@@ -195,7 +195,7 @@ const CDN_TEST_CASES: TestCase[] = [
         }).then(res => res.json());
 
         const duration = Date.now() - startTime;
-        
+
         return {
           passed: result.uploaded && result.url,
           duration,
@@ -219,7 +219,7 @@ const CDN_TEST_CASES: TestCase[] = [
     category: 'cache',
     execute: async () => {
       const startTime = Date.now();
-      
+
       try {
         // Test cache headers
         const response = await fetch('/api/cdn/test-cache', {
@@ -228,9 +228,9 @@ const CDN_TEST_CASES: TestCase[] = [
 
         const cacheControl = response.headers.get('Cache-Control');
         const cdnCacheKey = response.headers.get('CDN-Cache-Key');
-        
+
         const duration = Date.now() - startTime;
-        
+
         return {
           passed: !!cacheControl && !!cdnCacheKey,
           duration,
@@ -254,7 +254,7 @@ const CDN_TEST_CASES: TestCase[] = [
     category: 'optimization',
     execute: async () => {
       const startTime = Date.now();
-      
+
       try {
         const result = await fetch('/api/cdn/test-cost-optimization', {
           method: 'POST',
@@ -263,7 +263,7 @@ const CDN_TEST_CASES: TestCase[] = [
         }).then(res => res.json());
 
         const duration = Date.now() - startTime;
-        
+
         return {
           passed: result.optimized && result.optimizedUrl,
           duration,
@@ -323,7 +323,7 @@ class CDNTester {
   // Run a single test case
   async runTestCase(testCase: TestCase): Promise<TestCaseResult> {
     const startTime = Date.now();
-    
+
     try {
       const timeoutPromise = new Promise<never>((_, reject) => {
         if (testCase.timeout) {
@@ -333,7 +333,7 @@ class CDNTester {
 
       const testPromise = testCase.execute();
       const result = await Promise.race([testPromise, timeoutPromise]);
-      
+
       return {
         ...result,
         duration: Date.now() - startTime,
@@ -369,9 +369,11 @@ class CDNTester {
         console.log(`Running test: ${testCase.name}`);
         const result = await this.runTestCase(testCase);
         results.push(result);
-        
+
         // Log result
-        console.log(`Test ${testCase.name}: ${result.passed ? 'PASSED' : 'FAILED'} in ${result.duration}ms`);
+        console.log(
+          `Test ${testCase.name}: ${result.passed ? 'PASSED' : 'FAILED'} in ${result.duration}ms`
+        );
       }
 
       // Run afterAll hook
@@ -411,7 +413,7 @@ class CDNTester {
   // Run all test suites
   async runAllTestSuites(): Promise<Map<string, TestReport>> {
     const results = new Map<string, TestReport>();
-    
+
     for (const suite of this.testSuites) {
       console.log(`Running test suite: ${suite.name}`);
       const report = await this.runTestSuite(suite.name);
@@ -435,20 +437,20 @@ class CDNTester {
     }
 
     const failedTests = results.filter(r => !r.passed);
-    
+
     failedTests.forEach(test => {
       if (test.message.includes('connection') || test.message.includes('timeout')) {
         recommendations.push('Network connectivity issues detected - check CDN provider status');
       }
-      
+
       if (test.message.includes('fallback')) {
         recommendations.push('Fallback mechanism activated - verify CDN provider configuration');
       }
-      
+
       if (test.message.includes('upload')) {
         recommendations.push('Upload performance issues detected - check CDN upload limits');
       }
-      
+
       if (test.message.includes('cache')) {
         recommendations.push('Cache configuration may need optimization - review cache headers');
       }
@@ -473,7 +475,7 @@ class CDNTester {
   async getPerformanceMetrics(): Promise<PerformanceMetrics> {
     const healthStatus = cdnHealthMonitor.getHealthStatus();
     const bandwidthMetrics = cdnCostOptimizer.getBandwidthMetrics();
-    
+
     return {
       loadTime: this.calculateAverageLoadTime(),
       cacheHitRate: this.calculateCacheHitRate(),
@@ -539,15 +541,15 @@ class CDNTester {
   // Generate test report
   generateReport(): string {
     const reports = Array.from(this.results.values());
-    
+
     let report = '# CDN Integration Test Report\n\n';
     report += `Generated: ${new Date().toISOString()}\n\n`;
-    
+
     reports.forEach(suiteReport => {
       report += `## ${suiteReport.suiteName}\n\n`;
       report += `Duration: ${suiteReport.duration}ms\n`;
       report += `Summary: ${suiteReport.summary.passed}/${suiteReport.summary.total} tests passed\n\n`;
-      
+
       report += '### Results:\n';
       suiteReport.results.forEach(result => {
         const status = result.passed ? '✅ PASS' : '❌ FAIL';
@@ -557,12 +559,12 @@ class CDNTester {
           report += `  Error: ${result.error.message}\n`;
         }
       });
-      
+
       report += '\n### Recommendations:\n';
       suiteReport.recommendations.forEach(rec => {
         report += `- ${rec}\n`;
       });
-      
+
       report += '\n---\n\n';
     });
 
@@ -572,11 +574,11 @@ class CDNTester {
   // Export results to file
   exportResults(format: 'json' | 'csv' | 'html' = 'json'): string {
     const reports = Array.from(this.results.values());
-    
+
     switch (format) {
       case 'json':
         return JSON.stringify(reports, null, 2);
-      
+
       case 'csv':
         let csv = 'Suite Name,Test Name,Status,Duration,Message\n';
         reports.forEach(suite => {
@@ -585,10 +587,10 @@ class CDNTester {
           });
         });
         return csv;
-      
+
       case 'html':
         return this.generateHTMLReport(reports);
-      
+
       default:
         throw new Error(`Unsupported format: ${format}`);
     }
@@ -660,7 +662,9 @@ class CDNTester {
 export const cdnTester = new CDNTester();
 
 // Utility functions
-export const runCDNTests = async (suiteName?: string): Promise<TestReport | Map<string, TestReport>> => {
+export const runCDNTests = async (
+  suiteName?: string
+): Promise<TestReport | Map<string, TestReport>> => {
   if (suiteName) {
     return await cdnTester.runTestSuite(suiteName);
   }

@@ -1,8 +1,8 @@
-export { Button } from './Button'
-export { IconButton } from './IconButton'
-export { Input } from './Input'
-export { Textarea } from './Textarea'
-export { Select } from './Select'
-export { FileInput } from './FileInput'
-export { Avatar } from './Avatar'
-export { Modal } from './Modal'
+export { Button } from './Button';
+export { IconButton } from './IconButton';
+export { Input } from './Input';
+export { Textarea } from './Textarea';
+export { Select } from './Select';
+export { FileInput } from './FileInput';
+export { Avatar } from './Avatar';
+export { Modal } from './Modal';

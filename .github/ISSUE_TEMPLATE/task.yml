@@ -1,6 +1,6 @@
 name: Internal task
 description: Implementation work, refactor, chore, tooling
-title: "[task] "
+title: '[task] '
 labels: [task, needs-triage]
 body:
   - type: textarea

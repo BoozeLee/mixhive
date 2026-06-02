@@ -1,9 +1,9 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface Props {
-  height?: number
-  className?: string
+  height?: number;
+  className?: string;
 }
 
 /**
@@ -11,15 +11,15 @@ interface Props {
  * past. Falls back to a static gradient stripe when prefers-reduced-motion is set.
  */
 export function HoneyDripDivider({ height = 64, className }: Props) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
-  })
-  const len = useTransform(scrollYProgress, [0, 1], [4, height - 6])
+  });
+  const len = useTransform(scrollYProgress, [0, 1], [4, height - 6]);
 
   // 7 droplets spaced across the width
-  const drops = [10, 22, 36, 50, 64, 78, 90]
+  const drops = [10, 22, 36, 50, 64, 78, 90];
 
   return (
     <div
@@ -75,5 +75,5 @@ export function HoneyDripDivider({ height = 64, className }: Props) {
         />
       </svg>
     </div>
-  )
+  );
 }

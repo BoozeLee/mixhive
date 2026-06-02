@@ -55,6 +55,28 @@ MixHive stdlib (mh.*):
   mh.json_encode(table)                    -- Lua table → JSON string
   mh.json_decode(str)                      -- JSON string → Lua table
 
+  -- Durable agent state (Phase 8 / doc 31)
+  mh.agent_state_load_user()               -- load {state} for (owner_id, agent_id); {} if none
+  mh.agent_state_save_user(state)          -- upsert state; max 64KB
+  mh.agent_state_load_session(session_id)  -- load session-scoped state; {} if none
+  mh.agent_state_save_session(session_id, state)  -- upsert session state; max 64KB
+  mh.notify_session(session_id, event_type, payload?)  -- broadcast to session:{id}:state channel
+
+  -- Web3 read APIs (Phase 9 / doc 38) — all fail-open; return 0/false/[] when disabled
+  mh.web3_experiments_enabled             -- "true" | "false" string (env var mirror)
+  mh.web3_get_pass_count(mix_id)          -- count of minted tokens for a mix's collection
+  mh.web3_get_quest_backers(quest_id)     -- count of token holders for a quest's collection
+  mh.web3_get_supporter_history(limit?)   -- creator's own collections [{collection_id,...}]
+  mh.web3_has_gig_proof(profile_id)       -- bool: profile holds a soulbound gig proof
+  mh.suggest({suggestion_type, payload})  -- insert web3_proposal into ai_suggestions
+  mh.agent_event_log(event_type, source_id)          -- append to agent_events for cooldowns
+  mh.agent_event_last(event_type, source_id)         -- {days_ago} or nil
+
+  -- Vector intelligence APIs (Phase 10 / doc 39) — all fail-open; return [] on error
+  mh.find_similar_mixes(mix_id, k?)          -- [{mix_id, title, similarity, bpm}]
+  mh.find_collab_candidates(profile_id, k?)  -- [{profile_id, username, similarity, graph_score}]
+  mh.find_set_continuations(mix_id, bpm_min?, bpm_max?, k?)  -- [{mix_id, title, similarity, bpm, camelot}]
+
 The runtime is deliberately small and strict. The point is not to be a
 general-purpose Lua interpreter; the point is to give creators a safe
 way to script social-media reactions.
@@ -67,6 +89,7 @@ import signal
 import time
 import traceback
 from contextlib import contextmanager
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 from typing import Any
 from urllib.parse import urljoin
@@ -77,6 +100,8 @@ from lupa import LuaError, LuaRuntime
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 RUNTIME_SHARED_SECRET = os.environ.get("LUA_RUNTIME_SHARED_SECRET", SERVICE_ROLE_KEY)
+# Sync WEB3_EXPERIMENTS_ENABLED from env so agents can read it via mh.kv_get
+_WEB3_EXPERIMENTS_ENABLED = os.environ.get("WEB3_EXPERIMENTS_ENABLED", "false")
 
 
 # --------------------------------------------------------------------- #
@@ -534,6 +559,377 @@ def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
         return _python_to_lua_table(lua, r.json() or [])
 
     # -----------------------------------------------------------------
+    # Graph & career intelligence tools (Phase 6)
+    # -----------------------------------------------------------------
+
+    def get_similar_artists(limit: int = 10) -> Any:
+        n = min(int(limit), 20)
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/lua_get_similar_artists"),
+                json={"p_owner_id": owner_id, "p_limit": n},
+            )
+            r.raise_for_status()
+            return _python_to_lua_table(lua, r.json() or [])
+        except Exception:
+            return _python_to_lua_table(lua, [])
+
+    def get_relevant_opportunities(limit: int = 10) -> Any:
+        n = min(int(limit), 20)
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/lua_get_relevant_opportunities"),
+                json={"p_owner_id": owner_id, "p_limit": n},
+            )
+            r.raise_for_status()
+            return _python_to_lua_table(lua, r.json() or [])
+        except Exception:
+            return _python_to_lua_table(lua, [])
+
+    def get_quest_momentum() -> Any:
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/lua_get_quest_momentum"),
+                json={"p_owner_id": owner_id},
+            )
+            r.raise_for_status()
+            return _python_to_lua_table(lua, r.json() or [])
+        except Exception:
+            return _python_to_lua_table(lua, [])
+
+    def propose_quest(title: str, scene_tags: Any = None, timeframe_days: int = 90) -> str | None:
+        title_str = str(title).strip()[:200]
+        if not title_str:
+            raise AgentDeniedError("quest title must be non-empty")
+        days = max(7, min(int(timeframe_days), 365))
+        tags: list[str] = []
+        if scene_tags is not None:
+            try:
+                raw = _lua_table_to_python(lua, scene_tags)
+                tags = [str(t) for t in (raw if isinstance(raw, list) else list(raw.values()))][:10]
+            except Exception:
+                pass
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/lua_propose_quest"),
+                json={
+                    "p_owner_id": owner_id,
+                    "p_agent_id": agent_id,
+                    "p_title": title_str,
+                    "p_scene_tags": tags,
+                    "p_timeframe_days": days,
+                },
+            )
+            r.raise_for_status()
+            return r.json()  # uuid string or null
+        except Exception:
+            return None
+
+    # -----------------------------------------------------------------
+    # Durable agent state (Phase 8 / doc 31)
+    # -----------------------------------------------------------------
+
+    def agent_state_load_user() -> Any:
+        try:
+            r = client_svc.get(
+                _rest("/rest/v1/agent_state_user"),
+                params={
+                    "user_id": f"eq.{owner_id}",
+                    "agent_id": f"eq.{agent_id}",
+                    "select": "state_json",
+                    "limit": "1",
+                },
+            )
+            r.raise_for_status()
+            rows = r.json()
+            if rows:
+                raw = rows[0].get("state_json") or {}
+                return _python_to_lua_table(lua, raw if isinstance(raw, dict) else {})
+        except Exception:
+            pass
+        return _python_to_lua_table(lua, {})
+
+    def agent_state_save_user(state_table: Any) -> None:
+        state = _lua_table_to_python(lua, state_table)
+        if not isinstance(state, dict):
+            raise AgentDeniedError("agent_state_save_user: argument must be a table")
+        state_str = json.dumps(state, ensure_ascii=False)
+        if len(state_str.encode()) > 65536:
+            raise AgentDeniedError("agent state exceeds 64KB limit")
+        now = datetime.now(timezone.utc).isoformat()
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/agent_state_user"),
+                json={"user_id": owner_id, "agent_id": agent_id, "state_json": state, "updated_at": now},
+                headers={**_service_headers(), "Prefer": "resolution=merge-duplicates,return=minimal"},
+            )
+            r.raise_for_status()
+        except Exception:
+            pass
+
+    def agent_state_load_session(session_id: str) -> Any:
+        sid = str(session_id).strip()
+        if not sid:
+            return _python_to_lua_table(lua, {})
+        try:
+            r = client_svc.get(
+                _rest("/rest/v1/agent_state_session"),
+                params={
+                    "session_id": f"eq.{sid}",
+                    "agent_id": f"eq.{agent_id}",
+                    "select": "state_json",
+                    "limit": "1",
+                },
+            )
+            r.raise_for_status()
+            rows = r.json()
+            if rows:
+                raw = rows[0].get("state_json") or {}
+                return _python_to_lua_table(lua, raw if isinstance(raw, dict) else {})
+        except Exception:
+            pass
+        return _python_to_lua_table(lua, {})
+
+    def agent_state_save_session(session_id: str, state_table: Any) -> None:
+        sid = str(session_id).strip()
+        if not sid:
+            raise AgentDeniedError("agent_state_save_session: session_id required")
+        state = _lua_table_to_python(lua, state_table)
+        if not isinstance(state, dict):
+            raise AgentDeniedError("agent_state_save_session: state must be a table")
+        state_str = json.dumps(state, ensure_ascii=False)
+        if len(state_str.encode()) > 65536:
+            raise AgentDeniedError("agent state exceeds 64KB limit")
+        now = datetime.now(timezone.utc).isoformat()
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/agent_state_session"),
+                json={"session_id": sid, "agent_id": agent_id, "state_json": state, "updated_at": now},
+                headers={**_service_headers(), "Prefer": "resolution=merge-duplicates,return=minimal"},
+            )
+            r.raise_for_status()
+        except Exception:
+            pass
+
+    def notify_session(session_id: str, event_type: str, payload: Any = None) -> None:
+        sid = str(session_id).strip()
+        if not sid:
+            raise AgentDeniedError("notify_session: session_id required")
+        evt = str(event_type).strip()[:64]
+        py_payload: dict[str, Any] = {}
+        if payload is not None:
+            try:
+                raw = _lua_table_to_python(lua, payload)
+                if isinstance(raw, dict):
+                    py_payload = raw
+            except Exception:
+                pass
+        try:
+            client_svc.post(
+                _rest("/realtime/v1/api/broadcast"),
+                json={
+                    "messages": [{
+                        "topic": f"session:{sid}:state",
+                        "event": evt,
+                        "payload": {**py_payload, "agent_id": agent_id},
+                    }]
+                },
+            )
+        except Exception:
+            pass  # best-effort broadcast
+
+    # -----------------------------------------------------------------
+    # Web3 read APIs (Phase 9 / doc 38)
+    # -----------------------------------------------------------------
+
+    def web3_get_pass_count(mix_id: str) -> int:
+        if _WEB3_EXPERIMENTS_ENABLED != "true":
+            return 0
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/agent_web3_get_pass_count"),
+                json={"p_mix_id": str(mix_id)},
+            )
+            r.raise_for_status()
+            return int(r.json() or 0)
+        except Exception:
+            return 0
+
+    def web3_get_quest_backers(quest_id: str) -> int:
+        if _WEB3_EXPERIMENTS_ENABLED != "true":
+            return 0
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/agent_web3_get_quest_backers"),
+                json={"p_quest_id": str(quest_id)},
+            )
+            r.raise_for_status()
+            return int(r.json() or 0)
+        except Exception:
+            return 0
+
+    def web3_get_supporter_history(limit: int = 10) -> Any:
+        if _WEB3_EXPERIMENTS_ENABLED != "true":
+            return _python_to_lua_table(lua, [])
+        n = max(1, min(int(limit), 20))
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/agent_web3_get_supporter_history"),
+                json={"p_owner_id": owner_id, "p_limit": n},
+            )
+            r.raise_for_status()
+            return _python_to_lua_table(lua, r.json() or [])
+        except Exception:
+            return _python_to_lua_table(lua, [])
+
+    def web3_has_gig_proof(profile_id: str) -> bool:
+        if _WEB3_EXPERIMENTS_ENABLED != "true":
+            return False
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/agent_web3_has_gig_proof"),
+                json={"p_profile_id": str(profile_id)},
+            )
+            r.raise_for_status()
+            return bool(r.json())
+        except Exception:
+            return False
+
+    def suggest(payload_table: Any) -> None:
+        """Insert a suggestion into ai_suggestions for the agent owner."""
+        if _WEB3_EXPERIMENTS_ENABLED != "true":
+            return
+        data = _lua_table_to_python(lua, payload_table)
+        if not isinstance(data, dict):
+            raise AgentDeniedError("mh.suggest: argument must be a table")
+        stype = str(data.get("suggestion_type", "web3_proposal"))
+        inner_payload = data.get("payload", {})
+        if not isinstance(inner_payload, dict):
+            inner_payload = {}
+        try:
+            client_svc.post(
+                _rest("/rest/v1/ai_suggestions"),
+                json={
+                    "owner_id": owner_id,
+                    "suggestion_type": stype,
+                    "payload": inner_payload,
+                    "source": agent_id,
+                    "status": "pending",
+                },
+                headers={**_service_headers(), "Prefer": "return=minimal"},
+            )
+        except Exception:
+            pass  # suggestions are best-effort
+
+    def agent_event_log(event_type: str, source_id: str) -> None:
+        """Append an entry to agent_events for cooldown tracking."""
+        try:
+            client_svc.post(
+                _rest("/rest/v1/agent_events"),
+                json={
+                    "agent_id": agent_id,
+                    "user_id": owner_id,
+                    "event_type": str(event_type)[:64],
+                    "payload": {"source_id": str(source_id)},
+                },
+                headers={**_service_headers(), "Prefer": "return=minimal"},
+            )
+        except Exception:
+            pass  # best-effort
+
+    def agent_event_last(event_type: str, source_id: str) -> Any:
+        """Return {days_ago: int} for the most recent matching agent_event, or nil."""
+        try:
+            r = client_svc.get(
+                _rest("/rest/v1/agent_events"),
+                params={
+                    "agent_id": f"eq.{agent_id}",
+                    "user_id": f"eq.{owner_id}",
+                    "event_type": f"eq.{event_type}",
+                    "payload->>source_id": f"eq.{source_id}",
+                    "select": "created_at",
+                    "order": "created_at.desc",
+                    "limit": "1",
+                },
+            )
+            r.raise_for_status()
+            rows = r.json()
+            if not rows:
+                return None
+            created_at_str = rows[0].get("created_at", "")
+            if not created_at_str:
+                return None
+            created_at = datetime.fromisoformat(created_at_str.replace("Z", "+00:00"))
+            now_utc = datetime.now(timezone.utc)
+            days_ago = (now_utc - created_at).days
+            return _python_to_lua_table(lua, {"days_ago": days_ago})
+        except Exception:
+            return None
+
+    # -----------------------------------------------------------------
+    # Vector intelligence APIs (Phase 10 / doc 39)
+    # -----------------------------------------------------------------
+
+    def find_similar_mixes(mix_id: str, k: int = 10) -> Any:
+        """Return [{mix_id, title, similarity, bpm}] for mixes similar to mix_id. Fail-open."""
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/find_similar_mixes"),
+                json={"p_mix_id": str(mix_id), "p_k": max(1, min(int(k), 20))},
+            )
+            r.raise_for_status()
+            rows = r.json() or []
+            return _python_to_lua_table(lua, [
+                {"mix_id": row.get("mix_id"), "title": row.get("title"), "similarity": row.get("similarity"), "bpm": row.get("bpm")}
+                for row in rows
+            ])
+        except Exception:
+            return _python_to_lua_table(lua, [])
+
+    def find_collab_candidates(profile_id: str, k: int = 10) -> Any:
+        """Return [{profile_id, username, similarity, graph_score}] for collab candidates. Fail-open."""
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/find_collab_candidates_hybrid"),
+                json={"p_profile_id": str(profile_id), "p_k": max(1, min(int(k), 20))},
+            )
+            r.raise_for_status()
+            rows = r.json() or []
+            return _python_to_lua_table(lua, [
+                {"profile_id": row.get("profile_id"), "username": row.get("username"), "similarity": row.get("similarity"), "graph_score": row.get("graph_score")}
+                for row in rows
+            ])
+        except Exception:
+            return _python_to_lua_table(lua, [])
+
+    def find_set_continuations(mix_id: str, bpm_min: int = 0, bpm_max: int = 999, k: int = 3) -> Any:
+        """Fetch embedding for mix_id then call find_mixes_for_set_context. Fail-open."""
+        try:
+            # Fetch embedding
+            emb_r = client_svc.get(
+                _rest("/rest/v1/ai_embeddings"),
+                params={"entity_type": "eq.mix", "entity_id": f"eq.{mix_id}", "select": "embedding", "limit": "1"},
+            )
+            emb_r.raise_for_status()
+            emb_rows = emb_r.json()
+            if not emb_rows:
+                return _python_to_lua_table(lua, [])
+            embedding = emb_rows[0].get("embedding")
+
+            r = client_svc.post(
+                _rest("/rest/v1/rpc/find_mixes_for_set_context"),
+                json={"p_embedding": embedding, "p_bpm_min": int(bpm_min), "p_bpm_max": int(bpm_max), "p_k": max(1, min(int(k), 20))},
+            )
+            r.raise_for_status()
+            rows = r.json() or []
+            return _python_to_lua_table(lua, [
+                {"mix_id": row.get("mix_id"), "title": row.get("title"), "similarity": row.get("similarity"), "bpm": row.get("bpm"), "camelot": row.get("camelot")}
+                for row in rows
+            ])
+        except Exception:
+            return _python_to_lua_table(lua, [])
+
+    # -----------------------------------------------------------------
     # JSON utilities
     # -----------------------------------------------------------------
 
@@ -587,6 +983,30 @@ def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
         # JSON utilities
         "json_encode":        json_encode,
         "json_decode":        json_decode,
+        # Graph & career intelligence (Phase 6)
+        "get_similar_artists":         get_similar_artists,
+        "get_relevant_opportunities":  get_relevant_opportunities,
+        "get_quest_momentum":          get_quest_momentum,
+        "propose_quest":               propose_quest,
+        # Durable agent state (Phase 8 / doc 31)
+        "agent_state_load_user":       agent_state_load_user,
+        "agent_state_save_user":       agent_state_save_user,
+        "agent_state_load_session":    agent_state_load_session,
+        "agent_state_save_session":    agent_state_save_session,
+        "notify_session":              notify_session,
+        # Web3 read APIs (Phase 9 / doc 38)
+        "web3_get_pass_count":          web3_get_pass_count,
+        "web3_get_quest_backers":       web3_get_quest_backers,
+        "web3_get_supporter_history":   web3_get_supporter_history,
+        "web3_has_gig_proof":           web3_has_gig_proof,
+        "suggest":                      suggest,
+        "agent_event_log":              agent_event_log,
+        "agent_event_last":             agent_event_last,
+        "web3_experiments_enabled":     _WEB3_EXPERIMENTS_ENABLED,
+        # Vector intelligence (Phase 10 / doc 39)
+        "find_similar_mixes":           find_similar_mixes,
+        "find_collab_candidates":       find_collab_candidates,
+        "find_set_continuations":       find_set_continuations,
     })
     lua.globals().mh = mh
     lua.globals().print = lua_print

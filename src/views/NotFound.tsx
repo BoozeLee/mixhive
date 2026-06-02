@@ -1,8 +1,8 @@
-import { useLocation } from 'react-router-dom'
-import { EmptyState } from '../components/EmptyState'
+import { useLocation } from 'react-router-dom';
+import { EmptyState } from '../components/EmptyState';
 
 export function NotFound() {
-  const location = useLocation()
+  const location = useLocation();
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '40px 16px' }}>
       <EmptyState
@@ -21,5 +21,5 @@ export function NotFound() {
         actionTo="/feed"
       />
     </div>
-  )
+  );
 }

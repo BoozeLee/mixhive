@@ -39,7 +39,9 @@
     "test:ci": "npm run type-check && npm run lint && npm run format:check && npm test && npm run build",
     "deploy": "node scripts/deploy.js",
     "deploy:vercel": "vercel --prod --token ${{ secrets.VERCEL_TOKEN }}",
-    "deploy:docker": "docker build -t mixhive . && docker run -p 3000:3000 mixhive"
+    "deploy:docker": "docker build -t mixhive . && docker run -p 3000:3000 mixhive",
+    "smoke": "node scripts/post-deploy-verify.js",
+    "smoke:preview": "node scripts/post-deploy-verify.js"
   },
   "dependencies": {
     "@next/font": "14.1.0",
@@ -66,6 +68,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
+    "ethers": "^6.16.0",
     "express": "^5.2.1",
     "framer-motion": "^10.16.4",
     "http-proxy-middleware": "^3.0.5",

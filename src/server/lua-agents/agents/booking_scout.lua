@@ -30,6 +30,19 @@ function run(ctx)
     end
   end
 
+  -- Load structured availability windows for this artist
+  local avail = mixhive["db.rpc"]("get_artist_availability",
+    { p_profile_id = ctx.profile_id, p_type = "gig" }
+  ):await()
+  local has_availability = #(avail or {}) > 0 or (profile.booking_open == true)
+
+  -- Find promoters active in artist's city / genres
+  local artist_city    = (profile.location or ""):match("^([^,]+)")
+  local artist_genres  = profile.genres or {}
+  local promoters = mixhive["db.rpc"]("find_candidate_promoters",
+    { p_genres = artist_genres, p_city = artist_city, p_country = "BE", p_limit = 10 }
+  ):await()
+
   -- Fetch active booking opportunities
   local opps = mixhive["db.read"]("opportunities", { is_active = true }, 30):await()
   local booking_opps = {}
@@ -60,12 +73,32 @@ function run(ctx)
     ))
   end
 
+  local promoter_lines = {}
+  for i, p in ipairs(promoters or {}) do
+    if i > 5 then break end
+    table.insert(promoter_lines, string.format(
+      "- %s (%s) | genres: %s | verified: %s",
+      p.name or "?",
+      p.city or "?",
+      table.concat(p.genres or {}, ","),
+      tostring(p.is_verified or false)
+    ))
+  end
+
+  local avail_note = has_availability
+    and "Artist has open availability slots for gigs."
+    or  "No explicit availability set — mention general openness."
+
   local fit_prompt = string.format([[
 You are a booking agent for underground electronic music.
 Score which of these opportunities best fit this artist. Return top 5 only.
 
 Artist: %s | Location: %s | Genres: %s | Style: %s
 Recent mixes: %d uploaded
+%s
+
+Local promoters (context for outreach hooks):
+%s
 
 Opportunities:
 %s
@@ -79,6 +112,8 @@ fit_score is 0-100. outreach_hook is 1 sentence the artist can use to open the c
     table.concat(profile.genres or {}, ", "),
     profile.dj_style or "DJ",
     #mixes,
+    avail_note,
+    #promoter_lines > 0 and table.concat(promoter_lines, "\n") or "None found nearby.",
     table.concat(opp_lines, "\n")
   )
 
@@ -114,6 +149,38 @@ fit_score is 0-100. outreach_hook is 1 sentence the artist can use to open the c
   end
 
   mh_log("booking_scout found " .. #suggs .. " leads")
+
+  if not ctx.dry_run then
+    for _, sugg in ipairs(suggs) do
+      local p = sugg.payload
+      if p and p.opportunity_id then
+        local ok, err = pcall(function()
+          local profile_node = mixhive["mythic.node.find_or_create"]({
+            node_type    = "artist_profile",
+            source_table = "profiles",
+            source_id    = ctx.profile_id,
+            title        = "Artist",
+            owner_id     = ctx.profile_id,
+          }):await()
+          local opp_node = mixhive["mythic.node.find_or_create"]({
+            node_type    = "opportunity",
+            source_table = "opportunities",
+            source_id    = p.opportunity_id,
+            title        = p.title or "Opportunity",
+            owner_id     = ctx.profile_id,
+          }):await()
+          mixhive["mythic.edge.create"]({
+            from_node_id = profile_node,
+            to_node_id   = opp_node,
+            edge_type    = "submitted_to",
+            weight       = sugg.confidence or 0.5,
+            source_event = "booking_scout",
+          }):await()
+        end)
+        if not ok then mh_log("mythic edge error: " .. tostring(err)) end
+      end
+    end
+  end
 
   return {
     status        = #suggs > 0 and "needs_approval" or "ok",

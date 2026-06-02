@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import { Button } from './ui/Button'
-import { IconButton } from './ui/IconButton'
-import type { Mix } from '../lib/types'
-import { colors, radius, shadow, space } from '../styles/tokens'
+import { useState } from 'react';
+import { Button } from './ui/Button';
+import { IconButton } from './ui/IconButton';
+import type { Mix } from '../lib/types';
+import { colors, radius, shadow, space } from '../styles/tokens';
 
 interface ShareButtonProps {
-  mix?: Mix
-  title?: string
-  url?: string
-  variant?: 'icon' | 'button'
-  showCount?: boolean
-  onShare?: () => void
-  className?: string
+  mix?: Mix;
+  title?: string;
+  url?: string;
+  variant?: 'icon' | 'button';
+  showCount?: boolean;
+  onShare?: () => void;
+  className?: string;
 }
 
 export function ShareButton({
@@ -23,38 +23,45 @@ export function ShareButton({
   onShare,
   className,
 }: ShareButtonProps) {
-  const [open, setOpen] = useState(false)
-  const [copied, setCopied] = useState(false)
-  const [shareCount, setShareCount] = useState(0)
-  const shareUrl = url || window.location.href
-  const shareTitle = title || mix?.title || 'Check out this mix'
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [shareCount, setShareCount] = useState(0);
+  const shareUrl = url || window.location.href;
+  const shareTitle = title || mix?.title || 'Check out this mix';
 
   async function copy() {
-    await navigator.clipboard.writeText(shareUrl)
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 1600)
-    setShareCount(prev => prev + 1)
-    onShare?.()
-    setOpen(false)
+    await navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+    setShareCount(prev => prev + 1);
+    onShare?.();
+    setOpen(false);
   }
 
   async function nativeShare() {
-    if (!navigator.share) return copy()
-    await navigator.share({ title: shareTitle, url: shareUrl })
-    setShareCount(prev => prev + 1)
-    onShare?.()
-    setOpen(false)
+    if (!navigator.share) return copy();
+    await navigator.share({ title: shareTitle, url: shareUrl });
+    setShareCount(prev => prev + 1);
+    onShare?.();
+    setOpen(false);
   }
 
-  const trigger = variant === 'icon' ? (
-    <IconButton label="Share" onClick={() => setOpen(prev => !prev)} className={className}>
-      ↗
-    </IconButton>
-  ) : (
-    <Button type="button" variant="secondary" size="sm" onClick={() => setOpen(prev => !prev)} className={className}>
-      Share{showCount ? ` ${shareCount}` : ''}
-    </Button>
-  )
+  const trigger =
+    variant === 'icon' ? (
+      <IconButton label="Share" onClick={() => setOpen(prev => !prev)} className={className}>
+        ↗
+      </IconButton>
+    ) : (
+      <Button
+        type="button"
+        variant="secondary"
+        size="sm"
+        onClick={() => setOpen(prev => !prev)}
+        className={className}
+      >
+        Share{showCount ? ` ${shareCount}` : ''}
+      </Button>
+    );
 
   return (
     <span style={{ position: 'relative', display: 'inline-flex' }}>
@@ -80,13 +87,17 @@ export function ShareButton({
           <button type="button" onClick={copy} style={menuItemStyle}>
             {copied ? 'Copied' : 'Copy link'}
           </button>
-          <button type="button" onClick={() => setOpen(false)} style={{ ...menuItemStyle, color: colors.text.dim }}>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            style={{ ...menuItemStyle, color: colors.text.dim }}
+          >
             Cancel
           </button>
         </span>
       )}
     </span>
-  )
+  );
 }
 
 const menuItemStyle = {
@@ -101,17 +112,17 @@ const menuItemStyle = {
   font: 'inherit',
   fontSize: 13,
   textAlign: 'left' as const,
-}
+};
 
 export function useShare(mix?: Mix, title?: string, url?: string) {
-  const [shareCount, setShareCount] = useState(0)
+  const [shareCount, setShareCount] = useState(0);
 
   async function handleShare() {
-    await navigator.clipboard.writeText(url || window.location.href)
-    setShareCount(prev => prev + 1)
-    void mix
-    void title
+    await navigator.clipboard.writeText(url || window.location.href);
+    setShareCount(prev => prev + 1);
+    void mix;
+    void title;
   }
 
-  return { shareCount, handleShare }
+  return { shareCount, handleShare };
 }

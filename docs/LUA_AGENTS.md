@@ -109,6 +109,85 @@ mh.json_encode(table)   -- Lua table → JSON string
 mh.json_decode(str)     -- JSON string → Lua table
 ```
 
+### Graph & career intelligence
+
+These tools are powered by the MythicNode career graph. They are fail-open: on error they return an empty list or `nil` rather than throwing.
+
+```lua
+mh.get_similar_artists(limit?)
+  -- Returns up to limit (max 20) similar artists ranked by graph overlap.
+  -- Each row: { artist_id, display_name, username, avatar_url, shared_score }
+
+mh.get_relevant_opportunities(limit?)
+  -- Returns up to limit (max 20) open opportunities personalised for you.
+  -- Scored by genre overlap × 3, deadline proximity (0–7), city match (+2).
+  -- Filters out opportunities you've already saved.
+  -- Each row: { opp_id, title, opp_type, city, deadline, genres, match_score }
+
+mh.get_quest_momentum()
+  -- Returns your active and paused quests with milestone progress.
+  -- Each row: { quest_id, title, status, momentum, milestones_total, milestones_done, days_remaining }
+
+mh.propose_quest(title, scene_tags?, timeframe_days?)
+  -- Proposes a new quest on your behalf (appears in /quests for your review).
+  -- Rate-limited: max 3 agent-proposed quests per 30 days.
+  -- Returns the new quest_id (string) or nil if the rate limit is reached.
+```
+
+### Durable agent state
+
+Persists structured data across agent invocations. Two scopes:
+- **User-scoped** — survives indefinitely, keyed by `(owner_id, agent_id)`, max 64 KB.
+- **Session-scoped** — tied to a collab session lifetime, keyed by `(session_id, agent_id)`, max 64 KB.
+
+All functions are fail-open on network/DB errors (load returns `{}`, save silently drops).
+
+```lua
+mh.agent_state_load_user()
+  -- Loads the saved state table for this agent + owner.
+  -- Returns {} if no state has been saved yet.
+
+mh.agent_state_save_user(state)
+  -- Upserts state (a Lua table) for this agent + owner.
+  -- Raises if state exceeds 64 KB or is not a table.
+
+mh.agent_state_load_session(session_id)
+  -- Loads session-scoped state for this agent + session.
+  -- Returns {} if no state exists.
+
+mh.agent_state_save_session(session_id, state)
+  -- Upserts session-scoped state.
+  -- Raises if session_id is empty, state is not a table, or state > 64 KB.
+
+mh.notify_session(session_id, event_type, payload?)
+  -- Broadcasts a Realtime event to the session:{id}:state channel.
+  -- Best-effort: silently drops on network error.
+  -- payload is an optional Lua table merged with { agent_id }.
+  -- Use event_type "agent_suggestion_added" for collab session suggestions.
+```
+
+Example — Collab Cartographer persisting state across runs:
+
+```lua
+function on_schedule()
+  local state = mh.agent_state_load_user()
+  local shown = state.shown_ids or {}
+  local candidates = mh.get_similar_artists(10)
+
+  for i = 1, #candidates do
+    local c = candidates[i]
+    if not shown[c.artist_id] then
+      -- surface this candidate to the user ...
+      shown[c.artist_id] = true
+    end
+  end
+
+  state.shown_ids = shown
+  state.last_run_at = tostring(os.time and os.time() or "")
+  mh.agent_state_save_user(state)
+end
+```
+
 ## Limits
 
 | Limit                        | Default | Hard ceiling  |

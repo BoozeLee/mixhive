@@ -1,12 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import type { Opportunity } from '../../../lib/types'
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import type { Opportunity } from '../../../lib/types';
 
 const fallbackOpportunities: Opportunity[] = [
   {
     id: 'pilot-kiosk-radio-summer-2026',
     title: 'Kiosk Radio Open Submission — Summer 2026',
-    description: 'Brussels community radio call for DJs and selectors with 60-90 minute sets across underground electronic, leftfield, jazz, and experimental sounds.',
+    description:
+      'Brussels community radio call for DJs and selectors with 60-90 minute sets across underground electronic, leftfield, jazz, and experimental sounds.',
     opp_type: 'radio',
     source: 'manual',
     source_url: null,
@@ -25,7 +26,8 @@ const fallbackOpportunities: Opportunity[] = [
   {
     id: 'pilot-fuse-resident-search-2026',
     title: 'Fuse Brussels Resident DJ Search',
-    description: 'Resident search for techno, industrial, and peak-time electronic DJs. Submit a recorded set and a short motivation.',
+    description:
+      'Resident search for techno, industrial, and peak-time electronic DJs. Submit a recorded set and a short motivation.',
     opp_type: 'gig',
     source: 'manual',
     source_url: null,
@@ -44,7 +46,8 @@ const fallbackOpportunities: Opportunity[] = [
   {
     id: 'pilot-listen-emerging-grant-2026',
     title: 'Listen! Festival Artist Grant — Emerging Talent',
-    description: 'Development grant for Belgian electronic artists. Open to DJs, producers, and live acts with an EPK and work-in-progress recording.',
+    description:
+      'Development grant for Belgian electronic artists. Open to DJs, producers, and live acts with an EPK and work-in-progress recording.',
     opp_type: 'grant',
     source: 'manual',
     source_url: null,
@@ -63,7 +66,8 @@ const fallbackOpportunities: Opportunity[] = [
   {
     id: 'pilot-kompass-new-face-2026',
     title: 'Kompass Klub Ghent — New Face Night',
-    description: 'Monthly new-talent slot for undiscovered local DJs. One-hour set, no experience minimum. Submit a mix and three-line bio.',
+    description:
+      'Monthly new-talent slot for undiscovered local DJs. One-hour set, no experience minimum. Submit a mix and three-line bio.',
     opp_type: 'gig',
     source: 'manual',
     source_url: null,
@@ -79,40 +83,40 @@ const fallbackOpportunities: Opportunity[] = [
     is_active: true,
     created_at: '2026-05-27T00:00:00.000Z',
   },
-]
+];
 
 function filterFallback(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  const city = searchParams.get('city')?.toLowerCase()
-  const genre = searchParams.get('genre')?.toLowerCase()
-  const type = searchParams.get('type')
-  const limit = Math.min(parseInt(searchParams.get('limit') ?? '20', 10), 100)
+  const { searchParams } = new URL(req.url);
+  const city = searchParams.get('city')?.toLowerCase();
+  const genre = searchParams.get('genre')?.toLowerCase();
+  const type = searchParams.get('type');
+  const limit = Math.min(parseInt(searchParams.get('limit') ?? '20', 10), 100);
 
   return fallbackOpportunities
     .filter(opp => !city || opp.city?.toLowerCase().includes(city))
     .filter(opp => !type || opp.opp_type === type)
     .filter(opp => !genre || opp.genres.some(g => g.toLowerCase() === genre))
-    .slice(0, limit)
+    .slice(0, limit);
 }
 
 export async function GET(req: NextRequest) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
     return NextResponse.json({
       opportunities: filterFallback(req),
       source: 'fallback',
-    })
+    });
   }
 
-  const sb = createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } })
+  const sb = createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } });
 
-  const { searchParams } = new URL(req.url)
-  const city = searchParams.get('city')
-  const genre = searchParams.get('genre')
-  const type = searchParams.get('type')
-  const limit = Math.min(parseInt(searchParams.get('limit') ?? '20', 10), 100)
+  const { searchParams } = new URL(req.url);
+  const city = searchParams.get('city');
+  const genre = searchParams.get('genre');
+  const type = searchParams.get('type');
+  const limit = Math.min(parseInt(searchParams.get('limit') ?? '20', 10), 100);
 
   let query = sb
     .from('opportunities')
@@ -120,20 +124,20 @@ export async function GET(req: NextRequest) {
     .eq('is_active', true)
     .order('deadline', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
-    .limit(limit)
+    .limit(limit);
 
-  if (city) query = query.ilike('city', `%${city}%`)
-  if (type) query = query.eq('opp_type', type)
-  if (genre) query = query.contains('genres', [genre])
+  if (city) query = query.ilike('city', `%${city}%`);
+  if (type) query = query.eq('opp_type', type);
+  if (genre) query = query.contains('genres', [genre]);
 
-  const { data, error } = await query
+  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({
       opportunities: filterFallback(req),
       source: 'fallback',
       warning: error.message,
-    })
+    });
   }
-  return NextResponse.json({ opportunities: data ?? [], source: 'supabase' })
+  return NextResponse.json({ opportunities: data ?? [], source: 'supabase' });
 }

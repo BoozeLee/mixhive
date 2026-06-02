@@ -1,12 +1,19 @@
-import type { AgentConfig, AgentNotification, AgentSuggestion, AgentTask, ToolCatalogue } from './agent.types'
-import { dbTools } from './tools/db'
-import { llmTools } from './tools/llm'
-import { vectorTools } from './tools/vector'
-import { audioTools } from './tools/audio'
-import { httpTools } from './tools/http'
+import type {
+  AgentConfig,
+  AgentNotification,
+  AgentSuggestion,
+  AgentTask,
+  ToolCatalogue,
+} from './agent.types';
+import { dbTools } from './tools/db';
+import { llmTools } from './tools/llm';
+import { vectorTools } from './tools/vector';
+import { audioTools } from './tools/audio';
+import { httpTools } from './tools/http';
+import { mythicTools } from './tools/mythic';
 
 export interface BridgeState {
-  logs: string[]
+  logs: string[];
 }
 
 const MASTER: ToolCatalogue = {
@@ -15,29 +22,30 @@ const MASTER: ToolCatalogue = {
   ...vectorTools,
   ...audioTools,
   ...httpTools,
-}
+  ...mythicTools,
+};
 
 export function buildToolCatalogue(config: AgentConfig): ToolCatalogue {
-  const allowed = new Set(config.tools_whitelist)
-  const catalogue: ToolCatalogue = {}
+  const allowed = new Set(config.tools_whitelist);
+  const catalogue: ToolCatalogue = {};
 
   for (const name of allowed) {
-    const fn = MASTER[name]
+    const fn = MASTER[name];
     if (fn) {
-      catalogue[name] = fn
+      catalogue[name] = fn;
     } else if (name !== 'runtime.allowed_tools') {
-      console.warn(`[ToolBridge] unknown tool "${name}" for agent ${config.id}`)
+      console.warn(`[ToolBridge] unknown tool "${name}" for agent ${config.id}`);
     }
   }
 
-  return catalogue
+  return catalogue;
 }
 
 export function buildRuntimeHelpers(config: AgentConfig, state: BridgeState) {
   return {
     mh_log: (...parts: unknown[]) => {
-      state.logs.push(parts.map(String).join(' '))
-      return true
+      state.logs.push(parts.map(String).join(' '));
+      return true;
     },
     mh_get_logs: () => state.logs,
     suggestion: (
@@ -45,7 +53,7 @@ export function buildRuntimeHelpers(config: AgentConfig, state: BridgeState) {
       payload: Record<string, unknown> = {},
       confidence = 0,
       rationale = '',
-      requiresApproval = config.approval_policy === 'always',
+      requiresApproval = config.approval_policy === 'always'
     ): AgentSuggestion => ({
       type,
       payload,
@@ -53,7 +61,11 @@ export function buildRuntimeHelpers(config: AgentConfig, state: BridgeState) {
       rationale,
       requires_approval: Boolean(requiresApproval),
     }),
-    task: (title: string, priority: AgentTask['priority'] = 'medium', dueDate?: string): AgentTask => ({
+    task: (
+      title: string,
+      priority: AgentTask['priority'] = 'medium',
+      dueDate?: string
+    ): AgentTask => ({
       title,
       priority,
       due_date: dueDate,
@@ -63,17 +75,17 @@ export function buildRuntimeHelpers(config: AgentConfig, state: BridgeState) {
       subject: string,
       body: string,
       channel: AgentNotification['channel'] = 'in_app',
-      ctaUrl?: string,
+      ctaUrl?: string
     ): AgentNotification => ({
       subject,
       body,
       channel,
       cta_url: ctaUrl,
     }),
-  }
+  };
 }
 
 function clampConfidence(value: number): number {
-  if (Number.isNaN(value)) return 0
-  return Math.min(1, Math.max(0, value))
+  if (Number.isNaN(value)) return 0;
+  return Math.min(1, Math.max(0, value));
 }

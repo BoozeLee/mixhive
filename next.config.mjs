@@ -1,7 +1,16 @@
-import { dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const appDir = dirname(fileURLToPath(import.meta.url))
+const appDir = dirname(fileURLToPath(import.meta.url));
+const hasNextPublicSupabasePair = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+const supabaseUrl = hasNextPublicSupabasePair
+  ? process.env.NEXT_PUBLIC_SUPABASE_URL
+  : process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = hasNextPublicSupabasePair
+  ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  : process.env.VITE_SUPABASE_ANON_KEY;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -10,18 +19,119 @@ const nextConfig = {
     root: appDir,
   },
   serverExternalPackages: ['ioredis'],
-  env: {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.VITE_SENTRY_DSN,
-    NEXT_PUBLIC_RELEASE_SHA: process.env.NEXT_PUBLIC_RELEASE_SHA || process.env.VITE_RELEASE_SHA || process.env.VERCEL_GIT_COMMIT_SHA,
+
+  // Images optimization
+  images: {
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+
+  // Webpack configuration
+  webpack: (config, { dev, isServer, webpack }) => {
+    // Add optimization for production builds
+    if (!dev && !isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+            },
+            common: {
+              name: 'common',
+              minChunks: 2,
+              chunks: 'all',
+              priority: 5,
+            },
+            ui: {
+              test: /[\\/]src[\\/]components[\\/]ui[\\/]/,
+              name: 'ui',
+              chunks: 'all',
+              priority: 8,
+            },
+            hooks: {
+              test: /[\\/]src[\\/]hooks[\\/]/,
+              name: 'hooks',
+              chunks: 'all',
+              priority: 7,
+            },
+            audio: {
+              test: /[\\/]src[\\/]components[\\/]audio[\\/]/,
+              name: 'audio',
+              chunks: 'all',
+              priority: 9,
+            },
+          },
+        },
+      };
+    }
+
+    // Add loader for audio files
+    config.module.rules.push({
+      test: /\.(mp3|wav|flac|aac|ogg|webm)$/,
+      type: 'asset/resource',
+      generator: {
+        filename: 'static/media/[name].[hash][ext]',
+      },
+    });
+
+    // Add loader for video files
+    config.module.rules.push({
+      test: /\.(mp4|webm|mov)$/,
+      type: 'asset/resource',
+      generator: {
+        filename: 'static/media/[name].[hash][ext]',
+      },
+    });
+
+    // Add loader for fonts
+    config.module.rules.push({
+      test: /\.(woff|woff2|eot|ttf|otf)$/,
+      type: 'asset/resource',
+      generator: {
+        filename: 'static/fonts/[name].[hash][ext]',
+      },
+    });
+
+    // Add performance budget
+    if (!dev && !isServer) {
+      config.performance = {
+        ...config.performance,
+        hints: 'warning',
+        maxEntrypointSize: 512000, // 512KB
+        maxAssetSize: 512000, // 512KB
+      };
+    }
+
+    return config;
+  },
+
+  // Environment variables
+  env: {
+    NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey,
+    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.VITE_SENTRY_DSN,
+    NEXT_PUBLIC_RELEASE_SHA:
+      process.env.NEXT_PUBLIC_RELEASE_SHA ||
+      process.env.VITE_RELEASE_SHA ||
+      process.env.VERCEL_GIT_COMMIT_SHA,
+    NEXT_PUBLIC_CDN_BASE_URL: process.env.NEXT_PUBLIC_CDN_BASE_URL,
+  },
+
   async headers() {
     // CDN-specific cache configuration
-    const getCdnHeaders = (source) => {
+    const getCdnHeaders = source => {
       const cdnUrl = process.env.NEXT_PUBLIC_CDN_BASE_URL;
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      
+
       return [
         {
           key: 'Content-Security-Policy',
@@ -30,14 +140,19 @@ const nextConfig = {
         { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
         { key: 'X-Content-Type-Options', value: 'nosniff' },
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(self), interest-cohort=()' },
+        {
+          key: 'Permissions-Policy',
+          value: 'camera=(), microphone=(), geolocation=(), payment=(self), interest-cohort=()',
+        },
         { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
         { key: 'X-DNS-Prefetch-Control', value: 'on' },
         // CDN-specific headers
-        ...(cdnUrl ? [
-          { key: 'CDN-Cache-Control', value: 'public, s-maxage=31536000, immutable' },
-          { key: 'X-Content-Digest', value: 'cdn' },
-        ] : []),
+        ...(cdnUrl
+          ? [
+              { key: 'CDN-Cache-Control', value: 'public, s-maxage=31536000, immutable' },
+              { key: 'X-Content-Digest', value: 'cdn' },
+            ]
+          : []),
       ];
     };
 
@@ -49,12 +164,14 @@ const nextConfig = {
       },
       // Media file headers with optimized caching
       {
-        source: '/(mix-audio|mix-artwork|mix-waveforms|profile-avatars|profile-banners|buzz-media)/(.*)',
+        source:
+          '/(mix-audio|mix-artwork|mix-waveforms|profile-avatars|profile-banners|buzz-media)/(.*)',
         headers: [
           ...getCdnHeaders('/'),
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable, s-maxage=31536000, stale-while-revalidate=86400',
+            value:
+              'public, max-age=31536000, immutable, s-maxage=31536000, stale-while-revalidate=86400',
           },
           { key: 'CDN-Cache-Tag', value: 'media,cdn' },
           {
@@ -95,7 +212,10 @@ const nextConfig = {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
           },
-          { key: 'Content-Security-Policy', value: "default-src 'self'; img-src 'self' data: blob:;" },
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; img-src 'self' data: blob:;",
+          },
         ],
       },
       // Embedded content headers
@@ -105,7 +225,8 @@ const nextConfig = {
           { key: 'X-Frame-Options', value: 'ALLOWALL' },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${cdnUrl} ${supabaseUrl}; media-src 'self' blob: ${cdnUrl} ${supabaseUrl}; connect-src 'self' ${cdnUrl} ${supabaseUrl}; frame-ancestors *",
+            value:
+              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${cdnUrl} ${supabaseUrl}; media-src 'self' blob: ${cdnUrl} ${supabaseUrl}; connect-src 'self' ${cdnUrl} ${supabaseUrl}; frame-ancestors *",
           },
           { key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=3600' },
         ],
@@ -137,8 +258,43 @@ const nextConfig = {
           { key: 'X-CDN-Health', value: 'enabled' },
         ],
       },
-    ]
+    ];
   },
-}
 
-export default nextConfig
+  // Redirects
+  async redirects() {
+    return [
+      {
+        source: '/dashboard',
+        destination: '/feed',
+        permanent: true,
+      },
+    ];
+  },
+
+  // Rewrites
+  async rewrites() {
+    return [
+      {
+        source: '/api/trpc/:path*',
+        destination: 'http://localhost:3000/api/trpc/:path*',
+      },
+    ];
+  },
+
+  // Compression
+  compress: true,
+
+  // Powered by header
+  poweredByHeader: false,
+
+  // Generate ETags
+  generateEtags: false,
+
+  // Generate build ID
+  generateBuildId: async () => {
+    return 'mixhive-' + Date.now();
+  },
+};
+
+export default nextConfig;

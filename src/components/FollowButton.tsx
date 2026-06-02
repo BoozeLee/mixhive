@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react'
-import { Button } from './ui/Button'
-import { follow, isFollowing as readIsFollowing, unfollow } from '../lib/api'
-import type { Profile } from '../lib/types'
+import { useEffect, useState } from 'react';
+import { Button } from './ui/Button';
+import { follow, isFollowing as readIsFollowing, unfollow } from '../lib/api';
+import type { Profile } from '../lib/types';
 
 type Props = {
-  profile?: Profile
-  targetUserId?: string
-  currentUserId?: string
-  userId?: string
-  showCount?: boolean
-  onFollow?: (isFollowing: boolean) => void
-  onToggle?: () => void
-  className?: string
-  variant?: 'default' | 'ghost' | 'outline'
-}
+  profile?: Profile;
+  targetUserId?: string;
+  currentUserId?: string;
+  userId?: string;
+  showCount?: boolean;
+  onFollow?: (isFollowing: boolean) => void;
+  onToggle?: () => void;
+  className?: string;
+  variant?: 'default' | 'ghost' | 'outline';
+};
 
 export function FollowButton({
   profile,
@@ -25,42 +25,42 @@ export function FollowButton({
   className,
   variant = 'default',
 }: Props) {
-  const targetId = targetUserId || profile?.id
-  const viewerId = currentUserId || userId
-  const [isFollowing, setIsFollowing] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const targetId = targetUserId || profile?.id;
+  const viewerId = currentUserId || userId;
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let cancelled = false
-    if (!viewerId || !targetId || viewerId === targetId) return
+    let cancelled = false;
+    if (!viewerId || !targetId || viewerId === targetId) return;
     readIsFollowing(viewerId, targetId).then(value => {
-      if (!cancelled) setIsFollowing(value)
-    })
+      if (!cancelled) setIsFollowing(value);
+    });
     return () => {
-      cancelled = true
-    }
-  }, [viewerId, targetId])
+      cancelled = true;
+    };
+  }, [viewerId, targetId]);
 
   async function toggle() {
-    if (!viewerId || !targetId || viewerId === targetId || loading) return
-    setLoading(true)
+    if (!viewerId || !targetId || viewerId === targetId || loading) return;
+    setLoading(true);
     try {
       if (isFollowing) {
-        await unfollow(viewerId, targetId)
-        setIsFollowing(false)
-        onFollow?.(false)
+        await unfollow(viewerId, targetId);
+        setIsFollowing(false);
+        onFollow?.(false);
       } else {
-        await follow(viewerId, targetId)
-        setIsFollowing(true)
-        onFollow?.(true)
+        await follow(viewerId, targetId);
+        setIsFollowing(true);
+        onFollow?.(true);
       }
-      onToggle?.()
+      onToggle?.();
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
-  if (!targetId || viewerId === targetId) return null
+  if (!targetId || viewerId === targetId) return null;
 
   return (
     <Button
@@ -74,5 +74,5 @@ export function FollowButton({
     >
       {isFollowing ? 'Following' : 'Follow'}
     </Button>
-  )
+  );
 }

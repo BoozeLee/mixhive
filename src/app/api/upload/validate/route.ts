@@ -16,6 +16,13 @@ function getCategory(mime: string): 'audio' | 'image' | 'video' | null {
 }
 
 export async function POST(req: NextRequest) {
+  const contentType = req.headers.get('content-type') ?? '';
+  if (!contentType.includes('multipart/form-data')) {
+    return NextResponse.json(
+      { valid: false, error: 'Expected multipart/form-data' },
+      { status: 400 }
+    );
+  }
   try {
     const form = await req.formData();
     const file = form.get('file') as File | null;

@@ -103,6 +103,65 @@
   left: 8px;
 }
 
+/* ── Feed 3-column layout ─────────────────────────────────────────────────── */
+
+.feed-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.feed-right-rail {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .feed-layout {
+    grid-template-columns: minmax(0, 1fr) 288px;
+  }
+
+  .feed-right-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: calc(var(--navbar-height, 73px) + 16px);
+    max-height: calc(100vh - var(--navbar-height, 73px) - 32px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding-bottom: 24px;
+  }
+
+  .feed-right-rail::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Feed hero strip */
+.feed-hero {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .feed-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+}
+
+/* ── MixCard play button — always visible on touch devices ────────────────── */
+@media (hover: none) {
+  .mix-card-play {
+    opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.55) !important;
+  }
+}
+
 /* Responsive image loading */
 img {
   max-width: 100%;

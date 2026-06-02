@@ -33,6 +33,8 @@ export function Upload() {
   const [platformErrors, setPlatformErrors] = useState<Record<string, string>>({});
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [dragOver, setDragOver] = useState(false);
   const [detectingDuration, setDetectingDuration] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
@@ -152,6 +154,7 @@ export function Upload() {
     setFormErrors({});
     setGeneralError('');
     setUploading(true);
+    setUploadProgress(10);
 
     try {
       // Generate waveform data (non-critical, can fail silently)
@@ -174,14 +177,17 @@ export function Upload() {
         // Waveform generation is non-critical — upload proceeds without it
       }
 
+      setUploadProgress(30);
       // Upload audio to public bucket for playback
       const audioUrl = await uploadFile(audioFile, AUDIO_BUCKET);
       if (!audioUrl) throw new Error('Failed to upload audio');
+      setUploadProgress(70);
 
       let artworkUrl = '';
       if (artworkFile) {
         artworkUrl = (await uploadFile(artworkFile, ARTWORK_BUCKET)) || '';
       }
+      setUploadProgress(85);
 
       const mixData: Partial<Mix> = {
         dj_id: user.id,
@@ -213,6 +219,7 @@ export function Upload() {
       const mix = await createMix(mixData);
 
       if (mix) {
+        setUploadProgress(100);
         // Transition to 'processing' — triggers DB trigger → enqueues waveform job
         void updateMix(mix.id, { upload_status: 'processing' });
         setPublishedTitle(mix.title);
@@ -220,6 +227,7 @@ export function Upload() {
       }
     } catch (err) {
       setGeneralError(err instanceof Error ? err.message : 'Upload failed');
+      setUploadProgress(0);
     } finally {
       setUploading(false);
     }
@@ -246,35 +254,125 @@ export function Upload() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#eee', marginBottom: 24 }}>
-        Upload a mix
-      </h1>
+    <div className="container" style={{ maxWidth: 560, margin: '0 auto', padding: '24px 16px 80px' }}>
+      {/* Page header */}
+      <div style={{ marginBottom: 28 }}>
+        <p style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, color: '#f0c040', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          Nectar Upload
+        </p>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 900, color: '#eee', lineHeight: 1.1 }}>
+          Drop your mix
+        </h1>
+        <p style={{ margin: '8px 0 0', fontSize: 13, color: '#888' }}>
+          Share your sound with the hive. MP3, WAV, AIFF, or FLAC.
+        </p>
+      </div>
+
+      {/* Upload progress bar */}
+      {uploading && (
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <span style={{ fontSize: 12, color: '#f0c040', fontWeight: 600 }}>Uploading…</span>
+            <span style={{ fontSize: 12, color: '#888' }}>{uploadProgress}%</span>
+          </div>
+          <div style={{ height: 4, borderRadius: 999, background: '#1a1a2e', overflow: 'hidden' }}>
+            <div
+              style={{
+                height: '100%',
+                width: `${uploadProgress}%`,
+                background: 'linear-gradient(90deg, #f0c040, #ffd84a)',
+                borderRadius: 999,
+                transition: 'width 300ms ease',
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {generalError && (
         <div
           style={{
-            background: '#2a1010',
-            color: '#f55',
-            padding: '10px 14px',
-            borderRadius: 8,
-            fontSize: 13,
-            marginBottom: 16,
+            background: '#2a1010', color: '#f55', padding: '10px 14px',
+            borderRadius: 8, fontSize: 13, marginBottom: 16,
+            border: '1px solid #f5525244',
           }}
         >
           {generalError}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <FileInput
-          label="Audio file *"
-          accept="audio/*"
-          required
-          help="Large touch target. Select an MP3, WAV, AIFF, or FLAC mix."
-          style={{ minHeight: 48 }}
-          onChange={e => setAudioFile(e.target.files?.[0] || null)}
-        />
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        {/* Drag-and-drop audio upload zone */}
+        <div>
+          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#999', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Audio file *
+          </label>
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Audio file drop zone — drag and drop or click to browse"
+            onDragEnter={e => { e.preventDefault(); setDragOver(true); }}
+            onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={e => { e.preventDefault(); setDragOver(false); }}
+            onDrop={e => {
+              e.preventDefault();
+              setDragOver(false);
+              const file = e.dataTransfer.files?.[0];
+              if (file) setAudioFile(file);
+            }}
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'audio/*';
+              input.onchange = () => { const f = input.files?.[0]; if (f) setAudioFile(f); };
+              input.click();
+            }}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click(); }}
+            style={{
+              minHeight: 120,
+              borderRadius: 10,
+              border: dragOver ? '2px solid #f0c040' : audioFile ? '2px solid #f0c04055' : '1.5px dashed #1a1a2e',
+              background: dragOver ? '#f0c04014' : audioFile ? '#f0c04008' : '#111',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              cursor: 'pointer',
+              padding: '24px 20px',
+              transition: 'border-color 120ms ease, background 120ms ease',
+              textAlign: 'center',
+              outline: 'none',
+            }}
+          >
+            {audioFile ? (
+              <>
+                <span aria-hidden="true" style={{ fontSize: 28, color: '#f0c040' }}>✓</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#eee' }}>{audioFile.name}</span>
+                <span style={{ fontSize: 12, color: '#888' }}>
+                  {(audioFile.size / 1024 / 1024).toFixed(1)} MB
+                  {duration && !detectingDuration && ` · ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`}
+                  {detectingDuration && ' · detecting duration…'}
+                </span>
+                <button
+                  type="button"
+                  onClick={e => { e.stopPropagation(); setAudioFile(null); setDuration(null); }}
+                  style={{ fontSize: 11, color: '#f55', background: 'none', border: 'none', cursor: 'pointer', marginTop: 4 }}
+                >
+                  Remove
+                </button>
+              </>
+            ) : (
+              <>
+                <span aria-hidden="true" style={{ fontSize: 30, color: dragOver ? '#f0c040' : '#444' }}>⬡</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: dragOver ? '#f0c040' : '#777' }}>
+                  {dragOver ? 'Drop it!' : 'Drop your mix here'}
+                </span>
+                <span style={{ fontSize: 12, color: '#555' }}>or click to browse — MP3, WAV, AIFF, FLAC</span>
+              </>
+            )}
+          </div>
+        </div>
 
         <Input
           label="Title *"
@@ -322,34 +420,6 @@ export function Upload() {
           style={{ minHeight: 48 }}
           onChange={e => setArtworkFile(e.target.files?.[0] || null)}
         />
-
-        <div>
-          <Input
-            label="Duration (seconds)"
-            type="number"
-            value={duration ?? ''}
-            onChange={e => setDuration(e.target.value === '' ? null : Number(e.target.value))}
-            placeholder="Auto-detected (will show when loaded)"
-          />
-          {detectingDuration && (
-            <div
-              style={{
-                width: '100%',
-                height: 4,
-                background: '#f0c040',
-                borderRadius: 2,
-                marginTop: 8,
-                animation: 'pulse 2s infinite',
-              }}
-            />
-          )}
-          {duration !== null && !detectingDuration && (
-            <small style={{ color: '#6c6', fontSize: 12, display: 'block', marginTop: 4 }}>
-              Auto-detected: {Math.floor(duration / 60)}:
-              {String(Math.floor(duration % 60)).padStart(2, '0')}
-            </small>
-          )}
-        </div>
 
         <label
           style={{

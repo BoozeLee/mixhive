@@ -40,8 +40,10 @@
     "deploy": "node scripts/deploy.js",
     "deploy:vercel": "vercel --prod --token ${{ secrets.VERCEL_TOKEN }}",
     "deploy:docker": "docker build -t mixhive . && docker run -p 3000:3000 mixhive",
-    "smoke": "node scripts/post-deploy-verify.js",
-    "smoke:preview": "node scripts/post-deploy-verify.js"
+    "smoke": "node scripts/mixhive-test.mjs",
+    "smoke:preview": "node scripts/mixhive-test.mjs http://localhost:3000",
+    "smoke:browser": "python3 scripts/browser_smoke.py",
+    "smoke:legacy": "node scripts/post-deploy-verify.js"
   },
   "dependencies": {
     "@next/font": "14.1.0",

@@ -47,10 +47,15 @@ function isMissingTable(error: { code?: string; message?: string } | null | unde
   return error?.code === '42P01' || /Could not find the table/i.test(error?.message || '');
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ mixId: string }> }) {
   const env = requireSupabase();
   if (!env) return NextResponse.json({ feature: null, tracks: [], setup_required: true });
   const { mixId } = await params;
+  if (!UUID_RE.test(mixId)) {
+    return NextResponse.json({ feature: null, tracks: [] }, { status: 404 });
+  }
   const sb = createClient(env.supabaseUrl, env.supabaseAnonKey, {
     auth: { persistSession: false },
   });
@@ -69,7 +74,10 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ mix
       message: 'audio_features migration has not been applied yet.',
     });
   }
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    // Invalid UUID or RLS error — not an internal server error
+    return NextResponse.json({ feature: null, tracks: [] }, { status: 404 });
+  }
 
   const { data: tracks, error: tracksError } = await sb
     .from('mix_tracks')
@@ -78,7 +86,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ mix
     .order('start_sec', { ascending: true });
 
   if (tracksError && tracksError.code !== '42P01') {
-    return NextResponse.json({ error: tracksError.message }, { status: 500 });
+    // Non-fatal — return what we have
+    return NextResponse.json({ feature, tracks: [] });
   }
 
   return NextResponse.json({ feature, tracks: tracks ?? [] });

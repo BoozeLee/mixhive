@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from urllib.parse import urljoin
 
 from playwright.sync_api import sync_playwright
@@ -48,7 +49,10 @@ def main() -> int:
             args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
         )
         for width, height in VIEWPORTS:
-            context = browser.new_context(viewport={"width": width, "height": height})
+            context = browser.new_context(
+                viewport={"width": width, "height": height},
+                user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            )
             if args.mock_supabase:
                 context.add_init_script("window.__MIXHIVE_DISABLE_SUPABASE__ = true")
             page = context.new_page()
@@ -93,6 +97,8 @@ def main() -> int:
                         failures.append(f"{width}x{height} {route}: horizontal overflow")
                 except Exception as exc:
                     failures.append(f"{width}x{height} {route}: {exc}")
+                finally:
+                    time.sleep(0.8)
 
             failures.extend(f"{width}x{height}: console error: {entry}" for entry in console_errors)
             failures.extend(f"{width}x{height}: failed response: {entry}" for entry in bad_responses)

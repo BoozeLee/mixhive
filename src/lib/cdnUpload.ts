@@ -187,7 +187,12 @@ export async function uploadBuzzMediaWithCDN(
 
   const startTime = Date.now();
   const bucket = 'buzz-media';
-  const path = `${crypto.randomUUID()}.${file.name.split('.').pop()}`;
+  const { data: { session } } = await supabase.auth.getSession();
+  const uid = session?.user?.id;
+  const ext = file.name.split('.').pop();
+  const path = uid
+    ? `${uid}/${crypto.randomUUID()}.${ext}`
+    : `public/${crypto.randomUUID()}.${ext}`;
 
   try {
     // Try CDN upload first if enabled

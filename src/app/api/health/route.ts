@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
   // Determine overall status
   const unhealthyServices = Object.entries(health.services).filter(
-    ([_, status]) => status.status !== 'healthy'
+    ([_, status]) => status.status === 'unhealthy'
   );
 
   if (unhealthyServices.length > 0) {

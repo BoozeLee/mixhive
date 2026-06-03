@@ -11,14 +11,15 @@ export async function GET() {
     const expiresAt = new Date(Date.now() + 3_600_000).toISOString();
 
     const supabase = createServerClient();
-    const { error } = await supabase
-      .from('siwe_nonces')
-      .insert({ nonce, expires_at: expiresAt });
+    const { error } = await supabase.from('siwe_nonces').insert({ nonce, expires_at: expiresAt });
 
     if (error) {
       // Silently fall through — nonce table may not exist yet; client still gets a nonce
       // but server-side replay protection is advisory until migration 069 is applied.
-      console.warn('[wallet:nonce] siwe_nonces insert failed (table may not exist):', error.message);
+      console.warn(
+        '[wallet:nonce] siwe_nonces insert failed (table may not exist):',
+        error.message
+      );
     }
 
     return NextResponse.json({ nonce });

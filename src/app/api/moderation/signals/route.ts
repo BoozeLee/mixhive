@@ -8,10 +8,7 @@ export async function POST(req: NextRequest) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !supabaseServiceKey) {
-      return NextResponse.json(
-        { error: 'Supabase not configured' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -19,21 +16,16 @@ export async function POST(req: NextRequest) {
     // Verify service token (internal service calls don't need user auth)
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: 'Authorization header required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Authorization header required' }, { status: 401 });
     }
 
     const serviceToken = authHeader.substring(7);
     if (serviceToken !== process.env.SERVICE_ROLE_TOKEN) {
-      return NextResponse.json(
-        { error: 'Invalid service token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid service token' }, { status: 401 });
     }
 
-    const { source_table, source_id, signal_type, severity, action_taken, flagged_by, payload } = await req.json();
+    const { source_table, source_id, signal_type, severity, action_taken, flagged_by, payload } =
+      await req.json();
 
     // Validate required fields
     if (!source_table || !source_id || !signal_type || !severity) {
@@ -77,7 +69,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
     return NextResponse.json(
-      { error: 'Internal server error', details: err instanceof Error ? err.message : 'Unknown error' },
+      {
+        error: 'Internal server error',
+        details: err instanceof Error ? err.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
@@ -91,10 +86,7 @@ export async function GET(req: NextRequest) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !supabaseServiceKey) {
-      return NextResponse.json(
-        { error: 'Supabase not configured' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -102,18 +94,12 @@ export async function GET(req: NextRequest) {
     // Verify service token
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: 'Authorization header required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Authorization header required' }, { status: 401 });
     }
 
     const serviceToken = authHeader.substring(7);
     if (serviceToken !== process.env.SERVICE_ROLE_TOKEN) {
-      return NextResponse.json(
-        { error: 'Invalid service token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid service token' }, { status: 401 });
     }
 
     const { searchParams } = new URL(req.url);
@@ -156,7 +142,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(data);
   } catch (err) {
     return NextResponse.json(
-      { error: 'Internal server error', details: err instanceof Error ? err.message : 'Unknown error' },
+      {
+        error: 'Internal server error',
+        details: err instanceof Error ? err.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

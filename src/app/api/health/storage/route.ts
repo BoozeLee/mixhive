@@ -48,7 +48,7 @@ export async function GET() {
       result.error = error.message;
     } else {
       result.bucketCount = buckets?.length ?? 0;
-      result.buckets = (buckets ?? []).map((b) => b.name);
+      result.buckets = (buckets ?? []).map(b => b.name);
     }
   } catch (error) {
     result.status = 'unhealthy';

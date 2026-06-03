@@ -6,7 +6,15 @@ import { repost, unrepost, hasReposted } from '../lib/api';
 import { LikeButton } from './LikeButton';
 import { ShareButton } from './ShareButton';
 import type { FeedMix } from '../lib/types';
-import { colors, fontSize, fontWeight, getGenreColor, radius, space, transition } from '../styles/tokens';
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  getGenreColor,
+  radius,
+  space,
+  transition,
+} from '../styles/tokens';
 
 interface Props {
   mix: FeedMix;
@@ -37,8 +45,12 @@ export function MixCard({ mix }: Props) {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    hasReposted(user.id, mix.id).then(r => { if (!cancelled) setReposted(r); });
-    return () => { cancelled = true; };
+    hasReposted(user.id, mix.id).then(r => {
+      if (!cancelled) setReposted(r);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [user, mix.id]);
 
   async function handleRepost(e: React.MouseEvent) {
@@ -51,15 +63,25 @@ export function MixCard({ mix }: Props) {
     try {
       if (prev) await unrepost(mix.id);
       else await repost(user.id, mix.id, mix.dj_id);
-    } catch { setReposted(prev); }
-    finally { setRepostBusy(false); }
+    } catch {
+      setReposted(prev);
+    } finally {
+      setRepostBusy(false);
+    }
   }
 
   function handlePlay(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
     play(
-      { id: mix.id, title: mix.title, djName: mix.dj_display_name || mix.dj_username, djUsername: mix.dj_username, artworkUrl: mix.artwork_url, audioUrl: mix.audio_url },
+      {
+        id: mix.id,
+        title: mix.title,
+        djName: mix.dj_display_name || mix.dj_username,
+        djUsername: mix.dj_username,
+        artworkUrl: mix.artwork_url,
+        audioUrl: mix.audio_url,
+      },
       { clearQueue: true }
     );
   }
@@ -67,14 +89,28 @@ export function MixCard({ mix }: Props) {
   function handlePlayNext(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    addToQueue({ id: mix.id, title: mix.title, djName: mix.dj_display_name || mix.dj_username, djUsername: mix.dj_username, artworkUrl: mix.artwork_url, audioUrl: mix.audio_url });
+    addToQueue({
+      id: mix.id,
+      title: mix.title,
+      djName: mix.dj_display_name || mix.dj_username,
+      djUsername: mix.dj_username,
+      artworkUrl: mix.artwork_url,
+      audioUrl: mix.audio_url,
+    });
     setShowMenu(false);
   }
 
   function handleAddToQueue(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    addToQueue({ id: mix.id, title: mix.title, djName: mix.dj_display_name || mix.dj_username, djUsername: mix.dj_username, artworkUrl: mix.artwork_url, audioUrl: mix.audio_url });
+    addToQueue({
+      id: mix.id,
+      title: mix.title,
+      djName: mix.dj_display_name || mix.dj_username,
+      djUsername: mix.dj_username,
+      artworkUrl: mix.artwork_url,
+      audioUrl: mix.audio_url,
+    });
     setShowMenu(false);
   }
 
@@ -84,11 +120,30 @@ export function MixCard({ mix }: Props) {
     <div style={{ position: 'relative' }}>
       {/* Repost attribution */}
       {mix.is_repost && mix.reposted_by_username && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 14px 6px', fontSize: 11, color: colors.text.dim }}>
-          <span style={{ color: colors.success, fontSize: 12, lineHeight: 1 }} aria-hidden="true">🔁</span>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '4px 14px 6px',
+            fontSize: 11,
+            color: colors.text.dim,
+          }}
+        >
+          <span style={{ color: colors.success, fontSize: 12, lineHeight: 1 }} aria-hidden="true">
+            🔁
+          </span>
           <span>
             Reposted by{' '}
-            <Link to={`/u/${mix.reposted_by_username}`} onClick={e => e.stopPropagation()} style={{ color: colors.text.muted, textDecoration: 'none', fontWeight: fontWeight.semibold }}>
+            <Link
+              to={`/u/${mix.reposted_by_username}`}
+              onClick={e => e.stopPropagation()}
+              style={{
+                color: colors.text.muted,
+                textDecoration: 'none',
+                fontWeight: fontWeight.semibold,
+              }}
+            >
               @{mix.reposted_by_username}
             </Link>
           </span>
@@ -109,7 +164,9 @@ export function MixCard({ mix }: Props) {
             flexDirection: 'column',
           }}
           onMouseEnter={e => (e.currentTarget.style.borderColor = colors.accentMuted)}
-          onMouseLeave={e => { if (!isNowPlaying) e.currentTarget.style.borderColor = colors.border; }}
+          onMouseLeave={e => {
+            if (!isNowPlaying) e.currentTarget.style.borderColor = colors.border;
+          }}
         >
           {/* Top row: artwork + metadata + actions */}
           <div style={{ display: 'flex', gap: space[6] }}>
@@ -139,7 +196,15 @@ export function MixCard({ mix }: Props) {
               {!mix.artwork_url && (
                 <div
                   aria-hidden="true"
-                  style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: `${genreColor}66` }}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 24,
+                    color: `${genreColor}66`,
+                  }}
                 >
                   ♪
                 </div>
@@ -165,7 +230,9 @@ export function MixCard({ mix }: Props) {
                   transition: `opacity ${transition.fast}`,
                 }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={e => { if (!isNowPlaying) e.currentTarget.style.opacity = '0'; }}
+                onMouseLeave={e => {
+                  if (!isNowPlaying) e.currentTarget.style.opacity = '0';
+                }}
               >
                 <span aria-hidden="true">{isNowPlaying ? '▶' : '▶'}</span>
               </button>
@@ -203,7 +270,15 @@ export function MixCard({ mix }: Props) {
             </div>
 
             {/* Metadata */}
-            <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div
+              style={{
+                flex: 1,
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+            >
               {/* Title row */}
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 3 }}>
                 <div
@@ -221,7 +296,9 @@ export function MixCard({ mix }: Props) {
                   {mix.title}
                 </div>
                 {dateLabel && (
-                  <span style={{ fontSize: 11, color: colors.text.faint, flexShrink: 0, marginTop: 2 }}>
+                  <span
+                    style={{ fontSize: 11, color: colors.text.faint, flexShrink: 0, marginTop: 2 }}
+                  >
                     {dateLabel}
                   </span>
                 )}
@@ -252,14 +329,19 @@ export function MixCard({ mix }: Props) {
                   </span>
                 )}
                 {(mix.play_count ?? 0) > 0 && (
-                  <span style={{ fontSize: 11, color: colors.text.dim }}>{mix.play_count} plays</span>
+                  <span style={{ fontSize: 11, color: colors.text.dim }}>
+                    {mix.play_count} plays
+                  </span>
                 )}
                 {(mix.like_count ?? 0) > 0 && (
-                  <span style={{ fontSize: 11, color: colors.text.dim }}>{mix.like_count} likes</span>
+                  <span style={{ fontSize: 11, color: colors.text.dim }}>
+                    {mix.like_count} likes
+                  </span>
                 )}
                 {mix.duration_seconds && (
                   <span style={{ fontSize: 11, color: colors.text.dim }}>
-                    {Math.floor(mix.duration_seconds / 60)}:{(mix.duration_seconds % 60).toString().padStart(2, '0')}
+                    {Math.floor(mix.duration_seconds / 60)}:
+                    {(mix.duration_seconds % 60).toString().padStart(2, '0')}
                   </span>
                 )}
                 <span
@@ -297,12 +379,19 @@ export function MixCard({ mix }: Props) {
                   disabled={repostBusy}
                   aria-label={reposted ? `Un-repost ${mix.title}` : `Repost ${mix.title}`}
                   style={{
-                    background: 'transparent', border: 'none',
+                    background: 'transparent',
+                    border: 'none',
                     color: reposted ? colors.success : colors.text.faint,
                     cursor: repostBusy ? 'wait' : 'pointer',
-                    fontSize: 16, padding: '4px', lineHeight: 1,
-                    opacity: repostBusy ? 0.6 : 1, minWidth: 32, minHeight: 32,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 16,
+                    padding: '4px',
+                    lineHeight: 1,
+                    opacity: repostBusy ? 0.6 : 1,
+                    minWidth: 32,
+                    minHeight: 32,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     transition: transition.fast,
                   }}
                 >
@@ -310,14 +399,26 @@ export function MixCard({ mix }: Props) {
                 </button>
                 <ShareButton mix={mix} variant="icon" onShare={() => {}} />
                 <button
-                  onClick={e => { e.preventDefault(); e.stopPropagation(); setShowMenu(s => !s); }}
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowMenu(s => !s);
+                  }}
                   aria-label="More options"
                   aria-expanded={showMenu}
                   style={{
-                    background: 'transparent', border: 'none',
+                    background: 'transparent',
+                    border: 'none',
                     color: showMenu ? colors.accent : colors.text.faint,
-                    cursor: 'pointer', fontSize: 16, padding: '4px', lineHeight: 1,
-                    minWidth: 32, minHeight: 32, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer',
+                    fontSize: 16,
+                    padding: '4px',
+                    lineHeight: 1,
+                    minWidth: 32,
+                    minHeight: 32,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
                   ⋯
@@ -326,9 +427,15 @@ export function MixCard({ mix }: Props) {
                   <div
                     role="menu"
                     style={{
-                      position: 'absolute', right: 0, top: '100%', zIndex: 10,
-                      background: colors.surface, border: `1px solid ${colors.border}`,
-                      borderRadius: radius.md, minWidth: 128, padding: 4,
+                      position: 'absolute',
+                      right: 0,
+                      top: '100%',
+                      zIndex: 10,
+                      background: colors.surface,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: radius.md,
+                      minWidth: 128,
+                      padding: 4,
                       boxShadow: '0 4px 14px rgba(0,0,0,0.4)',
                     }}
                   >
@@ -341,10 +448,17 @@ export function MixCard({ mix }: Props) {
                         role="menuitem"
                         onClick={handler}
                         style={{
-                          display: 'block', width: '100%', background: 'transparent', border: 'none',
-                          color: colors.text.primary, padding: `${space[4]}px ${space[5]}px`,
-                          fontSize: fontSize.sm, cursor: 'pointer', textAlign: 'left',
-                          borderRadius: radius.sm, transition: transition.fast,
+                          display: 'block',
+                          width: '100%',
+                          background: 'transparent',
+                          border: 'none',
+                          color: colors.text.primary,
+                          padding: `${space[4]}px ${space[5]}px`,
+                          fontSize: fontSize.sm,
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          borderRadius: radius.sm,
+                          transition: transition.fast,
                         }}
                         onMouseEnter={e => (e.currentTarget.style.background = colors.border)}
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}

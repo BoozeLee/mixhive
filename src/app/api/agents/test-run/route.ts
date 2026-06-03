@@ -69,11 +69,11 @@ export async function POST(req: NextRequest) {
       Authorization: `Bearer ${LUA_RUNTIME_SECRET}`,
     },
     body: JSON.stringify({
-      agent_id:   agentId,
+      agent_id: agentId,
       profile_id: user.id,
-      trigger:    'event:user_request',
-      dry_run:    body.dry_run ?? false,
-      context:    body.context ?? {},
+      trigger: 'event:user_request',
+      dry_run: body.dry_run ?? false,
+      context: body.context ?? {},
     }),
   });
 

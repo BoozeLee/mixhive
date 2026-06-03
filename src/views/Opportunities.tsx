@@ -276,27 +276,90 @@ export function Opportunities() {
       </header>
 
       {matchError && (
-        <div style={{ marginBottom: space[6], padding: `${space[4]}px`, borderRadius: radius.lg, background: 'rgba(220,0,80,0.08)', border: '1px solid rgba(220,0,80,0.2)', color: '#e05', fontSize: fontSize.sm }}>
+        <div
+          style={{
+            marginBottom: space[6],
+            padding: `${space[4]}px`,
+            borderRadius: radius.lg,
+            background: 'rgba(220,0,80,0.08)',
+            border: '1px solid rgba(220,0,80,0.2)',
+            color: '#e05',
+            fontSize: fontSize.sm,
+          }}
+        >
           {matchError}
         </div>
       )}
 
       {matchResult && matchResult.suggestions.length > 0 && (
-        <div style={{ marginBottom: space[8], borderRadius: radius.xl, border: `1px solid ${colors.accentMuted}`, overflow: 'hidden' }}>
-          <div style={{ padding: `${space[4]}px ${space[5]}px`, background: 'rgba(240,192,64,0.06)', borderBottom: `1px solid ${colors.accentMuted}`, color: colors.accent, fontWeight: fontWeight.bold, fontSize: fontSize.sm }}>
-            AI Match Results — top {Math.min(3, matchResult.suggestions.length)} of {matchResult.suggestions.length}
+        <div
+          style={{
+            marginBottom: space[8],
+            borderRadius: radius.xl,
+            border: `1px solid ${colors.accentMuted}`,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              padding: `${space[4]}px ${space[5]}px`,
+              background: 'rgba(240,192,64,0.06)',
+              borderBottom: `1px solid ${colors.accentMuted}`,
+              color: colors.accent,
+              fontWeight: fontWeight.bold,
+              fontSize: fontSize.sm,
+            }}
+          >
+            AI Match Results — top {Math.min(3, matchResult.suggestions.length)} of{' '}
+            {matchResult.suggestions.length}
           </div>
           <div style={{ padding: `${space[4]}px ${space[5]}px`, display: 'grid', gap: space[3] }}>
             {matchResult.suggestions.slice(0, 3).map((s, i) => (
-              <div key={i} style={{ border: `1px solid #222`, borderRadius: radius.lg, padding: `${space[3]}px ${space[4]}px`, background: 'rgba(0,0,0,0.2)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: space[1] }}>
-                  <span style={{ color: colors.accent, fontSize: fontSize.xs, fontWeight: fontWeight.bold, textTransform: 'uppercase' }}>{s.type.replace(/_/g, ' ')}</span>
-                  <span style={{ color: colors.text.dim, fontSize: fontSize.xs }}>{Math.round(s.confidence * 100)}% match</span>
+              <div
+                key={i}
+                style={{
+                  border: `1px solid #222`,
+                  borderRadius: radius.lg,
+                  padding: `${space[3]}px ${space[4]}px`,
+                  background: 'rgba(0,0,0,0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: space[1],
+                  }}
+                >
+                  <span
+                    style={{
+                      color: colors.accent,
+                      fontSize: fontSize.xs,
+                      fontWeight: fontWeight.bold,
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {s.type.replace(/_/g, ' ')}
+                  </span>
+                  <span style={{ color: colors.text.dim, fontSize: fontSize.xs }}>
+                    {Math.round(s.confidence * 100)}% match
+                  </span>
                 </div>
-                <p style={{ margin: 0, color: colors.text.secondary, fontSize: fontSize.sm, lineHeight: 1.5 }}>{s.rationale}</p>
+                <p
+                  style={{
+                    margin: 0,
+                    color: colors.text.secondary,
+                    fontSize: fontSize.sm,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {s.rationale}
+                </p>
               </div>
             ))}
-            <a href="/agents/inbox" style={{ color: colors.accent, fontSize: fontSize.xs }}>View all in agents inbox →</a>
+            <a href="/agents/inbox" style={{ color: colors.accent, fontSize: fontSize.xs }}>
+              View all in agents inbox →
+            </a>
           </div>
         </div>
       )}

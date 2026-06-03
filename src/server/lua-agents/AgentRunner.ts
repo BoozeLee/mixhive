@@ -27,36 +27,36 @@ function persistRun(output: AgentOutput, input: AgentInput): void {
   Promise.resolve()
     .then(async () => {
       await sb.from('agent_runs').insert({
-        id:          output.run_id,
-        agent_id:    output.agent_id,
-        profile_id:  output.profile_id,
-        trigger:     input.trigger,
-        status:      output.status,
+        id: output.run_id,
+        agent_id: output.agent_id,
+        profile_id: output.profile_id,
+        trigger: input.trigger,
+        status: output.status,
         duration_ms: output.duration_ms,
         tokens_used: 0,
-        error:       output.error ?? null,
+        error: output.error ?? null,
       });
 
       for (const s of output.suggestions) {
         await sb.from('ai_suggestions').insert({
-          owner_id:        output.profile_id,
+          owner_id: output.profile_id,
           suggestion_type: s.type,
-          payload:         s.payload,
-          rationale:       s.rationale,
-          confidence:      s.confidence,
-          status:          'pending',
-          source:          'claude',
-          model:           output.agent_id,
+          payload: s.payload,
+          rationale: s.rationale,
+          confidence: s.confidence,
+          status: 'pending',
+          source: 'claude',
+          model: output.agent_id,
         });
       }
 
       for (const t of output.tasks) {
         await sb.from('creator_tasks').insert({
-          owner_id:    output.profile_id,
-          title:       t.title,
-          task_type:   'agent_task',
-          priority:    PRIORITY_MAP[t.priority] ?? 3,
-          status:      'open',
+          owner_id: output.profile_id,
+          title: t.title,
+          task_type: 'agent_task',
+          priority: PRIORITY_MAP[t.priority] ?? 3,
+          status: 'open',
           linked_entity_type: 'agent',
         });
       }
@@ -64,13 +64,13 @@ function persistRun(output: AgentOutput, input: AgentInput): void {
       for (const n of output.notifications) {
         await sb.from('notifications').insert({
           user_id: output.profile_id,
-          type:    'agent_notification',
-          data:    {
-            agent_id:   output.agent_id,
-            subject:    n.subject,
-            body:       n.body,
-            channel:    n.channel,
-            cta_url:    n.cta_url,
+          type: 'agent_notification',
+          data: {
+            agent_id: output.agent_id,
+            subject: n.subject,
+            body: n.body,
+            channel: n.channel,
+            cta_url: n.cta_url,
           },
         });
       }

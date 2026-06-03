@@ -187,7 +187,9 @@ export async function uploadBuzzMediaWithCDN(
 
   const startTime = Date.now();
   const bucket = 'buzz-media';
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const uid = session?.user?.id;
   const ext = file.name.split('.').pop();
   const path = uid

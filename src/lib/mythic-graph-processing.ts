@@ -151,12 +151,15 @@ export class MythicGraphProcessingWorker {
     }
 
     // 2. Use the fast SQL RPC we created in migration 044
-    const { data: overlappingArtists } = await supabase.rpc('find_similar_artists_by_graph_overlap', {
-      p_user_id: user_id,
-      p_min_shared: 2,
-      p_limit: 30,
-      p_days_window: 365,
-    });
+    const { data: overlappingArtists } = await supabase.rpc(
+      'find_similar_artists_by_graph_overlap',
+      {
+        p_user_id: user_id,
+        p_min_shared: 2,
+        p_limit: 30,
+        p_days_window: 365,
+      }
+    );
 
     const created: any[] = [];
 
@@ -166,15 +169,13 @@ export class MythicGraphProcessingWorker {
         const sharedEngagement = candidate.shared_mix_engagement || 0;
 
         // Stronger weighting now that we have better signals
-        const compositeScore = Math.min(0.95, 
-          (sharedVenues * 0.28) + 
-          (sharedEngagement * 0.14) + 
-          0.25 // base graph affinity
+        const compositeScore = Math.min(
+          0.95,
+          sharedVenues * 0.28 + sharedEngagement * 0.14 + 0.25 // base graph affinity
         );
 
-        const { error } = await supabase
-          .from('mythic_edges')
-          .upsert({
+        const { error } = await supabase.from('mythic_edges').upsert(
+          {
             from_node_id: user_id,
             to_node_id: candidate.artist_node_id,
             edge_type: 'collab_with',
@@ -188,7 +189,9 @@ export class MythicGraphProcessingWorker {
               computed_at: new Date().toISOString(),
               method: 'graph_overlap_v2',
             },
-          }, { onConflict: 'from_node_id,to_node_id,edge_type' });
+          },
+          { onConflict: 'from_node_id,to_node_id,edge_type' }
+        );
 
         if (!error) {
           created.push({
@@ -229,7 +232,9 @@ export class MythicGraphProcessingWorker {
         node.title,
         node.node_type,
         JSON.stringify(node.payload || {}).slice(0, 800),
-      ].filter(Boolean).join(' | ');
+      ]
+        .filter(Boolean)
+        .join(' | ');
 
       if (textToEmbed.length < 10) continue;
 
@@ -379,7 +384,11 @@ export class MythicGraphProcessingWorker {
 
         if (!nodeA) {
           // Fallback creation (should be rare thanks to 049 trigger)
-          const { data: profileA } = await supabase.from('profiles').select('username, display_name').eq('id', artistA).single();
+          const { data: profileA } = await supabase
+            .from('profiles')
+            .select('username, display_name')
+            .eq('id', artistA)
+            .single();
           const { data: newNodeA } = await supabase
             .from('mythic_nodes')
             .insert({
@@ -402,7 +411,11 @@ export class MythicGraphProcessingWorker {
           .single();
 
         if (!nodeB) {
-          const { data: profileB } = await supabase.from('profiles').select('username, display_name').eq('id', artistB).single();
+          const { data: profileB } = await supabase
+            .from('profiles')
+            .select('username, display_name')
+            .eq('id', artistB)
+            .single();
           const { data: newNodeB } = await supabase
             .from('mythic_nodes')
             .insert({
@@ -420,9 +433,8 @@ export class MythicGraphProcessingWorker {
         if (!nodeA || !nodeB) continue;
 
         // Upsert collab_with edge as "proposed" (user must approve in review screen)
-        const { error } = await supabase
-          .from('mythic_edges')
-          .upsert({
+        const { error } = await supabase.from('mythic_edges').upsert(
+          {
             from_node_id: nodeA.id,
             to_node_id: nodeB.id,
             edge_type: 'collab_with',
@@ -434,9 +446,11 @@ export class MythicGraphProcessingWorker {
               session_title: session.title,
               generated_by: 'collab_session_post_process',
               created_at: new Date().toISOString(),
-              status: 'proposed',           // <-- Key field for review flow
+              status: 'proposed', // <-- Key field for review flow
             },
-          }, { onConflict: 'from_node_id,to_node_id,edge_type' });
+          },
+          { onConflict: 'from_node_id,to_node_id,edge_type' }
+        );
 
         if (!error) {
           created.push({
@@ -472,9 +486,8 @@ export class MythicGraphProcessingWorker {
       .single();
 
     if (profile) {
-      const { error: nodeErr } = await supabase
-        .from('mythic_nodes')
-        .upsert({
+      const { error: nodeErr } = await supabase.from('mythic_nodes').upsert(
+        {
           node_type: 'artist_profile',
           owner_id: user_id,
           source_table: 'profiles',
@@ -482,7 +495,9 @@ export class MythicGraphProcessingWorker {
           title: profile.username || 'Unknown Artist',
           payload: { avatar_url: profile.avatar_url },
           occurred_at: profile.created_at,
-        }, { onConflict: 'source_table,source_id', ignoreDuplicates: false });
+        },
+        { onConflict: 'source_table,source_id', ignoreDuplicates: false }
+      );
 
       if (!nodeErr) stats.profile = true;
       else errors.push(`profile node: ${nodeErr.message}`);
@@ -515,16 +530,17 @@ export class MythicGraphProcessingWorker {
         for (const f of following) {
           const targetNodeId = await this.getArtistNodeId(supabase, f.following_id);
           if (targetNodeId) {
-            const { error: edgeErr } = await supabase
-              .from('mythic_edges')
-              .upsert({
+            const { error: edgeErr } = await supabase.from('mythic_edges').upsert(
+              {
                 from_node_id: myNodeId,
                 to_node_id: targetNodeId,
                 edge_type: 'followed',
                 weight: 1.0,
                 occurred_at: f.created_at,
                 source_event: 'backfill_user_graph',
-              }, { onConflict: 'from_node_id,to_node_id,edge_type' });
+              },
+              { onConflict: 'from_node_id,to_node_id,edge_type' }
+            );
 
             if (!edgeErr) stats.follows++;
             else errors.push(`follow ${f.following_id}: ${edgeErr.message}`);
@@ -545,9 +561,8 @@ export class MythicGraphProcessingWorker {
         const myNodeId = await this.getArtistNodeId(supabase, user_id);
 
         if (oppNodeId && myNodeId) {
-          const { error: edgeErr } = await supabase
-            .from('mythic_edges')
-            .upsert({
+          const { error: edgeErr } = await supabase.from('mythic_edges').upsert(
+            {
               from_node_id: myNodeId,
               to_node_id: oppNodeId,
               edge_type: 'submitted_to',
@@ -555,7 +570,9 @@ export class MythicGraphProcessingWorker {
               occurred_at: save.created_at,
               source_event: 'backfill_user_graph',
               metadata: { status: save.status },
-            }, { onConflict: 'from_node_id,to_node_id,edge_type' });
+            },
+            { onConflict: 'from_node_id,to_node_id,edge_type' }
+          );
 
           if (!edgeErr) stats.opportunities++;
         }
@@ -570,9 +587,8 @@ export class MythicGraphProcessingWorker {
 
     if (buzzes) {
       for (const buzz of buzzes) {
-        await supabase
-          .from('mythic_nodes')
-          .upsert({
+        await supabase.from('mythic_nodes').upsert(
+          {
             node_type: 'buzz',
             owner_id: user_id,
             source_table: 'buzzes',
@@ -580,7 +596,9 @@ export class MythicGraphProcessingWorker {
             title: (buzz.text || '').slice(0, 100),
             payload: {},
             occurred_at: buzz.created_at,
-          }, { onConflict: 'source_table,source_id', ignoreDuplicates: false });
+          },
+          { onConflict: 'source_table,source_id', ignoreDuplicates: false }
+        );
 
         stats.buzzes++;
       }
@@ -638,16 +656,17 @@ export class MythicGraphProcessingWorker {
     // Create engaged_with edge from artist
     const artistNodeId = await this.getArtistNodeId(supabase, userId);
     if (artistNodeId) {
-      await supabase
-        .from('mythic_edges')
-        .upsert({
+      await supabase.from('mythic_edges').upsert(
+        {
           from_node_id: artistNodeId,
           to_node_id: node.id,
           edge_type: 'engaged_with',
           weight: 5.0,
           occurred_at: mix.created_at,
           source_event: 'backfill_user_graph',
-        }, { onConflict: 'from_node_id,to_node_id,edge_type' });
+        },
+        { onConflict: 'from_node_id,to_node_id,edge_type' }
+      );
     }
 
     return node.id;
@@ -687,7 +706,7 @@ export class MythicGraphProcessingWorker {
       .select('id')
       .single();
 
-    return error ? null : (node?.id || null);
+    return error ? null : node?.id || null;
   }
 
   private async getArtistNodeId(supabase: any, profileId: string): Promise<string | null> {

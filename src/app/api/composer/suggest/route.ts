@@ -27,7 +27,9 @@ interface SuggestionRow {
 export async function POST(req: Request) {
   try {
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -52,20 +54,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ suggestions: [] });
     }
 
-    const { data: rows, error: rpcErr } = await supabase.rpc(
-      'find_mixes_for_set_context',
-      {
-        p_embedding: embRow.embedding,
-        p_bpm_min: bpm_min,
-        p_bpm_max: bpm_max,
-        p_k: Math.min(k, 20),
-        p_genre_hint: genre_hint ?? null,
-      }
-    );
+    const { data: rows, error: rpcErr } = await supabase.rpc('find_mixes_for_set_context', {
+      p_embedding: embRow.embedding,
+      p_bpm_min: bpm_min,
+      p_bpm_max: bpm_max,
+      p_k: Math.min(k, 20),
+      p_genre_hint: genre_hint ?? null,
+    });
 
     if (rpcErr) throw rpcErr;
 
-    const suggestions = ((rows ?? []) as SuggestionRow[]).map((r) => ({
+    const suggestions = ((rows ?? []) as SuggestionRow[]).map(r => ({
       mix_id: r.mix_id,
       title: r.title,
       artist: r.artist,

@@ -163,7 +163,7 @@ describe('GET /api/feed — following', () => {
     await get({ type: 'following', userId: 'user-1', limit: '100' });
     expect(sb.rpc).toHaveBeenCalledWith(
       'get_feed_cursor',
-      expect.objectContaining({ p_limit: 50 }),
+      expect.objectContaining({ p_limit: 50 })
     );
   });
 });

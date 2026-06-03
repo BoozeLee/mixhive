@@ -49,13 +49,12 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
 
     async function fetchStory() {
       try {
-        const { data, error: rpcErr } = await supabase
-          .rpc('get_profile_story', { p_profile_id: profileId });
+        const { data, error: rpcErr } = await supabase.rpc('get_profile_story', {
+          p_profile_id: profileId,
+        });
         if (!mounted) return;
         if (rpcErr) throw rpcErr;
-        setChapters(
-          (data ?? []) as StoryChapter[]
-        );
+        setChapters((data ?? []) as StoryChapter[]);
       } catch {
         if (mounted) setError('Could not load story data.');
       } finally {
@@ -108,7 +107,9 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
 
     fetchStory();
     fetchEvolution();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [profileId, showJourney]);
 
   if (!showJourney) {
@@ -153,8 +154,17 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
         <p style={{ color: colors.danger, fontSize: fontSize.sm }}>{error}</p>
         <button
           type="button"
-          onClick={() => { setLoading(true); setError(null); }}
-          style={{ color: colors.accent, background: 'none', border: 'none', cursor: 'pointer', fontSize: fontSize.sm }}
+          onClick={() => {
+            setLoading(true);
+            setError(null);
+          }}
+          style={{
+            color: colors.accent,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: fontSize.sm,
+          }}
         >
           Retry
         </button>
@@ -181,7 +191,16 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
   return (
     <div style={{ display: 'flex', height: '100%' }}>
       {/* Main story content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: space[10], padding: `${space[10]}px`, overflowY: 'auto' }}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: space[10],
+          padding: `${space[10]}px`,
+          overflowY: 'auto',
+        }}
+      >
         {/* Section A: Milestone chain */}
         <section>
           <h2
@@ -224,9 +243,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
                   <StoryChapterCell
                     chapter={ch}
                     selected={selectedChapter === ch}
-                    onClick={() =>
-                      setSelectedChapter(selectedChapter === ch ? null : ch)
-                    }
+                    onClick={() => setSelectedChapter(selectedChapter === ch ? null : ch)}
                   />
                 </div>
               ))}
@@ -261,34 +278,50 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
               }}
             >
               {snapshotPeriods.map((period, idx) => (
-                <div key={period.index} style={{ display: 'flex', alignItems: 'center', gap: space[6] }}>
+                <div
+                  key={period.index}
+                  style={{ display: 'flex', alignItems: 'center', gap: space[6] }}
+                >
                   <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>
-                    <span style={{ fontSize: fontSize.xs, color: colors.text.dim, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    <span
+                      style={{
+                        fontSize: fontSize.xs,
+                        color: colors.text.dim,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                      }}
+                    >
                       {period.label}
                     </span>
                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                      {period.genreTags.length > 0 ? period.genreTags.map(tag => (
-                        <span
-                          key={tag}
-                          style={{
-                            fontSize: fontSize.xs,
-                            padding: '2px 7px',
-                            borderRadius: 999,
-                            background: `${getGenreColor(tag)}22`,
-                            border: `1px solid ${getGenreColor(tag)}55`,
-                            color: getGenreColor(tag),
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {tag}
-                        </span>
-                      )) : (
+                      {period.genreTags.length > 0 ? (
+                        period.genreTags.map(tag => (
+                          <span
+                            key={tag}
+                            style={{
+                              fontSize: fontSize.xs,
+                              padding: '2px 7px',
+                              borderRadius: 999,
+                              background: `${getGenreColor(tag)}22`,
+                              border: `1px solid ${getGenreColor(tag)}55`,
+                              color: getGenreColor(tag),
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {tag}
+                          </span>
+                        ))
+                      ) : (
                         <span style={{ fontSize: fontSize.xs, color: colors.text.faint }}>—</span>
                       )}
                     </div>
                   </div>
                   {idx < snapshotPeriods.length - 1 && (
-                    <span style={{ fontSize: fontSize.md, color: colors.text.faint, flexShrink: 0 }}>→</span>
+                    <span
+                      style={{ fontSize: fontSize.md, color: colors.text.faint, flexShrink: 0 }}
+                    >
+                      →
+                    </span>
                   )}
                 </div>
               ))}
@@ -299,16 +332,52 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
 
           {/* Evolution score bar */}
           {evolution?.score !== undefined && (
-            <div style={{ marginTop: space[8], display: 'flex', flexDirection: 'column', gap: space[3] }}>
+            <div
+              style={{
+                marginTop: space[8],
+                display: 'flex',
+                flexDirection: 'column',
+                gap: space[3],
+              }}
+            >
               {(() => {
                 const score = evolution.score ?? 0;
-                const label = score >= 0.7 ? 'Consistent' : score >= 0.4 ? 'Evolving' : 'Transformed';
-                const barColor = score >= 0.7 ? getMoodColor('ambient') : score >= 0.4 ? getMoodColor('groove') : getMoodColor('peak');
+                const label =
+                  score >= 0.7 ? 'Consistent' : score >= 0.4 ? 'Evolving' : 'Transformed';
+                const barColor =
+                  score >= 0.7
+                    ? getMoodColor('ambient')
+                    : score >= 0.4
+                      ? getMoodColor('groove')
+                      : getMoodColor('peak');
                 return (
                   <>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: fontSize.xs, color: colors.text.dim, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sound consistency</span>
-                      <span style={{ fontSize: fontSize.xs, fontWeight: fontWeight.semibold, color: barColor }}>{label}</span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: fontSize.xs,
+                          color: colors.text.dim,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
+                        }}
+                      >
+                        Sound consistency
+                      </span>
+                      <span
+                        style={{
+                          fontSize: fontSize.xs,
+                          fontWeight: fontWeight.semibold,
+                          color: barColor,
+                        }}
+                      >
+                        {label}
+                      </span>
                     </div>
                     <div
                       style={{
@@ -347,7 +416,14 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
                 padding: space[10],
               }}
             >
-              <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.text.primary, lineHeight: 1.6 }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: fontSize.sm,
+                  color: colors.text.primary,
+                  lineHeight: 1.6,
+                }}
+              >
                 ⚡ {evolution.narrative}
               </p>
             </div>
@@ -365,7 +441,14 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
                 padding: space[10],
               }}
             >
-              <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.text.muted, lineHeight: 1.6 }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: fontSize.sm,
+                  color: colors.text.muted,
+                  lineHeight: 1.6,
+                }}
+              >
                 ⚡ Your sound story is being analysed — check back soon.
               </p>
             </div>
@@ -375,10 +458,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
 
       {/* Detail panel */}
       {selectedChapter && (
-        <StoryDetailPanel
-          chapter={selectedChapter}
-          onClose={() => setSelectedChapter(null)}
-        />
+        <StoryDetailPanel chapter={selectedChapter} onClose={() => setSelectedChapter(null)} />
       )}
     </div>
   );

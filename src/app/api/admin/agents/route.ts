@@ -28,7 +28,9 @@ export async function GET(req: NextRequest) {
 
   const { data: agents, error } = await serviceClient()
     .from('agent_registry')
-    .select('id, display_name, description, tier, approval_policy, timeout_ms, enabled, lua_script_version, updated_at')
+    .select(
+      'id, display_name, description, tier, approval_policy, timeout_ms, enabled, lua_script_version, updated_at'
+    )
     .order('id');
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

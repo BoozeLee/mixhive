@@ -13,7 +13,10 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [lastResult, setLastResult] = useState<{ nodesCreated: number; edgesCreated: number } | null>(null);
+  const [lastResult, setLastResult] = useState<{
+    nodesCreated: number;
+    edgesCreated: number;
+  } | null>(null);
 
   // Simple Gig Logger form (MVP)
   const [gigForm, setGigForm] = useState({
@@ -81,7 +84,6 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
         `Created ${nodes} nodes and ${edges} edges. This performance is now part of your Mythic legend.`,
         { duration: 5000 }
       );
-
     } catch (e) {
       console.error('Failed to log gig:', e);
       setSubmitError((e as Error).message || 'Failed to log performance');
@@ -101,12 +103,40 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ background: colors.surface, border: `1px solid ${colors.borderStrong}`, borderRadius: radius.lg, width: '100%', maxWidth: 580, padding: 24 }}>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.75)',
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        style={{
+          background: colors.surface,
+          border: `1px solid ${colors.borderStrong}`,
+          borderRadius: radius.lg,
+          width: '100%',
+          maxWidth: 580,
+          padding: 24,
+        }}
+      >
         <h2 style={{ marginTop: 0 }}>Seed Your Mythic Graph</h2>
-        <p style={{ color: colors.text.muted, fontSize: fontSize.sm }}>Log real activity so your agents and quests have data to work with.</p>
+        <p style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
+          Log real activity so your agents and quests have data to work with.
+        </p>
 
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16, borderBottom: `1px solid ${colors.border}` }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            marginBottom: 16,
+            borderBottom: `1px solid ${colors.border}`,
+          }}
+        >
           {(['gig', 'mix', 'collab'] as const).map(tab => (
             <button
               key={tab}
@@ -130,21 +160,78 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
         {activeTab === 'gig' && (
           <div>
             <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>Date</label>
-              <input type="date" value={gigForm.date} onChange={e => setGigForm({ ...gigForm, date: e.target.value })} style={{ width: '100%', padding: 8, background: colors.bg, border: `1px solid ${colors.border}`, color: colors.text.primary, borderRadius: 6 }} />
+              <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
+                Date
+              </label>
+              <input
+                type="date"
+                value={gigForm.date}
+                onChange={e => setGigForm({ ...gigForm, date: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: 8,
+                  background: colors.bg,
+                  border: `1px solid ${colors.border}`,
+                  color: colors.text.primary,
+                  borderRadius: 6,
+                }}
+              />
             </div>
             <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>Venue / Event</label>
-              <input value={gigForm.venue} onChange={e => setGigForm({ ...gigForm, venue: e.target.value })} placeholder="Fuse, Kiosk Radio, etc." style={{ width: '100%', padding: 8, background: colors.bg, border: `1px solid ${colors.border}`, color: colors.text.primary, borderRadius: 6 }} />
+              <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
+                Venue / Event
+              </label>
+              <input
+                value={gigForm.venue}
+                onChange={e => setGigForm({ ...gigForm, venue: e.target.value })}
+                placeholder="Fuse, Kiosk Radio, etc."
+                style={{
+                  width: '100%',
+                  padding: 8,
+                  background: colors.bg,
+                  border: `1px solid ${colors.border}`,
+                  color: colors.text.primary,
+                  borderRadius: 6,
+                }}
+              />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div
+              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}
+            >
               <div>
-                <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>City</label>
-                <input value={gigForm.city} onChange={e => setGigForm({ ...gigForm, city: e.target.value })} placeholder="Brussels" style={{ width: '100%', padding: 8, background: colors.bg, border: `1px solid ${colors.border}`, color: colors.text.primary, borderRadius: 6 }} />
+                <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
+                  City
+                </label>
+                <input
+                  value={gigForm.city}
+                  onChange={e => setGigForm({ ...gigForm, city: e.target.value })}
+                  placeholder="Brussels"
+                  style={{
+                    width: '100%',
+                    padding: 8,
+                    background: colors.bg,
+                    border: `1px solid ${colors.border}`,
+                    color: colors.text.primary,
+                    borderRadius: 6,
+                  }}
+                />
               </div>
               <div>
-                <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>Role</label>
-                <select value={gigForm.role} onChange={e => setGigForm({ ...gigForm, role: e.target.value })} style={{ width: '100%', padding: 8, background: colors.bg, border: `1px solid ${colors.border}`, color: colors.text.primary, borderRadius: 6 }}>
+                <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
+                  Role
+                </label>
+                <select
+                  value={gigForm.role}
+                  onChange={e => setGigForm({ ...gigForm, role: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: 8,
+                    background: colors.bg,
+                    border: `1px solid ${colors.border}`,
+                    color: colors.text.primary,
+                    borderRadius: 6,
+                  }}
+                >
                   <option value="headline">Headline</option>
                   <option value="support">Support</option>
                   <option value="resident">Resident</option>
@@ -154,28 +241,51 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               </div>
             </div>
             <div style={{ marginBottom: 16 }}>
-              <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>Notes (optional)</label>
-              <textarea value={gigForm.notes} onChange={e => setGigForm({ ...gigForm, notes: e.target.value })} rows={2} style={{ width: '100%', padding: 8, background: colors.bg, border: `1px solid ${colors.border}`, color: colors.text.primary, borderRadius: 6 }} />
+              <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
+                Notes (optional)
+              </label>
+              <textarea
+                value={gigForm.notes}
+                onChange={e => setGigForm({ ...gigForm, notes: e.target.value })}
+                rows={2}
+                style={{
+                  width: '100%',
+                  padding: 8,
+                  background: colors.bg,
+                  border: `1px solid ${colors.border}`,
+                  color: colors.text.primary,
+                  borderRadius: 6,
+                }}
+              />
             </div>
           </div>
         )}
 
         {activeTab !== 'gig' && (
-          <div style={{ padding: 20, textAlign: 'center', color: colors.text.muted, fontSize: fontSize.sm }}>
+          <div
+            style={{
+              padding: 20,
+              textAlign: 'center',
+              color: colors.text.muted,
+              fontSize: fontSize.sm,
+            }}
+          >
             This category is coming soon. Focus on logging gigs for maximum graph value right now.
           </div>
         )}
 
         {/* Error message */}
         {submitError && (
-          <div style={{ 
-            background: '#3a1f1f', 
-            color: '#ff6b6b', 
-            padding: '8px 12px', 
-            borderRadius: 6, 
-            fontSize: fontSize.sm,
-            marginBottom: 12 
-          }}>
+          <div
+            style={{
+              background: '#3a1f1f',
+              color: '#ff6b6b',
+              padding: '8px 12px',
+              borderRadius: 6,
+              fontSize: fontSize.sm,
+              marginBottom: 12,
+            }}
+          >
             {submitError}
           </div>
         )}
@@ -202,8 +312,14 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
         ) : (
           /* Normal submit buttons */
           <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 16 }}>
-            <HiveButton variant="secondary" onClick={onClose} disabled={isSubmitting}>Cancel</HiveButton>
-            <HiveButton variant="primary" onClick={handleSubmitGig} disabled={isSubmitting || !gigForm.venue}>
+            <HiveButton variant="secondary" onClick={onClose} disabled={isSubmitting}>
+              Cancel
+            </HiveButton>
+            <HiveButton
+              variant="primary"
+              onClick={handleSubmitGig}
+              disabled={isSubmitting || !gigForm.venue}
+            >
               {isSubmitting ? 'Saving to Graph...' : 'Log & Seed Graph'}
             </HiveButton>
           </div>

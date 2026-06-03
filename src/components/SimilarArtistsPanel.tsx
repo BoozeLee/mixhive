@@ -17,7 +17,10 @@ export function SimilarArtistsPanel({ profileId }: { profileId: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isSupabaseConfigured || !profileId) { setLoading(false); return; }
+    if (!isSupabaseConfigured || !profileId) {
+      setLoading(false);
+      return;
+    }
     supabase
       .rpc('find_similar_artists', { p_profile_id: profileId, p_k: 3 })
       .then(({ data }) => {
@@ -30,11 +33,20 @@ export function SimilarArtistsPanel({ profileId }: { profileId: string }) {
   if (loading) {
     return (
       <div style={{ marginTop: space[10] }}>
-        <h3 style={{ fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.text.secondary, marginBottom: space[6] }}>
+        <h3
+          style={{
+            fontSize: fontSize.sm,
+            fontWeight: fontWeight.semibold,
+            color: colors.text.secondary,
+            marginBottom: space[6],
+          }}
+        >
           Similar DJs
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {[0, 1, 2].map(i => <SkeletonBar key={i} height={52} style={{ borderRadius: 8 }} />)}
+          {[0, 1, 2].map(i => (
+            <SkeletonBar key={i} height={52} style={{ borderRadius: 8 }} />
+          ))}
         </div>
       </div>
     );
@@ -44,16 +56,19 @@ export function SimilarArtistsPanel({ profileId }: { profileId: string }) {
 
   return (
     <div style={{ marginTop: space[10] }}>
-      <h3 style={{ fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.text.secondary, marginBottom: space[6] }}>
+      <h3
+        style={{
+          fontSize: fontSize.sm,
+          fontWeight: fontWeight.semibold,
+          color: colors.text.secondary,
+          marginBottom: space[6],
+        }}
+      >
         Similar DJs
       </h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {artists.map(a => (
-          <Link
-            key={a.profile_id}
-            to={`/u/${a.username}`}
-            style={{ textDecoration: 'none' }}
-          >
+          <Link key={a.profile_id} to={`/u/${a.username}`} style={{ textDecoration: 'none' }}>
             <div
               style={{
                 display: 'flex',

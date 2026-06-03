@@ -11,7 +11,15 @@ import { BuzzComposer } from '../components/BuzzComposer';
 import { RecommendedDJs } from '../components/RecommendedDJs';
 import { SkeletonFeed } from '../components/Skeleton';
 import { EmptyState } from '../components/EmptyState';
-import { colors, fontSize, fontWeight, getGenreColor, radius, space, transition } from '../styles/tokens';
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  getGenreColor,
+  radius,
+  space,
+  transition,
+} from '../styles/tokens';
 import type {
   FeedMix,
   FeedCursor,
@@ -48,8 +56,16 @@ const emptyMixedTab = (): MixedTabState => ({
 });
 
 const POPULAR_GENRES = [
-  'techno', 'house', 'drum and bass', 'ambient', 'trance',
-  'garage', 'jungle', 'breaks', 'electro', 'trap',
+  'techno',
+  'house',
+  'drum and bass',
+  'ambient',
+  'trance',
+  'garage',
+  'jungle',
+  'breaks',
+  'electro',
+  'trap',
 ];
 
 function RightRailPanel({ title, children }: { title: string; children: React.ReactNode }) {
@@ -328,13 +344,20 @@ export function Feed() {
       .channel(`feed:${user.id}`)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'feed_events', filter: `target_id=eq.${user.id}` },
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'feed_events',
+          filter: `target_id=eq.${user.id}`,
+        },
         (payload: { new: Record<string, unknown> }) => {
           if (payload.new?.actor_id !== user.id) setNewCount(c => c + 1);
         }
       )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   const handleShowNew = async () => {
@@ -356,7 +379,10 @@ export function Feed() {
     loadingMoreRef.current = true;
 
     if (tab === 'feed') {
-      if (!mixedFeed.mixCursor && !mixedFeed.buzzCursor) { loadingMoreRef.current = false; return; }
+      if (!mixedFeed.mixCursor && !mixedFeed.buzzCursor) {
+        loadingMoreRef.current = false;
+        return;
+      }
       setMixedFeed(prev => ({ ...prev, loading: true }));
       try {
         const res = await fetchFollowingFeed(
@@ -372,15 +398,24 @@ export function Feed() {
         }));
       } catch {
         setMixedFeed(prev => ({ ...prev, loading: false }));
-      } finally { loadingMoreRef.current = false; }
+      } finally {
+        loadingMoreRef.current = false;
+      }
       return;
     }
 
     if (tab === 'latest') {
-      if (!latestMixed.mixCursor && !latestMixed.buzzCursor) { loadingMoreRef.current = false; return; }
+      if (!latestMixed.mixCursor && !latestMixed.buzzCursor) {
+        loadingMoreRef.current = false;
+        return;
+      }
       setLatestMixed(prev => ({ ...prev, loading: true }));
       try {
-        const res = await getLatestMixed(20, latestMixed.mixCursor ?? undefined, latestMixed.buzzCursor ?? undefined);
+        const res = await getLatestMixed(
+          20,
+          latestMixed.mixCursor ?? undefined,
+          latestMixed.buzzCursor ?? undefined
+        );
         setLatestMixed(prev => ({
           data: [...prev.data, ...res.data],
           mixCursor: res.mixCursor,
@@ -390,11 +425,16 @@ export function Feed() {
         }));
       } catch {
         setLatestMixed(prev => ({ ...prev, loading: false }));
-      } finally { loadingMoreRef.current = false; }
+      } finally {
+        loadingMoreRef.current = false;
+      }
       return;
     }
 
-    if (!trendingTab.cursor) { loadingMoreRef.current = false; return; }
+    if (!trendingTab.cursor) {
+      loadingMoreRef.current = false;
+      return;
+    }
     setTrendingTab(prev => ({ ...prev, loading: true }));
     try {
       const res = await getTrending(20, trendingTab.cursor ?? undefined);
@@ -406,7 +446,9 @@ export function Feed() {
       }));
     } catch {
       setTrendingTab(prev => ({ ...prev, loading: false }));
-    } finally { loadingMoreRef.current = false; }
+    } finally {
+      loadingMoreRef.current = false;
+    }
   };
 
   const handleRetry = async (t: Tab) => {
@@ -414,29 +456,58 @@ export function Feed() {
       setMixedFeed(prev => ({ ...prev, loading: true }));
       try {
         const res = await fetchFollowingFeed();
-        setMixedFeed({ data: res.data, mixCursor: res.mixCursor, buzzCursor: res.buzzCursor, hasMore: !!(res.mixCursor || res.buzzCursor), loading: false });
-      } catch { setMixedFeed(prev => ({ ...prev, loading: false })); }
+        setMixedFeed({
+          data: res.data,
+          mixCursor: res.mixCursor,
+          buzzCursor: res.buzzCursor,
+          hasMore: !!(res.mixCursor || res.buzzCursor),
+          loading: false,
+        });
+      } catch {
+        setMixedFeed(prev => ({ ...prev, loading: false }));
+      }
       return;
     }
     if (t === 'latest') {
       setLatestMixed(prev => ({ ...prev, loading: true }));
       try {
         const res = await getLatestMixed(20);
-        setLatestMixed({ data: res.data, mixCursor: res.mixCursor, buzzCursor: res.buzzCursor, hasMore: !!(res.mixCursor || res.buzzCursor), loading: false });
-      } catch { setLatestMixed(prev => ({ ...prev, loading: false })); }
+        setLatestMixed({
+          data: res.data,
+          mixCursor: res.mixCursor,
+          buzzCursor: res.buzzCursor,
+          hasMore: !!(res.mixCursor || res.buzzCursor),
+          loading: false,
+        });
+      } catch {
+        setLatestMixed(prev => ({ ...prev, loading: false }));
+      }
       return;
     }
     setTrendingTab(prev => ({ ...prev, loading: true }));
     try {
       const res = await getTrending(20);
-      setTrendingTab({ data: res.data, cursor: res.cursor as TrendingCursor | null, hasMore: !!res.cursor, loading: false });
-    } catch { setTrendingTab(prev => ({ ...prev, loading: false })); }
+      setTrendingTab({
+        data: res.data,
+        cursor: res.cursor as TrendingCursor | null,
+        hasMore: !!res.cursor,
+        loading: false,
+      });
+    } catch {
+      setTrendingTab(prev => ({ ...prev, loading: false }));
+    }
   };
 
   function handleBuzzCreated(buzz: Buzz) {
     const feedBuzz = { ...buzz, author: profile ?? undefined };
-    setMixedFeed(prev => ({ ...prev, data: [{ type: 'buzz' as const, data: feedBuzz }, ...prev.data] }));
-    setLatestMixed(prev => ({ ...prev, data: [{ type: 'buzz' as const, data: feedBuzz }, ...prev.data] }));
+    setMixedFeed(prev => ({
+      ...prev,
+      data: [{ type: 'buzz' as const, data: feedBuzz }, ...prev.data],
+    }));
+    setLatestMixed(prev => ({
+      ...prev,
+      data: [{ type: 'buzz' as const, data: feedBuzz }, ...prev.data],
+    }));
     if (tab !== 'feed' && tab !== 'latest') setNewCount(c => c + 1);
   }
 
@@ -446,10 +517,24 @@ export function Feed() {
       : tab === 'latest'
         ? latestMixed.data
         : trendingTab.data.map(m => ({ type: 'mix' as const, data: m }));
-  const currentLoading = tab === 'feed' ? mixedFeed.loading : tab === 'latest' ? latestMixed.loading : trendingTab.loading;
-  const currentHasMore = tab === 'feed' ? mixedFeed.hasMore : tab === 'latest' ? latestMixed.hasMore : trendingTab.hasMore;
+  const currentLoading =
+    tab === 'feed'
+      ? mixedFeed.loading
+      : tab === 'latest'
+        ? latestMixed.loading
+        : trendingTab.loading;
+  const currentHasMore =
+    tab === 'feed'
+      ? mixedFeed.hasMore
+      : tab === 'latest'
+        ? latestMixed.hasMore
+        : trendingTab.hasMore;
 
-  const tabLabels: Record<Tab, string> = { trending: 'Trending', latest: 'Latest', feed: 'Following' };
+  const tabLabels: Record<Tab, string> = {
+    trending: 'Trending',
+    latest: 'Latest',
+    feed: 'Following',
+  };
 
   return (
     <>
@@ -484,7 +569,14 @@ export function Feed() {
           >
             The Hive Never Sleeps
           </h1>
-          <p style={{ margin: '6px 0 0', fontSize: fontSize.md, color: colors.text.muted, lineHeight: 1.4 }}>
+          <p
+            style={{
+              margin: '6px 0 0',
+              fontSize: fontSize.md,
+              color: colors.text.muted,
+              lineHeight: 1.4,
+            }}
+          >
             Underground mixes, live from the scene.
           </p>
         </div>
@@ -576,7 +668,10 @@ export function Feed() {
                 fontSize: fontSize.md,
               }}
             >
-              <Link to="/login" style={{ color: colors.accent }}>Sign in</Link> to see your following feed.
+              <Link to="/login" style={{ color: colors.accent }}>
+                Sign in
+              </Link>{' '}
+              to see your following feed.
             </div>
           )}
 
@@ -631,9 +726,7 @@ export function Feed() {
 
         {/* Right rail — desktop only */}
         <aside className="feed-right-rail" aria-label="Feed sidebar" style={{ alignSelf: 'start' }}>
-          {trendingTab.data.length > 0 && (
-            <TrendingNowPanel mixes={trendingTab.data} />
-          )}
+          {trendingTab.data.length > 0 && <TrendingNowPanel mixes={trendingTab.data} />}
           <GenreRadar />
           {user && <RecommendedDJs userId={user.id} />}
         </aside>

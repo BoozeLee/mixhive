@@ -300,13 +300,20 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         </>
       )}
 
-      {aiError && (
-        <p style={{ marginTop: 12, color: '#e05', fontSize: 13 }}>{aiError}</p>
-      )}
+      {aiError && <p style={{ marginTop: 12, color: '#e05', fontSize: 13 }}>{aiError}</p>}
 
       {aiAnalysis && aiAnalysis.suggestions.length > 0 && (
         <div style={{ marginTop: 16 }}>
-          <div style={{ color: '#f0c040', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>
+          <div
+            style={{
+              color: '#f0c040',
+              fontSize: 11,
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: 0.8,
+              marginBottom: 10,
+            }}
+          >
             AI Set Intelligence
           </div>
           <div style={{ display: 'grid', gap: 8 }}>
@@ -320,22 +327,40 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                   background: 'rgba(240,192,64,0.04)',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                  <span style={{ color: '#f0c040', fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 4,
+                  }}
+                >
+                  <span
+                    style={{
+                      color: '#f0c040',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                    }}
+                  >
                     {s.type.replace(/_/g, ' ')}
                   </span>
                   <span style={{ color: '#555', fontSize: 11 }}>
                     {Math.round(s.confidence * 100)}% confidence
                   </span>
                 </div>
-                <p style={{ margin: 0, color: '#bbb', fontSize: 13, lineHeight: 1.5 }}>{s.rationale}</p>
+                <p style={{ margin: 0, color: '#bbb', fontSize: 13, lineHeight: 1.5 }}>
+                  {s.rationale}
+                </p>
               </div>
             ))}
           </div>
           {aiAnalysis.suggestions.length > 3 && (
             <p style={{ marginTop: 8, color: '#555', fontSize: 12 }}>
               +{aiAnalysis.suggestions.length - 3} more in{' '}
-              <a href="/agents/inbox" style={{ color: '#f0c040' }}>agents inbox</a>
+              <a href="/agents/inbox" style={{ color: '#f0c040' }}>
+                agents inbox
+              </a>
             </p>
           )}
         </div>

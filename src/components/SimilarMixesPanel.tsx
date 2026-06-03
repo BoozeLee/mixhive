@@ -22,7 +22,10 @@ export function SimilarMixesPanel({ mixId }: { mixId: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isSupabaseConfigured || !mixId) { setLoading(false); return; }
+    if (!isSupabaseConfigured || !mixId) {
+      setLoading(false);
+      return;
+    }
     supabase
       .rpc('find_similar_mixes', { p_mix_id: mixId, p_k: 4 })
       .then(({ data }) => {
@@ -35,11 +38,20 @@ export function SimilarMixesPanel({ mixId }: { mixId: string }) {
   if (loading) {
     return (
       <div style={{ marginTop: 32 }}>
-        <h3 style={{ fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.text.secondary, marginBottom: 12 }}>
+        <h3
+          style={{
+            fontSize: fontSize.sm,
+            fontWeight: fontWeight.semibold,
+            color: colors.text.secondary,
+            marginBottom: 12,
+          }}
+        >
           Similar Vibes
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {[0, 1, 2].map(i => <SkeletonBar key={i} height={56} style={{ borderRadius: 8 }} />)}
+          {[0, 1, 2].map(i => (
+            <SkeletonBar key={i} height={56} style={{ borderRadius: 8 }} />
+          ))}
         </div>
       </div>
     );
@@ -49,16 +61,19 @@ export function SimilarMixesPanel({ mixId }: { mixId: string }) {
 
   return (
     <div style={{ marginTop: 32 }}>
-      <h3 style={{ fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.text.secondary, marginBottom: 12 }}>
+      <h3
+        style={{
+          fontSize: fontSize.sm,
+          fontWeight: fontWeight.semibold,
+          color: colors.text.secondary,
+          marginBottom: 12,
+        }}
+      >
         Similar Vibes
       </h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {mixes.map(m => (
-          <Link
-            key={m.mix_id}
-            to={`/mix/${m.mix_id}`}
-            style={{ textDecoration: 'none' }}
-          >
+          <Link key={m.mix_id} to={`/mix/${m.mix_id}`} style={{ textDecoration: 'none' }}>
             <div
               style={{
                 display: 'flex',

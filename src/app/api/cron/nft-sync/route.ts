@@ -47,11 +47,9 @@ async function fetchZoraTransfers(
 
   if (!resp.ok) throw new Error(`Zora API error: ${resp.status}`);
 
-  const json = await resp.json() as { data?: { transferEvents?: ZoraTransferEvent[] } };
+  const json = (await resp.json()) as { data?: { transferEvents?: ZoraTransferEvent[] } };
   const events = json.data?.transferEvents ?? [];
-  const latestBlock = events.length > 0
-    ? Math.max(...events.map(e => e.blockNumber))
-    : fromBlock;
+  const latestBlock = events.length > 0 ? Math.max(...events.map(e => e.blockNumber)) : fromBlock;
 
   return { events, latestBlock };
 }
@@ -109,15 +107,13 @@ export async function GET(request: Request) {
                 .eq('id', existingToken.id);
             }
           } else {
-            await supabase
-              .from('nft_tokens')
-              .insert({
-                collection_id: collection.id,
-                token_id: parseInt(event.tokenId, 10),
-                holder_address: event.toAddress.toLowerCase(),
-                tx_hash: event.txHash,
-                minted_at: new Date().toISOString(),
-              });
+            await supabase.from('nft_tokens').insert({
+              collection_id: collection.id,
+              token_id: parseInt(event.tokenId, 10),
+              holder_address: event.toAddress.toLowerCase(),
+              tx_hash: event.txHash,
+              minted_at: new Date().toISOString(),
+            });
           }
 
           // Sync owns_nft_of graph edge for linked profiles
@@ -146,18 +142,16 @@ export async function GET(request: Request) {
 
             if (holderNode && nftNode) {
               // Upsert owns_nft_of edge (idempotent)
-              await supabase
-                .from('mythic_edges')
-                .upsert(
-                  {
-                    from_node_id: holderNode.id,
-                    to_node_id: nftNode.id,
-                    edge_type: 'owns_nft_of',
-                    metadata: { token_id: event.tokenId, tx_hash: event.txHash },
-                    source_event: 'cron:nft-sync',
-                  },
-                  { onConflict: 'from_node_id,to_node_id,edge_type' }
-                );
+              await supabase.from('mythic_edges').upsert(
+                {
+                  from_node_id: holderNode.id,
+                  to_node_id: nftNode.id,
+                  edge_type: 'owns_nft_of',
+                  metadata: { token_id: event.tokenId, tx_hash: event.txHash },
+                  source_event: 'cron:nft-sync',
+                },
+                { onConflict: 'from_node_id,to_node_id,edge_type' }
+              );
             }
           }
         }

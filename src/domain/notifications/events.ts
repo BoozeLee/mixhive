@@ -1,6 +1,6 @@
-export type NotificationEventType = 
+export type NotificationEventType =
   | 'new_follower'
-  | 'mix_liked' 
+  | 'mix_liked'
   | 'comment'
   | 'reply'
   | 'mix_upload'
@@ -60,7 +60,7 @@ export interface RepostPayload {
   buzzId: string;
 }
 
-export type NotificationEventPayload = 
+export type NotificationEventPayload =
   | NewFollowerPayload
   | MixLikedPayload
   | CommentPayload

@@ -30,11 +30,15 @@ let doStringCalls: string[] = [];
 
 const mockEngine = {
   global: {
-    set: jest.fn((key: string, value: unknown) => { setCalls.push({ key, value }); }),
+    set: jest.fn((key: string, value: unknown) => {
+      setCalls.push({ key, value });
+    }),
     close: jest.fn(),
     get: jest.fn(),
   },
-  doString: jest.fn(async (code: string) => { doStringCalls.push(code); }),
+  doString: jest.fn(async (code: string) => {
+    doStringCalls.push(code);
+  }),
 };
 
 beforeEach(() => {
@@ -51,7 +55,13 @@ describe('installSandbox — global injection', () => {
     await installSandbox(
       mockEngine as never,
       buildToolCatalogue(config),
-      { profile_id: 'p1', agent_id: 'profile_coach', run_id: 'r1', trigger: 'event:user_request', dry_run: true },
+      {
+        profile_id: 'p1',
+        agent_id: 'profile_coach',
+        run_id: 'r1',
+        trigger: 'event:user_request',
+        dry_run: true,
+      },
       config,
       state
     );
@@ -146,7 +156,13 @@ describe('state_get / state_set — function shape', () => {
     await installSandbox(
       mockEngine as never,
       buildToolCatalogue(config),
-      { profile_id: 'p1', agent_id: 'profile_coach', run_id: 'r1', trigger: 'event:user_request', dry_run: true },
+      {
+        profile_id: 'p1',
+        agent_id: 'profile_coach',
+        run_id: 'r1',
+        trigger: 'event:user_request',
+        dry_run: true,
+      },
       config,
       state
     );
@@ -164,7 +180,13 @@ describe('state_get / state_set — function shape', () => {
     await installSandbox(
       mockEngine as never,
       buildToolCatalogue(config),
-      { profile_id: 'p1', agent_id: 'profile_coach', run_id: 'r1', trigger: 'event:user_request', dry_run: true },
+      {
+        profile_id: 'p1',
+        agent_id: 'profile_coach',
+        run_id: 'r1',
+        trigger: 'event:user_request',
+        dry_run: true,
+      },
       config,
       state
     );
@@ -179,7 +201,13 @@ describe('state_get / state_set — function shape', () => {
     await installSandbox(
       mockEngine as never,
       buildToolCatalogue(config),
-      { profile_id: 'p1', agent_id: 'profile_coach', run_id: 'r1', trigger: 'event:user_request', dry_run: true },
+      {
+        profile_id: 'p1',
+        agent_id: 'profile_coach',
+        run_id: 'r1',
+        trigger: 'event:user_request',
+        dry_run: true,
+      },
       config,
       state
     );

@@ -51,7 +51,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // Write the script to the live registry
   const { error: regErr } = await sb
     .from('agent_registry')
-    .update({ lua_script: ver.lua_script, lua_script_version: ver.version, updated_at: new Date().toISOString() })
+    .update({
+      lua_script: ver.lua_script,
+      lua_script_version: ver.version,
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', id);
 
   if (regErr) return NextResponse.json({ error: regErr.message }, { status: 500 });

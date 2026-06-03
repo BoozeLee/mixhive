@@ -211,13 +211,16 @@ function SuggestionBody({ suggestion }: { suggestion: AISuggestion }) {
     const action = p.action as string | undefined;
     const reasonTemplate = p.reason_template as string | undefined;
     const contextStats = p.context_stats as Record<string, string | number> | undefined;
-    const text = reasonTemplate?.replace(/\{(\w+)\}/g, (_, key) =>
-      contextStats?.[key] !== undefined ? String(contextStats[key]) : `{${key}}`
-    ) ?? 'A new supporter pass is suggested for this release.';
+    const text =
+      reasonTemplate?.replace(/\{(\w+)\}/g, (_, key) =>
+        contextStats?.[key] !== undefined ? String(contextStats[key]) : `{${key}}`
+      ) ?? 'A new supporter pass is suggested for this release.';
     const actionLabel =
-      action === 'create_pass' ? 'Supporter pass'
-      : action === 'open_quest_backing' ? 'Quest backing'
-      : 'Gig proof';
+      action === 'create_pass'
+        ? 'Supporter pass'
+        : action === 'open_quest_backing'
+          ? 'Quest backing'
+          : 'Gig proof';
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: space[3] }}>
@@ -238,7 +241,14 @@ function SuggestionBody({ suggestion }: { suggestion: AISuggestion }) {
           </span>
           <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>Base L2 · Zora</span>
         </div>
-        <p style={{ margin: 0, fontSize: fontSize.base, color: colors.text.secondary, lineHeight: 1.6 }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: fontSize.base,
+            color: colors.text.secondary,
+            lineHeight: 1.6,
+          }}
+        >
           {text}
         </p>
       </div>
@@ -308,7 +318,14 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
         candidate_type: suggestion.suggestion_type,
       });
     }
-  }, [profileId, suggestion.id, suggestion.suggestion_type, suggestion.source, suggestion.rank, suggestion.candidate_id]);
+  }, [
+    profileId,
+    suggestion.id,
+    suggestion.suggestion_type,
+    suggestion.source,
+    suggestion.rank,
+    suggestion.candidate_id,
+  ]);
 
   const isApplied = localStatus === 'applied';
   const isRejected = localStatus === 'rejected';

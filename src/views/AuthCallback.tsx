@@ -63,10 +63,12 @@ export function AuthCallback() {
               const metadata = session.user.user_metadata || {};
               await supabase.from('profiles').insert({
                 id: session.user.id,
-                username: metadata.preferred_username || 
-                         metadata.user_name || 
-                         `user_${session.user.id.slice(0, 8)}`,
-                display_name: metadata.full_name || metadata.name || session.user.email?.split('@')[0],
+                username:
+                  metadata.preferred_username ||
+                  metadata.user_name ||
+                  `user_${session.user.id.slice(0, 8)}`,
+                display_name:
+                  metadata.full_name || metadata.name || session.user.email?.split('@')[0],
                 avatar_url: metadata.avatar_url || metadata.picture,
               });
             }

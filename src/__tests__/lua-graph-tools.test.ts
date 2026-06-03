@@ -33,9 +33,7 @@ function makeRpcChain(result: { data: unknown; error: unknown }) {
 
 function makeSupabaseWithRpc(rpcResults: Record<string, unknown>) {
   return {
-    rpc: jest.fn((fn: string) =>
-      makeRpcChain({ data: rpcResults[fn] ?? null, error: null }),
-    ),
+    rpc: jest.fn((fn: string) => makeRpcChain({ data: rpcResults[fn] ?? null, error: null })),
     from: jest.fn().mockReturnValue(makeRpcChain({ data: [], error: null })),
   };
 }
@@ -43,8 +41,20 @@ function makeSupabaseWithRpc(rpcResults: Record<string, unknown>) {
 describe('lua_get_similar_artists RPC', () => {
   it('returns a capped list of similar artists', async () => {
     const artists = [
-      { artist_id: 'uuid-1', display_name: 'DJ Nef', username: 'djnef', avatar_url: null, shared_score: 0.87 },
-      { artist_id: 'uuid-2', display_name: 'Kilian', username: 'kilian', avatar_url: null, shared_score: 0.72 },
+      {
+        artist_id: 'uuid-1',
+        display_name: 'DJ Nef',
+        username: 'djnef',
+        avatar_url: null,
+        shared_score: 0.87,
+      },
+      {
+        artist_id: 'uuid-2',
+        display_name: 'Kilian',
+        username: 'kilian',
+        avatar_url: null,
+        shared_score: 0.72,
+      },
     ];
     const sb = makeSupabaseWithRpc({ lua_get_similar_artists: artists });
     mockCreateClient.mockReturnValue(sb);
@@ -61,7 +71,15 @@ describe('lua_get_similar_artists RPC', () => {
 describe('lua_get_relevant_opportunities RPC', () => {
   it('filters out already-saved opportunities and returns scored results', async () => {
     const opps = [
-      { opp_id: 'opp-1', title: 'Boiler Room BE', opp_type: 'festival', city: 'Ghent', deadline: '2026-07-01', genres: ['techno'], match_score: 9 },
+      {
+        opp_id: 'opp-1',
+        title: 'Boiler Room BE',
+        opp_type: 'festival',
+        city: 'Ghent',
+        deadline: '2026-07-01',
+        genres: ['techno'],
+        match_score: 9,
+      },
     ];
     const sb = makeSupabaseWithRpc({ lua_get_relevant_opportunities: opps });
     mockCreateClient.mockReturnValue(sb);

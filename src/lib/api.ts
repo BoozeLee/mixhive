@@ -7,7 +7,9 @@ function invalidateCache(payload: { userId?: string; mixId?: string }): void {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
-  }).catch(() => { /* fail-open */ });
+  }).catch(() => {
+    /* fail-open */
+  });
 }
 
 /** Pre-check rate limit for a social action before calling Supabase directly */
@@ -313,8 +315,11 @@ export async function trackAnalyticsEvent(input: {
 
 export async function follow(followerId: string, followingId: string) {
   if (!isSupabaseConfigured) return { error: null };
-  if (!(await checkRateLimit('follow', followerId))) return { error: { message: 'Rate limit exceeded' } };
-  const result = await supabase.from('follows').insert({ follower_id: followerId, following_id: followingId });
+  if (!(await checkRateLimit('follow', followerId)))
+    return { error: { message: 'Rate limit exceeded' } };
+  const result = await supabase
+    .from('follows')
+    .insert({ follower_id: followerId, following_id: followingId });
   if (!result.error) {
     invalidateCache({ userId: followerId });
     invalidateCache({ userId: followingId });
@@ -324,7 +329,8 @@ export async function follow(followerId: string, followingId: string) {
 
 export async function unfollow(followerId: string, followingId: string) {
   if (!isSupabaseConfigured) return { error: null };
-  if (!(await checkRateLimit('unfollow', followerId))) return { error: { message: 'Rate limit exceeded' } };
+  if (!(await checkRateLimit('unfollow', followerId)))
+    return { error: { message: 'Rate limit exceeded' } };
   const result = await supabase
     .from('follows')
     .delete()
@@ -1465,7 +1471,9 @@ export async function createQuest(input: {
 }): Promise<MythicQuest | null> {
   if (!isSupabaseConfigured) return null;
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
 
   const { data, error } = await supabase
@@ -1495,7 +1503,9 @@ export async function completeMilestone(
 ): Promise<boolean> {
   if (!isSupabaseConfigured) return false;
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return false;
 
   try {

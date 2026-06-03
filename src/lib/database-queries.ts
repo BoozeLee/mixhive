@@ -56,13 +56,12 @@ export async function enqueue_audio_job(
   maxRetries: number = 3
 ): Promise<string> {
   const supabase = createServerClient();
-  
-  const { data: jobId, error } = await supabase
-    .rpc('enqueue_audio_job', {
-      p_mix_id: mixId,
-      p_job_type: jobType,
-      p_max_retries: maxRetries
-    });
+
+  const { data: jobId, error } = await supabase.rpc('enqueue_audio_job', {
+    p_mix_id: mixId,
+    p_job_type: jobType,
+    p_max_retries: maxRetries,
+  });
 
   if (error) {
     throw new Error(`Failed to enqueue audio job: ${error.message}`);
@@ -76,9 +75,8 @@ export async function enqueue_audio_job(
  */
 export async function mark_audio_job_processing(jobId: string): Promise<void> {
   const supabase = createServerClient();
-  
-  const { error } = await supabase
-    .rpc('mark_audio_job_processing', { p_job_id: jobId });
+
+  const { error } = await supabase.rpc('mark_audio_job_processing', { p_job_id: jobId });
 
   if (error) {
     throw new Error(`Failed to mark job as processing: ${error.message}`);
@@ -88,17 +86,13 @@ export async function mark_audio_job_processing(jobId: string): Promise<void> {
 /**
  * Mark a job as complete with results
  */
-export async function mark_audio_job_complete(
-  jobId: string,
-  result: any
-): Promise<void> {
+export async function mark_audio_job_complete(jobId: string, result: any): Promise<void> {
   const supabase = createServerClient();
-  
-  const { error } = await supabase
-    .rpc('mark_audio_job_complete', {
-      p_job_id: jobId,
-      p_result: result
-    });
+
+  const { error } = await supabase.rpc('mark_audio_job_complete', {
+    p_job_id: jobId,
+    p_result: result,
+  });
 
   if (error) {
     throw new Error(`Failed to mark job as complete: ${error.message}`);
@@ -114,13 +108,12 @@ export async function mark_audio_job_failed(
   shouldRetry: boolean = true
 ): Promise<void> {
   const supabase = createServerClient();
-  
-  const { error } = await supabase
-    .rpc('mark_audio_job_failed', {
-      p_job_id: jobId,
-      p_error_message: errorMessage,
-      p_should_retry: shouldRetry
-    });
+
+  const { error } = await supabase.rpc('mark_audio_job_failed', {
+    p_job_id: jobId,
+    p_error_message: errorMessage,
+    p_should_retry: shouldRetry,
+  });
 
   if (error) {
     throw new Error(`Failed to mark job as failed: ${error.message}`);
@@ -135,7 +128,7 @@ export async function get_pending_audio_jobs(
   jobType?: string
 ): Promise<AudioJob[]> {
   const supabase = createServerClient();
-  
+
   let query = supabase
     .from('audio_jobs')
     .select('*')
@@ -161,12 +154,8 @@ export async function get_pending_audio_jobs(
  */
 export async function get_audio_job(jobId: string): Promise<AudioJob | null> {
   const supabase = createServerClient();
-  
-  const { data, error } = await supabase
-    .from('audio_jobs')
-    .select('*')
-    .eq('id', jobId)
-    .single();
+
+  const { data, error } = await supabase.from('audio_jobs').select('*').eq('id', jobId).single();
 
   if (error) {
     if (error.code === 'PGRST116') {
@@ -183,7 +172,7 @@ export async function get_audio_job(jobId: string): Promise<AudioJob | null> {
  */
 export async function get_mix_audio_jobs(mixId: string): Promise<AudioJob[]> {
   const supabase = createServerClient();
-  
+
   const { data, error } = await supabase
     .from('audio_jobs')
     .select('*')
@@ -200,13 +189,12 @@ export async function get_mix_audio_jobs(mixId: string): Promise<AudioJob[]> {
 /**
  * Cleanup old completed jobs
  */
-export async function cleanup_completed_audio_jobs(
-  daysToKeep: number = 30
-): Promise<number> {
+export async function cleanup_completed_audio_jobs(daysToKeep: number = 30): Promise<number> {
   const supabase = createServerClient();
-  
-  const { data, error } = await supabase
-    .rpc('cleanup_completed_audio_jobs', { p_days_to_keep: daysToKeep });
+
+  const { data, error } = await supabase.rpc('cleanup_completed_audio_jobs', {
+    p_days_to_keep: daysToKeep,
+  });
 
   if (error) {
     throw new Error(`Failed to cleanup jobs: ${error.message}`);
@@ -231,37 +219,34 @@ export async function update_mix_processing_status(
   }
 ): Promise<void> {
   const supabase = createServerClient();
-  
+
   const updateData: any = { upload_status: status };
-  
+
   if (updates?.processingStartedAt) {
     updateData.processing_started_at = updates.processingStartedAt;
   }
-  
+
   if (updates?.processingCompletedAt) {
     updateData.processing_completed_at = updates.processingCompletedAt;
   }
-  
+
   if (updates?.processingErrors) {
     updateData.processing_errors = updates.processingErrors;
   }
-  
+
   if (updates?.waveformUrl) {
     updateData.waveform_url = updates.waveformUrl;
   }
-  
+
   if (updates?.durationSeconds !== undefined) {
     updateData.duration_seconds = updates.durationSeconds;
   }
-  
+
   if (updates?.audioMetadata) {
     updateData.audio_metadata = updates.audioMetadata;
   }
 
-  const { error } = await supabase
-    .from('mixes')
-    .update(updateData)
-    .eq('id', mixId);
+  const { error } = await supabase.from('mixes').update(updateData).eq('id', mixId);
 
   if (error) {
     throw new Error(`Failed to update mix processing status: ${error.message}`);
@@ -353,10 +338,7 @@ export async function mark_mythic_graph_job_processing(jobId: string): Promise<v
   }
 }
 
-export async function mark_mythic_graph_job_complete(
-  jobId: string,
-  result?: any
-): Promise<void> {
+export async function mark_mythic_graph_job_complete(jobId: string, result?: any): Promise<void> {
   const supabase = createServerClient();
 
   const { error } = await supabase.rpc('mark_mythic_graph_job_complete', {
@@ -392,9 +374,7 @@ export async function mark_mythic_graph_job_failed(
  * Calls the security-definer RPC created in migration 048.
  * This is the core primitive for Experiment 5 (Mythic Tour Weaver).
  */
-export async function log_performance(
-  params: LogPerformanceParams
-): Promise<LogPerformanceResult> {
+export async function log_performance(params: LogPerformanceParams): Promise<LogPerformanceResult> {
   const supabase = createServerClient();
 
   const { data, error } = await supabase.rpc('log_performance', {

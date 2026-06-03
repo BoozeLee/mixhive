@@ -3,14 +3,14 @@ import { HexCell } from '@/components/HexCell';
 import { colors, fontSize } from '@/styles/tokens';
 
 const CHAPTER_ICONS: Record<string, string> = {
-  collab:         '🤝',
-  gig:            '🎤',
-  gig_proof:      '⬡',
-  opportunity:    '🎯',
-  quest:          '⚡',
-  set:            '🎧',
-  quest_backing:  '💠',
-  other:          '✦',
+  collab: '🤝',
+  gig: '🎤',
+  gig_proof: '⬡',
+  opportunity: '🎯',
+  quest: '⚡',
+  set: '🎧',
+  quest_backing: '💠',
+  other: '✦',
 };
 
 export interface StoryChapter {

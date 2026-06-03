@@ -34,7 +34,9 @@ async function req(method, path, { body, timeoutMs = 15_000 } = {}) {
     });
     const ms = Date.now() - start;
     let json = null;
-    try { json = await res.json(); } catch {}
+    try {
+      json = await res.json();
+    } catch {}
     return { status: res.status, json, ms, url, ok: true };
   } catch (err) {
     const ms = Date.now() - start;
@@ -204,34 +206,62 @@ const API = [
 ];
 
 const AUTH = [
-  { label: 'POST /api/mixes (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/mixes', { body: {} })) },
-  { label: 'POST /api/buzzes (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/buzzes', { body: {} })) },
-  { label: 'POST /api/ai/generate-bio (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/ai/generate-bio', { body: {} })) },
-  { label: 'POST /api/ai/suggest-genres (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/ai/suggest-genres', { body: {} })) },
-  { label: 'POST /api/ai/generate-avatar (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/ai/generate-avatar', { body: {} })) },
-  { label: 'POST /api/ai/profile-coach (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/ai/profile-coach', { body: {} })) },
-  { label: 'POST /api/composer/suggest (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/composer/suggest', { body: {} })) },
-  { label: 'GET /api/notifications (no auth)',
-    run: async () => mustBe401(await req('GET', '/api/notifications')) },
-  { label: 'POST /api/notifications/mark-read (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/notifications/mark-read', { body: {} })) },
-  { label: 'POST /api/mythic/propose (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/mythic/propose', { body: {} })) },
-  { label: 'POST /api/mythic/log-performance (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/mythic/log-performance', { body: {} })) },
-  { label: 'POST /api/cache/invalidate (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/cache/invalidate', { body: {} })) },
-  { label: 'GET /api/admin/agents (no auth)',
-    run: async () => mustBe401(await req('GET', '/api/admin/agents')) },
-  { label: 'POST /api/lua-agent/execute (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/lua-agent/execute', { body: {} })) },
+  {
+    label: 'POST /api/mixes (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/mixes', { body: {} })),
+  },
+  {
+    label: 'POST /api/buzzes (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/buzzes', { body: {} })),
+  },
+  {
+    label: 'POST /api/ai/generate-bio (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/ai/generate-bio', { body: {} })),
+  },
+  {
+    label: 'POST /api/ai/suggest-genres (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/ai/suggest-genres', { body: {} })),
+  },
+  {
+    label: 'POST /api/ai/generate-avatar (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/ai/generate-avatar', { body: {} })),
+  },
+  {
+    label: 'POST /api/ai/profile-coach (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/ai/profile-coach', { body: {} })),
+  },
+  {
+    label: 'POST /api/composer/suggest (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/composer/suggest', { body: {} })),
+  },
+  {
+    label: 'GET /api/notifications (no auth)',
+    run: async () => mustBe401(await req('GET', '/api/notifications')),
+  },
+  {
+    label: 'POST /api/notifications/mark-read (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/notifications/mark-read', { body: {} })),
+  },
+  {
+    label: 'POST /api/mythic/propose (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/mythic/propose', { body: {} })),
+  },
+  {
+    label: 'POST /api/mythic/log-performance (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/mythic/log-performance', { body: {} })),
+  },
+  {
+    label: 'POST /api/cache/invalidate (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/cache/invalidate', { body: {} })),
+  },
+  {
+    label: 'GET /api/admin/agents (no auth)',
+    run: async () => mustBe401(await req('GET', '/api/admin/agents')),
+  },
+  {
+    label: 'POST /api/lua-agent/execute (no auth)',
+    run: async () => mustBe401(await req('POST', '/api/lua-agent/execute', { body: {} })),
+  },
 ];
 
 // ── runner ────────────────────────────────────────────────────────────────────
@@ -253,11 +283,12 @@ function printSuite(name, results) {
   const pass = results.filter(r => r.pass != null).length;
   const warn = results.filter(r => r.warn != null).length;
   const fail = results.filter(r => r.fail != null).length;
-  const header = fail > 0
-    ? chalk.bold.red(`${name} (${pass}/${results.length})`)
-    : warn > 0
-      ? chalk.bold.yellow(`${name} (${pass}/${results.length})`)
-      : chalk.bold.green(`${name} (${results.length}/${results.length})`);
+  const header =
+    fail > 0
+      ? chalk.bold.red(`${name} (${pass}/${results.length})`)
+      : warn > 0
+        ? chalk.bold.yellow(`${name} (${pass}/${results.length})`)
+        : chalk.bold.green(`${name} (${results.length}/${results.length})`);
   console.log(`\n${header}`);
   for (const r of results) {
     const label = r.label.padEnd(46);
@@ -283,11 +314,10 @@ function runBrowserSmoke(baseUrl) {
   }
 
   console.log(`  ${chalk.dim('Running 15 routes × 4 viewports (this takes ~60s)…')}`);
-  const result = spawnSync(
-    'python3',
-    [smokeScript, baseUrl, '--mock-supabase'],
-    { encoding: 'utf-8', timeout: 300_000 }
-  );
+  const result = spawnSync('python3', [smokeScript, baseUrl, '--mock-supabase'], {
+    encoding: 'utf-8',
+    timeout: 300_000,
+  });
 
   if (result.status === 0) {
     const lines = (result.stdout ?? '').trim().split('\n');
@@ -303,12 +333,17 @@ function runBrowserSmoke(baseUrl) {
     /No such file|not found|ModuleNotFoundError|playwright|chromium/i.test(stderr);
 
   if (isEnvIssue) {
-    console.log(`  ${chalk.yellow('⚠')}  Playwright/Chromium not available — skipping browser smoke`);
+    console.log(
+      `  ${chalk.yellow('⚠')}  Playwright/Chromium not available — skipping browser smoke`
+    );
     return { pass: 0, warn: 1, fail: 0 };
   }
 
   const output = (result.stdout ?? '') + stderr;
-  const failLines = output.split('\n').filter(l => l.startsWith('- ')).slice(0, 10);
+  const failLines = output
+    .split('\n')
+    .filter(l => l.startsWith('- '))
+    .slice(0, 10);
 
   // Remote production URLs are throttled by Vercel/CDN on 60 rapid headless requests.
   // Classify failures: if every failure line is a Timeout (network), treat as WARN.
@@ -318,17 +353,25 @@ function runBrowserSmoke(baseUrl) {
   const isNetworkOnly = isRemote && allTimeouts;
 
   if (isNetworkOnly) {
-    console.log(`  ${chalk.yellow('⚠')}  Browser smoke: network timeouts on remote URL (${failLines.length} routes)`);
-    console.log(`     ${chalk.dim('Run locally against http://localhost:3000 for reliable results')}`);
+    console.log(
+      `  ${chalk.yellow('⚠')}  Browser smoke: network timeouts on remote URL (${failLines.length} routes)`
+    );
+    console.log(
+      `     ${chalk.dim('Run locally against http://localhost:3000 for reliable results')}`
+    );
     return { pass: 0, warn: 1, fail: 0 };
   }
 
   console.log(`  ${chalk.red('✗')}  Browser smoke failed`);
   failLines.forEach(l => console.log(`     ${chalk.red(l)}`));
   if (stderr) {
-    stderr.trim().split('\n').slice(0, 3).forEach(l => {
-      console.log(`     ${chalk.dim(l)}`);
-    });
+    stderr
+      .trim()
+      .split('\n')
+      .slice(0, 3)
+      .forEach(l => {
+        console.log(`     ${chalk.dim(l)}`);
+      });
   }
   return { pass: 0, warn: 0, fail: 1 };
 }
@@ -358,9 +401,9 @@ async function main() {
 
   // health is always critical
   await run('health', 'HEALTH', HEALTH, true);
-  await run('api',    'API',    API);
+  await run('api', 'API', API);
   // auth walls are critical — a 200 is a security failure
-  await run('auth',   'AUTH WALLS', AUTH, true);
+  await run('auth', 'AUTH WALLS', AUTH, true);
 
   if (CATEGORY === 'all' || CATEGORY === 'browser') {
     const stats = runBrowserSmoke(BASE_URL);

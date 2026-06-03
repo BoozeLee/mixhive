@@ -1,4 +1,4 @@
-import { Discover } from '@/views/feed/Discover';
+import { Discover } from '@/views/Discover';
 
 export default function DiscoverPage() {
   return <Discover />;

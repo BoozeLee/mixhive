@@ -1,5 +1,5 @@
-import { Trending } from '@/views/feed/Trending';
+import { Feed } from '@/views/Feed';
 
 export default function TrendingPage() {
-  return <Trending />;
+  return <Feed />;
 }

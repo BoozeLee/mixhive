@@ -1,4 +1,4 @@
-import { Feed } from '@/views/feed/Feed';
+import { Feed } from '@/views/Feed';
 
 export default function FeedPage() {
   return <Feed />;

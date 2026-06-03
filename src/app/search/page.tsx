@@ -1,5 +1,5 @@
-import { Search } from '@/views/feed/Search';
+import { SearchPage } from '@/views/Search';
 
-export default function SearchPage() {
-  return <Search />;
+export default function SearchPageRoute() {
+  return <SearchPage />;
 }

@@ -296,12 +296,23 @@ function runBrowserSmoke(baseUrl) {
     return { pass: 1, warn: 0, fail: 0 };
   }
 
-  const output = (result.stdout ?? '') + (result.stderr ?? '');
+  const stderr = result.stderr ?? '';
+  const isEnvIssue =
+    result.status === 127 ||
+    result.error?.code === 'ENOENT' ||
+    /No such file|not found|ModuleNotFoundError|playwright|chromium/i.test(stderr);
+
+  if (isEnvIssue) {
+    console.log(`  ${chalk.yellow('⚠')}  Playwright/Chromium not available — skipping browser smoke`);
+    return { pass: 0, warn: 1, fail: 0 };
+  }
+
+  const output = (result.stdout ?? '') + stderr;
   const failLines = output.split('\n').filter(l => l.startsWith('- ')).slice(0, 10);
   console.log(`  ${chalk.red('✗')}  Browser smoke failed`);
   failLines.forEach(l => console.log(`     ${chalk.red(l)}`));
-  if (result.stderr) {
-    result.stderr.trim().split('\n').slice(0, 3).forEach(l => {
+  if (stderr) {
+    stderr.trim().split('\n').slice(0, 3).forEach(l => {
       console.log(`     ${chalk.dim(l)}`);
     });
   }

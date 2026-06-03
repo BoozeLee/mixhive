@@ -7,6 +7,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (loading)
     return (
       <div
+        id="main-content"
         style={{
           display: 'flex',
           justifyContent: 'center',

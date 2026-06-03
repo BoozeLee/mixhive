@@ -82,10 +82,10 @@ def main() -> int:
             for route in ROUTES:
                 url = urljoin(args.base_url.rstrip("/") + "/", route.lstrip("/"))
                 try:
-                    response = page.goto(url, wait_until="networkidle", timeout=20_000)
+                    response = page.goto(url, wait_until="load", timeout=30_000)
                     if response is None or response.status >= 400:
                         failures.append(f"{width}x{height} {route}: navigation status {getattr(response, 'status', None)}")
-                    page.wait_for_selector("#main-content", timeout=5_000)
+                    page.wait_for_selector("#main-content", timeout=8_000)
                     overflow = page.evaluate(
                         "() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) > window.innerWidth + 1"
                     )

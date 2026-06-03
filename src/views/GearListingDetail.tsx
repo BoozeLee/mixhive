@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 interface Listing {
   id: string;
@@ -37,6 +38,15 @@ export function GearListingDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [buying, setBuying] = useState(false);
+  const [buyError, setBuyError] = useState('');
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserId(session?.user.id ?? null);
+    });
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -53,6 +63,26 @@ export function GearListingDetail() {
       }
     })();
   }, [id]);
+
+  const handleBuy = async () => {
+    if (!userId) { setBuyError('Sign in to purchase'); return; }
+    setBuying(true);
+    setBuyError('');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Sign in required');
+      const res = await fetch(`/api/marketplace/gear/${id}/buy`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Checkout failed');
+      window.location.href = data.checkout_url;
+    } catch (e) {
+      setBuyError(e instanceof Error ? e.message : 'Purchase failed');
+      setBuying(false);
+    }
+  };
 
   if (loading) {
     return <div style={{ padding: 40, color: '#555', textAlign: 'center' }}>Loading...</div>;
@@ -163,24 +193,41 @@ export function GearListingDetail() {
             </div>
           </div>
 
-          {listing.status === 'active' ? (
-            <button style={{
-              width: '100%',
-              background: 'var(--hive-gold)',
-              color: '#000',
-              border: 'none',
-              borderRadius: 10,
-              padding: '14px 0',
-              fontWeight: 700,
-              fontSize: 15,
-              cursor: 'pointer',
-              marginBottom: 10,
-            }}>
-              Contact Seller
-            </button>
-          ) : (
+          {listing.status === 'active' && userId !== listing.seller_profile_id ? (
+            <>
+              <button
+                onClick={handleBuy}
+                disabled={buying}
+                style={{
+                  width: '100%',
+                  background: buying ? '#a08800' : 'var(--hive-gold)',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: 10,
+                  padding: '14px 0',
+                  fontWeight: 700,
+                  fontSize: 15,
+                  cursor: buying ? 'default' : 'pointer',
+                  marginBottom: 10,
+                  opacity: buying ? 0.8 : 1,
+                }}
+              >
+                {buying ? 'Redirecting to checkout...' : `Buy Now · ${listing.currency} ${listing.price.toLocaleString()}`}
+              </button>
+              {buyError && (
+                <p style={{ color: '#ef4444', fontSize: 12, margin: '0 0 8px', textAlign: 'center' }}>{buyError}</p>
+              )}
+              <p style={{ color: '#444', fontSize: 11, textAlign: 'center', margin: 0 }}>
+                Secured escrow — funds held until you confirm receipt
+              </p>
+            </>
+          ) : listing.status !== 'active' ? (
             <div style={{ background: '#1a1a1a', color: '#666', textAlign: 'center', padding: 12, borderRadius: 8, fontSize: 14 }}>
               This listing is {listing.status}
+            </div>
+          ) : (
+            <div style={{ background: '#1a1a1a', color: '#555', textAlign: 'center', padding: 12, borderRadius: 8, fontSize: 13 }}>
+              Your listing
             </div>
           )}
 

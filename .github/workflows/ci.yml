@@ -23,23 +23,49 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect maintenance-only changes
+        id: changes
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          changed="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
+          echo "$changed"
+          non_maintenance="$(printf '%s\n' "$changed" | grep -Ev '^(README\.md|LICENSE|NOTICE|SECURITY\.md|CONTRIBUTING\.md|CODE_OF_CONDUCT\.md|docs/|\.github/(workflows/(ci|lighthouse)\.yml|dependabot\.yml|CODEOWNERS|PULL_REQUEST_TEMPLATE\.md|ISSUE_TEMPLATE/|copilot-instructions\.md))' || true)"
+          if [ -z "$non_maintenance" ]; then
+            echo "maintenance_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "maintenance_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip heavy checks for maintenance-only PR
+        if: github.event_name == 'pull_request' && steps.changes.outputs.maintenance_only == 'true'
+        run: echo "Maintenance-only PR; skipping type, lint, and repository-wide formatting checks."
 
       - name: Setup Node.js
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
 
       - name: Install dependencies
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         run: npm ci
 
       - name: Run TypeScript check
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         run: npm run type-check
 
       - name: Run ESLint
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         run: npm run lint
 
       - name: Check formatting with Prettier
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         run: npm run format:check
 
   # Build and test

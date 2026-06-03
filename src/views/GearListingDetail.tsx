@@ -72,7 +72,9 @@ export function GearListingDetail() {
         ← Gear Market
       </Link>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr minmax(280px, 320px)', gap: 32, alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(260px, 320px)', gap: 32, alignItems: 'start' }}
+        className="gear-detail-grid"
+      >
         {/* Left: Photos + Description */}
         <div>
           {/* Main photo */}

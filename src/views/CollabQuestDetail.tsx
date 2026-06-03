@@ -53,6 +53,7 @@ export function CollabQuestDetail() {
   const [applying, setApplying] = useState<string | null>(null);
   const [applied, setApplied] = useState<Set<string>>(new Set());
   const [applyMessage, setApplyMessage] = useState('');
+  const [advancing, setAdvancing] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -75,6 +76,27 @@ export function CollabQuestDetail() {
       }
     })();
   }, [id]);
+
+  const handleAdvancePhase = async (toPhase: string) => {
+    setAdvancing(true);
+    setError('');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Sign in required');
+      const res = await fetch(`/api/collab-quests/${id}/phase`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ to_phase: toPhase }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Failed');
+      setQuest(prev => prev ? { ...prev, phase: data.quest.phase } : prev);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to advance phase');
+    } finally {
+      setAdvancing(false);
+    }
+  };
 
   const handleApply = async (role: Role) => {
     if (!userId) { setError('Sign in to apply'); return; }
@@ -233,6 +255,67 @@ export function CollabQuestDetail() {
         </section>
       )}
 
+      {/* Creator control panel */}
+      {isCreator && quest.phase !== 'complete' && quest.phase !== 'cancelled' && (
+        <section style={{ marginBottom: 24, padding: 16, background: '#0a0a0a', border: '1px solid #2a2a2a', borderRadius: 10 }}>
+          <h2 style={sectionHeadStyle}>Quest Controls</h2>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {quest.phase === 'draft' && (
+              <button
+                onClick={() => handleAdvancePhase('recruiting')}
+                disabled={advancing}
+                style={{ ...ctrlBtnStyle, background: 'var(--hive-gold)', color: '#000' }}
+              >
+                {advancing ? '...' : '⚔ Open for Recruiting'}
+              </button>
+            )}
+            {quest.phase === 'recruiting' && (
+              <button
+                onClick={() => handleAdvancePhase('in_progress')}
+                disabled={advancing}
+                style={{ ...ctrlBtnStyle, background: '#22c55e', color: '#000' }}
+              >
+                {advancing ? '...' : '▶ Launch Quest'}
+              </button>
+            )}
+            {quest.phase === 'in_progress' && (
+              <button
+                onClick={() => handleAdvancePhase('complete')}
+                disabled={advancing}
+                style={{ ...ctrlBtnStyle, background: '#22c55e', color: '#000' }}
+              >
+                {advancing ? '...' : '✓ Mark Complete + Award XP'}
+              </button>
+            )}
+            <button
+              onClick={() => handleAdvancePhase('cancelled')}
+              disabled={advancing}
+              style={{ ...ctrlBtnStyle, background: 'transparent', color: '#ef4444', border: '1px solid #ef444444' }}
+            >
+              Cancel Quest
+            </button>
+          </div>
+          {quest.phase === 'recruiting' && (
+            <p style={{ color: '#555', fontSize: 12, marginTop: 8, marginBottom: 0 }}>
+              Launch when all needed roles are filled.
+            </p>
+          )}
+          {quest.phase === 'in_progress' && (
+            <p style={{ color: '#555', fontSize: 12, marginTop: 8, marginBottom: 0 }}>
+              Marking complete awards XP to all filled role holders.
+            </p>
+          )}
+        </section>
+      )}
+
+      {quest.phase === 'complete' && (
+        <div style={{ padding: 16, background: '#0a1a0a', border: '1px solid #22c55e33', borderRadius: 10, marginBottom: 24, textAlign: 'center' }}>
+          <p style={{ color: '#22c55e', fontWeight: 700, margin: 0 }}>
+            ✓ Quest complete — XP awarded to all collaborators
+          </p>
+        </div>
+      )}
+
       {error && (
         <div style={{ color: '#ef4444', padding: 12, background: '#1a0000', borderRadius: 8, fontSize: 14, marginBottom: 16 }}>
           {error}
@@ -241,6 +324,11 @@ export function CollabQuestDetail() {
     </div>
   );
 }
+
+const ctrlBtnStyle: React.CSSProperties = {
+  border: 'none', borderRadius: 8, padding: '9px 18px', fontWeight: 700,
+  fontSize: 13, cursor: 'pointer',
+};
 
 const sectionHeadStyle: React.CSSProperties = {
   fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em',

@@ -143,7 +143,7 @@ export function NewCollabQuest() {
         {/* Tags & logistics */}
         <section>
           <h2 style={sectionHeadStyle}>Tags &amp; Logistics</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="p15-form-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <label style={labelStyle}>
               Genre tags (comma-separated)
               <input value={form.genre_tags} onChange={e => updateForm('genre_tags', e.target.value)} placeholder="techno, ambient, house" style={inputStyle} />
@@ -179,7 +179,7 @@ export function NewCollabQuest() {
                     <button onClick={() => removeRole(i)} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: 13, cursor: 'pointer' }}>Remove</button>
                   )}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div className="p15-form-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                   <label style={labelStyle}>
                     Type *
                     <select value={role.role_type} onChange={e => updateRole(i, 'role_type', e.target.value)} style={inputStyle}>

@@ -136,7 +136,7 @@ export function NewGearListing() {
               {CATEGORIES.map(c => <option key={c} value={c}>{c.replace('_', ' ')}</option>)}
             </select>
           </label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="p15-form-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <label style={labelStyle}>
               Brand
               <input value={form.brand} onChange={e => update('brand', e.target.value)} placeholder="Pioneer DJ" style={inputStyle} />
@@ -236,7 +236,7 @@ export function NewGearListing() {
       {/* Step 3: Price & Location */}
       {step === 3 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+          <div className="p15-form-2col" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
             <label style={labelStyle}>
               Price *
               <input
@@ -257,7 +257,7 @@ export function NewGearListing() {
               </select>
             </label>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="p15-form-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <label style={labelStyle}>
               City
               <input value={form.location_city} onChange={e => update('location_city', e.target.value)} placeholder="Brussels" style={inputStyle} />

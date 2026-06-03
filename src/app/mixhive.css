@@ -538,3 +538,28 @@ body {
   background: rgba(240, 192, 64, 0.22);
   border-color: rgba(240, 192, 64, 0.6);
 }
+
+/* ── Phase 15 — Responsive overrides ────────────────────────────────────── */
+
+/* Gear listing detail: stack photo + sidebar vertically on narrow screens */
+@media (max-width: 680px) {
+  .gear-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Two-col form grids in NewGearListing / NewCollabQuest */
+@media (max-width: 480px) {
+  .p15-form-2col {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Phase 15 marketplace headers: stack on mobile */
+@media (max-width: 480px) {
+  .p15-page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+}

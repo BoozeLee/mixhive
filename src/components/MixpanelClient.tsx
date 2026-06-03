@@ -43,7 +43,7 @@ export function MixpanelClient({ token }: MixpanelClientProps) {
 
       // Listen for navigation events
       window.addEventListener('popstate', handleRouteChange);
-      
+
       // Clean up
       return () => {
         window.removeEventListener('popstate', handleRouteChange);

@@ -45,9 +45,7 @@ export async function POST(req: NextRequest) {
   }
 
   const isMonday = new Date().getDay() === 1;
-  const agentsToRun: AgentId[] = isMonday
-    ? [...DAILY_AGENTS, ...WEEKLY_AGENTS]
-    : DAILY_AGENTS;
+  const agentsToRun: AgentId[] = isMonday ? [...DAILY_AGENTS, ...WEEKLY_AGENTS] : DAILY_AGENTS;
 
   let ran = 0;
   let errors = 0;

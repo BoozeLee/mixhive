@@ -52,10 +52,7 @@ try {
 }
 
 // Check if Mixpanel components exist
-const componentFiles = [
-  'src/components/MixpanelClient.tsx',
-  'src/lib/mixpanel.ts'
-];
+const componentFiles = ['src/components/MixpanelClient.tsx', 'src/lib/mixpanel.ts'];
 
 componentFiles.forEach(file => {
   const filePath = path.join(process.cwd(), file);

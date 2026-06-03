@@ -56,7 +56,11 @@ export function QuestsList() {
   const completedQuests = quests.filter(q => q.status === 'completed');
 
   if (loading) {
-    return <div style={{ padding: 40, textAlign: 'center', color: colors.text.muted }}>Loading quests…</div>;
+    return (
+      <div style={{ padding: 40, textAlign: 'center', color: colors.text.muted }}>
+        Loading quests…
+      </div>
+    );
   }
 
   return (
@@ -90,35 +94,80 @@ export function QuestsList() {
             body="Start a new quest or let one of your Mythic agents propose one for you."
           />
         ) : (
-          <div style={{ display: 'grid', gap: space[4], gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))' }}>
+          <div
+            style={{
+              display: 'grid',
+              gap: space[4],
+              gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+            }}
+          >
             {activeQuests.map(quest => (
-              <Link key={quest.id} to={`/quests/${quest.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Link
+                key={quest.id}
+                to={`/quests/${quest.id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
                 <HiveCard interactive tone="panel">
-                  <div style={{ fontWeight: fontWeight.semibold, marginBottom: space[2], lineHeight: 1.3 }}>
+                  <div
+                    style={{
+                      fontWeight: fontWeight.semibold,
+                      marginBottom: space[2],
+                      lineHeight: 1.3,
+                    }}
+                  >
                     {quest.title}
                   </div>
-                  <div style={{ fontSize: fontSize.sm, color: colors.text.muted, marginBottom: space[4] }}>
+                  <div
+                    style={{
+                      fontSize: fontSize.sm,
+                      color: colors.text.muted,
+                      marginBottom: space[4],
+                    }}
+                  >
                     {quest.targetTags.join(' • ')}
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: fontSize.sm, marginBottom: space[2] }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: fontSize.sm,
+                      marginBottom: space[2],
+                    }}
+                  >
                     <div>Momentum</div>
                     <div style={{ fontWeight: fontWeight.medium }}>{quest.momentum}</div>
                   </div>
 
-                  <div style={{ height: 4, background: colors.border, borderRadius: 999, marginBottom: space[4] }}>
-                    <div 
-                      style={{ 
-                        width: `${Math.round((quest.completedMilestones / quest.totalMilestones) * 100)}%`, 
-                        height: '100%', 
-                        background: colors.accent, 
-                        borderRadius: 999 
-                      }} 
+                  <div
+                    style={{
+                      height: 4,
+                      background: colors.border,
+                      borderRadius: 999,
+                      marginBottom: space[4],
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${Math.round((quest.completedMilestones / quest.totalMilestones) * 100)}%`,
+                        height: '100%',
+                        background: colors.accent,
+                        borderRadius: 999,
+                      }}
                     />
                   </div>
 
-                  <div style={{ fontSize: fontSize.xs, color: colors.text.faint, display: 'flex', justifyContent: 'space-between' }}>
-                    <span>{quest.completedMilestones} / {quest.totalMilestones} milestones</span>
+                  <div
+                    style={{
+                      fontSize: fontSize.xs,
+                      color: colors.text.faint,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span>
+                      {quest.completedMilestones} / {quest.totalMilestones} milestones
+                    </span>
                     <span>Last activity {quest.lastActivity}</span>
                   </div>
                 </HiveCard>
@@ -132,11 +181,23 @@ export function QuestsList() {
       {completedQuests.length > 0 && (
         <section>
           <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>Completed</h2>
-          <div style={{ display: 'grid', gap: space[4], gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))' }}>
+          <div
+            style={{
+              display: 'grid',
+              gap: space[4],
+              gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+            }}
+          >
             {completedQuests.map(quest => (
-              <Link key={quest.id} to={`/quests/${quest.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Link
+                key={quest.id}
+                to={`/quests/${quest.id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
                 <HiveCard tone="flat">
-                  <div style={{ fontWeight: fontWeight.medium, marginBottom: space[2] }}>{quest.title}</div>
+                  <div style={{ fontWeight: fontWeight.medium, marginBottom: space[2] }}>
+                    {quest.title}
+                  </div>
                   <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
                     Completed • {quest.targetTags.join(' • ')}
                   </div>
@@ -150,7 +211,7 @@ export function QuestsList() {
       {showCreateModal && (
         <CreateQuestModal
           onClose={() => setShowCreateModal(false)}
-          onCreated={(newQuest) => {
+          onCreated={newQuest => {
             // Refresh the list after creation
             getActiveQuests(user!.id).then(data => {
               const formatted = data.map((q: MythicQuest) => ({

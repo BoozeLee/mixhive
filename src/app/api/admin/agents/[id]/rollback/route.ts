@@ -46,7 +46,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .eq('version', currentVersion);
 
   if (currentVersion <= 1) {
-    return NextResponse.json({ error: 'already at version 1, cannot roll back further' }, { status: 409 });
+    return NextResponse.json(
+      { error: 'already at version 1, cannot roll back further' },
+      { status: 409 }
+    );
   }
 
   // Find the highest promoted version before current that is not rolled back
@@ -62,12 +65,19 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .maybeSingle();
 
   if (!prev) {
-    return NextResponse.json({ error: 'no previous promoted version found to roll back to' }, { status: 409 });
+    return NextResponse.json(
+      { error: 'no previous promoted version found to roll back to' },
+      { status: 409 }
+    );
   }
 
   const { error: regErr } = await sb
     .from('agent_registry')
-    .update({ lua_script: prev.lua_script, lua_script_version: prev.version, updated_at: new Date().toISOString() })
+    .update({
+      lua_script: prev.lua_script,
+      lua_script_version: prev.version,
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', id);
 
   if (regErr) return NextResponse.json({ error: regErr.message }, { status: 500 });

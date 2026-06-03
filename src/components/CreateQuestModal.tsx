@@ -66,30 +66,41 @@ export function CreateQuestModal({ onClose, onCreated }: Props) {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0,0,0,0.7)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-    }}>
-      <div style={{
-        background: colors.surface,
-        border: `1px solid ${colors.borderStrong}`,
-        borderRadius: radius.lg,
-        width: '100%',
-        maxWidth: 620,
-        padding: 24,
-      }}>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.7)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+      }}
+    >
+      <div
+        style={{
+          background: colors.surface,
+          border: `1px solid ${colors.borderStrong}`,
+          borderRadius: radius.lg,
+          width: '100%',
+          maxWidth: 620,
+          padding: 24,
+        }}
+      >
         <h2 style={{ marginTop: 0, marginBottom: space[4] }}>Start a New Quest</h2>
 
         <p style={{ color: colors.text.muted, marginBottom: space[6] }}>
           Choose a template or create a custom one. Your Mythic agents will help you complete it.
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: space[3], marginBottom: space[6] }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: space[3],
+            marginBottom: space[6],
+          }}
+        >
           {QUEST_TEMPLATES.map(t => (
             <div
               key={t.id}
@@ -97,7 +108,10 @@ export function CreateQuestModal({ onClose, onCreated }: Props) {
               style={{
                 padding: 14,
                 borderRadius: radius.md,
-                border: selectedTemplate === t.id ? `2px solid ${colors.accent}` : `1px solid ${colors.border}`,
+                border:
+                  selectedTemplate === t.id
+                    ? `2px solid ${colors.accent}`
+                    : `1px solid ${colors.border}`,
                 background: selectedTemplate === t.id ? 'rgba(240,192,64,0.08)' : 'transparent',
                 cursor: 'pointer',
               }}
@@ -110,7 +124,9 @@ export function CreateQuestModal({ onClose, onCreated }: Props) {
 
         {selectedTemplate && (
           <div style={{ marginBottom: space[6] }}>
-            <label style={{ display: 'block', fontSize: fontSize.sm, marginBottom: 4 }}>Custom title (optional)</label>
+            <label style={{ display: 'block', fontSize: fontSize.sm, marginBottom: 4 }}>
+              Custom title (optional)
+            </label>
             <input
               type="text"
               value={customTitle}

@@ -184,10 +184,18 @@ class FeedService {
     // Only first-page requests are cached (cursor = undefined).
     if (typeof window !== 'undefined' && !cursor) {
       try {
-        const params = new URLSearchParams({ type: 'trending', genre: genre ?? 'all', limit: String(limit) });
+        const params = new URLSearchParams({
+          type: 'trending',
+          genre: genre ?? 'all',
+          limit: String(limit),
+        });
         const res = await fetch(`/api/feed?${params}`);
         if (res.ok) {
-          const json = await res.json() as { items: FeedMix[]; cursor: string | null; hasMore: boolean };
+          const json = (await res.json()) as {
+            items: FeedMix[];
+            cursor: string | null;
+            hasMore: boolean;
+          };
           const parsedCursor = json.cursor ? (JSON.parse(json.cursor) as TrendingCursor) : null;
           return { data: json.items, cursor: parsedCursor };
         }
@@ -207,16 +215,25 @@ class FeedService {
     // Only first-page requests are cached.
     if (typeof window !== 'undefined' && !cursor) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
         if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
         const params = new URLSearchParams({ type: 'following', userId, limit: String(limit) });
         const res = await fetch(`/api/feed?${params}`, { headers });
         if (res.ok) {
-          const json = await res.json() as { items: unknown[]; cursor: string | null; mixCursor?: string | null; hasMore: boolean };
+          const json = (await res.json()) as {
+            items: unknown[];
+            cursor: string | null;
+            mixCursor?: string | null;
+            hasMore: boolean;
+          };
           const mixCursor = json.cursor ? (JSON.parse(json.cursor) as FeedCursor) : null;
           return {
-            data: json.items as ReturnType<typeof getMixedFollowingFeed> extends Promise<infer R> ? R['data'] : never,
+            data: json.items as ReturnType<typeof getMixedFollowingFeed> extends Promise<infer R>
+              ? R['data']
+              : never,
             mixCursor,
             buzzCursor: null as FeedCursor | null,
           };

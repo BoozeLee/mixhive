@@ -8,7 +8,11 @@ interface StoryDetailPanelProps {
 }
 
 function formatFullDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 }
 
 export function StoryDetailPanel({ chapter, onClose }: StoryDetailPanelProps) {
@@ -32,7 +36,14 @@ export function StoryDetailPanel({ chapter, onClose }: StoryDetailPanelProps) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h3 style={{ margin: 0, fontSize: fontSize.md, fontWeight: fontWeight.semibold, color: colors.text.primary }}>
+        <h3
+          style={{
+            margin: 0,
+            fontSize: fontSize.md,
+            fontWeight: fontWeight.semibold,
+            color: colors.text.primary,
+          }}
+        >
           Chapter detail
         </h3>
         <button
@@ -53,7 +64,14 @@ export function StoryDetailPanel({ chapter, onClose }: StoryDetailPanelProps) {
         </button>
       </div>
 
-      <p style={{ margin: 0, fontSize: fontSize.lg, fontWeight: fontWeight.semibold, color: colors.text.primary }}>
+      <p
+        style={{
+          margin: 0,
+          fontSize: fontSize.lg,
+          fontWeight: fontWeight.semibold,
+          color: colors.text.primary,
+        }}
+      >
         {chapter.label}
       </p>
 
@@ -70,7 +88,9 @@ export function StoryDetailPanel({ chapter, onClose }: StoryDetailPanelProps) {
       )}
 
       {chapter.chapter_type === 'gig' && (props.venue_name || props.city) && (
-        <div style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}>
+        <div
+          style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}
+        >
           <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.text.secondary }}>
             📍 {[props.venue_name, props.city].filter(Boolean).map(String).join(', ')}
           </p>
@@ -78,15 +98,22 @@ export function StoryDetailPanel({ chapter, onClose }: StoryDetailPanelProps) {
       )}
 
       {chapter.chapter_type === 'collab' && props.collaborator_name && (
-        <div style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}>
+        <div
+          style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}
+        >
           <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.text.secondary }}>
-            🤝 Collab with <strong style={{ color: colors.text.primary }}>{String(props.collaborator_name)}</strong>
+            🤝 Collab with{' '}
+            <strong style={{ color: colors.text.primary }}>
+              {String(props.collaborator_name)}
+            </strong>
           </p>
         </div>
       )}
 
       {chapter.chapter_type === 'set' && props.playlist_title && (
-        <div style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}>
+        <div
+          style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}
+        >
           <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.text.secondary }}>
             🎧 {String(props.playlist_title)}
             {props.track_count !== undefined && (

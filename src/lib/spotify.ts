@@ -4,7 +4,9 @@ import SpotifyWebApi from 'spotify-web-api-node';
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || '',
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET || '',
-  redirectUri: process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI || `${process.env.NEXTAUTH_URL}/api/auth/callback/spotify`,
+  redirectUri:
+    process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI ||
+    `${process.env.NEXTAUTH_URL}/api/auth/callback/spotify`,
 });
 
 export interface SpotifyTrack {
@@ -230,7 +232,12 @@ export const spotifyService = {
   },
 
   // Create playlist
-  createPlaylist: async (userId: string, name: string, description: string = '', isPublic: boolean = true) => {
+  createPlaylist: async (
+    userId: string,
+    name: string,
+    description: string = '',
+    isPublic: boolean = true
+  ) => {
     try {
       const response = await spotifyApi.createPlaylist(userId, name, {
         description,
@@ -255,7 +262,10 @@ export const spotifyService = {
   },
 
   // Remove tracks from playlist
-  removeTracksFromPlaylist: async (playlistId: string, trackPositions: Array<{ uri: string; positions: number[] }>) => {
+  removeTracksFromPlaylist: async (
+    playlistId: string,
+    trackPositions: Array<{ uri: string; positions: number[] }>
+  ) => {
     try {
       const response = await spotifyApi.removeTracksFromPlaylist(playlistId, trackPositions);
       return response.body;

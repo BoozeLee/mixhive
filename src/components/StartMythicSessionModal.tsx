@@ -112,7 +112,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
           display: 'flex',
           flexDirection: 'column',
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div
@@ -154,13 +154,20 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
           {mode === 'form' ? (
             <div style={{ padding: 24 }}>
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: fontSize.sm, color: colors.text.secondary }}>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: 6,
+                    fontSize: fontSize.sm,
+                    color: colors.text.secondary,
+                  }}
+                >
                   Session Title *
                 </label>
                 <input
                   type="text"
                   value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  onChange={e => setForm({ ...form, title: e.target.value })}
                   placeholder="Late night techno sketches"
                   style={{
                     width: '100%',
@@ -175,12 +182,19 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: fontSize.sm, color: colors.text.secondary }}>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: 6,
+                    fontSize: fontSize.sm,
+                    color: colors.text.secondary,
+                  }}
+                >
                   Description (optional)
                 </label>
                 <textarea
                   value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  onChange={e => setForm({ ...form, description: e.target.value })}
                   placeholder="Working on a new track for the upcoming show at Fuse..."
                   rows={3}
                   style={{
@@ -201,9 +215,11 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
                   <input
                     type="checkbox"
                     checked={form.isPublic}
-                    onChange={(e) => setForm({ ...form, isPublic: e.target.checked })}
+                    onChange={e => setForm({ ...form, isPublic: e.target.checked })}
                   />
-                  <span style={{ fontSize: fontSize.sm }}>Make this session visible in legends (public)</span>
+                  <span style={{ fontSize: fontSize.sm }}>
+                    Make this session visible in legends (public)
+                  </span>
                 </label>
               </div>
 

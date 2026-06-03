@@ -89,7 +89,17 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     tier: 'free',
     approval: 'on_action',
     timeout_ms: 30000,
-    tools: ['db.read_one', 'db.read', 'db.rpc', 'vector.embed', 'vector.search', 'llm.call', 'llm.json', 'mythic.node.find_or_create', 'mythic.edge.create'],
+    tools: [
+      'db.read_one',
+      'db.read',
+      'db.rpc',
+      'vector.embed',
+      'vector.search',
+      'llm.call',
+      'llm.json',
+      'mythic.node.find_or_create',
+      'mythic.edge.create',
+    ],
   },
   opportunity_match: {
     display_name: 'Opportunity Match',
@@ -97,7 +107,15 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     tier: 'free',
     approval: 'auto',
     timeout_ms: 30000,
-    tools: ['db.read_one', 'db.read', 'db.rpc', 'vector.embed', 'vector.search', 'llm.call', 'llm.json'],
+    tools: [
+      'db.read_one',
+      'db.read',
+      'db.rpc',
+      'vector.embed',
+      'vector.search',
+      'llm.call',
+      'llm.json',
+    ],
   },
   collaboration_match: {
     display_name: 'Collaboration Match',
@@ -105,7 +123,16 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     tier: 'free',
     approval: 'on_action',
     timeout_ms: 30000,
-    tools: ['db.read_one', 'db.read', 'vector.embed', 'vector.search', 'llm.call', 'llm.json', 'mythic.node.find_or_create', 'mythic.edge.create'],
+    tools: [
+      'db.read_one',
+      'db.read',
+      'vector.embed',
+      'vector.search',
+      'llm.call',
+      'llm.json',
+      'mythic.node.find_or_create',
+      'mythic.edge.create',
+    ],
   },
   scene_radar: {
     display_name: 'Scene Radar',
@@ -129,7 +156,16 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
     tier: 'partner',
     approval: 'always',
     timeout_ms: 30000,
-    tools: ['db.read', 'db.insert', 'vector.embed', 'vector.search', 'llm.call', 'llm.json', 'mythic.node.find_or_create', 'mythic.edge.create'],
+    tools: [
+      'db.read',
+      'db.insert',
+      'vector.embed',
+      'vector.search',
+      'llm.call',
+      'llm.json',
+      'mythic.node.find_or_create',
+      'mythic.edge.create',
+    ],
   },
   venue_fit: {
     display_name: 'Venue Fit',
@@ -224,15 +260,24 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
   // Mythic Strategic Agents (Phase 6)
   mythic_scene_orbit: {
     display_name: 'Mythic Scene Orbit',
-    description: 'Maintains career quests and proposes high-yield scene actions using the MythicNode graph.',
+    description:
+      'Maintains career quests and proposes high-yield scene actions using the MythicNode graph.',
     tier: 'pro',
     approval: 'always',
     timeout_ms: 45000,
-    tools: ['db.read_one', 'db.read', 'llm.call', 'llm.json', 'mythic.quest.get_active', 'mythic.graph.query'],
+    tools: [
+      'db.read_one',
+      'db.read',
+      'llm.call',
+      'llm.json',
+      'mythic.quest.get_active',
+      'mythic.graph.query',
+    ],
   },
   mythic_collab_weaver: {
     display_name: 'Mythic Collab Weaver',
-    description: 'Identifies high-yield collaboration opportunities with provenance and historical conversion signals.',
+    description:
+      'Identifies high-yield collaboration opportunities with provenance and historical conversion signals.',
     tier: 'pro',
     approval: 'always',
     timeout_ms: 45000,
@@ -256,11 +301,20 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
   },
   mythic_strategist: {
     display_name: 'Mythic Strategist',
-    description: 'Weekly strategy pass: 3 collab targets, 3 venue approaches, 2 content ideas from the MythicNode graph.',
+    description:
+      'Weekly strategy pass: 3 collab targets, 3 venue approaches, 2 content ideas from the MythicNode graph.',
     tier: 'free',
     approval: 'on_action',
     timeout_ms: 45000,
-    tools: ['db.read_one', 'db.read', 'llm.call', 'llm.json', 'mythic.graph.query', 'mythic.quest.get_active', 'mythic.edge.create'],
+    tools: [
+      'db.read_one',
+      'db.read',
+      'llm.call',
+      'llm.json',
+      'mythic.graph.query',
+      'mythic.quest.get_active',
+      'mythic.edge.create',
+    ],
   },
 };
 

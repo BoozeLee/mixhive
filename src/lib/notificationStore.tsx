@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { isSupabaseConfigured, supabase } from './supabase';
 import type { Notification } from '../lib/types';
 import { useAuth } from '../hooks/useAuth';
@@ -77,38 +70,39 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     };
   }, [user, fetchNotifications]);
 
-  const markAsRead = useCallback(async (ids: string[]) => {
-    if (!user || ids.length === 0) return;
+  const markAsRead = useCallback(
+    async (ids: string[]) => {
+      if (!user || ids.length === 0) return;
 
-    try {
-      // Optimistic update: mark as read immediately
-      setNotifications(prev =>
-        prev.map(n => ({
-          ...n,
-          read: ids.includes(n.id) || n.read,
-        }))
-      );
+      try {
+        // Optimistic update: mark as read immediately
+        setNotifications(prev =>
+          prev.map(n => ({
+            ...n,
+            read: ids.includes(n.id) || n.read,
+          }))
+        );
 
-      // Call API to persist
-      await markNotificationsRead(user.id);
+        // Call API to persist
+        await markNotificationsRead(user.id);
 
-      // Refetch to ensure consistency (handles rollback on failure)
-      void fetchNotifications();
-    } catch (error) {
-      console.error('Failed to mark notifications as read:', error);
-      // Rollback optimistic update
-      void fetchNotifications();
-    }
-  }, [user, fetchNotifications]);
+        // Refetch to ensure consistency (handles rollback on failure)
+        void fetchNotifications();
+      } catch (error) {
+        console.error('Failed to mark notifications as read:', error);
+        // Rollback optimistic update
+        void fetchNotifications();
+      }
+    },
+    [user, fetchNotifications]
+  );
 
   const markAllAsRead = useCallback(async () => {
     if (!user) return;
 
     try {
       // Optimistic update
-      setNotifications(prev =>
-        prev.map(n => ({ ...n, read: true }))
-      );
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
 
       // Call API
       await markNotificationsRead(user.id);

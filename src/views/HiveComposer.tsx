@@ -139,7 +139,10 @@ export function HiveComposer() {
     if (!user) return;
     if (state.tracks.length === 0 && !setTitle) return;
     try {
-      localStorage.setItem(draftKey(user.id), JSON.stringify({ tracks: state.tracks, title: setTitle }));
+      localStorage.setItem(
+        draftKey(user.id),
+        JSON.stringify({ tracks: state.tracks, title: setTitle })
+      );
     } catch {
       // storage full — ignore
     }
@@ -149,48 +152,63 @@ export function HiveComposer() {
     if (user) localStorage.removeItem(draftKey(user.id));
   }, [user]);
 
-  const fetchSuggestions = useCallback(async (mixId: string, bpm: number | null, genre?: string | null, bpmOverride?: [number, number] | null) => {
-    dispatch({ type: 'SET_LOADING_SUGGESTIONS', loading: true });
-    try {
-      const body: Record<string, unknown> = { mix_id: mixId, k: 3 };
-      const activeBpmRange = bpmOverride !== undefined ? bpmOverride : bpmRange;
-      const activeGenre = genre !== undefined ? genre : genreFilter;
-      if (activeBpmRange) {
-        body.bpm_min = activeBpmRange[0];
-        body.bpm_max = activeBpmRange[1];
-      } else if (bpm) {
-        body.bpm_min = Math.max(0, bpm - 10);
-        body.bpm_max = bpm + 10;
-      }
-      if (activeGenre) body.genre_hint = activeGenre;
-      const res = await fetch('/api/composer/suggest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) throw new Error('Suggestion API failed');
-      const data = await res.json() as { suggestions: Suggestion[] };
-      const filtered = (data.suggestions ?? []).filter(
-        (s) => !state.tracks.some((t) => t.mix_id === s.mix_id)
-      );
-      dispatch({ type: 'SET_SUGGESTIONS', suggestions: filtered });
-
-      // Fire analytics event (best-effort; profile_id required by schema)
-      if (user) {
-        for (const s of filtered) {
-          supabase.from('experiment_events').insert({
-            profile_id: user.id,
-            event_type: 'vector_suggestion_shown',
-            feature: 'hive_composer',
-            variant: 'v1',
-            properties: { suggestion_mix_id: s.mix_id, rank: filtered.indexOf(s), similarity: s.similarity },
-          }).then(() => {});
+  const fetchSuggestions = useCallback(
+    async (
+      mixId: string,
+      bpm: number | null,
+      genre?: string | null,
+      bpmOverride?: [number, number] | null
+    ) => {
+      dispatch({ type: 'SET_LOADING_SUGGESTIONS', loading: true });
+      try {
+        const body: Record<string, unknown> = { mix_id: mixId, k: 3 };
+        const activeBpmRange = bpmOverride !== undefined ? bpmOverride : bpmRange;
+        const activeGenre = genre !== undefined ? genre : genreFilter;
+        if (activeBpmRange) {
+          body.bpm_min = activeBpmRange[0];
+          body.bpm_max = activeBpmRange[1];
+        } else if (bpm) {
+          body.bpm_min = Math.max(0, bpm - 10);
+          body.bpm_max = bpm + 10;
         }
+        if (activeGenre) body.genre_hint = activeGenre;
+        const res = await fetch('/api/composer/suggest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) throw new Error('Suggestion API failed');
+        const data = (await res.json()) as { suggestions: Suggestion[] };
+        const filtered = (data.suggestions ?? []).filter(
+          s => !state.tracks.some(t => t.mix_id === s.mix_id)
+        );
+        dispatch({ type: 'SET_SUGGESTIONS', suggestions: filtered });
+
+        // Fire analytics event (best-effort; profile_id required by schema)
+        if (user) {
+          for (const s of filtered) {
+            supabase
+              .from('experiment_events')
+              .insert({
+                profile_id: user.id,
+                event_type: 'vector_suggestion_shown',
+                feature: 'hive_composer',
+                variant: 'v1',
+                properties: {
+                  suggestion_mix_id: s.mix_id,
+                  rank: filtered.indexOf(s),
+                  similarity: s.similarity,
+                },
+              })
+              .then(() => {});
+          }
+        }
+      } catch {
+        dispatch({ type: 'SET_LOADING_SUGGESTIONS', loading: false });
       }
-    } catch {
-      dispatch({ type: 'SET_LOADING_SUGGESTIONS', loading: false });
-    }
-  }, [state.tracks, user, bpmRange, genreFilter]);
+    },
+    [state.tracks, user, bpmRange, genreFilter]
+  );
 
   // Derive filter chips from the last track after each ADD_TRACK
   useEffect(() => {
@@ -233,55 +251,73 @@ export function HiveComposer() {
     dispatch({ type: 'SET_SEARCHING', searching: false });
   }, []);
 
-  const handleSelectFromSearch = useCallback((track: TrackCell) => {
-    dispatch({ type: 'ADD_TRACK', track });
-    fetchSuggestions(track.mix_id, track.bpm);
-  }, [fetchSuggestions]);
+  const handleSelectFromSearch = useCallback(
+    (track: TrackCell) => {
+      dispatch({ type: 'ADD_TRACK', track });
+      fetchSuggestions(track.mix_id, track.bpm);
+    },
+    [fetchSuggestions]
+  );
 
-  const handleAcceptSuggestion = useCallback((suggestion: Suggestion) => {
-    const track: TrackCell = {
-      mix_id: suggestion.mix_id,
-      title: suggestion.title,
-      artist: suggestion.artist,
-      genre: suggestion.genre,
-      bpm: suggestion.bpm,
-    };
-    dispatch({ type: 'ADD_TRACK', track });
-    fetchSuggestions(suggestion.mix_id, suggestion.bpm);
+  const handleAcceptSuggestion = useCallback(
+    (suggestion: Suggestion) => {
+      const track: TrackCell = {
+        mix_id: suggestion.mix_id,
+        title: suggestion.title,
+        artist: suggestion.artist,
+        genre: suggestion.genre,
+        bpm: suggestion.bpm,
+      };
+      dispatch({ type: 'ADD_TRACK', track });
+      fetchSuggestions(suggestion.mix_id, suggestion.bpm);
 
-    if (user) {
-      supabase.from('experiment_events').insert({
-        profile_id: user.id,
-        event_type: 'vector_suggestion_added_to_set',
-        feature: 'hive_composer',
-        variant: 'v1',
-        properties: { mix_id: suggestion.mix_id, similarity: suggestion.similarity },
-      }).then(() => {});
-    }
-  }, [fetchSuggestions, user]);
+      if (user) {
+        supabase
+          .from('experiment_events')
+          .insert({
+            profile_id: user.id,
+            event_type: 'vector_suggestion_added_to_set',
+            feature: 'hive_composer',
+            variant: 'v1',
+            properties: { mix_id: suggestion.mix_id, similarity: suggestion.similarity },
+          })
+          .then(() => {});
+      }
+    },
+    [fetchSuggestions, user]
+  );
 
-  const handleDismissSuggestion = useCallback((mix_id: string) => {
-    dispatch({ type: 'DISMISS_SUGGESTION', mix_id });
-    if (user) {
-      supabase.from('experiment_events').insert({
-        profile_id: user.id,
-        event_type: 'vector_suggestion_dismissed',
-        feature: 'hive_composer',
-        variant: 'v1',
-        properties: { mix_id },
-      }).then(() => {});
-    }
-  }, [user]);
+  const handleDismissSuggestion = useCallback(
+    (mix_id: string) => {
+      dispatch({ type: 'DISMISS_SUGGESTION', mix_id });
+      if (user) {
+        supabase
+          .from('experiment_events')
+          .insert({
+            profile_id: user.id,
+            event_type: 'vector_suggestion_dismissed',
+            feature: 'hive_composer',
+            variant: 'v1',
+            properties: { mix_id },
+          })
+          .then(() => {});
+      }
+    },
+    [user]
+  );
 
-  const handleReorder = useCallback((from: number, to: number) => {
-    dispatch({ type: 'REORDER_TRACKS', from, to });
-    // Re-fetch suggestions for the new tail track
-    const newTracks = [...state.tracks];
-    const [moved] = newTracks.splice(from, 1);
-    newTracks.splice(to, 0, moved);
-    const tail = newTracks[newTracks.length - 1];
-    if (tail) fetchSuggestions(tail.mix_id, tail.bpm);
-  }, [state.tracks, fetchSuggestions]);
+  const handleReorder = useCallback(
+    (from: number, to: number) => {
+      dispatch({ type: 'REORDER_TRACKS', from, to });
+      // Re-fetch suggestions for the new tail track
+      const newTracks = [...state.tracks];
+      const [moved] = newTracks.splice(from, 1);
+      newTracks.splice(to, 0, moved);
+      const tail = newTracks[newTracks.length - 1];
+      if (tail) fetchSuggestions(tail.mix_id, tail.bpm);
+    },
+    [state.tracks, fetchSuggestions]
+  );
 
   const handleSave = useCallback(async () => {
     if (!user || state.tracks.length === 0) return;
@@ -353,7 +389,7 @@ export function HiveComposer() {
           type="text"
           placeholder="Set title…"
           value={setTitle}
-          onChange={(e) => setSetTitle(e.target.value)}
+          onChange={e => setSetTitle(e.target.value)}
           style={{
             flex: 1,
             maxWidth: 280,
@@ -503,7 +539,7 @@ export function HiveComposer() {
             dismissedIds={state.dismissedIds}
             selectedId={state.selectedId}
             onAddTrack={handleAddTrack}
-            onSelectTrack={(id) => dispatch({ type: 'SELECT_TRACK', mix_id: id })}
+            onSelectTrack={id => dispatch({ type: 'SELECT_TRACK', mix_id: id })}
             onAcceptSuggestion={handleAcceptSuggestion}
             onDismissSuggestion={handleDismissSuggestion}
             onReorder={handleReorder}
@@ -511,10 +547,7 @@ export function HiveComposer() {
         </div>
 
         {/* Agent panel */}
-        <ComposerAgentPanel
-          tracks={state.tracks}
-          visible={state.agentPanelVisible}
-        />
+        <ComposerAgentPanel tracks={state.tracks} visible={state.agentPanelVisible} />
       </div>
 
       {/* Search modal */}
@@ -532,9 +565,8 @@ export function HiveComposer() {
             justifyContent: 'center',
             padding: space[10],
           }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget)
-              dispatch({ type: 'TOGGLE_SEARCH', open: false });
+          onClick={e => {
+            if (e.target === e.currentTarget) dispatch({ type: 'TOGGLE_SEARCH', open: false });
           }}
         >
           <div
@@ -555,7 +587,7 @@ export function HiveComposer() {
               type="text"
               placeholder="Search mixes…"
               value={state.searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
+              onChange={e => handleSearch(e.target.value)}
               style={{
                 padding: `${space[6]}px ${space[8]}px`,
                 background: colors.surfaceHover,
@@ -567,11 +599,22 @@ export function HiveComposer() {
               }}
             />
             {state.searching && (
-              <p style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: 0 }}>Searching…</p>
+              <p style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: 0 }}>
+                Searching…
+              </p>
             )}
             {state.searchResults.length > 0 && (
-              <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {state.searchResults.map((r) => (
+              <ul
+                style={{
+                  margin: 0,
+                  padding: 0,
+                  listStyle: 'none',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 4,
+                }}
+              >
+                {state.searchResults.map(r => (
                   <li key={r.mix_id}>
                     <button
                       type="button"
@@ -595,9 +638,13 @@ export function HiveComposer() {
                 ))}
               </ul>
             )}
-            {!state.searching && state.searchQuery.length > 1 && state.searchResults.length === 0 && (
-              <p style={{ color: colors.text.dim, fontSize: fontSize.sm, margin: 0 }}>No mixes found.</p>
-            )}
+            {!state.searching &&
+              state.searchQuery.length > 1 &&
+              state.searchResults.length === 0 && (
+                <p style={{ color: colors.text.dim, fontSize: fontSize.sm, margin: 0 }}>
+                  No mixes found.
+                </p>
+              )}
           </div>
         </div>
       )}

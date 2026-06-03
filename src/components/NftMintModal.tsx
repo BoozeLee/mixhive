@@ -30,7 +30,14 @@ interface Props {
 
 type Step = 'configure' | 'preview' | 'deploying' | 'done';
 
-export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultConfig, onDeployed }: Props) {
+export function NftMintModal({
+  isOpen,
+  onClose,
+  sourceType,
+  sourceId,
+  defaultConfig,
+  onDeployed,
+}: Props) {
   const [step, setStep] = useState<Step>('configure');
   const [name, setName] = useState(defaultConfig?.name ?? '');
   const [description, setDescription] = useState(defaultConfig?.description ?? '');
@@ -52,13 +59,20 @@ export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultCon
   };
 
   const handleDeploy = async () => {
-    if (!name.trim()) { toast.error('Name is required'); return; }
+    if (!name.trim()) {
+      toast.error('Name is required');
+      return;
+    }
     setStep('deploying');
 
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    if (!session) { toast.error('Not signed in'); setStep('configure'); return; }
+    if (!session) {
+      toast.error('Not signed in');
+      setStep('configure');
+      return;
+    }
 
     // Require a connected wallet before minting (Settings → Web3 & NFTs)
     const { data: profile } = await supabase
@@ -109,21 +123,24 @@ export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultCon
   };
 
   const title =
-    step === 'configure' ? 'Mint a limited edition pass'
-    : step === 'preview' ? 'Preview token'
-    : step === 'deploying' ? 'Deploying…'
-    : 'Collection live!';
+    step === 'configure'
+      ? 'Mint a limited edition pass'
+      : step === 'preview'
+        ? 'Preview token'
+        : step === 'deploying'
+          ? 'Deploying…'
+          : 'Collection live!';
 
   const description_ =
     step === 'configure'
       ? sourceType === 'event'
         ? 'Create soulbound participation proofs for attendees'
         : sourceType === 'quest'
-        ? 'Let fans back your quest with a token'
-        : 'Give early supporters a permanent, on-chain receipt'
+          ? 'Let fans back your quest with a token'
+          : 'Give early supporters a permanent, on-chain receipt'
       : step === 'done'
-      ? 'Your collection is deploying on Base — tokens are claimable once confirmed.'
-      : undefined;
+        ? 'Your collection is deploying on Base — tokens are claimable once confirmed.'
+        : undefined;
 
   return (
     <Modal open={isOpen} onClose={handleClose} title={title} description={description_} width={520}>
@@ -135,7 +152,9 @@ export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultCon
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder={sourceType === 'event' ? 'Berlin Warehouse — April 2026' : 'Early supporter pass'}
+              placeholder={
+                sourceType === 'event' ? 'Berlin Warehouse — April 2026' : 'Early supporter pass'
+              }
               style={inputStyle}
             />
           </div>
@@ -162,13 +181,23 @@ export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultCon
                 onChange={e => setMaxSupply(parseInt(e.target.value) || 50)}
                 style={inputStyle}
               />
-              <span style={{ fontSize: fontSize.xs, color: colors.text.faint }}>Leave 0 for unlimited</span>
+              <span style={{ fontSize: fontSize.xs, color: colors.text.faint }}>
+                Leave 0 for unlimited
+              </span>
             </div>
 
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>Soulbound (non-transferable)</label>
               <div style={{ marginTop: 8 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: space[2], cursor: 'pointer', fontSize: fontSize.sm }}>
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: space[2],
+                    cursor: 'pointer',
+                    fontSize: fontSize.sm,
+                  }}
+                >
                   <input
                     type="checkbox"
                     checked={soulbound}
@@ -178,7 +207,9 @@ export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultCon
                   <span>Soulbound token</span>
                 </label>
                 <p style={{ fontSize: fontSize.xs, color: colors.text.faint, margin: '4px 0 0' }}>
-                  {soulbound ? 'Cannot be sold or transferred — pure provenance.' : 'Holders can transfer or resell externally.'}
+                  {soulbound
+                    ? 'Cannot be sold or transferred — pure provenance.'
+                    : 'Holders can transfer or resell externally.'}
                 </p>
               </div>
             </div>
@@ -194,12 +225,26 @@ export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultCon
               color: colors.text.muted,
             }}
           >
-            Tokens are minted on <strong>Base L2</strong> via Zora Protocol. Gas is covered by MIXHIVE — free to claim for holders. No secondary market is shown inside the app.
+            Tokens are minted on <strong>Base L2</strong> via Zora Protocol. Gas is covered by
+            MIXHIVE — free to claim for holders. No secondary market is shown inside the app.
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[3], paddingTop: space[2] }}>
-            <HiveButton variant="secondary" onClick={handleClose}>Cancel</HiveButton>
-            <HiveButton variant="secondary" onClick={() => setStep('preview')} disabled={!name.trim()}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: space[3],
+              paddingTop: space[2],
+            }}
+          >
+            <HiveButton variant="secondary" onClick={handleClose}>
+              Cancel
+            </HiveButton>
+            <HiveButton
+              variant="secondary"
+              onClick={() => setStep('preview')}
+              disabled={!name.trim()}
+            >
               Preview →
             </HiveButton>
           </div>
@@ -216,8 +261,17 @@ export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultCon
             sourceType={sourceType}
             imageUrl={defaultConfig?.image_url}
           />
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: space[2] }}>
-            <HiveButton variant="secondary" onClick={() => setStep('configure')}>← Edit</HiveButton>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingTop: space[2],
+            }}
+          >
+            <HiveButton variant="secondary" onClick={() => setStep('configure')}>
+              ← Edit
+            </HiveButton>
             <HiveButton variant="primary" onClick={handleDeploy}>
               Deploy on Base
             </HiveButton>
@@ -250,7 +304,8 @@ export function NftMintModal({ isOpen, onClose, sourceType, sourceId, defaultCon
           <div style={{ textAlign: 'center', padding: `${space[4]}px 0` }}>
             <div style={{ fontSize: 40, marginBottom: space[3] }}>✅</div>
             <p style={{ color: colors.text.secondary, fontSize: fontSize.sm }}>
-              Collection <strong>{name}</strong> is live. Fans can now claim tokens from the {sourceType} page.
+              Collection <strong>{name}</strong> is live. Fans can now claim tokens from the{' '}
+              {sourceType} page.
             </p>
             {collectionId && (
               <p style={{ fontSize: fontSize.xs, color: colors.text.faint, marginTop: space[2] }}>
@@ -294,7 +349,9 @@ function TokenPreviewCard({
       <div
         style={{
           height: 120,
-          background: imageUrl ? `url(${imageUrl}) center/cover` : 'linear-gradient(135deg, #1a1a2e, #16213e)',
+          background: imageUrl
+            ? `url(${imageUrl}) center/cover`
+            : 'linear-gradient(135deg, #1a1a2e, #16213e)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -303,12 +360,27 @@ function TokenPreviewCard({
         {!imageUrl && <span style={{ fontSize: 40 }}>🎛️</span>}
       </div>
       <div style={{ padding: space[4] }}>
-        <div style={{ fontWeight: fontWeight.bold, fontSize: fontSize.md, marginBottom: 4 }}>{name || 'Unnamed pass'}</div>
-        {description && <p style={{ fontSize: fontSize.sm, color: colors.text.muted, margin: '0 0 8px' }}>{description}</p>}
+        <div style={{ fontWeight: fontWeight.bold, fontSize: fontSize.md, marginBottom: 4 }}>
+          {name || 'Unnamed pass'}
+        </div>
+        {description && (
+          <p style={{ fontSize: fontSize.sm, color: colors.text.muted, margin: '0 0 8px' }}>
+            {description}
+          </p>
+        )}
         <div style={{ display: 'flex', gap: space[2], flexWrap: 'wrap' }}>
           <Tag label={`/${maxSupply > 0 ? maxSupply : '∞'} editions`} />
           <Tag label={soulbound ? 'Soulbound' : 'Transferable'} gold={soulbound} />
-          <Tag label={sourceType === 'mix' ? 'Mix pass' : sourceType === 'quest' ? 'Quest backing' : 'Gig proof'} gold />
+          <Tag
+            label={
+              sourceType === 'mix'
+                ? 'Mix pass'
+                : sourceType === 'quest'
+                  ? 'Quest backing'
+                  : 'Gig proof'
+            }
+            gold
+          />
           <Tag label="Base L2" />
         </div>
       </div>

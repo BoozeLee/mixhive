@@ -60,10 +60,12 @@ export function CollabSessionRoom() {
     } else {
       // Auto-join as participant if not the owner
       if (profile && data.owner_id !== profile.id) {
-        await supabase.from('collab_session_participants').upsert(
-          { session_id: id, profile_id: profile.id, role: 'participant' },
-          { onConflict: 'session_id,profile_id' }
-        );
+        await supabase
+          .from('collab_session_participants')
+          .upsert(
+            { session_id: id, profile_id: profile.id, role: 'participant' },
+            { onConflict: 'session_id,profile_id' }
+          );
       }
       setMode('room');
     }
@@ -80,7 +82,14 @@ export function CollabSessionRoom() {
 
   if (mode === 'loading') {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '60vh',
+        }}
+      >
         <LoadingSpinner />
       </div>
     );
@@ -88,33 +97,61 @@ export function CollabSessionRoom() {
 
   if (mode === 'error') {
     return (
-      <div style={{ maxWidth: 560, margin: '0 auto', padding: `${space[10]}px ${space[4]}px`, textAlign: 'center' }}>
+      <div
+        style={{
+          maxWidth: 560,
+          margin: '0 auto',
+          padding: `${space[10]}px ${space[4]}px`,
+          textAlign: 'center',
+        }}
+      >
         <div style={{ fontSize: 40, marginBottom: space[4] }}>⚡</div>
-        <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>Session unavailable</h1>
-        <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>{errorMsg}</p>
-        <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>Back to Dashboard</HiveButton>
+        <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>
+          Session unavailable
+        </h1>
+        <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>
+          {errorMsg}
+        </p>
+        <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>
+          Back to Dashboard
+        </HiveButton>
       </div>
     );
   }
 
   if (mode === 'ended') {
     return (
-      <div style={{ maxWidth: 560, margin: '0 auto', padding: `${space[10]}px ${space[4]}px`, textAlign: 'center' }}>
+      <div
+        style={{
+          maxWidth: 560,
+          margin: '0 auto',
+          padding: `${space[10]}px ${space[4]}px`,
+          textAlign: 'center',
+        }}
+      >
         <div style={{ fontSize: 40, marginBottom: space[4] }}>🎛️</div>
-        <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>Session ended</h1>
+        <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>
+          Session ended
+        </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>
           {session?.title} — this session has been closed and its provenance written to the graph.
         </p>
         <div style={{ display: 'flex', gap: space[3], justifyContent: 'center' }}>
-          <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>Dashboard</HiveButton>
-          <HiveButton variant="primary" onClick={() => navigate('/quests')}>View Quests</HiveButton>
+          <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>
+            Dashboard
+          </HiveButton>
+          <HiveButton variant="primary" onClick={() => navigate('/quests')}>
+            View Quests
+          </HiveButton>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', background: colors.bg }}>
+    <div
+      style={{ height: '100dvh', display: 'flex', flexDirection: 'column', background: colors.bg }}
+    >
       {/* Session header bar */}
       <div
         style={{
@@ -127,7 +164,13 @@ export function CollabSessionRoom() {
         }}
       >
         <div>
-          <span style={{ fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.text.primary }}>
+          <span
+            style={{
+              fontSize: fontSize.sm,
+              fontWeight: fontWeight.semibold,
+              color: colors.text.primary,
+            }}
+          >
             {session?.title ?? 'Mythic Session'}
           </span>
           <span
@@ -149,7 +192,9 @@ export function CollabSessionRoom() {
           <HiveButton
             variant="secondary"
             onClick={() => {
-              navigator.clipboard.writeText(window.location.href).then(() => toast.success('Session link copied'));
+              navigator.clipboard
+                .writeText(window.location.href)
+                .then(() => toast.success('Session link copied'));
             }}
             style={{ fontSize: fontSize.xs, padding: '6px 12px' }}
           >

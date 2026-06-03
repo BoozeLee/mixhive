@@ -38,7 +38,7 @@ export function PostSessionReview({
         // In a real app this would be a dedicated endpoint or RPC.
         // For now we query mythic_edges directly with the session_id in metadata.
         const { supabase } = await import('@/lib/supabase');
-        
+
         const { data: edges } = await supabase
           .from('mythic_edges')
           .select('*')
@@ -84,14 +84,12 @@ export function PostSessionReview({
   }, [sessionId, sessionTitle]);
 
   const toggleApprove = (id: string) => {
-    setApprovedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    setApprovedIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
   };
 
   const handleDiscard = (id: string) => {
-    setProposedUpdates((prev) => prev.filter((item) => item.id !== id));
-    setApprovedIds((prev) => prev.filter((x) => x !== id));
+    setProposedUpdates(prev => prev.filter(item => item.id !== id));
+    setApprovedIds(prev => prev.filter(x => x !== id));
   };
 
   const handleApproveSelected = async () => {
@@ -162,7 +160,7 @@ export function PostSessionReview({
             No proposed updates.
           </div>
         ) : (
-          proposedUpdates.map((update) => {
+          proposedUpdates.map(update => {
             const isApproved = approvedIds.includes(update.id);
 
             return (
@@ -176,12 +174,24 @@ export function PostSessionReview({
                   marginBottom: 12,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}
+                >
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: fontWeight.medium, marginBottom: 4 }}>
                       {update.title}
                     </div>
-                    <div style={{ fontSize: fontSize.sm, color: colors.text.secondary, marginBottom: 8 }}>
+                    <div
+                      style={{
+                        fontSize: fontSize.sm,
+                        color: colors.text.secondary,
+                        marginBottom: 8,
+                      }}
+                    >
                       {update.description}
                     </div>
                     {update.participants && (
@@ -232,7 +242,8 @@ export function PostSessionReview({
       </div>
 
       <div style={{ marginTop: 16, fontSize: 11, color: colors.text.faint, textAlign: 'center' }}>
-        Approved changes will create edges in your MythicNode graph and become visible to your agents.
+        Approved changes will create edges in your MythicNode graph and become visible to your
+        agents.
       </div>
     </div>
   );

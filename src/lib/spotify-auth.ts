@@ -10,7 +10,9 @@ export interface SpotifyAuthConfig {
 export const SpotifyAuthConfig: SpotifyAuthConfig = {
   clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || '',
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET || '',
-  redirectUri: process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI || `${process.env.NEXTAUTH_URL}/api/auth/callback/spotify`,
+  redirectUri:
+    process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI ||
+    `${process.env.NEXTAUTH_URL}/api/auth/callback/spotify`,
   scopes: [
     'user-read-private',
     'user-read-email',
@@ -34,7 +36,7 @@ export const SpotifyAuth = {
   // Generate Spotify authorization URL
   getAuthorizationUrl: (state?: string): string => {
     const { clientId, redirectUri, scopes } = SpotifyAuthConfig;
-    
+
     const params = new URLSearchParams({
       client_id: clientId,
       response_type: 'code',
@@ -51,7 +53,9 @@ export const SpotifyAuth = {
   },
 
   // Exchange authorization code for access token
-  exchangeCodeForToken: async (code: string): Promise<{ access_token: string; refresh_token: string; expires_in: number }> => {
+  exchangeCodeForToken: async (
+    code: string
+  ): Promise<{ access_token: string; refresh_token: string; expires_in: number }> => {
     try {
       const response = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
@@ -84,7 +88,9 @@ export const SpotifyAuth = {
   },
 
   // Refresh access token
-  refreshAccessToken: async (refreshToken: string): Promise<{ access_token: string; expires_in: number }> => {
+  refreshAccessToken: async (
+    refreshToken: string
+  ): Promise<{ access_token: string; expires_in: number }> => {
     try {
       const response = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',

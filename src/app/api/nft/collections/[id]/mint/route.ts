@@ -8,17 +8,16 @@ const MintSchema = z.object({
   holder_profile: z.string().uuid().optional(),
 });
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (process.env.WEB3_EXPERIMENTS_ENABLED !== 'true') {
     return NextResponse.json({ error: 'web3_disabled' }, { status: 503 });
   }
   try {
     const { id: collectionId } = await params;
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return unauthorized();
 
     const body = await request.json();

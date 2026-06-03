@@ -72,8 +72,24 @@ export function SoundEvolutionBanner({ evolution, loading }: SoundEvolutionBanne
         </svg>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingInline: 4 }}>
-        <span style={{ fontSize: fontSize.xs, color: colors.text.dim, maxWidth: '30%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingInline: 4,
+        }}
+      >
+        <span
+          style={{
+            fontSize: fontSize.xs,
+            color: colors.text.dim,
+            maxWidth: '30%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
           Early: {evolution.earlyTags ?? evolution.earlyGenre ?? '—'}
         </span>
         <span
@@ -89,7 +105,17 @@ export function SoundEvolutionBanner({ evolution, loading }: SoundEvolutionBanne
         >
           {label}
         </span>
-        <span style={{ fontSize: fontSize.xs, color: colors.text.dim, maxWidth: '30%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'right' }}>
+        <span
+          style={{
+            fontSize: fontSize.xs,
+            color: colors.text.dim,
+            maxWidth: '30%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            textAlign: 'right',
+          }}
+        >
           Now: {evolution.recentTags ?? evolution.recentGenre ?? '—'}
         </span>
       </div>

@@ -20,7 +20,9 @@ export async function POST(request: NextRequest) {
   }
   try {
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return unauthorized();
 
     const body = await request.json();
@@ -47,11 +49,7 @@ export async function POST(request: NextRequest) {
     if (error) throw error;
 
     // Advance web3_tier to at least 2 — user has initiated minting
-    await supabase
-      .from('profiles')
-      .update({ web3_tier: 2 })
-      .eq('id', user.id)
-      .lt('web3_tier', 2);
+    await supabase.from('profiles').update({ web3_tier: 2 }).eq('id', user.id).lt('web3_tier', 2);
 
     // Background: actual on-chain deploy is handled by a background worker
     // that polls nft_collections WHERE status='deploying' and calls the Zora SDK.
@@ -69,7 +67,9 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return unauthorized();
 
     const { data, error } = await supabase

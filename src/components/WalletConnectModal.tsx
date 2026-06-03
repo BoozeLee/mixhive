@@ -32,9 +32,9 @@ function detectProvider(type: 'metamask' | 'coinbase') {
 
   // Multi-provider env (EIP-5749)
   if (eth.providers) {
-    return eth.providers.find(p =>
-      type === 'metamask' ? p.isMetaMask : p.isCoinbaseWallet
-    ) ?? null;
+    return (
+      eth.providers.find(p => (type === 'metamask' ? p.isMetaMask : p.isCoinbaseWallet)) ?? null
+    );
   }
 
   if (type === 'metamask' && eth.isMetaMask) return eth;
@@ -54,7 +54,11 @@ async function requestAddress(type: 'metamask' | 'coinbase'): Promise<string | n
   }
 }
 
-async function signMessage(type: 'metamask' | 'coinbase', address: string, message: string): Promise<string | null> {
+async function signMessage(
+  type: 'metamask' | 'coinbase',
+  address: string,
+  message: string
+): Promise<string | null> {
   const provider = detectProvider(type);
   if (!provider) return null;
   try {
@@ -116,7 +120,7 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: Props) {
 
       // Fetch nonce from server
       const nonceRes = await fetch('/api/wallet/nonce');
-      const { nonce } = await nonceRes.json() as { nonce: string };
+      const { nonce } = (await nonceRes.json()) as { nonce: string };
 
       const message = buildSiweMessage(address, nonce);
       const signature = await signMessage(type, address, message);
@@ -134,13 +138,16 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: Props) {
       });
 
       if (!verifyRes.ok) {
-        const { error } = await verifyRes.json() as { error: string };
+        const { error } = (await verifyRes.json()) as { error: string };
         toast.error(error ?? 'Wallet verification failed. Please try again.');
         setStep('choose');
         return;
       }
 
-      const { wallet_address } = await verifyRes.json() as { wallet_address: string; ens_name?: string };
+      const { wallet_address } = (await verifyRes.json()) as {
+        wallet_address: string;
+        ens_name?: string;
+      };
       toast.success('Wallet connected');
       onConnected(wallet_address);
       onClose();
@@ -165,7 +172,7 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: Props) {
         body: JSON.stringify({ email }),
       });
       if (!res.ok) throw new Error('Embedded wallet not available yet');
-      const { address } = await res.json() as { address: string };
+      const { address } = (await res.json()) as { address: string };
       toast.success('Wallet created');
       onConnected(address);
       onClose();
@@ -201,7 +208,10 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: Props) {
             Approve the sign-in request in your wallet…
           </p>
           <button
-            onClick={() => { setStep('choose'); setConnecting(null); }}
+            onClick={() => {
+              setStep('choose');
+              setConnecting(null);
+            }}
             style={{
               marginTop: space[4],
               background: 'none',
@@ -273,7 +283,14 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: Props) {
           >
             ← Back
           </button>
-          <label style={{ display: 'block', fontSize: fontSize.sm, color: colors.text.secondary, marginBottom: space[2] }}>
+          <label
+            style={{
+              display: 'block',
+              fontSize: fontSize.sm,
+              color: colors.text.secondary,
+              marginBottom: space[2],
+            }}
+          >
             Email address
           </label>
           <input
@@ -308,9 +325,17 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: Props) {
 }
 
 function WalletOptionButton({
-  icon, label, description, loading, onClick,
+  icon,
+  label,
+  description,
+  loading,
+  onClick,
 }: {
-  icon: string; label: string; description: string; loading: boolean; onClick: () => void;
+  icon: string;
+  label: string;
+  description: string;
+  loading: boolean;
+  onClick: () => void;
 }) {
   return (
     <button
@@ -329,12 +354,22 @@ function WalletOptionButton({
         textAlign: 'left',
         transition: 'border-color 0.15s',
       }}
-      onMouseEnter={e => { (e.currentTarget).style.borderColor = colors.gold; }}
-      onMouseLeave={e => { (e.currentTarget).style.borderColor = colors.border; }}
+      onMouseEnter={e => {
+        e.currentTarget.style.borderColor = colors.gold;
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.borderColor = colors.border;
+      }}
     >
       <span style={{ fontSize: 24 }}>{icon}</span>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.text.primary }}>
+        <div
+          style={{
+            fontSize: fontSize.sm,
+            fontWeight: fontWeight.semibold,
+            color: colors.text.primary,
+          }}
+        >
           {loading ? 'Connecting…' : label}
         </div>
         <div style={{ fontSize: fontSize.xs, color: colors.text.muted }}>{description}</div>

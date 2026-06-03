@@ -103,7 +103,12 @@ export function NotificationsPage() {
         <h1 style={{ fontSize: 20, fontWeight: 700, color: colors.text.primary, margin: 0 }}>
           Notifications
         </h1>
-        <Button size="sm" variant="ghost" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleMarkAllAsRead}
+          disabled={unreadCount === 0}
+        >
           Mark all read
         </Button>
       </div>

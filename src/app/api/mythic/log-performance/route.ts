@@ -6,10 +6,10 @@ import { handleApiError, unauthorized } from '@/lib/api-errors';
 
 // Robust Zod schema for runtime validation
 const LogPerformanceSchema = z.object({
-  date: z.string().datetime({ message: "Invalid ISO date" }),
-  venueName: z.string().min(1, "Venue name is required").max(200),
+  date: z.string().datetime({ message: 'Invalid ISO date' }),
+  venueName: z.string().min(1, 'Venue name is required').max(200),
   city: z.string().max(100).optional().nullable(),
-  role: z.string().max(50).optional().default("support"),
+  role: z.string().max(50).optional().default('support'),
   notes: z.string().max(2000).optional().nullable(),
   link: z.string().url().optional().nullable().or(z.literal('')),
   promoterName: z.string().max(200).optional().nullable(),
@@ -29,7 +29,10 @@ export async function POST(request: NextRequest) {
     const supabase = createServerClient();
 
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return unauthorized();
@@ -39,9 +42,9 @@ export async function POST(request: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid input', 
-          issues: parsed.error.flatten().fieldErrors 
+        {
+          error: 'Invalid input',
+          issues: parsed.error.flatten().fieldErrors,
         },
         { status: 400 }
       );

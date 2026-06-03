@@ -12,7 +12,9 @@ type EntityType = 'mix' | 'profile';
 export async function POST(req: Request) {
   try {
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { entity_type, entity_id } = (await req.json()) as {

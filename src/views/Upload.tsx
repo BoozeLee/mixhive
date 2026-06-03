@@ -254,10 +254,22 @@ export function Upload() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: 560, margin: '0 auto', padding: '24px 16px 80px' }}>
+    <div
+      className="container"
+      style={{ maxWidth: 560, margin: '0 auto', padding: '24px 16px 80px' }}
+    >
       {/* Page header */}
       <div style={{ marginBottom: 28 }}>
-        <p style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, color: '#f0c040', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        <p
+          style={{
+            margin: '0 0 4px',
+            fontSize: 11,
+            fontWeight: 700,
+            color: '#f0c040',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+          }}
+        >
           Nectar Upload
         </p>
         <h1 style={{ margin: 0, fontSize: 26, fontWeight: 900, color: '#eee', lineHeight: 1.1 }}>
@@ -292,8 +304,12 @@ export function Upload() {
       {generalError && (
         <div
           style={{
-            background: '#2a1010', color: '#f55', padding: '10px 14px',
-            borderRadius: 8, fontSize: 13, marginBottom: 16,
+            background: '#2a1010',
+            color: '#f55',
+            padding: '10px 14px',
+            borderRadius: 8,
+            fontSize: 13,
+            marginBottom: 16,
             border: '1px solid #f5525244',
           }}
         >
@@ -304,16 +320,35 @@ export function Upload() {
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
         {/* Drag-and-drop audio upload zone */}
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#999', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          <label
+            style={{
+              display: 'block',
+              fontSize: 12,
+              fontWeight: 600,
+              color: '#999',
+              marginBottom: 8,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+            }}
+          >
             Audio file *
           </label>
           <div
             role="button"
             tabIndex={0}
             aria-label="Audio file drop zone — drag and drop or click to browse"
-            onDragEnter={e => { e.preventDefault(); setDragOver(true); }}
-            onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={e => { e.preventDefault(); setDragOver(false); }}
+            onDragEnter={e => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragOver={e => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={e => {
+              e.preventDefault();
+              setDragOver(false);
+            }}
             onDrop={e => {
               e.preventDefault();
               setDragOver(false);
@@ -324,14 +359,23 @@ export function Upload() {
               const input = document.createElement('input');
               input.type = 'file';
               input.accept = 'audio/*';
-              input.onchange = () => { const f = input.files?.[0]; if (f) setAudioFile(f); };
+              input.onchange = () => {
+                const f = input.files?.[0];
+                if (f) setAudioFile(f);
+              };
               input.click();
             }}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click(); }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click();
+            }}
             style={{
               minHeight: 120,
               borderRadius: 10,
-              border: dragOver ? '2px solid #f0c040' : audioFile ? '2px solid #f0c04055' : '1.5px dashed #1a1a2e',
+              border: dragOver
+                ? '2px solid #f0c040'
+                : audioFile
+                  ? '2px solid #f0c04055'
+                  : '1.5px dashed #1a1a2e',
               background: dragOver ? '#f0c04014' : audioFile ? '#f0c04008' : '#111',
               display: 'flex',
               flexDirection: 'column',
@@ -347,28 +391,54 @@ export function Upload() {
           >
             {audioFile ? (
               <>
-                <span aria-hidden="true" style={{ fontSize: 28, color: '#f0c040' }}>✓</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: '#eee' }}>{audioFile.name}</span>
+                <span aria-hidden="true" style={{ fontSize: 28, color: '#f0c040' }}>
+                  ✓
+                </span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#eee' }}>
+                  {audioFile.name}
+                </span>
                 <span style={{ fontSize: 12, color: '#888' }}>
                   {(audioFile.size / 1024 / 1024).toFixed(1)} MB
-                  {duration && !detectingDuration && ` · ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`}
+                  {duration &&
+                    !detectingDuration &&
+                    ` · ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`}
                   {detectingDuration && ' · detecting duration…'}
                 </span>
                 <button
                   type="button"
-                  onClick={e => { e.stopPropagation(); setAudioFile(null); setDuration(null); }}
-                  style={{ fontSize: 11, color: '#f55', background: 'none', border: 'none', cursor: 'pointer', marginTop: 4 }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setAudioFile(null);
+                    setDuration(null);
+                  }}
+                  style={{
+                    fontSize: 11,
+                    color: '#f55',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    marginTop: 4,
+                  }}
                 >
                   Remove
                 </button>
               </>
             ) : (
               <>
-                <span aria-hidden="true" style={{ fontSize: 30, color: dragOver ? '#f0c040' : '#444' }}>⬡</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: dragOver ? '#f0c040' : '#777' }}>
+                <span
+                  aria-hidden="true"
+                  style={{ fontSize: 30, color: dragOver ? '#f0c040' : '#444' }}
+                >
+                  ⬡
+                </span>
+                <span
+                  style={{ fontSize: 14, fontWeight: 600, color: dragOver ? '#f0c040' : '#777' }}
+                >
                   {dragOver ? 'Drop it!' : 'Drop your mix here'}
                 </span>
-                <span style={{ fontSize: 12, color: '#555' }}>or click to browse — MP3, WAV, AIFF, FLAC</span>
+                <span style={{ fontSize: 12, color: '#555' }}>
+                  or click to browse — MP3, WAV, AIFF, FLAC
+                </span>
               </>
             )}
           </div>

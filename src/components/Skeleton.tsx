@@ -7,12 +7,7 @@ export function SkeletonBar({
   height?: number;
   style?: React.CSSProperties;
 }) {
-  return (
-    <div
-      className="skeleton"
-      style={{ width, height, borderRadius: 4, ...style }}
-    />
-  );
+  return <div className="skeleton" style={{ width, height, borderRadius: 4, ...style }} />;
 }
 
 export function SkeletonCircle({ size = 36 }: { size?: number }) {

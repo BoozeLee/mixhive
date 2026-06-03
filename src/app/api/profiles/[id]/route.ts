@@ -3,10 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { moderateContent } from '@/lib/moderation';
 import { embedAndStoreEntity } from '@/lib/embed-entity';
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
 
@@ -17,7 +14,8 @@ export async function PATCH(
     const jwt = authHeader.slice(7);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
@@ -27,7 +25,10 @@ export async function PATCH(
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
@@ -38,11 +39,7 @@ export async function PATCH(
     }
 
     // Fetch existing profile to get the current bio
-    const { data: existing } = await sb
-      .from('profiles')
-      .select('id, bio')
-      .eq('id', id)
-      .single();
+    const { data: existing } = await sb.from('profiles').select('id, bio').eq('id', id).single();
 
     if (!existing) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });

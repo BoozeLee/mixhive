@@ -78,12 +78,12 @@ export const mythicTools = {
     const { data, error } = await adminClient()
       .from('mythic_nodes')
       .insert({
-        node_type:    params.node_type,
+        node_type: params.node_type,
         source_table: params.source_table,
-        source_id:    params.source_id,
-        title:        params.title,
-        owner_id:     params.owner_id,
-        payload:      params.payload ?? {},
+        source_id: params.source_id,
+        title: params.title,
+        owner_id: params.owner_id,
+        payload: params.payload ?? {},
       })
       .select('id')
       .single();
@@ -103,12 +103,12 @@ export const mythicTools = {
       .from('mythic_edges')
       .insert({
         from_node_id: params.from_node_id,
-        to_node_id:   params.to_node_id,
-        edge_type:    params.edge_type,
-        weight:       params.weight ?? 1.0,
-        metadata:     params.metadata ?? {},
+        to_node_id: params.to_node_id,
+        edge_type: params.edge_type,
+        weight: params.weight ?? 1.0,
+        metadata: params.metadata ?? {},
         source_event: params.source_event ?? 'agent',
-        occurred_at:  new Date().toISOString(),
+        occurred_at: new Date().toISOString(),
       });
     if (error) throw new Error(`mythic.edge.create: ${error.message}`);
     return true;

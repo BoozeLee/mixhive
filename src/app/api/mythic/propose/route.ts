@@ -4,7 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 export async function POST(req: NextRequest) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceKey) {
@@ -13,7 +14,10 @@ export async function POST(req: NextRequest) {
 
     const authHeader = req.headers.get('authorization');
     const serviceToken = process.env.SERVICE_ROLE_TOKEN;
-    if (!authHeader?.startsWith('Bearer ') || (serviceToken && authHeader.slice(7) !== serviceToken)) {
+    if (
+      !authHeader?.startsWith('Bearer ') ||
+      (serviceToken && authHeader.slice(7) !== serviceToken)
+    ) {
       return NextResponse.json({ error: 'Invalid service token' }, { status: 401 });
     }
 
@@ -21,10 +25,14 @@ export async function POST(req: NextRequest) {
       auth: { persistSession: false },
     });
 
-    const { action_type, target_node_id, rationale, draft_text, agent_id, from_node_id } = await req.json();
+    const { action_type, target_node_id, rationale, draft_text, agent_id, from_node_id } =
+      await req.json();
 
     if (!action_type || !target_node_id || !rationale) {
-      return NextResponse.json({ error: 'action_type, target_node_id, and rationale are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'action_type, target_node_id, and rationale are required' },
+        { status: 400 }
+      );
     }
 
     if (!['recommended_by_agent'].includes(action_type)) {

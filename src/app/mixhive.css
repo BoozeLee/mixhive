@@ -437,8 +437,12 @@ body {
 /* ── Motion ──────────────────────────────────────────────────────────────── */
 
 @keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .skeleton {
@@ -460,57 +464,106 @@ body {
 }
 
 @keyframes toastIn {
-  from { transform: translateX(120%); opacity: 0; }
-  to   { transform: translateX(0);    opacity: 1; }
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes toastOut {
-  from { transform: translateX(0);    opacity: 1; }
-  to   { transform: translateX(120%); opacity: 0; }
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(120%);
+    opacity: 0;
+  }
 }
 
-.toast-enter { animation: toastIn  200ms ease-out forwards; }
-.toast-exit  { animation: toastOut 150ms ease-in  forwards; }
+.toast-enter {
+  animation: toastIn 200ms ease-out forwards;
+}
+.toast-exit {
+  animation: toastOut 150ms ease-in forwards;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .toast-enter,
-  .toast-exit { animation: none; }
+  .toast-exit {
+    animation: none;
+  }
 }
 
 @keyframes panelSlide {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0);    }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
-.panel-enter { animation: panelSlide 150ms ease-out forwards; }
+.panel-enter {
+  animation: panelSlide 150ms ease-out forwards;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .panel-enter { animation: none; }
+  .panel-enter {
+    animation: none;
+  }
 }
 
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0);    }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.page-enter { animation: pageIn 150ms ease-out forwards; }
+.page-enter {
+  animation: pageIn 150ms ease-out forwards;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .page-enter { animation: none; }
+  .page-enter {
+    animation: none;
+  }
 }
 
 @keyframes eq-bar {
-  0%, 100% { transform: scaleY(0.3); }
-  50%       { transform: scaleY(1.0); }
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eq-bar { animation: none !important; }
+  .eq-bar {
+    animation: none !important;
+  }
 }
 
 @keyframes suggestionIn {
-  from { opacity: 0; transform: scale(0.82); }
-  to   { opacity: 1; transform: scale(1);    }
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .suggestion-enter {
@@ -518,7 +571,9 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .suggestion-enter { animation-duration: 0.01ms; }
+  .suggestion-enter {
+    animation-duration: 0.01ms;
+  }
 }
 
 /* Filter chips in Hive Composer */
@@ -530,7 +585,9 @@ body {
   color: #f0c040;
   font-size: 11px;
   cursor: pointer;
-  transition: background 120ms ease, border-color 120ms ease;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
   white-space: nowrap;
 }
 

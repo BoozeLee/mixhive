@@ -31,8 +31,14 @@ beforeEach(() => {
 describe('db.rpc', () => {
   it('allows find_candidate_venues', async () => {
     mockRpc.mockResolvedValueOnce({ data: [{ id: '1', name: 'Club Test' }], error: null });
-    const result = await dbTools['db.rpc']('find_candidate_venues', { p_city: 'Brussels', p_limit: 5 });
-    expect(mockRpc).toHaveBeenCalledWith('find_candidate_venues', { p_city: 'Brussels', p_limit: 5 });
+    const result = await dbTools['db.rpc']('find_candidate_venues', {
+      p_city: 'Brussels',
+      p_limit: 5,
+    });
+    expect(mockRpc).toHaveBeenCalledWith('find_candidate_venues', {
+      p_city: 'Brussels',
+      p_limit: 5,
+    });
     expect(Array.isArray(result)).toBe(true);
   });
 
@@ -49,9 +55,9 @@ describe('db.rpc', () => {
   });
 
   it('blocks SQL-injection-like names', async () => {
-    await expect(dbTools['db.rpc']('find_candidate_venues; DROP TABLE venues--', {})).rejects.toThrow(
-      'not in the allowed RPC list'
-    );
+    await expect(
+      dbTools['db.rpc']('find_candidate_venues; DROP TABLE venues--', {})
+    ).rejects.toThrow('not in the allowed RPC list');
   });
 
   it('returns empty array on null data', async () => {
@@ -62,7 +68,9 @@ describe('db.rpc', () => {
 
   it('throws on Supabase error', async () => {
     mockRpc.mockResolvedValueOnce({ data: null, error: { message: 'function not found' } });
-    await expect(dbTools['db.rpc']('find_candidate_venues', {})).rejects.toThrow('find_candidate_venues');
+    await expect(dbTools['db.rpc']('find_candidate_venues', {})).rejects.toThrow(
+      'find_candidate_venues'
+    );
   });
 });
 
@@ -70,7 +78,9 @@ describe('db.read', () => {
   it('applies equality filters and limit', async () => {
     const mockEq = jest.fn().mockReturnThis();
     const mockLimit = jest.fn().mockResolvedValueOnce({ data: [], error: null });
-    mockFrom.mockReturnValue({ select: jest.fn().mockReturnValue({ limit: mockLimit, eq: mockEq }) });
+    mockFrom.mockReturnValue({
+      select: jest.fn().mockReturnValue({ limit: mockLimit, eq: mockEq }),
+    });
 
     // Due to chaining complexity, just verify no error is thrown with mocked chain
     // Real filter chaining tested via integration

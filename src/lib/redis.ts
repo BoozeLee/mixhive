@@ -514,9 +514,10 @@ function parseRedisConnectionInfo(redisUrl: string): RedisConnectionInfo {
 
 function normalizeRedisError(error: unknown): { message: string; code: string | null } {
   if (error instanceof Error) {
-    const code = typeof (error as Error & { code?: unknown }).code === 'string'
-      ? ((error as Error & { code: string }).code)
-      : null;
+    const code =
+      typeof (error as Error & { code?: unknown }).code === 'string'
+        ? (error as Error & { code: string }).code
+        : null;
 
     return {
       message: error.message,

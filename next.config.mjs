@@ -18,7 +18,7 @@ const nextConfig = {
   turbopack: {
     root: appDir,
   },
-  serverExternalPackages: ['ioredis'],
+  serverExternalPackages: ['ioredis', 'web-push'],
 
   // Images optimization
   images: {
@@ -124,6 +124,7 @@ const nextConfig = {
       process.env.VITE_RELEASE_SHA ||
       process.env.VERCEL_GIT_COMMIT_SHA,
     NEXT_PUBLIC_CDN_BASE_URL: process.env.NEXT_PUBLIC_CDN_BASE_URL,
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY,
   },
 
   async headers() {

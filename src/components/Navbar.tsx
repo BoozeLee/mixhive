@@ -15,6 +15,7 @@ const navLinks = [
   { to: '/opportunities', label: 'Events' },
   { to: '/marketplace/gear', label: 'Market' },
   { to: '/collab-quests', label: 'Quests' },
+  { to: '/hub', label: 'Hub' },
 ];
 
 const menuItemStyle: React.CSSProperties = {

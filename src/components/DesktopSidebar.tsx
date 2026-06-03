@@ -25,6 +25,8 @@ const topItems: SidebarItem[] = [
   { path: '/quests', icon: '⚔', label: 'Quests', ariaLabel: 'Mythic Quest Lines' },
   { path: '/scene-radar', icon: '📡', label: 'Radar', ariaLabel: 'Scene Radar' },
   { path: '/composer', icon: '⬡', label: 'Composer', ariaLabel: 'Hive Composer' },
+  { path: '/hive-story', icon: '✦', label: 'Hive Story', ariaLabel: 'Hive Story editorial' },
+  { path: '/hub', icon: '⬡', label: 'Hub', ariaLabel: 'Feature hub' },
 ];
 
 function isActive(itemPath: string, currentPath: string): boolean {

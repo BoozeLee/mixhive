@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
   }
 
-  const stripe = new Stripe(stripeKey, { apiVersion: '2025-05-28.basil' });
+  const stripe = new Stripe(stripeKey, { apiVersion: '2026-05-27.dahlia' });
   const body = await req.text();
   const sig = req.headers.get('stripe-signature');
 
@@ -39,29 +39,73 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { listing_id, buyer_profile_id, seller_profile_id } = session.metadata ?? {};
+    const { listing_id, buyer_profile_id, seller_profile_id, agent_package_id, creator_profile_id } = session.metadata ?? {};
 
-    if (!listing_id) return NextResponse.json({ ok: true });
+    // --- Gear marketplace escrow ---
+    if (listing_id) {
+      await sb
+        .from('equipment_transactions')
+        .update({
+          transaction_state: 'paid_escrow',
+          payment_reference: session.id,
+        })
+        .eq('listing_id', listing_id)
+        .eq('transaction_state', 'pending_payment');
 
-    // Move transaction to paid_escrow
-    await sb
-      .from('equipment_transactions')
-      .update({
-        transaction_state: 'paid_escrow',
-        payment_reference: session.id,
-      })
-      .eq('listing_id', listing_id)
-      .eq('transaction_state', 'pending_payment');
+      if (seller_profile_id) {
+        try {
+          await sb.from('notifications').insert({
+            user_id: seller_profile_id,
+            type: 'gear_sale',
+            body: `Your gear listing has a buyer — payment secured in escrow. Ship the item and add a tracking number.`,
+            metadata: { listing_id, buyer_profile_id },
+            read: false,
+          });
+        } catch {}
+      }
+    }
 
-    // Notify seller
-    if (seller_profile_id) {
-      await sb.from('notifications').insert({
-        user_id: seller_profile_id,
-        type: 'gear_sale',
-        body: `Your gear listing has a buyer — payment secured in escrow. Ship the item and add a tracking number.`,
-        metadata: { listing_id, buyer_profile_id },
-        read: false,
-      }).catch(() => {});
+    // --- Agent marketplace: immediate fulfillment ---
+    if (agent_package_id && buyer_profile_id) {
+      const { data: agentId, error: installErr } = await sb.rpc('install_agent_package', {
+        p_package_id: agent_package_id,
+        p_config: {},
+        p_buyer_id: buyer_profile_id,
+      });
+
+      await sb
+        .from('lua_agent_package_purchases')
+        .update({
+          purchase_state: installErr ? 'failed' : 'completed',
+          agent_id: installErr ? null : agentId,
+          resolved_at: new Date().toISOString(),
+        })
+        .eq('payment_reference', session.id)
+        .eq('purchase_state', 'pending_payment');
+
+      if (!installErr) {
+        try {
+          await sb.from('notifications').insert({
+            user_id: buyer_profile_id,
+            type: 'agent_purchased',
+            body: `Your agent purchase is complete — find it in your Agents dashboard.`,
+            metadata: { agent_package_id, agent_id: agentId },
+            read: false,
+          });
+        } catch {}
+
+        if (creator_profile_id) {
+          try {
+            await sb.from('notifications').insert({
+              user_id: creator_profile_id,
+              type: 'agent_sale',
+              body: `Your agent was purchased. Earnings will be paid out via your connected Stripe account.`,
+              metadata: { agent_package_id },
+              read: false,
+            });
+          } catch {}
+        }
+      }
     }
   }
 

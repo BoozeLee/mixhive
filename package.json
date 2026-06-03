@@ -43,7 +43,12 @@
     "smoke": "node scripts/mixhive-test.mjs",
     "smoke:preview": "node scripts/mixhive-test.mjs http://localhost:3000",
     "smoke:browser": "python3 scripts/browser_smoke.py",
-    "smoke:legacy": "node scripts/post-deploy-verify.js"
+    "smoke:legacy": "node scripts/post-deploy-verify.js",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:debug": "playwright test --debug",
+    "e2e:headed": "playwright test --headed",
+    "e2e:ci": "PLAYWRIGHT_BASE_URL=https://mixhive.vercel.app playwright test --project='Desktop Chrome' --project='Mobile Chrome'"
   },
   "dependencies": {
     "@next/font": "14.1.0",
@@ -64,6 +69,7 @@
     "@tailwindcss/postcss": "^4.3.0",
     "@tanstack/react-query": "^5.8.4",
     "@types/three": "^0.184.1",
+    "@types/web-push": "^3.6.4",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.0",
@@ -92,11 +98,13 @@
     "three": "^0.184.0",
     "wasmoon": "^1.16.0",
     "waveform-react": "^0.2.3",
+    "web-push": "^3.6.7",
     "zod": "^4.4.3",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.60.0",
     "@sentry/vite-plugin": "^5.3.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

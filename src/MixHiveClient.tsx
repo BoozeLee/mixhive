@@ -4,6 +4,7 @@ import { StrictMode, useEffect } from 'react';
 import * as Sentry from '@sentry/react';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { registerSW } from './lib/pushSubscription';
 
 let sentryReady = false;
 
@@ -29,6 +30,7 @@ function initSentry() {
 export default function MixHiveClient() {
   useEffect(() => {
     initSentry();
+    registerSW(); // silent — no permission requested here, opt-in via bell
   }, []);
 
   return (

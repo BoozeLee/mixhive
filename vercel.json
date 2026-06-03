@@ -124,6 +124,10 @@
       "schedule": "0 8 * * *"
     },
     {
+      "path": "/api/cron/push-sender",
+      "schedule": "0 9 * * *"
+    },
+    {
       "path": "/api/cron/nft-sync",
       "schedule": "0 5 * * *"
     },

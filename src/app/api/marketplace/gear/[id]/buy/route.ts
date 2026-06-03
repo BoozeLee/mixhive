@@ -57,7 +57,7 @@ export async function POST(
       return NextResponse.json({ error: 'Cannot buy your own listing' }, { status: 400 });
     }
 
-    const stripe = new Stripe(stripeKey, { apiVersion: '2025-05-28.basil' });
+    const stripe = new Stripe(stripeKey, { apiVersion: '2026-05-27.dahlia' });
 
     const priceInCents = Math.round(listing.price * 100);
     const fee = feeRate(listing.price);

@@ -88,6 +88,15 @@ const CollabSessionRoom = lazy(() =>
 const HiveComposer = lazy(() =>
   import('./views/HiveComposer').then(m => ({ default: m.HiveComposer }))
 );
+const HiveStoryLanding = lazy(() =>
+  import('./views/HiveStoryLanding').then(m => ({ default: m.HiveStoryLanding }))
+);
+const HiveStoryIssue = lazy(() =>
+  import('./views/HiveStoryIssue').then(m => ({ default: m.HiveStoryIssue }))
+);
+const Hub = lazy(() =>
+  import('./views/Hub').then(m => ({ default: m.Hub }))
+);
 // SessionFab is small and always available to authenticated users — not lazy-loaded
 import { SessionFab } from './components/SessionFab';
 
@@ -248,6 +257,11 @@ function AnimatedRoutes() {
         />
         {/* Phase 15 — Agent Marketplace */}
         <Route path="/marketplace/agents" element={<AgentMarketplace />} />
+        {/* Phase 16 — Hive Story editorial */}
+        <Route path="/hive-story" element={<HiveStoryLanding />} />
+        <Route path="/hive-story/:slug" element={<HiveStoryIssue />} />
+        {/* Hub — feature navigation */}
+        <Route path="/hub" element={<Hub />} />
         {/* Phase 15 — Collab Quests */}
         <Route path="/collab-quests" element={<CollabQuests />} />
         <Route path="/collab-quests/:id" element={<CollabQuestDetail />} />

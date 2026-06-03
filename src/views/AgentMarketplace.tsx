@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 interface AgentPackage {
@@ -44,7 +44,9 @@ export function AgentMarketplace() {
   const [discipline, setDiscipline] = useState('');
   const [freeOnly, setFreeOnly] = useState(false);
   const [installing, setInstalling] = useState<string | null>(null);
+  const [buying, setBuying] = useState<string | null>(null);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
+  const location = useLocation();
 
   const fetchPackages = async (cat: string, disc: string, free: boolean) => {
     setLoading(true);
@@ -69,8 +71,36 @@ export function AgentMarketplace() {
     fetchPackages(category, discipline, freeOnly);
   }, [category, discipline, freeOnly]);
 
+  // Mark as installed when returning from Stripe success
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('payment') === 'success') {
+      const pkgId = params.get('package_id');
+      if (pkgId) setInstalled(prev => new Set([...prev, pkgId]));
+    }
+  }, [location.search]);
+
+  const handleBuy = async (pkg: AgentPackage) => {
+    if (buying) return;
+    setBuying(pkg.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { setError('Sign in to purchase agents'); return; }
+      const res = await fetch(`/api/marketplace/agents/${pkg.id}/buy`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Purchase failed');
+      window.location.href = data.checkout_url;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Purchase failed');
+      setBuying(null);
+    }
+  };
+
   const handleInstall = async (pkg: AgentPackage) => {
-    if (installing || pkg.price > 0) return;
+    if (installing) return;
     setInstalling(pkg.id);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -142,7 +172,9 @@ export function AgentMarketplace() {
               pkg={pkg}
               installed={installed.has(pkg.id)}
               installing={installing === pkg.id}
+              buying={buying === pkg.id}
               onInstall={() => handleInstall(pkg)}
+              onBuy={() => handleBuy(pkg)}
             />
           ))}
         </div>
@@ -160,12 +192,14 @@ export function AgentMarketplace() {
 }
 
 function AgentCard({
-  pkg, installed, installing, onInstall,
+  pkg, installed, installing, buying, onInstall, onBuy,
 }: {
   pkg: AgentPackage;
   installed: boolean;
   installing: boolean;
+  buying: boolean;
   onInstall: () => void;
+  onBuy: () => void;
 }) {
   return (
     <div style={{
@@ -239,7 +273,7 @@ function AgentCard({
           <span style={{ color: pkg.price === 0 ? '#22c55e' : 'var(--hive-gold)', fontSize: 14, fontWeight: 700 }}>
             {pkg.price === 0 ? 'FREE' : `€${pkg.price}`}
           </span>
-          {pkg.price === 0 && (
+          {pkg.price === 0 ? (
             <button
               onClick={onInstall}
               disabled={installing || installed}
@@ -256,6 +290,24 @@ function AgentCard({
               }}
             >
               {installing ? '...' : installed ? 'Installed' : 'Install'}
+            </button>
+          ) : (
+            <button
+              onClick={onBuy}
+              disabled={buying || installed}
+              style={{
+                background: installed ? '#1a3a1a' : 'linear-gradient(135deg, #f6c400, #ffd84a)',
+                color: installed ? '#22c55e' : '#000',
+                border: 'none',
+                borderRadius: 6,
+                padding: '5px 14px',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: installed || buying ? 'default' : 'pointer',
+                opacity: buying ? 0.7 : 1,
+              }}
+            >
+              {buying ? '...' : installed ? 'Installed' : 'Buy'}
             </button>
           )}
         </div>

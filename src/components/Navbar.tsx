@@ -8,14 +8,11 @@ import { Logo } from './Logo';
 import { colors, space } from '../styles/tokens';
 
 const navLinks = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/feed', label: 'Feed' },
+  { to: '/', label: 'Home' },
   { to: '/discover', label: 'Explore' },
   { to: '/search', label: 'Network' },
-  { to: '/opportunities', label: 'Opportunities' },
-  { to: '/epk', label: 'EPK' },
   { to: '/upload', label: 'Upload' },
-  { to: '/agents/gallery', label: 'BeeCast' },
+  { to: '/opportunities', label: 'Events' },
 ];
 
 const menuItemStyle: React.CSSProperties = {

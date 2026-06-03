@@ -13,6 +13,8 @@ const navLinks = [
   { to: '/search', label: 'Network' },
   { to: '/upload', label: 'Upload' },
   { to: '/opportunities', label: 'Events' },
+  { to: '/marketplace/gear', label: 'Market' },
+  { to: '/collab-quests', label: 'Quests' },
 ];
 
 const menuItemStyle: React.CSSProperties = {

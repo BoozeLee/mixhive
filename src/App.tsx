@@ -66,6 +66,13 @@ const Opportunities = lazy(() =>
 );
 const QuestDetail = lazy(() => import('./views/QuestDetail').then(m => ({ default: m.QuestDetail })));
 const QuestsList = lazy(() => import('./views/QuestsList').then(m => ({ default: m.QuestsList })));
+const GearMarketplace = lazy(() => import('./views/GearMarketplace').then(m => ({ default: m.GearMarketplace })));
+const GearListingDetail = lazy(() => import('./views/GearListingDetail').then(m => ({ default: m.GearListingDetail })));
+const NewGearListing = lazy(() => import('./views/NewGearListing').then(m => ({ default: m.NewGearListing })));
+const AgentMarketplace = lazy(() => import('./views/AgentMarketplace').then(m => ({ default: m.AgentMarketplace })));
+const CollabQuests = lazy(() => import('./views/CollabQuests').then(m => ({ default: m.CollabQuests })));
+const NewCollabQuest = lazy(() => import('./views/NewCollabQuest').then(m => ({ default: m.NewCollabQuest })));
+const CollabQuestDetail = lazy(() => import('./views/CollabQuestDetail').then(m => ({ default: m.CollabQuestDetail })));
 const PressKitStudio = lazy(() =>
   import('./views/PressKitStudio').then(m => ({ default: m.PressKitStudio }))
 );
@@ -225,6 +232,30 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <HiveComposer />
+            </ProtectedRoute>
+          }
+        />
+        {/* Phase 15 — Gear Marketplace */}
+        <Route path="/marketplace/gear" element={<GearMarketplace />} />
+        <Route path="/marketplace/gear/:id" element={<GearListingDetail />} />
+        <Route
+          path="/marketplace/gear/new"
+          element={
+            <ProtectedRoute>
+              <NewGearListing />
+            </ProtectedRoute>
+          }
+        />
+        {/* Phase 15 — Agent Marketplace */}
+        <Route path="/marketplace/agents" element={<AgentMarketplace />} />
+        {/* Phase 15 — Collab Quests */}
+        <Route path="/collab-quests" element={<CollabQuests />} />
+        <Route path="/collab-quests/:id" element={<CollabQuestDetail />} />
+        <Route
+          path="/collab-quests/new"
+          element={
+            <ProtectedRoute>
+              <NewCollabQuest />
             </ProtectedRoute>
           }
         />

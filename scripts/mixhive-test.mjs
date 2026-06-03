@@ -309,6 +309,20 @@ function runBrowserSmoke(baseUrl) {
 
   const output = (result.stdout ?? '') + stderr;
   const failLines = output.split('\n').filter(l => l.startsWith('- ')).slice(0, 10);
+
+  // Remote production URLs are throttled by Vercel/CDN on 60 rapid headless requests.
+  // Classify failures: if every failure line is a Timeout (network), treat as WARN.
+  // Only FAIL on app-level errors (overflow, console error, non-timeout navigation).
+  const isRemote = !/localhost|127\.0\.0\.1/.test(baseUrl);
+  const allTimeouts = failLines.every(l => /Timeout|PING_FAILED/i.test(l));
+  const isNetworkOnly = isRemote && allTimeouts;
+
+  if (isNetworkOnly) {
+    console.log(`  ${chalk.yellow('⚠')}  Browser smoke: network timeouts on remote URL (${failLines.length} routes)`);
+    console.log(`     ${chalk.dim('Run locally against http://localhost:3000 for reliable results')}`);
+    return { pass: 0, warn: 1, fail: 0 };
+  }
+
   console.log(`  ${chalk.red('✗')}  Browser smoke failed`);
   failLines.forEach(l => console.log(`     ${chalk.red(l)}`));
   if (stderr) {

@@ -43,6 +43,13 @@
   }
 }
 
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* At tablet, nav links are hidden (no sidebar yet) — only logo + search + user actions */
+  .navbar-links {
+    display: none !important;
+  }
+}
+
 @media (min-width: 768px) {
   /* Hide mobile nav on tablet+ */
   .mobile-nav {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
+import { BeeMark } from '../components/brand/BeeMark';
 
 interface HiveStoryIssue {
   id: string;
@@ -61,7 +62,7 @@ function IssueCard({ issue, hero }: { issue: HiveStoryIssue; hero?: boolean }) {
             }}
             aria-hidden="true"
           >
-            <span style={{ fontSize: hero ? 56 : 36, opacity: 0.6 }}>⬡</span>
+            <BeeMark size={hero ? 52 : 34} color="rgba(246,196,0,0.6)" />
           </div>
         )}
         <div style={{ padding: hero ? `${space[8]}px ${space[9]}px` : `${space[5]}px ${space[6]}px` }}>
@@ -209,7 +210,7 @@ export function HiveStoryLanding() {
             borderRadius: radius.xl,
           }}
         >
-          <div style={{ fontSize: 48, marginBottom: space[4], opacity: 0.4 }}>⬡</div>
+          <div style={{ marginBottom: space[4], opacity: 0.4, display: "flex", justifyContent: "center" }}><BeeMark size={46} color="rgba(246,196,0,0.6)" /></div>
           <p style={{ margin: 0 }}>The first Hive Story issue is coming soon.</p>
         </div>
       )}

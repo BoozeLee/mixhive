@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { AISuggestionCard } from './AISuggestionCard';
 import type { AISuggestion } from '../lib/types';
 import { colors, space, radius, fontSize, fontWeight, transition } from '../styles/tokens';
+import { Icon } from './ui/Icon';
 
 async function fetchSuggestions(userId: string, limit: number): Promise<AISuggestion[]> {
   const { data } = await supabase
@@ -244,7 +245,7 @@ export function ProfileCoachPanel({ compact = false }: ProfileCoachPanelProps) {
               fontSize: 16,
             }}
           >
-            ⬡
+            <Icon name="sparkles" size={18} color="currentColor" />
           </div>
           <div>
             <div

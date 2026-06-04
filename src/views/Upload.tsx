@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
+import { Icon } from '../components/ui/Icon';
 import { Select } from '../components/ui/Select';
 import { FileInput } from '../components/ui/FileInput';
 import { UploadSchema, formatZodError } from '../lib/schemas';
@@ -364,7 +365,7 @@ export function Upload() {
               </>
             ) : (
               <>
-                <span aria-hidden="true" style={{ fontSize: 30, color: dragOver ? '#f0c040' : '#444' }}>⬡</span>
+                <span aria-hidden="true" style={{ display: 'flex', color: dragOver ? '#f0c040' : '#444' }}><Icon name="upload" size={30} color="currentColor" /></span>
                 <span style={{ fontSize: 14, fontWeight: 600, color: dragOver ? '#f0c040' : '#777' }}>
                   {dragOver ? 'Drop it!' : 'Drop your mix here'}
                 </span>

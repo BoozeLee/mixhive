@@ -585,7 +585,7 @@ export function Feed() {
             <SkeletonFeed />
           ) : currentData.length === 0 && !currentLoading ? (
             <EmptyState
-              icon="⌁"
+              iconKey="feed"
               title={tab === 'feed' ? 'Nothing from your network yet' : 'No mixes yet'}
               body={
                 tab === 'feed'

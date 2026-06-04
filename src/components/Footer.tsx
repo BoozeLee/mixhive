@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { Icon } from './ui/Icon';
 
 export function Footer() {
   const { user } = useAuth();
@@ -28,9 +29,9 @@ export function Footer() {
                 <span className="sr-only">YouTube</span>
                 📺
               </a>
-              <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
+              <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors inline-flex">
                 <span className="sr-only">Discord</span>
-                💬
+                <Icon name="comment" size={18} />
               </a>
             </div>
           </div>

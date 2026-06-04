@@ -1,11 +1,13 @@
 import type { Profile, VerificationBadge } from '../lib/types';
 import { colors, radius, space } from '../styles/tokens';
+import { Icon } from './ui/Icon';
+import type { IconKey } from '../lib/icons';
 
 const badgeMeta = {
-  verified: { icon: '✓', label: 'Verified', title: 'Verified DJ profile' },
-  artist: { icon: '♪', label: 'Artist', title: 'Verified artist account' },
-  official: { icon: '★', label: 'Official', title: 'Official representative account' },
-} as const;
+  verified: { icon: 'verified', label: 'Verified', title: 'Verified DJ profile' },
+  artist: { icon: 'music', label: 'Artist', title: 'Verified artist account' },
+  official: { icon: 'rating', label: 'Official', title: 'Official representative account' },
+} as const satisfies Record<string, { icon: IconKey; label: string; title: string }>;
 
 interface Props {
   profile: Profile;
@@ -60,7 +62,7 @@ export function VerificationBadgeSystem({ profile, badges, compact = false }: Pr
               whiteSpace: 'nowrap',
             }}
           >
-            <span aria-hidden="true">{meta.icon}</span>
+            <span aria-hidden="true" style={{ display: 'inline-flex' }}><Icon name={meta.icon} size={13} color="currentColor" /></span>
             {!compact && <span>{badge.label || meta.label}</span>}
           </span>
         );

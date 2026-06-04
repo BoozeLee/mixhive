@@ -5,6 +5,7 @@ import type { AgentOutput } from '../lib/agents';
 import type { Opportunity, OpportunityMatch, OpportunitySaveStatus } from '../lib/types';
 import { getOpportunitySaves, upsertOpportunitySave } from '../lib/api';
 import { colors, fontSize, fontWeight, radius, space, transition } from '../styles/tokens';
+import { Icon } from '../components/ui/Icon';
 
 type Tab = 'for-you' | 'saved' | 'applied' | 'dismissed';
 type OpportunityAction = OpportunitySaveStatus;
@@ -269,7 +270,7 @@ export function Opportunities() {
                 width: '100%',
               }}
             >
-              {matchBusy ? 'Matching…' : '◇ Match me to opportunities'}
+              {matchBusy ? 'Matching…' : <><Icon name="radar" size={15} color="currentColor" /> Match me to opportunities</>}
             </button>
           )}
         </div>

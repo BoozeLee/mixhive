@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { usePlayer } from '../lib/playerStore';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { Icon } from '../components/ui/Icon';
 import {
   getMix,
   getComments,
@@ -401,7 +402,7 @@ export function MixDetail() {
               fontSize: 12,
             }}
           >
-            ✎ Edit
+            <Icon name="edit" size={13} color="currentColor" /> Edit
           </Link>
         )}
         {WEB3_ENABLED && user && mix.dj_id === user.id && (
@@ -417,7 +418,7 @@ export function MixDetail() {
               fontSize: 12,
             }}
           >
-            ◈ Create supporter pass
+            <Icon name="sparkles" size={14} color="currentColor" /> Create supporter pass
           </button>
         )}
       </div>

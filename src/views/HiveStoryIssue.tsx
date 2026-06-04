@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
+import { BeeMark } from '../components/brand/BeeMark';
 
 interface HiveStoryIssueData {
   id: string;
@@ -226,7 +227,7 @@ export function HiveStoryIssue() {
   if (notFound || !issue) {
     return (
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px', textAlign: 'center' }}>
-        <div style={{ fontSize: 48, marginBottom: space[4], opacity: 0.4 }}>⬡</div>
+        <div style={{ marginBottom: space[4], opacity: 0.4, display: "flex", justifyContent: "center" }}><BeeMark size={46} color="rgba(246,196,0,0.6)" /></div>
         <p style={{ color: colors.text.muted }}>This issue couldn't be found.</p>
         <Link to="/hive-story" style={{ color: colors.accent, textDecoration: 'none', fontSize: fontSize.sm }}>
           ← Back to Hive Story
@@ -284,7 +285,7 @@ export function HiveStoryIssue() {
             }}
             aria-hidden="true"
           >
-            <span style={{ fontSize: 72, opacity: 0.5 }}>⬡</span>
+            <BeeMark size={68} color="rgba(246,196,0,0.5)" />
           </div>
         )}
         <div style={{ padding: `${space[9]}px ${space[10]}px` }}>

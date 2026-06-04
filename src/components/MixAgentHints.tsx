@@ -14,6 +14,7 @@ import { useAuth } from '../hooks/useAuth';
 import type { Mix } from '../lib/types';
 import type { LuaAgentTrigger } from '../lib/agents';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
+import { Icon } from './ui/Icon';
 
 interface Props {
   mix: Mix;
@@ -68,7 +69,7 @@ export function MixAgentHints({ mix, djUsername }: Props) {
             fontSize: fontSize.md,
           }}
         >
-          <span aria-hidden="true">🤖</span>
+          <span aria-hidden="true" style={{ display: 'inline-flex' }}><Icon name="agents" size={16} /></span>
           <span style={{ flex: 1 }}>
             {isOwner ? 'Automate this mix with Lua' : 'Automate how you engage'}
           </span>

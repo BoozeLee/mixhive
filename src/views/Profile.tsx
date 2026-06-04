@@ -604,7 +604,7 @@ export function ProfilePage() {
         {profileTab === 'buzzes' &&
           (buzzes.length === 0 ? (
             <EmptyState
-              icon="🐝"
+              iconKey="buzz"
               title="No buzzes yet"
               body={isOwn ? 'Post your first buzz from the feed.' : 'This DJ has not buzzed yet.'}
             />

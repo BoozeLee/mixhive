@@ -91,7 +91,7 @@ export function Agents() {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '40px 16px' }}>
         <EmptyState
-          icon="🤖"
+          iconKey="agents"
           title="Sign in to manage your agents"
           body="Lua agents automate your social-media reactions."
           actionLabel="Sign in"
@@ -165,7 +165,7 @@ export function Agents() {
         <div style={{ color: colors.text.muted }}>Loading…</div>
       ) : agents.length === 0 ? (
         <EmptyState
-          icon="🤖"
+          iconKey="agents"
           title="No agents yet"
           body="Write a small Lua script that fires when something happens — auto-welcome new followers, thank commenters, schedule a weekly digest."
           actionLabel="Create your first agent"

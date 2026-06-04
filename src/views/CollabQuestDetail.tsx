@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { Icon } from '../components/ui/Icon';
 
 interface Role {
   id: string;
@@ -150,8 +151,8 @@ export function CollabQuestDetail() {
             <span key={t} style={{ background: '#1a1a1a', color: '#666', fontSize: 11, padding: '3px 8px', borderRadius: 4 }}>{t}</span>
           ))}
         </div>
-        <h1 style={{ fontSize: 26, color: '#fff', fontWeight: 700, margin: '0 0 8px', lineHeight: 1.3 }}>
-          ⚔ {quest.title}
+        <h1 style={{ fontSize: 26, color: '#fff', fontWeight: 700, margin: '0 0 8px', lineHeight: 1.3, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Icon name="quests" size={24} color="var(--hive-gold, #f6c400)" /> {quest.title}
         </h1>
         {quest.narrative && (
           <p style={{ color: '#aaa', fontSize: 15, lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>
@@ -266,7 +267,7 @@ export function CollabQuestDetail() {
                 disabled={advancing}
                 style={{ ...ctrlBtnStyle, background: 'var(--hive-gold)', color: '#000' }}
               >
-                {advancing ? '...' : '⚔ Open for Recruiting'}
+                {advancing ? '...' : 'Open for Recruiting'}
               </button>
             )}
             {quest.phase === 'recruiting' && (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
@@ -12,8 +12,13 @@ export function Login() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
-  const { signInWithEmail, signInWithGoogle } = useAuth();
+  const { user, loading, signInWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect already-authenticated users so they never see the login form
+  useEffect(() => {
+    if (!loading && user) navigate('/feed', { replace: true });
+  }, [user, loading, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

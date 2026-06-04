@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export function AuthCallback() {
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const isMounted = useRef(true);
 
   useEffect(() => {
+    isMounted.current = true;
+
     if (!isSupabaseConfigured) {
       setError(
         'Supabase is not configured. Add Supabase public URL and anon key environment variables, then try signing in again.'
@@ -22,70 +25,86 @@ export function AuthCallback() {
         const errorDescription = params.get('error_description');
 
         if (errorParam) {
-          setError(errorDescription || `OAuth error: ${errorParam}`);
+          if (isMounted.current) setError(errorDescription || `Auth error: ${errorParam}`);
           return;
         }
 
         if (code) {
+          // PKCE flow — exchange the code. The SDK stores the session immediately on success.
           const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
           if (exchangeError) {
-            console.error('Code exchange error:', exchangeError);
-            setError(exchangeError.message);
+            console.error('[AuthCallback] code exchange error:', exchangeError);
+            if (isMounted.current) setError(exchangeError.message);
             return;
           }
+          // Session is guaranteed to be in storage after a successful exchange — no delay needed.
         }
 
-        // Wait a moment for session to be established (especially important for Google OAuth)
-        await new Promise(resolve => setTimeout(resolve, 300));
-
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession();
+        // Hash-fragment OAuth (#access_token=...) is handled automatically by detectSessionInUrl.
+        // For both paths, getSession() now returns the active session immediately.
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) {
-          console.error('Session error after OAuth:', sessionError);
-          setError(sessionError.message);
+          console.error('[AuthCallback] session error:', sessionError);
+          if (isMounted.current) setError(sessionError.message);
           return;
         }
 
         if (session?.user) {
-          // Ensure profile exists (defense in depth for Google signups)
+          // Defence-in-depth: ensure profile exists (the onAuthStateChange in useAuth handles
+          // this too, but doing it here guarantees it for Google signups with slow DB triggers).
           try {
-            const { data: existingProfile } = await supabase
+            const { data: existing } = await supabase
               .from('profiles')
               .select('id')
               .eq('id', session.user.id)
               .maybeSingle();
 
-            if (!existingProfile) {
-              // Create minimal profile for Google users if trigger missed
-              const metadata = session.user.user_metadata || {};
-              await supabase.from('profiles').insert({
-                id: session.user.id,
-                username: metadata.preferred_username || 
-                         metadata.user_name || 
-                         `user_${session.user.id.slice(0, 8)}`,
-                display_name: metadata.full_name || metadata.name || session.user.email?.split('@')[0],
-                avatar_url: metadata.avatar_url || metadata.picture,
-              });
+            if (!existing) {
+              const metadata = session.user.user_metadata ?? {};
+              await supabase.from('profiles').upsert(
+                {
+                  id: session.user.id,
+                  username:
+                    metadata.preferred_username ||
+                    metadata.user_name ||
+                    `user_${session.user.id.slice(0, 8)}`,
+                  display_name:
+                    metadata.full_name ||
+                    metadata.name ||
+                    session.user.email?.split('@')[0] ||
+                    'User',
+                  avatar_url: metadata.avatar_url || metadata.picture || null,
+                },
+                { onConflict: 'id', ignoreDuplicates: true }
+              );
             }
           } catch (profileErr) {
-            console.warn('Profile creation during OAuth callback (non-fatal):', profileErr);
+            // Profile creation is non-fatal — useAuth will retry on next render
+            console.warn('[AuthCallback] profile upsert (non-fatal):', profileErr);
           }
 
-          navigate('/feed', { replace: true });
+          if (isMounted.current) navigate('/feed', { replace: true });
           return;
         }
 
-        setError('Authentication failed. Try signing in again.');
-      } catch (err: any) {
-        console.error('Unexpected error in AuthCallback:', err);
-        setError(err.message || 'An unexpected error occurred during sign in.');
+        // No code, no hash token, no session — the link was invalid or already used
+        if (isMounted.current) {
+          setError('This sign-in link has expired or is invalid. Please try signing in again.');
+        }
+      } catch (err: unknown) {
+        console.error('[AuthCallback] unexpected error:', err);
+        if (isMounted.current) {
+          setError(
+            err instanceof Error ? err.message : 'An unexpected error occurred during sign in.'
+          );
+        }
       }
     }
 
     completeAuth();
+
+    return () => { isMounted.current = false; };
   }, [navigate]);
 
   if (error) {
@@ -101,8 +120,8 @@ export function AuthCallback() {
           textAlign: 'center',
         }}
       >
-        <p style={{ color: '#f55', fontSize: 14, marginBottom: 16 }}>{error}</p>
-        <a href="/login" style={{ color: '#f0c040', fontSize: 14 }}>
+        <p style={{ color: '#f55', fontSize: 14, marginBottom: 16, lineHeight: 1.5 }}>{error}</p>
+        <a href="/login" style={{ color: '#f0c040', fontSize: 14, textDecoration: 'none' }}>
           Back to sign in
         </a>
       </div>
@@ -110,11 +129,9 @@ export function AuthCallback() {
   }
 
   return (
-    <div
-      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}
-    >
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ color: '#f0c040', fontSize: 14, marginBottom: 8 }}>Completing sign in...</div>
+        <div style={{ color: '#f0c040', fontSize: 14, marginBottom: 8 }}>Completing sign in…</div>
         <div style={{ color: '#555', fontSize: 12 }}>Redirecting you to the feed</div>
       </div>
     </div>

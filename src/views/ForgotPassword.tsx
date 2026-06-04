@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { LoginSchema } from '../lib/schemas';
 
 export function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -13,8 +14,14 @@ export function ForgotPassword() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email) return;
     setError('');
+
+    // Validate email format before hitting the network
+    const emailCheck = LoginSchema.shape.email.safeParse(email);
+    if (!emailCheck.success) {
+      setError('Please enter a valid email address.');
+      return;
+    }
     setLoading(true);
 
     const { error: err } = await resetPasswordForEmail(email);

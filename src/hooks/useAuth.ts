@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import type { Profile } from '../lib/types';
@@ -10,8 +10,6 @@ const missingConfigError = {
 
 function getAuthRedirectTo() {
   if (typeof window === 'undefined') return undefined;
-  
-  // Prefer explicit env var for production, fallback to current origin
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
   return `${baseUrl}/auth/callback`;
 }
@@ -24,19 +22,33 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  // Prevents setState on unmounted component — eliminates race conditions and memory leaks
+  const isMounted = useRef(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-    if (data) setProfile(data);
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    // PGRST116 = "no rows found" — expected for brand-new OAuth users, not an error
+    if (error && error.code !== 'PGRST116') {
+      console.error('[useAuth] fetchProfile error', error);
+    }
+    if (data && isMounted.current) setProfile(data);
   };
 
   useEffect(() => {
+    isMounted.current = true;
+
     if (!isSupabaseConfigured) {
       setLoading(false);
       return;
     }
 
+    // Initial session check — guard against unmount before promise resolves
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted.current) return;
       setUser(session?.user ?? null);
       if (session?.user) fetchProfile(session.user.id);
       setLoading(false);
@@ -45,10 +57,10 @@ export function useAuth() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!isMounted.current) return;
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
-        // Fetch or create profile (important for Google OAuth users)
         const { data: profileData } = await supabase
           .from('profiles')
           .select('*')
@@ -56,26 +68,42 @@ export function useAuth() {
           .maybeSingle();
 
         if (profileData) {
-          setProfile(profileData);
+          if (isMounted.current) setProfile(profileData);
         } else {
-          // Fallback profile creation for OAuth users
-          const metadata = session.user.user_metadata || {};
+          // Upsert (not insert) to safely handle concurrent auth events from the same user
+          const metadata = session.user.user_metadata ?? {};
           const newProfile = {
             id: session.user.id,
-            username: metadata.preferred_username || metadata.user_name || `user_${session.user.id.slice(0,8)}`,
-            display_name: metadata.full_name || metadata.name || session.user.email?.split('@')[0] || 'User',
-            avatar_url: metadata.avatar_url || metadata.picture,
+            username:
+              metadata.preferred_username ||
+              metadata.user_name ||
+              `user_${session.user.id.slice(0, 8)}`,
+            display_name:
+              metadata.full_name ||
+              metadata.name ||
+              session.user.email?.split('@')[0] ||
+              'User',
+            avatar_url: metadata.avatar_url || metadata.picture || null,
           };
-          
-          const { data: created } = await supabase.from('profiles').insert(newProfile).select().single();
-          if (created) setProfile(created);
+
+          const { data: upserted, error: upsertErr } = await supabase
+            .from('profiles')
+            .upsert(newProfile, { onConflict: 'id', ignoreDuplicates: false })
+            .select()
+            .single();
+
+          if (upsertErr) console.error('[useAuth] profile upsert error', upsertErr);
+          if (upserted && isMounted.current) setProfile(upserted);
         }
       } else {
-        setProfile(null);
+        if (isMounted.current) setProfile(null);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted.current = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function signInWithEmail(email: string, password: string) {
@@ -93,24 +121,26 @@ export function useAuth() {
       email,
       password,
       options: {
-        data: metadata,
-        emailRedirectTo: getAuthRedirectTo(),
+        ...(metadata ? { data: metadata } : {}),
+        ...(getAuthRedirectTo() ? { emailRedirectTo: getAuthRedirectTo()! } : {}),
       },
     });
   }
 
   async function signInWithGoogle() {
     if (!isSupabaseConfigured) return { error: missingConfigError };
+    const redirectTo = getAuthRedirectTo();
     return supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: getAuthRedirectTo() },
+      options: { ...(redirectTo ? { redirectTo } : {}) },
     });
   }
 
   async function resetPasswordForEmail(email: string) {
     if (!isSupabaseConfigured) return { error: missingConfigError };
+    // Use getAuthRedirectTo() so dev/prod redirect URLs are always consistent
     return supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${(process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : ''))}/auth/reset-password`,
     });
   }
 
@@ -122,14 +152,19 @@ export function useAuth() {
   async function signOut() {
     if (!isSupabaseConfigured) return;
     await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
+    if (isMounted.current) {
+      setUser(null);
+      setProfile(null);
+    }
   }
 
-  async function updateProfile(updates: Partial<Profile>) {
-    if (!isSupabaseConfigured || !user) return;
-    await supabase.from('profiles').update(updates).eq('id', user.id);
-    setProfile(prev => (prev ? { ...prev, ...updates } : null));
+  async function updateProfile(updates: Partial<Profile>): Promise<{ error: Error | null }> {
+    if (!isSupabaseConfigured || !user) return { error: new Error('Not authenticated') };
+    const { error } = await supabase.from('profiles').update(updates).eq('id', user.id);
+    if (!error && isMounted.current) {
+      setProfile(prev => (prev ? { ...prev, ...updates } : null));
+    }
+    return { error: error ?? null };
   }
 
   return {

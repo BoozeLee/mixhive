@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
@@ -15,8 +15,13 @@ export function Register() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
-  const { signUpWithEmail } = useAuth();
+  const { user, loading, signUpWithEmail } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect already-authenticated users away from the register form
+  useEffect(() => {
+    if (!loading && user) navigate('/feed', { replace: true });
+  }, [user, loading, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,7 +62,11 @@ export function Register() {
       full_name: formData.display_name,
     });
     if (err) {
-      setGeneralError(err.message);
+      // 23505 = unique constraint violation — username was taken between our check and the insert
+      const msg = (err as { code?: string }).code === '23505'
+        ? 'Username already taken. Please choose a different one.'
+        : err.message;
+      setGeneralError(msg);
     } else {
       navigate('/setup');
     }

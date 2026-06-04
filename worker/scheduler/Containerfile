@@ -1,0 +1,7 @@
+# MixHive scheduler — pure-stdlib Ruby, no gems, minimal image.
+FROM docker.io/library/ruby:3.4-alpine
+RUN adduser -D -u 10002 sched
+USER sched
+WORKDIR /app
+COPY schedule.rb /app/schedule.rb
+ENTRYPOINT ["ruby", "/app/schedule.rb"]

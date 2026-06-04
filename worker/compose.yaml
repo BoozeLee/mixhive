@@ -1,0 +1,48 @@
+# MixHive self-hosted Active Worker Tier — Podman / Docker compatible.
+#
+#   podman compose -f worker/compose.yaml up -d --build
+#
+# Hosts the always-on jobs Vercel serverless can't run. P1 ships the audio worker
+# + Redis; the Lua runtime and scheduler slot in here later (see INFRA_INTEGRATION_REPORT.md).
+
+services:
+  redis:
+    image: docker.io/library/redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  audio-worker:
+    build:
+      context: ./audio
+      dockerfile: Containerfile
+    restart: unless-stopped
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      AUDIO_BUCKET: ${AUDIO_BUCKET:-mix-audio}
+      POLL_INTERVAL_MS: ${POLL_INTERVAL_MS:-5000}
+      MAX_CONCURRENT: ${MAX_CONCURRENT:-3}
+      JOB_TIMEOUT_MS: ${JOB_TIMEOUT_MS:-300000}
+      WAVEFORM_POINTS: ${WAVEFORM_POINTS:-200}
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: ./scheduler
+      dockerfile: Containerfile
+    restart: unless-stopped
+    environment:
+      APP_BASE_URL: ${APP_BASE_URL:-https://mixhive.vercel.app}
+      CRON_SECRET: ${CRON_SECRET}
+    depends_on:
+      - audio-worker

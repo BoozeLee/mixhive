@@ -1,0 +1,22 @@
+# systemd Quadlet unit for rootless Podman auto-start + restart-on-crash.
+# Install: copy to ~/.config/containers/systemd/ then:
+#   systemctl --user daemon-reload && systemctl --user start mixhive-audio-worker
+# Enable lingering so it survives logout: loginctl enable-linger $USER
+#
+# Build the image first: podman build -t localhost/mixhive-audio-worker ./worker/audio
+
+[Unit]
+Description=MixHive audio worker (waveform/metadata queue consumer)
+After=network-online.target
+
+[Container]
+Image=localhost/mixhive-audio-worker:latest
+EnvironmentFile=%h/.config/mixhive/worker.env
+# Pull secrets from the env file above (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ...)
+
+[Service]
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,16 @@
+# MixHive audio worker — multi-stage OCI build (Podman or Docker).
+# Stage 1: build the static Go binary. Stage 2: minimal runtime with ffmpeg.
+
+FROM docker.io/library/golang:1.26-alpine AS build
+WORKDIR /src
+COPY go.mod ./
+# stdlib-only module: no `go mod download` network step needed.
+COPY *.go ./
+RUN CGO_ENABLED=0 go build -ldflags "-s -w -X main.version=$(date +%Y%m%d)" -o /out/audio-worker .
+
+FROM docker.io/library/alpine:3.21
+RUN apk add --no-cache ffmpeg ca-certificates && adduser -D -u 10001 worker
+USER worker
+COPY --from=build /out/audio-worker /usr/local/bin/audio-worker
+ENV TEMP_DIR=/tmp/mixhive-audio
+ENTRYPOINT ["/usr/local/bin/audio-worker"]

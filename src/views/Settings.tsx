@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { Icon } from '../components/ui/Icon';
+import { BeeMark } from '../components/brand/BeeMark';
+import type { IconKey } from '../lib/icons';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -435,7 +438,7 @@ export function Settings() {
               platform => (
                 <div key={platform} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 16, width: 20, textAlign: 'center' }}>
-                    {getPlatformIcon(platform)}
+                    <Icon name={getPlatformIcon(platform)} size={16} color="currentColor" />
                   </span>
                   <Input
                     type="text"
@@ -654,7 +657,7 @@ export function Settings() {
               border: `1px solid ${colors.accentMuted}`,
             }}
           >
-            <span style={{ flexShrink: 0, fontSize: 15, color: colors.accent }}>⬡</span>
+            <span style={{ flexShrink: 0, display: "inline-flex", color: colors.accent }}><Icon name="settings" size={15} /></span>
             <p
               style={{ margin: 0, fontSize: fontSize.xs, color: colors.text.dim, lineHeight: 1.5 }}
             >
@@ -680,7 +683,7 @@ export function Settings() {
               marginBottom: space[7],
             }}
           >
-            <span style={{ fontSize: 22 }}>🐝</span>
+            <span style={{ display: "inline-flex" }}><BeeMark size={22} color="var(--hive-gold, #f6c400)" /></span>
             <div>
               <div
                 style={{
@@ -889,7 +892,7 @@ export function Settings() {
               gap: space[7],
             }}
           >
-            <span style={{ fontSize: 28, flexShrink: 0 }}>🐝</span>
+            <span style={{ display: "inline-flex", flexShrink: 0 }}><BeeMark size={28} color="var(--hive-gold, #f6c400)" /></span>
             <div style={{ flex: 1 }}>
               <div
                 style={{
@@ -1085,14 +1088,10 @@ export function Settings() {
   );
 }
 
-function getPlatformIcon(platform: string): string {
-  const icons: Record<string, string> = {
-    twitter: '🐦',
-    instagram: '📷',
-    soundcloud: '🎵',
-    youtube: '📺',
-    spotify: '🎧',
-    website: '🌐',
+function getPlatformIcon(platform: string): IconKey {
+  const icons: Record<string, IconKey> = {
+    soundcloud: 'music', spotify: 'headphones', youtube: 'video',
+    instagram: 'camera', website: 'link', twitter: 'external',
   };
-  return icons[platform] || '🔗';
+  return icons[platform] || 'link';
 }

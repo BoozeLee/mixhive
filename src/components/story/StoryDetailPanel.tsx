@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from '../ui/Icon';
 import { colors, fontSize, fontWeight, radius, space } from '@/styles/tokens';
 import type { StoryChapter } from '@/components/story/StoryChapterCell';
 
@@ -80,7 +81,7 @@ export function StoryDetailPanel({ chapter, onClose }: StoryDetailPanelProps) {
       {chapter.chapter_type === 'collab' && props.collaborator_name && (
         <div style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}>
           <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.text.secondary }}>
-            🤝 Collab with <strong style={{ color: colors.text.primary }}>{String(props.collaborator_name)}</strong>
+            <Icon name="network" size={14} /> Collab with <strong style={{ color: colors.text.primary }}>{String(props.collaborator_name)}</strong>
           </p>
         </div>
       )}
@@ -88,7 +89,7 @@ export function StoryDetailPanel({ chapter, onClose }: StoryDetailPanelProps) {
       {chapter.chapter_type === 'set' && props.playlist_title && (
         <div style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}>
           <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.text.secondary }}>
-            🎧 {String(props.playlist_title)}
+            <Icon name="headphones" size={14} /> {String(props.playlist_title)}
             {props.track_count !== undefined && (
               <span style={{ color: colors.text.dim }}> · {String(props.track_count)} tracks</span>
             )}

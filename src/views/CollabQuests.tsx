@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/ui/Icon';
+import type { IconKey } from '../lib/icons';
 
 interface CollabQuest {
   id: string;
@@ -33,10 +34,10 @@ const DISCIPLINES = [
   { value: 'developer', label: 'Developer' },
 ];
 
-const ROLE_ICONS: Record<string, string> = {
-  dj: '🎧', producer: '🎹', musician: '🎸', visual_artist: '🎨',
-  animator: '✏️', photographer: '📷', videographer: '🎥',
-  writer: '✍️', business: '💼', actor: '🎭', designer: '🖌️', developer: '💻', other: '⚡',
+const ROLE_ICONS: Record<string, IconKey> = {
+  dj: 'headphones', producer: 'producer', musician: 'music', visual_artist: 'visual',
+  animator: 'edit', photographer: 'camera', videographer: 'video',
+  writer: 'epk', business: 'gear', actor: 'vocalist', designer: 'visual', developer: 'composer', other: 'sparkles',
 };
 
 export function CollabQuests() {
@@ -182,7 +183,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
                     alignItems: 'center',
                     gap: 4,
                   }}>
-                    {ROLE_ICONS[rt] ?? '⚡'} {rt.replace('_', ' ')}
+                    <Icon name={ROLE_ICONS[rt] ?? 'sparkles'} size={13} color="currentColor" /> {rt.replace('_', ' ')}
                   </span>
                 ))}
                 {uniqueRoleTypes.length > 5 && (

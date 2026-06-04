@@ -1,4 +1,6 @@
 import { ProfilePictureUpload } from './ProfilePictureUpload';
+import { Icon } from './ui/Icon';
+import type { IconKey } from '../lib/icons';
 import { ProfileBannerUpload } from './ProfileBannerUpload';
 import { useAuth } from '../hooks/useAuth';
 import type { Profile } from '../lib/types';
@@ -52,7 +54,7 @@ export function EnhancedProfileHeader({
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-purple-900/50 via-blue-900/50 to-indigo-900/50 flex items-center justify-center">
             <div className="text-center text-gray-400">
-              <div className="text-4xl mb-2">🎵</div>
+              <div className="mb-2" style={{display:"inline-flex"}}><Icon name="music" size={36} /></div>
               <div className="text-lg">Profile Banner</div>
             </div>
           </div>
@@ -141,7 +143,7 @@ export function EnhancedProfileHeader({
                       title={platform}
                     >
                       <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
-                        {getPlatformIcon(platform)}
+                        <Icon name={getPlatformIcon(platform)} size={16} color="currentColor" />
                       </div>
                     </a>
                   ))}
@@ -200,20 +202,11 @@ export function EnhancedProfileHeader({
   );
 }
 
-function getPlatformIcon(platform: string): string {
-  const icons: Record<string, string> = {
-    twitter: '🐦',
-    instagram: '📷',
-    soundcloud: '🎵',
-    youtube: '📺',
-    spotify: '🎧',
-    applemusic: '🍎',
-    mixcloud: '☁️',
-    tiktok: '🎵',
-    facebook: '📘',
-    website: '🌐',
-    bandcamp: '🎸',
-    beatport: '🎵',
+function getPlatformIcon(platform: string): IconKey {
+  const icons: Record<string, IconKey> = {
+    soundcloud: 'music', spotify: 'headphones', youtube: 'video', applemusic: 'music',
+    mixcloud: 'headphones', tiktok: 'video', bandcamp: 'music', beatport: 'music',
+    instagram: 'camera', website: 'link', twitter: 'external', facebook: 'external',
   };
-  return icons[platform.toLowerCase()] || '🔗';
+  return icons[platform.toLowerCase()] || 'link';
 }

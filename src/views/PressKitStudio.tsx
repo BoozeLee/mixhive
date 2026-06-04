@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Icon } from '../components/ui/Icon';
 import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -165,7 +166,7 @@ export function PressKitStudio() {
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: 36, color: colors.accent, marginBottom: space[4] }}>◈</div>
+          <div style={{ color: colors.accent, marginBottom: space[4], display: "flex" }}><Icon name="epk" size={34} /></div>
           <h2 style={{ margin: 0, color: colors.text.primary, fontSize: fontSize.xl }}>
             No EPK generated yet
           </h2>

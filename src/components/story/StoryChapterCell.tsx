@@ -1,16 +1,18 @@
 import React from 'react';
+import { Icon } from '../ui/Icon';
+import type { IconKey } from '../../lib/icons';
 import { HexCell } from '@/components/HexCell';
 import { colors, fontSize } from '@/styles/tokens';
 
-const CHAPTER_ICONS: Record<string, string> = {
-  collab:         '🤝',
-  gig:            '🎤',
-  gig_proof:      '⬡',
-  opportunity:    '🎯',
-  quest:          '⚡',
-  set:            '🎧',
-  quest_backing:  '💠',
-  other:          '✦',
+const CHAPTER_ICONS: Record<string, IconKey> = {
+  collab:         'quests',
+  gig:            'vocalist',
+  gig_proof:      'verified',
+  opportunity:    'events',
+  quest:          'sparkles',
+  set:            'headphones',
+  quest_backing:  'mythic',
+  other:          'sparkles',
 };
 
 export interface StoryChapter {
@@ -37,7 +39,7 @@ function formatDate(iso: string, size: 'lg' | 'sm'): string {
 
 export function StoryChapterCell({ chapter, selected, onClick }: StoryChapterCellProps) {
   const size = chapter.is_chapter ? 'lg' : 'sm';
-  const icon = CHAPTER_ICONS[chapter.chapter_type] ?? '✦';
+  const icon = <Icon name={CHAPTER_ICONS[chapter.chapter_type] ?? 'sparkles'} size={16} color="currentColor" />;
   const dateLabel = formatDate(chapter.date, size);
 
   return (

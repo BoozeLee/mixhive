@@ -18,16 +18,13 @@ export function Footer() {
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                <span className="sr-only">Twitter</span>
-                🐦
+                <span className="sr-only">Twitter</span><Icon name="external" size={18} />
               </a>
               <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                <span className="sr-only">Instagram</span>
-                📷
+                <span className="sr-only">Instagram</span><Icon name="camera" size={18} />
               </a>
               <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                <span className="sr-only">YouTube</span>
-                📺
+                <span className="sr-only">YouTube</span><Icon name="video" size={18} />
               </a>
               <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors inline-flex">
                 <span className="sr-only">Discord</span>

@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Icon } from './ui/Icon';
 import { getOptimizedAudioUrl, preloadAudio } from '../lib/cdnUrlTransformers';
 import type { AudioOptimizationParams } from '../lib/cdnUrlTransformers';
 
@@ -303,7 +304,7 @@ export const CDNLazyAudio: React.FC<CDNAudioProps> = props => {
         className={`bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer ${props.className}`}
         onClick={handleClick}
       >
-        <div className="text-gray-500 mb-2">🎵</div>
+        <div className="mb-2" style={{display:"inline-flex"}}><Icon name="music" size={22} /></div>
         <p className="text-sm text-gray-600">Click to load audio</p>
       </div>
     );
@@ -316,7 +317,7 @@ export const CDNLazyAudio: React.FC<CDNAudioProps> = props => {
         className={`bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer ${props.className}`}
         onClick={handleClick}
       >
-        <div className="text-gray-500 mb-2">🎵</div>
+        <div className="mb-2" style={{display:"inline-flex"}}><Icon name="music" size={22} /></div>
         <p className="text-sm text-gray-600">Click to play audio</p>
       </div>
     );
@@ -399,9 +400,7 @@ export const CDNPlaylist: React.FC<{
                       className="w-full h-full object-cover rounded"
                     />
                   ) : (
-                    <div className="flex items-center justify-center w-full h-full text-gray-400">
-                      🎵
-                    </div>
+                    <div className="flex items-center justify-center w-full h-full text-gray-400"><Icon name="music" size={28} /></div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">

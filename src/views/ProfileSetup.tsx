@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { Icon } from '../components/ui/Icon';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -68,10 +69,10 @@ const DAW_OPTIONS = [
 ];
 
 const AVATAR_STYLES = [
-  { key: 'cyber-hive', label: 'Cyber DJ', emoji: '🐝', desc: 'Dark honeycomb, gold glow' },
-  { key: 'abstract', label: 'Sound Waves', emoji: '〰', desc: 'Abstract frequency art' },
-  { key: 'neon', label: 'Neon Rave', emoji: '💥', desc: 'Cyberpunk neon lights' },
-  { key: 'minimal', label: 'Minimal Dark', emoji: '◼', desc: 'Clean geometric minimal' },
+  { key: 'cyber-hive', label: 'Cyber DJ', icon: 'mythic' as const, desc: 'Dark honeycomb, gold glow' },
+  { key: 'abstract', label: 'Sound Waves', icon: 'wave' as const, desc: 'Abstract frequency art' },
+  { key: 'neon', label: 'Neon Rave', icon: 'zap' as const, desc: 'Cyberpunk neon lights' },
+  { key: 'minimal', label: 'Minimal Dark', icon: 'square' as const, desc: 'Clean geometric minimal' },
 ] as const;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -560,7 +561,7 @@ export function ProfileSetup() {
                       cursor: 'pointer',
                     }}
                   >
-                    {m === 'generate' ? '✨ Generate with AI' : '📷 Upload'}
+                    {m === "generate" ? "Generate with AI" : "Upload"}
                   </button>
                 ))}
               </div>
@@ -597,7 +598,7 @@ export function ProfileSetup() {
                       />
                     ) : (
                       <>
-                        <div style={{ fontSize: 40, marginBottom: space[4] }}>📷</div>
+                        <div style={{ marginBottom: space[4], display: "flex", justifyContent: "center" }}><Icon name="camera" size={38} /></div>
                         <p style={{ margin: 0, fontSize: fontSize.base }}>
                           {avatarUploading ? 'Uploading…' : 'Click to upload (max 5 MB)'}
                         </p>
@@ -630,7 +631,7 @@ export function ProfileSetup() {
                         marginBottom: space[7],
                       }}
                     >
-                      <span style={{ fontSize: 18, flexShrink: 0 }}>🔑</span>
+                      <span style={{ display: "inline-flex", flexShrink: 0 }}><Icon name="key" size={18} /></span>
                       <div
                         style={{
                           flex: 1,
@@ -665,10 +666,10 @@ export function ProfileSetup() {
                       }}
                     >
                       {profile?.is_admin
-                        ? '🔑 Admin — using MixHive AI key'
+                        ? 'Admin — using MixHive AI key'
                         : profile?.is_pro
-                          ? '🐝 MixHive Pro AI active'
-                          : '🔑 OpenAI key connected'}
+                          ? 'MixHive Pro AI active'
+                          : 'OpenAI key connected'}
                     </div>
                   )}
 
@@ -704,7 +705,7 @@ export function ProfileSetup() {
                           transition: 'all 150ms',
                         }}
                       >
-                        <span style={{ fontSize: 24 }}>{s.emoji}</span>
+                        <span style={{ display: "inline-flex" }}><Icon name={s.icon} size={24} /></span>
                         <p
                           style={{
                             margin: `${space[3]}px 0 ${space[1]}px`,
@@ -743,10 +744,10 @@ export function ProfileSetup() {
                     }}
                   >
                     {generatingAvatar
-                      ? '✨ Generating…'
+                      ? 'Generating…'
                       : genCount >= 3
                         ? 'Max regenerations reached'
-                        : '✨ Generate 4 avatars'}
+                        : 'Generate 4 avatars'}
                   </button>
                   {genCount > 0 && genCount < 3 && (
                     <p
@@ -932,7 +933,7 @@ export function ProfileSetup() {
                     marginBottom: space[5],
                   }}
                 >
-                  <span style={{ fontSize: 18, flexShrink: 0 }}>🔑</span>
+                  <span style={{ display: "inline-flex", flexShrink: 0 }}><Icon name="key" size={18} /></span>
                   <div
                     style={{
                       flex: 1,
@@ -959,7 +960,7 @@ export function ProfileSetup() {
                   opacity: generatingBio || aiKeyReady === 'none' ? 0.5 : 1,
                 }}
               >
-                {generatingBio ? '✨ Writing bio…' : '✨ Write my bio with AI'}
+                {generatingBio ? 'Writing bio…' : 'Write my bio with AI'}
               </button>
 
               <StepNav
@@ -1095,7 +1096,7 @@ export function ProfileSetup() {
           {/* ── Step 5: Complete ── */}
           {step === 5 && (
             <StepShell
-              title="You're ready to buzz 🐝"
+              title="You're ready to buzz"
               subtitle="Here's your profile preview. You can always edit it later."
             >
               <div style={{ textAlign: 'center', marginBottom: space[9] }}>
@@ -1200,7 +1201,7 @@ export function ProfileSetup() {
                     opacity: !canFinish || saving ? 0.5 : 1,
                   }}
                 >
-                  {saving ? 'Saving…' : 'Enter the Hive 🐝'}
+                  {saving ? 'Saving…' : 'Enter the Hive'}
                 </button>
                 <button onClick={() => setStep(4)} style={{ ...secondaryBtnStyle }}>
                   ← Go back
@@ -1235,9 +1236,7 @@ export function ProfileSetup() {
                       border: `1px solid ${colors.accentMuted}`,
                       fontSize: 13,
                     }}
-                  >
-                    ⬡
-                  </div>
+                  ><Icon name="sparkles" size={24} color="currentColor" /></div>
                   <div>
                     <div
                       style={{
@@ -1347,8 +1346,8 @@ export function ProfileSetup() {
                     {coachLoading
                       ? '⟳ Analysing…'
                       : aiKeyReady === 'none'
-                        ? '🔑 Add AI key to analyse'
-                        : '⬡ Analyse my profile'}
+                        ? 'Add AI key to analyse'
+                        : 'Analyse my profile'}
                   </button>
                 )}
               </div>

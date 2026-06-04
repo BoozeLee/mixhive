@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
+import type { IconKey } from '../lib/icons';
 
 interface Role {
   id: string;
@@ -31,10 +32,10 @@ interface Quest {
   collab_roles?: Role[];
 }
 
-const ROLE_ICONS: Record<string, string> = {
-  dj: '🎧', producer: '🎹', musician: '🎸', visual_artist: '🎨',
-  animator: '✏️', photographer: '📷', videographer: '🎥',
-  writer: '✍️', business: '💼', actor: '🎭', designer: '🖌️', developer: '💻', other: '⚡',
+const ROLE_ICONS: Record<string, IconKey> = {
+  dj: 'headphones', producer: 'producer', musician: 'music', visual_artist: 'visual',
+  animator: 'edit', photographer: 'camera', videographer: 'video',
+  writer: 'epk', business: 'gear', actor: 'vocalist', designer: 'visual', developer: 'composer', other: 'sparkles',
 };
 
 const PHASE_LABELS: Record<string, { label: string; color: string }> = {
@@ -197,7 +198,7 @@ export function CollabQuestDetail() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontSize: 20 }}>{ROLE_ICONS[role.role_type] ?? '⚡'}</span>
+                      <span style={{ display: 'inline-flex', color: 'var(--hive-gold, #f6c400)' }}><Icon name={ROLE_ICONS[role.role_type] ?? 'sparkles'} size={18} color="currentColor" /></span>
                       <h3 style={{ color: '#fff', fontSize: 15, fontWeight: 700, margin: 0 }}>{role.title}</h3>
                       {role.is_paid && (
                         <span style={{ background: '#22c55e22', color: '#22c55e', fontSize: 11, padding: '2px 6px', borderRadius: 4 }}>PAID</span>

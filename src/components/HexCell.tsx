@@ -32,7 +32,7 @@ export interface HexCellProps {
   onClick?: () => void;
   onDismiss?: () => void;
   // chapter-specific
-  icon?: string;
+  icon?: React.ReactNode;
   date?: string;
   label?: string;
 }

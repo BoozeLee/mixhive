@@ -1,4 +1,5 @@
 import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
+import { Icon } from '../components/ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
@@ -337,7 +338,7 @@ export function HiveComposer() {
           flexShrink: 0,
         }}
       >
-        <span style={{ fontSize: 18 }}>⬡</span>
+        <span style={{ display: "inline-flex" }}><Icon name="composer" size={18} /></span>
         <h1
           style={{
             margin: 0,
@@ -419,7 +420,7 @@ export function HiveComposer() {
             flexShrink: 0,
           }}
         >
-          <span>⬡ Draft restored from your last session.</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Icon name="composer" size={14} /> Draft restored from your last session.</span>
           <button
             type="button"
             onClick={() => setShowDraftBanner(false)}
@@ -493,7 +494,7 @@ export function HiveComposer() {
                 fontSize: fontSize.md,
               }}
             >
-              ⬡ Start a new set — click the hex below to search for your first track
+              Start a new set — click the hex below to search for your first track
             </div>
           )}
           <ComposerCanvas

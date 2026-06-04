@@ -52,6 +52,13 @@ import {
   ExternalLink,
   LifeBuoy,
   Link as LinkIcon,
+  Camera,
+  Video,
+  Mic,
+  KeyRound,
+  AudioWaveform,
+  Zap,
+  Square,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -103,7 +110,14 @@ export type IconKey =
   | 'edit'
   | 'external'
   | 'help'
-  | 'link';
+  | 'link'
+  | 'camera'
+  | 'video'
+  | 'vocalist'
+  | 'key'
+  | 'wave'
+  | 'zap'
+  | 'square';
 
 export const ICONS: Record<IconKey, LucideIcon> = {
   // navigation / features
@@ -154,6 +168,13 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   external: ExternalLink,
   help: LifeBuoy,
   link: LinkIcon,
+  camera: Camera,
+  video: Video,
+  vocalist: Mic,
+  key: KeyRound,
+  wave: AudioWaveform,
+  zap: Zap,
+  square: Square,
 };
 
 // Less-common one-offs that consumers may import directly when not worth a key.

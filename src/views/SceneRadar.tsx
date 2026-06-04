@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from '../components/hive/HiveButton';
+import { Icon } from '../components/ui/Icon';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { useAuth } from '../hooks/useAuth';
 import { runStrategicAgent } from '../lib/agents';
@@ -312,7 +313,7 @@ export function SceneRadar() {
                 fontSize: fontSize.sm,
               }}
             >
-              <div style={{ fontSize: 32, marginBottom: space[3] }}>📡</div>
+              <div style={{ marginBottom: space[3], display: 'flex', justifyContent: 'center' }}><Icon name="radar" size={34} color="rgba(246,196,0,0.55)" strokeWidth={1.6} /></div>
               <p style={{ margin: 0 }}>
                 {tab === 'scene'
                   ? 'No scene activity detected yet — add gigs and follows to seed the radar.'
@@ -349,7 +350,7 @@ export function SceneRadar() {
       {/* Empty state before first run */}
       {!activeLoading && !activeOutput && !activeError && (
         <div style={{ textAlign: 'center', padding: `${space[10]}px 0`, color: colors.text.faint }}>
-          <div style={{ fontSize: 32, marginBottom: space[3] }}>📡</div>
+          <div style={{ marginBottom: space[3], display: 'flex', justifyContent: 'center' }}><Icon name="radar" size={34} color="rgba(246,196,0,0.55)" strokeWidth={1.6} /></div>
           <p style={{ fontSize: fontSize.sm, margin: 0 }}>Click refresh to scan your scene.</p>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { Icon } from '../components/ui/Icon';
 
 interface AgentPackage {
   id: string;
@@ -160,7 +161,9 @@ export function AgentMarketplace() {
         </div>
       ) : packages.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '64px 20px', color: '#555' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>🤖</div>
+          <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
+            <Icon name="agents" size={44} color="rgba(246,196,0,0.5)" strokeWidth={1.6} />
+          </div>
           <p style={{ fontSize: 18 }}>No agents found</p>
           <p style={{ fontSize: 14 }}>Try different filters</p>
         </div>

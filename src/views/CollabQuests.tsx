@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Icon } from '../components/ui/Icon';
 
 interface CollabQuest {
   id: string;
@@ -103,7 +104,9 @@ export function CollabQuests() {
         </div>
       ) : quests.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '64px 20px', color: '#555' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>⚔️</div>
+          <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
+            <Icon name="quests" size={44} color="rgba(246,196,0,0.5)" strokeWidth={1.6} />
+          </div>
           <p style={{ fontSize: 18 }}>No quests recruiting right now</p>
           <p style={{ fontSize: 14 }}>
             <Link to="/collab-quests/new" style={{ color: 'var(--hive-gold)' }}>Post the first quest</Link>
@@ -153,8 +156,8 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
             </div>
 
             {/* Title */}
-            <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: '0 0 6px', lineHeight: 1.3 }}>
-              ⚔ {quest.title}
+            <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: '0 0 6px', lineHeight: 1.3, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Icon name="quests" size={17} color="var(--hive-gold, #f6c400)" /> {quest.title}
             </h3>
 
             {/* Narrative */}

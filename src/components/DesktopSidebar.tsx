@@ -1,32 +1,34 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Logo } from './Logo';
+import { Icon, HexIcon } from './ui/Icon';
+import type { IconKey } from '../lib/icons';
 import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens';
 
 interface SidebarItem {
   path: string;
-  icon: string;
+  icon: IconKey;
   label: string;
   ariaLabel: string;
   highlight?: boolean;
 }
 
 const topItems: SidebarItem[] = [
-  { path: '/feed?compose=1', icon: '🐝', label: 'Buzz', ariaLabel: 'Post a Buzz', highlight: true },
-  { path: '/dashboard', icon: '▣', label: 'Dashboard', ariaLabel: 'Creator dashboard' },
-  { path: '/feed', icon: '⌁', label: 'Feed', ariaLabel: 'Hive Feed' },
-  { path: '/discover', icon: '◈', label: 'Explore', ariaLabel: 'Explore MixHive' },
-  { path: '/search', icon: '◇', label: 'Network', ariaLabel: 'Hive Radar' },
-  { path: '/opportunities', icon: '◆', label: 'Opportunities', ariaLabel: 'Opportunity Hub' },
-  { path: '/epk', icon: '◩', label: 'EPK', ariaLabel: 'Press Kit Studio' },
-  { path: '/upload', icon: '+', label: 'Upload', ariaLabel: 'Nectar Upload' },
-  { path: '/agents/inbox', icon: '✦', label: 'Inbox', ariaLabel: 'Agent Inbox' },
-  { path: '/agents/gallery', icon: '⬡', label: 'BeeCast', ariaLabel: 'BeeCast agents' },
-  { path: '/quests', icon: '⚔', label: 'Quests', ariaLabel: 'Mythic Quest Lines' },
-  { path: '/scene-radar', icon: '📡', label: 'Radar', ariaLabel: 'Scene Radar' },
-  { path: '/composer', icon: '⬡', label: 'Composer', ariaLabel: 'Hive Composer' },
-  { path: '/hive-story', icon: '✦', label: 'Hive Story', ariaLabel: 'Hive Story editorial' },
-  { path: '/hub', icon: '⬡', label: 'Hub', ariaLabel: 'Feature hub' },
+  { path: '/feed?compose=1', icon: 'buzz', label: 'Buzz', ariaLabel: 'Post a Buzz', highlight: true },
+  { path: '/dashboard', icon: 'dashboard', label: 'Dashboard', ariaLabel: 'Creator dashboard' },
+  { path: '/feed', icon: 'feed', label: 'Feed', ariaLabel: 'Hive Feed' },
+  { path: '/discover', icon: 'discover', label: 'Explore', ariaLabel: 'Explore MixHive' },
+  { path: '/search', icon: 'network', label: 'Network', ariaLabel: 'Hive Radar' },
+  { path: '/opportunities', icon: 'events', label: 'Opportunities', ariaLabel: 'Opportunity Hub' },
+  { path: '/epk', icon: 'epk', label: 'EPK', ariaLabel: 'Press Kit Studio' },
+  { path: '/upload', icon: 'upload', label: 'Upload', ariaLabel: 'Nectar Upload' },
+  { path: '/agents/inbox', icon: 'inbox', label: 'Inbox', ariaLabel: 'Agent Inbox' },
+  { path: '/agents/gallery', icon: 'agents', label: 'BeeCast', ariaLabel: 'BeeCast agents' },
+  { path: '/quests', icon: 'quests', label: 'Quests', ariaLabel: 'Mythic Quest Lines' },
+  { path: '/scene-radar', icon: 'radar', label: 'Radar', ariaLabel: 'Scene Radar' },
+  { path: '/composer', icon: 'composer', label: 'Composer', ariaLabel: 'Hive Composer' },
+  { path: '/hive-story', icon: 'story', label: 'Hive Story', ariaLabel: 'Hive Story editorial' },
+  { path: '/hub', icon: 'hub', label: 'Hub', ariaLabel: 'Feature hub' },
 ];
 
 function isActive(itemPath: string, currentPath: string): boolean {
@@ -106,8 +108,8 @@ export function DesktopSidebar() {
                   transition: transition.base,
                 }}
               >
-                <span aria-hidden="true" style={{ fontSize: 20, lineHeight: 1 }}>
-                  {item.icon}
+                <span aria-hidden="true" style={{ display: 'grid', placeItems: 'center' }}>
+                  <Icon name={item.icon} size={19} color={colors.bg} strokeWidth={2.4} />
                 </span>
                 {item.label}
               </Link>
@@ -145,24 +147,7 @@ export function DesktopSidebar() {
                 }
               }}
             >
-              <span
-                aria-hidden="true"
-                style={{
-                  width: 32,
-                  height: 32,
-                  display: 'grid',
-                  placeItems: 'center',
-                  clipPath: 'polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%)',
-                  background: active ? colors.accent : 'rgba(240,192,64,0.08)',
-                  color: active ? colors.bg : colors.accent,
-                  border: `1px solid ${active ? colors.accent : colors.accentMuted}`,
-                  fontSize: 15,
-                  fontWeight: 900,
-                  flexShrink: 0,
-                }}
-              >
-                {item.icon}
-              </span>
+              <HexIcon name={item.icon} cell={32} size={16} active={active} />
               <span>{item.label}</span>
             </Link>
           );

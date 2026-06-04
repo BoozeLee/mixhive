@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../lib/notificationStore';
 import { isPushSupported, registerSW, subscribeToPush } from '../lib/pushSubscription';
 import { supabase } from '../lib/supabase';
+import { Icon } from './ui/Icon';
 
 const PUSH_DENIED_KEY = 'mixhive_push_denied';
 
@@ -55,15 +56,16 @@ export function NotificationsBell() {
     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <Link
         to="/notifications"
+        aria-label="Notifications"
         style={{
           position: 'relative',
-          color: '#888',
+          color: '#a9a390',
           textDecoration: 'none',
-          fontSize: 18,
-          lineHeight: 1,
+          lineHeight: 0,
+          display: 'inline-flex',
         }}
       >
-        🔔
+        <Icon name="notifications" size={19} color="currentColor" />
         {unreadCount > 0 && (
           <span
             style={{

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
+import { Icon } from '../components/ui/Icon';
+import type { IconKey } from '../lib/icons';
 import { colors, space, radius, fontSize, fontWeight } from '../styles/tokens';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
@@ -19,7 +21,7 @@ const TABS = [
 type TabId = typeof TABS[number]['id'];
 
 interface HubCardData {
-  glyph: string;
+  icon: IconKey;
   title: string;
   desc: string;
   path: string;
@@ -29,45 +31,45 @@ interface HubCardData {
 
 const CARDS: Record<TabId, HubCardData[]> = {
   discover: [
-    { glyph: '⌁', title: 'Feed',      desc: 'Your hive social stream',       path: '/feed',     auth: false },
-    { glyph: '◈', title: 'Explore',   desc: 'Trending mixes by genre',       path: '/discover', auth: false },
-    { glyph: '◇', title: 'Search',    desc: 'Find DJs, mixes, collabs',      path: '/search',   auth: false },
-    { glyph: '⌁', title: 'Trending',  desc: 'What the scene plays now',      path: '/trending', auth: false },
-    { glyph: '⬡', title: 'Home',      desc: 'MixHive landing page',          path: '/',         auth: false },
+    { icon: 'feed',      title: 'Feed',      desc: 'Your hive social stream',       path: '/feed',     auth: false },
+    { icon: 'discover',  title: 'Explore',   desc: 'Trending mixes by genre',       path: '/discover', auth: false },
+    { icon: 'search',    title: 'Search',    desc: 'Find DJs, mixes, collabs',      path: '/search',   auth: false },
+    { icon: 'mix',       title: 'Trending',  desc: 'What the scene plays now',      path: '/trending', auth: false },
+    { icon: 'home',      title: 'Home',      desc: 'MixHive landing page',          path: '/',         auth: false },
   ],
   create: [
-    { glyph: '+', title: 'Upload Mix',  desc: 'Drop your next release',         path: '/upload',   auth: true,  badge: 'New' },
-    { glyph: '⬡', title: 'Composer',   desc: 'AI-assisted solo track builder', path: '/composer', auth: true  },
-    { glyph: '✎', title: 'Edit Mix',   desc: 'Update a published release',     path: '/mix',      auth: true  },
+    { icon: 'upload',    title: 'Upload Mix',  desc: 'Drop your next release',         path: '/upload',   auth: true,  badge: 'New' },
+    { icon: 'composer',  title: 'Composer',   desc: 'AI-assisted solo track builder', path: '/composer', auth: true  },
+    { icon: 'mix',       title: 'Edit Mix',   desc: 'Update a published release',     path: '/mix',      auth: true  },
   ],
   community: [
-    { glyph: '⚔', title: 'Collab Quests', desc: 'Team-based music projects',     path: '/collab-quests',     auth: false },
-    { glyph: '+', title: 'New Quest',      desc: 'Start a collaboration',         path: '/collab-quests/new', auth: true  },
-    { glyph: '◆', title: 'My Quests',     desc: 'Track quest progress',          path: '/quests',            auth: true  },
-    { glyph: '⬡', title: 'Live Session',  desc: 'Real-time collab workspace',    path: '/session',           auth: true  },
+    { icon: 'quests',    title: 'Collab Quests', desc: 'Team-based music projects',     path: '/collab-quests',     auth: false },
+    { icon: 'quests',    title: 'New Quest',      desc: 'Start a collaboration',         path: '/collab-quests/new', auth: true  },
+    { icon: 'quests',    title: 'My Quests',     desc: 'Track quest progress',          path: '/quests',            auth: true  },
+    { icon: 'session',   title: 'Live Session',  desc: 'Real-time collab workspace',    path: '/session',           auth: true  },
   ],
   marketplace: [
-    { glyph: '◆', title: 'Gear Market',   desc: 'Buy & sell DJ equipment',       path: '/marketplace/gear',     auth: false },
-    { glyph: '+', title: 'List Gear',      desc: 'Sell your equipment',           path: '/marketplace/gear/new', auth: true  },
-    { glyph: '✦', title: 'Agent Market',  desc: 'Lua automation agents',         path: '/marketplace/agents',   auth: false, badge: 'Phase 16' },
-    { glyph: '◆', title: 'Opportunities', desc: 'AI-matched gig board',          path: '/opportunities',        auth: true  },
+    { icon: 'gear',      title: 'Gear Market',   desc: 'Buy & sell DJ equipment',       path: '/marketplace/gear',     auth: false },
+    { icon: 'gear',      title: 'List Gear',      desc: 'Sell your equipment',           path: '/marketplace/gear/new', auth: true  },
+    { icon: 'agentMarket', title: 'Agent Market', desc: 'Lua automation agents',        path: '/marketplace/agents',   auth: false, badge: 'Phase 16' },
+    { icon: 'events',    title: 'Opportunities', desc: 'AI-matched gig board',          path: '/opportunities',        auth: true  },
   ],
   agents: [
-    { glyph: '✦', title: 'Agent Builder', desc: 'Write custom Lua agents',       path: '/agents',         auth: true  },
-    { glyph: '⬡', title: 'Agent Gallery', desc: 'Starter & community agents',    path: '/agents/gallery', auth: false },
-    { glyph: '✦', title: 'Agent Inbox',   desc: 'Suggestions and task output',   path: '/agents/inbox',   auth: true  },
-    { glyph: '◈', title: 'Scene Radar',   desc: 'AI-powered orbit map',          path: '/scene-radar',    auth: true  },
+    { icon: 'agents',    title: 'Agent Builder', desc: 'Write custom Lua agents',       path: '/agents',         auth: true  },
+    { icon: 'agents',    title: 'Agent Gallery', desc: 'Starter & community agents',    path: '/agents/gallery', auth: false },
+    { icon: 'inbox',     title: 'Agent Inbox',   desc: 'Suggestions and task output',   path: '/agents/inbox',   auth: true  },
+    { icon: 'radar',     title: 'Scene Radar',   desc: 'AI-powered orbit map',          path: '/scene-radar',    auth: true  },
   ],
   profile: [
-    { glyph: '♕', title: 'My Profile',  desc: 'Your public creator page',    path: '/u',          auth: true  },
-    { glyph: '▣', title: 'Dashboard',   desc: 'Analytics, mixes, activity',  path: '/dashboard',  auth: true  },
-    { glyph: '◈', title: 'Settings',    desc: 'Account & preferences',       path: '/settings',   auth: true  },
-    { glyph: '◩', title: 'Onboarding',  desc: 'Complete your profile setup', path: '/setup',      auth: true  },
-    { glyph: '◩', title: 'Press Kit',   desc: 'Build & share your EPK',      path: '/epk',        auth: true  },
+    { icon: 'profile',   title: 'My Profile',  desc: 'Your public creator page',    path: '/u',          auth: true  },
+    { icon: 'dashboard', title: 'Dashboard',   desc: 'Analytics, mixes, activity',  path: '/dashboard',  auth: true  },
+    { icon: 'settings',  title: 'Settings',    desc: 'Account & preferences',       path: '/settings',   auth: true  },
+    { icon: 'profile',   title: 'Onboarding',  desc: 'Complete your profile setup', path: '/setup',      auth: true  },
+    { icon: 'epk',       title: 'Press Kit',   desc: 'Build & share your EPK',      path: '/epk',        auth: true  },
   ],
   editorial: [
-    { glyph: '✦', title: 'Hive Story',    desc: 'Monthly editorial showcase',      path: '/hive-story',    auth: false, badge: 'Phase 16' },
-    { glyph: '🔔', title: 'Notifications', desc: 'Activity, alerts, push updates', path: '/notifications', auth: true  },
+    { icon: 'story',         title: 'Hive Story',    desc: 'Monthly editorial showcase',      path: '/hive-story',    auth: false, badge: 'Phase 16' },
+    { icon: 'notifications', title: 'Notifications', desc: 'Activity, alerts, push updates', path: '/notifications', auth: true  },
   ],
 };
 
@@ -180,13 +182,11 @@ function HubCard({ card, isAuthed, accent }: { card: HubCardData; isAuthed: bool
                   ? 'rgba(255,255,255,0.04)'
                   : `linear-gradient(135deg, ${accent}1a 0%, ${accent}0d 100%)`,
                 color: locked ? '#3a3830' : accent,
-                fontSize: 17,
-                fontWeight: 900,
                 flexShrink: 0,
                 filter: locked ? 'none' : `drop-shadow(0 0 6px ${accent}44)`,
               }}
             >
-              {card.glyph}
+              <Icon name={card.icon} size={20} color="currentColor" />
             </span>
 
             <div style={{ display: 'flex', gap: space[2], alignItems: 'center' }}>

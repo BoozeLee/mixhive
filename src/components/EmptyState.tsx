@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { Icon } from './ui/Icon';
+import { GlowText } from './ui/GlowText';
+import type { IconKey } from '../lib/icons';
+import { colors, space, radius, fontSize, fontWeight } from '../styles/tokens';
 
 interface Props {
+  /** Preferred: a registry icon key (renders a professional lucide glyph). */
+  iconKey?: IconKey;
+  /** Legacy: a raw glyph/emoji string (kept for back-compat). */
   icon?: string;
   title: string;
   body?: ReactNode;
@@ -10,7 +17,20 @@ interface Props {
   onAction?: () => void;
 }
 
-export function EmptyState({ icon = '♪', title, body, actionLabel, actionTo, onAction }: Props) {
+const actionStyle = {
+  marginTop: space[9],
+  padding: '9px 22px',
+  borderRadius: radius.md,
+  background: colors.accent,
+  color: colors.bg,
+  textDecoration: 'none',
+  fontWeight: fontWeight.bold,
+  fontSize: fontSize.md,
+  border: 'none',
+  cursor: 'pointer',
+} as const;
+
+export function EmptyState({ iconKey = 'music', icon, title, body, actionLabel, actionTo, onAction }: Props) {
   return (
     <div
       role="status"
@@ -21,7 +41,7 @@ export function EmptyState({ icon = '♪', title, body, actionLabel, actionTo, o
         justifyContent: 'center',
         textAlign: 'center',
         padding: '48px 24px',
-        color: '#999',
+        color: colors.text.muted,
       }}
     >
       <div
@@ -30,55 +50,35 @@ export function EmptyState({ icon = '♪', title, body, actionLabel, actionTo, o
           width: 84,
           height: 84,
           borderRadius: '50%',
-          background:
-            'radial-gradient(circle at 32% 28%, #38dfff55, transparent 28%), linear-gradient(135deg, #1a1a2e, #f0c04022)',
-          border: '1px solid #f0c04033',
-          boxShadow: '0 12px 32px rgba(0,0,0,0.28)',
+          background: 'linear-gradient(135deg, rgba(246,196,0,0.12), rgba(10,9,6,0.9))',
+          border: `1px solid ${colors.accentMuted}`,
+          boxShadow: '0 12px 32px rgba(0,0,0,0.28), inset 0 0 24px rgba(246,196,0,0.06)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          color: 'rgba(246,196,0,0.7)',
           fontSize: 32,
-          color: '#f0c04088',
-          marginBottom: 16,
+          marginBottom: space[8],
         }}
       >
-        {icon}
+        {icon ? icon : <Icon name={iconKey} size={34} color="currentColor" strokeWidth={1.8} />}
       </div>
-      <h2 style={{ margin: 0, color: '#eee', fontSize: 18, fontWeight: 600 }}>{title}</h2>
-      {body && <div style={{ marginTop: 8, maxWidth: 380, lineHeight: 1.5 }}>{body}</div>}
+      <GlowText as="h2" variant="plain" style={{ margin: 0, fontSize: fontSize.xl, fontWeight: fontWeight.bold, color: colors.text.primary }}>
+        {title}
+      </GlowText>
+      {body && (
+        <div style={{ marginTop: space[4], maxWidth: 380, lineHeight: 1.5, color: colors.text.muted, fontSize: fontSize.md }}>
+          {body}
+        </div>
+      )}
       {actionLabel &&
         (actionTo || onAction) &&
         (actionTo ? (
-          <Link
-            to={actionTo}
-            style={{
-              marginTop: 20,
-              padding: '8px 20px',
-              borderRadius: 6,
-              background: '#f0c040',
-              color: '#0a0a0a',
-              textDecoration: 'none',
-              fontWeight: 600,
-              fontSize: 14,
-            }}
-          >
+          <Link to={actionTo} style={actionStyle}>
             {actionLabel}
           </Link>
         ) : (
-          <button
-            onClick={onAction}
-            style={{
-              marginTop: 20,
-              padding: '8px 20px',
-              borderRadius: 6,
-              background: '#f0c040',
-              color: '#0a0a0a',
-              border: 'none',
-              fontWeight: 600,
-              fontSize: 14,
-              cursor: 'pointer',
-            }}
-          >
+          <button onClick={onAction} style={actionStyle}>
             {actionLabel}
           </button>
         ))}
@@ -97,7 +97,7 @@ export function NotFoundState({
 }) {
   return (
     <EmptyState
-      icon="?"
+      iconKey="search"
       title={`This ${what} doesn't exist`}
       body="It might have been deleted, made private, or the link is wrong."
       actionLabel={backLabel}

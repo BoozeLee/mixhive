@@ -1,26 +1,27 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { LogoIcon } from './Logo';
+import { Icon } from './ui/Icon';
+import type { IconKey } from '../lib/icons';
 import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens';
 
 interface NavItem {
   path: string;
-  icon: string;
+  icon: IconKey;
   label: string;
   ariaLabel: string;
 }
 
 const navItems: NavItem[] = [
-  { path: '/dashboard', icon: '▣', label: 'Growth', ariaLabel: 'Creator dashboard' },
-  { path: '/feed', icon: '⌁', label: 'Feed', ariaLabel: 'Hive Feed' },
-  { path: '/search', icon: '◇', label: 'Radar', ariaLabel: 'Hive Radar' },
-  { path: '/profile', icon: '♕', label: 'Cell', ariaLabel: 'Profile cell' },
+  { path: '/dashboard', icon: 'dashboard', label: 'Growth', ariaLabel: 'Creator dashboard' },
+  { path: '/feed', icon: 'feed', label: 'Feed', ariaLabel: 'Hive Feed' },
+  { path: '/search', icon: 'network', label: 'Radar', ariaLabel: 'Hive Radar' },
+  { path: '/profile', icon: 'profile', label: 'Cell', ariaLabel: 'Profile cell' },
 ];
 
 // Logo item for mobile navigation
-const logoItem: NavItem = {
+const logoItem = {
   path: '/',
-  icon: '',
   label: 'MixHive',
   ariaLabel: 'MixHive Home',
 };
@@ -110,7 +111,7 @@ export function MobileNav() {
             marginTop: -14,
           }}
         >
-          🐝
+          <Icon name="buzz" size={22} color={colors.bg} strokeWidth={2.4} />
         </span>
         <span
           style={{
@@ -156,11 +157,9 @@ export function MobileNav() {
                 background: isActive ? colors.accent : 'rgba(240,192,64,0.08)',
                 color: isActive ? colors.bg : colors.accent,
                 border: `1px solid ${isActive ? colors.accent : colors.accentMuted}`,
-                fontSize: 18,
-                fontWeight: 900,
               }}
             >
-              {item.icon}
+              <Icon name={item.icon} size={17} color="currentColor" />
             </span>
             <span
               style={{

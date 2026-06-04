@@ -6,6 +6,7 @@ import { SearchBar } from './SearchBar';
 import { Button } from './ui/Button';
 import { BeeMark } from './brand/BeeMark';
 import { MixhiveWordmark } from './brand/MixhiveWordmark';
+import { Icon } from './ui/Icon';
 import { colors, space } from '../styles/tokens';
 
 const navLinks = [
@@ -162,7 +163,7 @@ export function Navbar() {
                 letterSpacing: 0.3,
               }}
             >
-              🐝 Buzz
+              <Icon name="buzz" size={14} color={colors.bg} strokeWidth={2.4} /> Buzz
             </Link>
 
             {/* Avatar — click to open dropdown */}

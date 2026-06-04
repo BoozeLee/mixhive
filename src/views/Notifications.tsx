@@ -3,8 +3,23 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../lib/notificationStore';
 import type { Notification } from '../lib/types';
-import { colors, space } from '../styles/tokens';
+import { colors, space, fontSize } from '../styles/tokens';
 import { Button } from '../components/ui/Button';
+import { Icon } from '../components/ui/Icon';
+import { SectionHeading } from '../components/ui/SectionHeading';
+import { Reveal } from '../components/ui/Reveal';
+import type { IconKey } from '../lib/icons';
+
+const TYPE_ICON: Record<string, IconKey> = {
+  like: 'like',
+  follow: 'profile',
+  comment: 'comment',
+  reply: 'comment',
+  mix_upload: 'mix',
+  mention: 'mention',
+  buzz_like: 'like',
+  repost: 'repost',
+};
 
 export function NotificationsPage() {
   const { user } = useAuth();
@@ -69,18 +84,16 @@ export function NotificationsPage() {
 
   if (loading) {
     return (
-      <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: colors.text.primary, marginBottom: 20 }}>
-          Notifications
-        </h1>
-        <p>Loading notifications...</p>
+      <div id="main-content" style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
+        <SectionHeading eyebrow="Activity" title="Notifications" />
+        <p style={{ color: colors.text.dim, marginTop: space[8] }}>Loading notifications…</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
+      <div id="main-content" style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
         <p style={{ marginBottom: space[6] }}>Sign in to see your notifications</p>
         <Link to="/login" style={{ color: colors.accent }}>
           Sign in
@@ -90,19 +103,17 @@ export function NotificationsPage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>
+    <div id="main-content" style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-end',
           justifyContent: 'space-between',
           gap: space[8],
-          marginBottom: 20,
+          marginBottom: space[10],
         }}
       >
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: colors.text.primary, margin: 0 }}>
-          Notifications
-        </h1>
+        <SectionHeading eyebrow="Activity" title="Notifications" />
         <Button size="sm" variant="ghost" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
           Mark all read
         </Button>
@@ -113,67 +124,95 @@ export function NotificationsPage() {
           No notifications yet. Follow some DJs and come back.
         </p>
       ) : (
-        <div>
-          {notifications.map(notification => (
-            <Link
-              key={notification.id}
-              to={notificationLink(notification)}
-              style={{
-                display: 'flex',
-                gap: space[6],
-                padding: '14px 0',
-                borderBottom: `1px solid ${colors.border}`,
-                textDecoration: 'none',
-                color: 'inherit',
-                opacity: notification.read ? 0.6 : 1,
-              }}
-            >
-              <div
+        <div style={{ display: 'grid', gap: space[3] }}>
+          {notifications.map((notification, i) => (
+            <Reveal key={notification.id} index={i} from="up">
+              <Link
+                to={notificationLink(notification)}
                 style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: '50%',
-                  background: notification.actor?.avatar_url
-                    ? `url(${notification.actor.avatar_url}) center/cover`
-                    : colors.surfaceHover,
-                  flexShrink: 0,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 14,
-                  color: colors.accentMuted,
+                  gap: space[6],
+                  padding: '14px 16px',
+                  borderRadius: 12,
+                  border: `1px solid ${notification.read ? colors.border : colors.accentMuted}`,
+                  background: notification.read ? 'transparent' : 'rgba(246,196,0,0.04)',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  opacity: notification.read ? 0.7 : 1,
+                  transition: 'border-color 0.15s, background 0.15s',
                 }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = colors.accent; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = notification.read ? colors.border : colors.accentMuted; }}
               >
-                {!notification.actor?.avatar_url && '♪'}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p
-                  style={{ fontSize: 14, color: colors.text.secondary, margin: 0, lineHeight: 1.4 }}
-                >
-                  {notificationText(notification)}
-                </p>
-                <p style={{ fontSize: 12, color: colors.text.dim, margin: '4px 0 0' }}>
-                  {new Date(notification.created_at).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </p>
-              </div>
-              {!notification.read && (
-                <span
-                  aria-label="Unread"
+                <div
                   style={{
-                    width: 8,
-                    height: 8,
+                    position: 'relative',
+                    width: 40,
+                    height: 40,
                     borderRadius: '50%',
-                    background: colors.accent,
-                    alignSelf: 'center',
+                    background: notification.actor?.avatar_url
+                      ? `url(${notification.actor.avatar_url}) center/cover`
+                      : colors.surfaceHover,
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: colors.accent,
                   }}
-                />
-              )}
-            </Link>
+                >
+                  {!notification.actor?.avatar_url && (
+                    <Icon name={TYPE_ICON[notification.type] ?? 'notifications'} size={18} color="currentColor" />
+                  )}
+                  {/* type badge on the corner */}
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      bottom: -2,
+                      right: -2,
+                      width: 18,
+                      height: 18,
+                      borderRadius: '50%',
+                      background: colors.bg,
+                      border: `1px solid ${colors.accentMuted}`,
+                      display: 'grid',
+                      placeItems: 'center',
+                      color: colors.accent,
+                    }}
+                  >
+                    <Icon name={TYPE_ICON[notification.type] ?? 'notifications'} size={10} color="currentColor" />
+                  </span>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: fontSize.md, color: colors.text.secondary, margin: 0, lineHeight: 1.4 }}>
+                    {notificationText(notification)}
+                  </p>
+                  <p style={{ fontSize: fontSize.sm, color: colors.text.dim, margin: '4px 0 0' }}>
+                    {new Date(notification.created_at).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
+                </div>
+                {!notification.read && (
+                  <span
+                    aria-label="Unread"
+                    style={{
+                      width: 9,
+                      height: 9,
+                      borderRadius: '50%',
+                      background: colors.accent,
+                      boxShadow: '0 0 8px rgba(246,196,0,0.6)',
+                      alignSelf: 'center',
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
+              </Link>
+            </Reveal>
           ))}
         </div>
       )}

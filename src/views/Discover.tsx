@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { getTrending } from '../lib/api';
 import { getPopularSearches } from '../lib/search';
 import { MixCard } from '../components/MixCard';
+import { SectionHeading } from '../components/ui/SectionHeading';
+import { Reveal } from '../components/ui/Reveal';
 import type { FeedMix } from '../lib/types';
-import { colors, radius, space } from '../styles/tokens';
+import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 
 export function Discover() {
   const [mixes, setMixes] = useState<FeedMix[]>([]);
@@ -31,23 +33,24 @@ export function Discover() {
   const genres = getPopularSearches().slice(0, 10);
 
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px' }}>
-      <header style={{ marginBottom: space[10] }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, color: colors.text.primary, margin: 0 }}>
-          Discover
-        </h1>
-        <p style={{ color: colors.text.muted, fontSize: 16, margin: '8px 0 0' }}>
-          Explore trending mixes and popular search lanes.
-        </p>
+    <div id="main-content" style={{ maxWidth: 760, margin: '0 auto', padding: '32px 16px 96px' }}>
+      <header style={{ marginBottom: space[11] }}>
+        <SectionHeading
+          eyebrow="Music Discovery"
+          title="Discover"
+          subtitle="Explore trending mixes and popular search lanes across the underground."
+        />
       </header>
 
       <section style={{ marginBottom: space[12] }}>
         <h2
           style={{
-            fontSize: 18,
-            fontWeight: 700,
+            fontSize: fontSize.xl,
+            fontWeight: fontWeight.bold,
             color: colors.text.primary,
-            marginBottom: space[4],
+            marginBottom: space[6],
+            fontFamily: 'var(--font-display, system-ui)',
+            letterSpacing: '0.01em',
           }}
         >
           Trending Mixes
@@ -70,8 +73,10 @@ export function Discover() {
           <p style={{ color: colors.text.dim, fontSize: 14 }}>No trending mixes yet.</p>
         ) : (
           <div style={{ display: 'grid', gap: space[4] }}>
-            {mixes.map(mix => (
-              <MixCard key={mix.id} mix={mix} />
+            {mixes.map((mix, i) => (
+              <Reveal key={mix.id} index={i} from="up">
+                <MixCard mix={mix} />
+              </Reveal>
             ))}
           </div>
         )}
@@ -80,10 +85,12 @@ export function Discover() {
       <section>
         <h2
           style={{
-            fontSize: 18,
-            fontWeight: 700,
+            fontSize: fontSize.xl,
+            fontWeight: fontWeight.bold,
             color: colors.text.primary,
-            marginBottom: space[4],
+            marginBottom: space[6],
+            fontFamily: 'var(--font-display, system-ui)',
+            letterSpacing: '0.01em',
           }}
         >
           Popular Genres
@@ -95,14 +102,23 @@ export function Discover() {
               to={`/search?q=${encodeURIComponent(genre)}`}
               style={{
                 display: 'inline-flex',
-                padding: '8px 12px',
+                padding: '8px 14px',
                 background: colors.surface,
-                border: `1px solid ${colors.border}`,
-                borderRadius: radius.md,
+                border: `1px solid ${colors.accentMuted}`,
+                borderRadius: radius.pill,
                 color: colors.text.secondary,
                 textDecoration: 'none',
-                fontSize: 13,
-                fontWeight: 600,
+                fontSize: fontSize.base,
+                fontWeight: fontWeight.semibold,
+                transition: 'border-color 0.15s, color 0.15s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = colors.accent;
+                e.currentTarget.style.color = colors.accent;
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = colors.accentMuted;
+                e.currentTarget.style.color = colors.text.secondary;
               }}
             >
               {genre}

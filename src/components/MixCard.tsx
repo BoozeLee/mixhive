@@ -5,6 +5,7 @@ import { usePlayer } from '../lib/playerStore';
 import { repost, unrepost, hasReposted } from '../lib/api';
 import { LikeButton } from './LikeButton';
 import { ShareButton } from './ShareButton';
+import { Icon } from './ui/Icon';
 import type { FeedMix } from '../lib/types';
 import { colors, fontSize, fontWeight, getGenreColor, radius, space, transition } from '../styles/tokens';
 
@@ -85,7 +86,7 @@ export function MixCard({ mix }: Props) {
       {/* Repost attribution */}
       {mix.is_repost && mix.reposted_by_username && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 14px 6px', fontSize: 11, color: colors.text.dim }}>
-          <span style={{ color: colors.success, fontSize: 12, lineHeight: 1 }} aria-hidden="true">🔁</span>
+          <span style={{ color: colors.success, lineHeight: 0, display: 'inline-flex' }} aria-hidden="true"><Icon name="repost" size={12} color="currentColor" /></span>
           <span>
             Reposted by{' '}
             <Link to={`/u/${mix.reposted_by_username}`} onClick={e => e.stopPropagation()} style={{ color: colors.text.muted, textDecoration: 'none', fontWeight: fontWeight.semibold }}>
@@ -300,13 +301,13 @@ export function MixCard({ mix }: Props) {
                     background: 'transparent', border: 'none',
                     color: reposted ? colors.success : colors.text.faint,
                     cursor: repostBusy ? 'wait' : 'pointer',
-                    fontSize: 16, padding: '4px', lineHeight: 1,
+                    padding: '4px', lineHeight: 0,
                     opacity: repostBusy ? 0.6 : 1, minWidth: 32, minHeight: 32,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: transition.fast,
                   }}
                 >
-                  {reposted ? '🔁' : '↻'}
+                  <Icon name="repost" size={16} color="currentColor" />
                 </button>
                 <ShareButton mix={mix} variant="icon" onShare={() => {}} />
                 <button

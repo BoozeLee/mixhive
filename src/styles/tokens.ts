@@ -91,6 +91,47 @@ export const shadow = {
   md: '0 4px 12px rgba(0,0,0,0.5)',
   lg: '0 8px 24px rgba(0,0,0,0.6)',
   accent: '0 4px 16px rgba(240,192,64,0.18)',
+  // Premium layered elevations with gold bleed — for cinematic cards/panels
+  elevated: '0 18px 60px rgba(0,0,0,0.5), 0 0 32px rgba(246,196,0,0.08)',
+  honey: '0 0 24px rgba(246,196,0,0.35)',
+  honeyStrong: '0 0 40px rgba(246,196,0,0.45), 0 0 10px rgba(246,196,0,0.6)',
+} as const;
+
+// Cinematic display type scale (clamp-based, responsive). Use for hero and
+// section headlines — distinct from the UI fontSize scale above.
+export const display = {
+  sm: 'clamp(24px, 3vw, 32px)',
+  md: 'clamp(28px, 4vw, 44px)',
+  lg: 'clamp(34px, 5.5vw, 64px)',
+  xl: 'clamp(40px, 8vw, 88px)',
+  '2xl': 'clamp(48px, 10vw, 112px)',
+} as const;
+
+export const blur = {
+  sm: '8px',
+  md: '16px',
+  lg: '24px',
+  xl: '40px',
+} as const;
+
+// Reusable gradient presets in the brand vocabulary.
+export const gradient = {
+  honey: 'linear-gradient(135deg, #ffde4d, #f6c400 58%, #b96a00)',
+  ember: 'linear-gradient(135deg, #ffd84a, #ff8c1a 70%, #b96a00)',
+  goldText: 'linear-gradient(120deg, #fff 18%, #ffd84a 55%, #f6c400 100%)',
+  meshTop: 'radial-gradient(ellipse at 80% 10%, rgba(246,196,0,0.10) 0%, transparent 65%)',
+  meshBottom: 'radial-gradient(ellipse at 10% 90%, rgba(37,217,255,0.06) 0%, transparent 70%)',
+  scanline:
+    'repeating-linear-gradient(180deg, transparent 0 3px, rgba(0,0,0,0.18) 3px 4px)',
+} as const;
+
+// Motion tokens — keep durations/easing consistent with src/lib/motion.ts
+export const motion = {
+  ease: 'cubic-bezier(0.22, 1, 0.36, 1)',
+  durXs: '120ms',
+  durSm: '180ms',
+  durMd: '280ms',
+  durLg: '450ms',
 } as const;
 
 // Stacking order — lower numbers render below higher ones. Keep concrete

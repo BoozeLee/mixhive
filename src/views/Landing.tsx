@@ -1,440 +1,722 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '../hooks/useAuth';
 import { getHiveStats, getRecentMixes, type HiveStats } from '../lib/api';
 import type { FeedMix } from '../lib/types';
-import {
-  HiveButton,
-  HiveCard,
-  HiveStat,
-  HexIcon,
-  WaveBar,
-  HoneyDripDivider,
-  type IconName,
-} from '../components/hive';
+import { HiveButton } from '../components/hive';
+import { MixhiveWordmark } from '../components/brand/MixhiveWordmark';
+import { BeeMark } from '../components/brand/BeeMark';
+import { Reveal } from '../components/ui/Reveal';
+import { GlowText } from '../components/ui/GlowText';
+import { SectionHeading } from '../components/ui/SectionHeading';
+import { NeonDivider } from '../components/ui/NeonDivider';
+import { ParticleField } from '../components/ui/ParticleField';
+import { DURATION, EASE_OUT } from '../lib/motion';
 
-const EXPLORE_TILES: { icon: IconName; label: string; to: string }[] = [
-  { icon: 'mix-vault', label: 'Mixes', to: '/discover' },
-  { icon: 'hive-radar', label: 'Network', to: '/search' },
-  { icon: 'nectar-upload', label: 'Upload', to: '/upload' },
-  { icon: 'queen-mode', label: 'Events', to: '/opportunities' },
-  { icon: 'honeydrop-nft', label: 'HoneyDrop', to: '/discover' },
-  { icon: 'buzz-alerts', label: 'Buzz', to: '/feed' },
+// ─── Static content ─────────────────────────────────────────────────────────
+
+const ECOSYSTEM = [
+  { label: 'Create', sub: 'in Beehive Studio', glyph: '✦' },
+  { label: 'Distribute', sub: 'on MixHive', glyph: '⌁' },
+  { label: 'Get discovered', sub: 'Scene Radar', glyph: '◈' },
+  { label: 'Collaborate', sub: 'Collab Quests', glyph: '⚔' },
+  { label: 'Get paid', sub: 'Marketplace', glyph: '◆' },
 ];
 
-function HiveMap() {
-  const nodes: [number, number][] = [
-    [14, 55], [26, 68], [38, 46], [50, 75],
-    [61, 50], [74, 64], [86, 42], [48, 30],
-  ];
+const PILLARS = [
+  { glyph: '⌁', title: 'Mixes & Feed', desc: 'Upload sets with waveforms. A living feed of the underground, not an algorithm feeding you.', to: '/discover' },
+  { glyph: '✦', title: 'AI Lua Agents', desc: 'Automation agents that work your profile while you sleep — yours to build, fork, and sell.', to: '/agents/gallery' },
+  { glyph: '⚔', title: 'Collab Quests', desc: 'RPG-style team quests. Assemble crews across every creative discipline and ship together.', to: '/collab-quests' },
+  { glyph: '◆', title: 'Gear + Agent Market', desc: 'Buy and sell gear with escrow. Install paid agents. The economy is yours, not a middleman’s.', to: '/marketplace/gear' },
+  { glyph: '◈', title: 'Scene Radar', desc: 'Vector + graph recommendations that surface the artists and nights actually near your sound.', to: '/scene-radar' },
+  { glyph: '♕', title: 'MythicNode Graph', desc: 'A living career knowledge graph for every artist — your scene, mapped and growing.', to: '/hub' },
+];
+
+const CREATORS = [
+  { glyph: '⌁', label: 'DJs', line: 'Share sets, get booked, build a following.' },
+  { glyph: '✦', label: 'Producers', line: 'Release tracks, find collaborators, sell sounds.' },
+  { glyph: '◈', label: 'Visual artists', line: 'Cover art, visuals, AV collabs — get commissioned.' },
+  { glyph: '◆', label: 'Organizers', line: 'Cast lineups, post quests, find the next wave.' },
+];
+
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
+}
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+function MascotPicture({ size }: { size: number }) {
   return (
-    <HiveCard tone="panel" style={{ minHeight: 240, overflow: 'hidden', height: '100%' }}>
-      <h2 style={{
-        margin: 0,
-        color: 'var(--hive-gold)',
-        fontFamily: 'var(--font-ui)',
-        fontSize: 12,
-        textTransform: 'uppercase',
-        letterSpacing: '0.14em',
-        fontWeight: 800,
-      }}>
-        Hive Map
-      </h2>
-      <svg
-        viewBox="0 0 100 70"
-        aria-label="Constellation of connected hive nodes"
-        style={{ width: '100%', height: 190, marginTop: 14, filter: 'drop-shadow(0 0 10px rgba(246,196,0,0.4))' }}
-      >
-        <defs>
-          <pattern id="hm-dots" width="4" height="4" patternUnits="userSpaceOnUse">
-            <circle cx="1" cy="1" r=".45" fill="rgba(246,196,0,.4)" />
-          </pattern>
-        </defs>
-        <path d="M5 52 C18 30, 33 50, 45 28 S77 22, 96 48" fill="none" stroke="rgba(246,196,0,.14)" strokeWidth="7" />
-        <rect x="4" y="8" width="92" height="54" fill="url(#hm-dots)" opacity=".7" />
-        {nodes.slice(1).map((node, i) => (
-          <line key={i} x1={nodes[i][0]} y1={nodes[i][1]} x2={node[0]} y2={node[1]}
-            stroke="rgba(246,196,0,.5)" strokeWidth=".4" />
-        ))}
-        {nodes.map((node, i) => (
-          <circle key={i} cx={node[0]} cy={node[1]} r="2.1" fill="#f6c400" />
-        ))}
-      </svg>
-    </HiveCard>
+    <picture>
+      <source srcSet="/brand/mascot-640.avif" type="image/avif" />
+      <source srcSet="/brand/mascot-640.webp" type="image/webp" />
+      <img
+        src="/mixhive.png"
+        alt="MixHive"
+        width={size}
+        height={size}
+        style={{
+          width: size,
+          height: size,
+          objectFit: 'contain',
+          filter: 'drop-shadow(0 0 50px rgba(246,196,0,0.45))',
+          mixBlendMode: 'screen',
+        }}
+      />
+    </picture>
   );
 }
 
-function FeedItem({ mix, index }: { mix: FeedMix; index: number }) {
+function StatBlock({ value, label }: { value: string; label: string }) {
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 12,
-      padding: '12px 18px',
-      borderBottom: '1px solid var(--hive-line-soft)',
-    }}>
-      <div style={{
-        width: 38,
-        height: 38,
-        borderRadius: '50%',
-        flexShrink: 0,
-        background: mix.cover_url
-          ? `url(${mix.cover_url}) center/cover`
-          : `linear-gradient(135deg, var(--hive-ink), var(--hive-gold-deep))`,
-        border: '1px solid var(--hive-line)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'var(--hive-gold)',
-        fontSize: 16,
-      }}>
-        {!mix.cover_url && '♛'}
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          color: 'var(--hive-text)',
-          fontFamily: 'var(--font-ui)',
-          fontSize: 12,
-          fontWeight: 700,
-          letterSpacing: '0.04em',
-          textTransform: 'uppercase',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}>
-          {mix.dj_display_name || mix.dj_username || 'Unknown DJ'}
-        </div>
-        <div style={{
-          color: 'var(--hive-muted)',
-          fontSize: 11,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          marginTop: 2,
-        }}>
-          {mix.title}
-        </div>
-        <div style={{ marginTop: 6 }}>
-          <WaveBar bars={40} height={22} progress={index === 0 ? 0.3 : 0} label={mix.title} />
-        </div>
-      </div>
-      <button
-        aria-label="Play"
+    <div style={{ textAlign: 'center' }}>
+      <div
         style={{
-          width: 28,
-          height: 28,
-          borderRadius: '50%',
-          background: 'rgba(246,196,0,0.12)',
-          border: '1px solid var(--hive-line)',
-          color: 'var(--hive-gold)',
-          fontSize: 10,
-          cursor: 'pointer',
-          flexShrink: 0,
-          display: 'grid',
-          placeItems: 'center',
+          fontFamily: 'var(--font-display, system-ui)',
+          fontSize: 'clamp(28px, 5vw, 48px)',
+          lineHeight: 1,
+          color: 'var(--hive-gold, #f6c400)',
+          textShadow: '0 0 24px rgba(246,196,0,0.35)',
         }}
       >
-        ▶
-      </button>
+        {value}
+      </div>
+      <div
+        style={{
+          fontSize: 11,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          color: 'var(--hive-muted, #a9a390)',
+          marginTop: 8,
+          fontFamily: 'var(--font-mono, monospace)',
+        }}
+      >
+        {label}
+      </div>
     </div>
   );
 }
 
+// ─── Page ────────────────────────────────────────────────────────────────────
+
 export function Landing() {
-  const { user } = useAuth();
-  const [stats, setStats] = useState<HiveStats>({ mixes_total: 0, voices_total: 0, plays_total: 0, live_now: 0 });
-  const [feed, setFeed] = useState<FeedMix[]>([]);
+  const navigate = useNavigate();
+  const [stats, setStats] = useState<HiveStats | null>(null);
+  const [mixes, setMixes] = useState<FeedMix[]>([]);
 
   useEffect(() => {
     let cancelled = false;
-    void Promise.all([getHiveStats(), getRecentMixes(3)])
-      .then(([s, f]) => {
-        if (cancelled) return;
-        setStats(s);
-        setFeed(f.data ?? []);
-      })
+    getHiveStats()
+      .then(s => { if (!cancelled) setStats(s); })
+      .catch(() => {});
+    getRecentMixes(6)
+      .then(r => { if (!cancelled) setMixes(r.data); })
       .catch(() => {});
     return () => { cancelled = true; };
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
-      style={{ position: 'relative', minHeight: '100vh', paddingBottom: 80 }}
-    >
-      {/* Full-bleed fixed backdrop */}
-      <div
-        aria-hidden="true"
+    <div id="main-content" style={{ position: 'relative', overflow: 'hidden' }}>
+      {/* ═══ HERO ═══ */}
+      <section
         style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: -1,
-          background: '#050505',
-          backgroundImage: 'url(/art/honeycomb-tile.png)',
-          backgroundSize: '260px',
-          opacity: 0.15,
-          pointerEvents: 'none',
+          position: 'relative',
+          minHeight: 'calc(100vh - 64px)',
+          display: 'flex',
+          alignItems: 'center',
+          padding: '40px clamp(16px, 5vw, 64px) 64px',
+          overflow: 'hidden',
         }}
-      />
-
-      <main
-        id="main-content"
-        style={{ position: 'relative', zIndex: 1, maxWidth: 1360, margin: '0 auto', padding: '0 clamp(16px,4vw,48px)' }}
       >
-
-        {/* ── HERO ── */}
-        <section
-          className="lp-hero"
+        {/* ambient layers */}
+        <ParticleField count={40} />
+        <div
+          aria-hidden
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0,1fr) 240px minmax(260px,400px)',
-            gap: 40,
-            alignItems: 'center',
-            minHeight: 'calc(100vh - 64px - 80px)',
-            paddingTop: 56,
-            paddingBottom: 48,
+            position: 'absolute',
+            inset: 0,
+            background:
+              'radial-gradient(ellipse 60% 50% at 75% 30%, rgba(246,196,0,0.10), transparent 70%), radial-gradient(ellipse 50% 40% at 15% 80%, rgba(37,217,255,0.05), transparent 70%)',
+            pointerEvents: 'none',
           }}
-        >
-          {/* Left: CTA text */}
-          <div>
-            <p style={{
-              margin: '0 0 16px',
-              color: 'var(--hive-gold)',
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 800,
-              fontSize: 11,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-            }}>
-              The hive never sleeps
-            </p>
+        />
 
-            <h1 style={{
-              margin: '0 0 20px',
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(40px, 6vw, 72px)',
-              lineHeight: 0.95,
-              fontWeight: 900,
-              textTransform: 'uppercase',
-              color: 'var(--hive-text)',
-              letterSpacing: '0.01em',
-            }}>
-              The Hive<br />
-              Is Your<br />
-              <span style={{ color: 'var(--hive-gold)', textShadow: '0 0 28px rgba(246,196,0,0.5)' }}>
-                Network
-              </span>
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            maxWidth: 1200,
+            margin: '0 auto',
+            width: '100%',
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 0.85fr)',
+            gap: 'clamp(24px, 4vw, 64px)',
+            alignItems: 'center',
+          }}
+          className="landing-hero-grid"
+        >
+          {/* Left: copy */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: DURATION.xl, ease: EASE_OUT }}
+          >
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 14px',
+                borderRadius: 999,
+                border: '1px solid rgba(246,196,0,0.25)',
+                background: 'rgba(246,196,0,0.06)',
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'var(--hive-gold, #f6c400)',
+                fontFamily: 'var(--font-mono, monospace)',
+                marginBottom: 24,
+              }}
+            >
+              <BeeMark size={16} color="#f6c400" /> The underground creative OS
+            </div>
+
+            <h1
+              style={{
+                fontFamily: 'var(--font-display, system-ui)',
+                fontSize: 'clamp(44px, 9vw, 104px)',
+                lineHeight: 0.92,
+                letterSpacing: '-0.01em',
+                margin: 0,
+                textTransform: 'uppercase',
+              }}
+            >
+              <GlowText variant="gradient" style={{ display: 'block' }}>The Hive</GlowText>
+              <GlowText variant="neon" style={{ display: 'block' }}>Never Sleeps</GlowText>
             </h1>
 
-            <p style={{
-              margin: '0 0 32px',
-              fontFamily: 'var(--font-ui)',
-              color: 'var(--hive-text-soft)',
-              fontSize: 15,
-              lineHeight: 1.55,
-              maxWidth: 400,
-            }}>
-              The social platform for DJs, producers and music creators.
+            <p
+              style={{
+                margin: '24px 0 0',
+                fontSize: 'clamp(15px, 1.8vw, 19px)',
+                lineHeight: 1.6,
+                color: 'var(--hive-text-soft, #d4cdb0)',
+                maxWidth: 540,
+              }}
+            >
+              The social operating system for the underground creative economy.
+              Facebook × SoundCloud × Upwork — built for DJs, producers, visual
+              artists, and the people who power culture from the underground up.
             </p>
 
-            <Link to={user ? '/feed' : '/register'} style={{ textDecoration: 'none' }}>
-              <HiveButton size="lg" variant={user ? 'primary' : 'ghost'}>
-                {user ? 'Enter the Hive' : 'Join the Hive'}
-              </HiveButton>
-            </Link>
-          </div>
-
-          {/* Center: Crown art */}
-          <div
-            className="lp-hero-crown"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 12,
-              justifyContent: 'center',
-            }}
-          >
-            <img
-              src="/mixhivebusinesslogo.png"
-              alt="MixHive"
+            {/* kinetic subline */}
+            <div
               style={{
-                width: 220,
-                height: 220,
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 0 36px rgba(246,196,0,0.65)) drop-shadow(0 0 8px rgba(246,196,0,0.4))',
-                mixBlendMode: 'screen',
-              }}
-            />
-            <span style={{ fontSize: 26, filter: 'drop-shadow(0 0 8px rgba(246,196,0,0.8))' }}>🐝</span>
-          </div>
-
-          {/* Right: Live feed */}
-          <HiveCard tone="panel" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '14px 18px',
-              borderBottom: '1px solid var(--hive-line-soft)',
-            }}>
-              <h2 style={{
-                margin: 0,
-                color: 'var(--hive-gold)',
-                fontFamily: 'var(--font-ui)',
+                margin: '22px 0 34px',
                 fontSize: 12,
                 fontWeight: 800,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-              }}>
-                Hive Feed
-              </h2>
-              <Link to="/feed" style={{
-                color: 'var(--hive-gold)',
-                fontSize: 11,
-                textDecoration: 'none',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                opacity: 0.7,
-              }}>
-                See all →
-              </Link>
+                letterSpacing: '0.22em',
+                color: 'var(--hive-muted, #a9a390)',
+                fontFamily: 'var(--font-mono, monospace)',
+              }}
+            >
+              BEATS · ENERGY · CREATIVITY · CONNECTION
             </div>
 
-            {feed.length === 0 ? (
-              <div style={{ padding: '20px 18px', color: 'var(--hive-muted)', fontSize: 13, fontStyle: 'italic' }}>
-                The swarm is silent. Drop the first nectar.
-              </div>
-            ) : (
-              feed.slice(0, 3).map((mix, i) => <FeedItem key={mix.id} mix={mix} index={i} />)
-            )}
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>
+                Join the Hive
+              </HiveButton>
+              <HiveButton variant="ghost" size="lg" onClick={() => navigate('/discover')}>
+                Explore Mixes
+              </HiveButton>
+            </div>
+          </motion.div>
 
-            {/* MixHive branding strip inside feed card */}
-            <div style={{
-              padding: '14px 18px',
-              borderTop: '1px solid var(--hive-line-soft)',
+          {/* Right: mascot */}
+          <div className="landing-hero-mascot" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1, y: [0, -14, 0] }}
+              transition={{
+                opacity: { duration: DURATION.xl, ease: EASE_OUT, delay: 0.15 },
+                scale: { duration: DURATION.xl, ease: EASE_OUT, delay: 0.15 },
+                y: { duration: 6, repeat: Infinity, ease: 'easeInOut' },
+              }}
+            >
+              <MascotPicture size={420} />
+            </motion.div>
+          </div>
+        </div>
+
+        {/* scroll cue */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            bottom: 22,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: 'var(--hive-dim, #6a624a)',
+            fontSize: 11,
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            fontFamily: 'var(--font-mono, monospace)',
+          }}
+        >
+          Scroll ↓
+        </div>
+      </section>
+
+      {/* ═══ VISION BAND ═══ */}
+      <section style={{ padding: '80px clamp(16px, 5vw, 64px)', position: 'relative' }}>
+        <div style={{ maxWidth: 920, margin: '0 auto', textAlign: 'center' }}>
+          <Reveal>
+            <p
+              style={{
+                fontFamily: 'var(--font-display, system-ui)',
+                fontSize: 'clamp(24px, 4vw, 44px)',
+                lineHeight: 1.25,
+                color: 'var(--hive-text, #f5f3e7)',
+                margin: 0,
+              }}
+            >
+              Where Spotify tells you what to listen to,{' '}
+              <GlowText variant="neon">MixHive puts the DJ back in control.</GlowText>{' '}
+              Where LinkedIn is for suits, MixHive is for scene-builders. Where Fiverr
+              is transactional, <GlowText variant="gradient">MixHive is community-first.</GlowText>
+            </p>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <NeonDivider style={{ marginTop: 40 }} />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ═══ ECOSYSTEM FLOW ═══ */}
+      <section style={{ padding: '40px clamp(16px, 5vw, 64px) 90px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <Reveal>
+            <SectionHeading
+              align="center"
+              eyebrow="The flywheel"
+              title="One ecosystem, end to end"
+              subtitle="Create in Beehive Studio, distribute on MixHive, get discovered, collaborate, and get paid — without leaving the hive."
+            />
+          </Reveal>
+
+          <div
+            style={{
               display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-            }}>
-              <img src="/mixhivebusinesslogo.png" alt="" style={{ width: 28, height: 28, objectFit: 'contain', mixBlendMode: 'screen', opacity: 0.7 }} />
-              <div>
-                <div style={{ color: 'var(--hive-gold)', fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>MixHive</div>
-                <div style={{ color: 'var(--hive-muted)', fontSize: 10, lineHeight: 1.3 }}>The Hive Is Your Network</div>
-              </div>
-              <div style={{ marginLeft: 'auto' }}>
-                <Link to={user ? '/feed' : '/register'} style={{ textDecoration: 'none' }}>
-                  <HiveButton size="sm" variant="ghost">{user ? 'Enter' : 'Join'}</HiveButton>
-                </Link>
-              </div>
-            </div>
-          </HiveCard>
-        </section>
-
-        <HoneyDripDivider height={40} />
-
-        {/* ── STATS ── */}
-        <section
-          className="lp-stats"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4,1fr)',
-            gap: 1,
-            background: 'rgba(12,10,3,0.7)',
-            borderTop: '1px solid var(--hive-line-soft)',
-            borderBottom: '1px solid var(--hive-line-soft)',
-            margin: '0 calc(-1 * clamp(16px,4vw,48px))',
-            padding: '22px clamp(16px,4vw,48px)',
-          }}
-        >
-          <HiveStat icon="♟" label="Mixes" value={stats.mixes_total} />
-          <HiveStat icon="◌" label="Voices" value={stats.voices_total} />
-          <HiveStat icon="≋" label="Plays" value={stats.plays_total} />
-          <HiveStat icon="♕" label="Live Now" value={stats.live_now} />
-        </section>
-
-        <HoneyDripDivider height={40} />
-
-        {/* ── EXPLORE + MAP ── */}
-        <section
-          className="lp-bottom"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 24,
-            paddingBottom: 48,
-          }}
-        >
-          {/* Explore */}
-          <HiveCard tone="panel" style={{ padding: 24 }}>
-            <h2 style={{
-              margin: '0 0 20px',
-              color: 'var(--hive-gold)',
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 800,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-            }}>
-              Explore the Hive
-            </h2>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3,1fr)',
-              gap: 18,
-            }}>
-              {EXPLORE_TILES.map(tile => (
-                <Link
-                  key={tile.icon}
-                  to={tile.to}
-                  aria-label={tile.label}
+              alignItems: 'stretch',
+              justifyContent: 'center',
+              gap: 12,
+              flexWrap: 'wrap',
+              marginTop: 48,
+            }}
+          >
+            {ECOSYSTEM.map((step, i) => (
+              <Reveal key={step.label} index={i} from="up">
+                <div
                   style={{
-                    textDecoration: 'none',
-                    display: 'grid',
-                    justifyItems: 'center',
-                    gap: 8,
-                    color: 'var(--hive-text-soft)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
                   }}
                 >
-                  <HexIcon name={tile.icon} size={56} label={tile.label} />
-                  <span style={{
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    textAlign: 'center',
-                  }}>
-                    {tile.label}
-                  </span>
+                  <div
+                    style={{
+                      width: 168,
+                      padding: '22px 16px',
+                      borderRadius: 14,
+                      background: 'rgba(16,14,10,0.7)',
+                      border: '1px solid rgba(246,196,0,0.14)',
+                      backdropFilter: 'blur(14px)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        margin: '0 auto 12px',
+                        display: 'grid',
+                        placeItems: 'center',
+                        clipPath: 'polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)',
+                        background: 'rgba(246,196,0,0.12)',
+                        color: '#f6c400',
+                        fontSize: 17,
+                        fontWeight: 900,
+                      }}
+                    >
+                      {step.glyph}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 800,
+                        color: 'var(--hive-text, #f5f3e7)',
+                        fontFamily: 'var(--font-display, system-ui)',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {step.label}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--hive-muted, #a9a390)', marginTop: 4 }}>
+                      {step.sub}
+                    </div>
+                  </div>
+                  {i < ECOSYSTEM.length - 1 && (
+                    <span
+                      aria-hidden
+                      className="ecosystem-arrow"
+                      style={{ color: 'rgba(246,196,0,0.5)', fontSize: 20, fontWeight: 900 }}
+                    >
+                      →
+                    </span>
+                  )}
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ FEATURE PILLARS ═══ */}
+      <section style={{ padding: '40px clamp(16px, 5vw, 64px) 90px', position: 'relative' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <Reveal>
+            <SectionHeading
+              eyebrow="What's inside"
+              title="Everything the underground needs"
+              subtitle="The only platform combining social discovery, AI agent automation, a creator marketplace, collab quests, and a living career graph — in one place."
+            />
+          </Reveal>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: 20,
+              marginTop: 48,
+            }}
+          >
+            {PILLARS.map((p, i) => (
+              <Reveal key={p.title} index={i} from="up">
+                <Link to={p.to} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    transition={{ duration: 0.18 }}
+                    style={{
+                      height: '100%',
+                      padding: 26,
+                      borderRadius: 18,
+                      background: 'linear-gradient(160deg, rgba(18,16,11,0.85), rgba(10,9,6,0.8))',
+                      border: '1px solid rgba(246,196,0,0.13)',
+                      backdropFilter: 'blur(16px)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 52,
+                        height: 52,
+                        display: 'grid',
+                        placeItems: 'center',
+                        clipPath: 'polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)',
+                        background: 'linear-gradient(135deg, rgba(246,196,0,0.18), rgba(246,196,0,0.06))',
+                        color: '#f6c400',
+                        fontSize: 22,
+                        fontWeight: 900,
+                        marginBottom: 18,
+                        filter: 'drop-shadow(0 0 10px rgba(246,196,0,0.3))',
+                      }}
+                    >
+                      {p.glyph}
+                    </div>
+                    <h3
+                      style={{
+                        margin: '0 0 8px',
+                        fontSize: 18,
+                        fontWeight: 800,
+                        color: 'var(--hive-text, #f5f3e7)',
+                        fontFamily: 'var(--font-display, system-ui)',
+                        letterSpacing: '0.01em',
+                      }}
+                    >
+                      {p.title}
+                    </h3>
+                    <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: 'var(--hive-muted, #a9a390)' }}>
+                      {p.desc}
+                    </p>
+                  </motion.div>
                 </Link>
-              ))}
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ FOR EVERY CREATOR ═══ */}
+      <section style={{ padding: '40px clamp(16px, 5vw, 64px) 90px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <Reveal>
+            <SectionHeading align="center" eyebrow="Built for all of you" title="For every creator in the scene" />
+          </Reveal>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: 18,
+              marginTop: 44,
+            }}
+          >
+            {CREATORS.map((c, i) => (
+              <Reveal key={c.label} index={i} from="scale">
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '30px 20px',
+                    borderRadius: 16,
+                    background: 'rgba(14,12,8,0.6)',
+                    border: '1px solid rgba(246,196,0,0.1)',
+                  }}
+                >
+                  <div style={{ fontSize: 30, marginBottom: 12 }}>{c.glyph}</div>
+                  <div
+                    style={{
+                      fontSize: 17,
+                      fontWeight: 800,
+                      color: 'var(--hive-gold, #f6c400)',
+                      fontFamily: 'var(--font-display, system-ui)',
+                    }}
+                  >
+                    {c.label}
+                  </div>
+                  <p style={{ margin: '8px 0 0', fontSize: 13, lineHeight: 1.5, color: 'var(--hive-muted, #a9a390)' }}>
+                    {c.line}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ LIVE SOCIAL PROOF ═══ */}
+      <section style={{ padding: '40px clamp(16px, 5vw, 64px) 90px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          {stats && (
+            <Reveal>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: 16,
+                  padding: '32px 20px',
+                  borderRadius: 18,
+                  background: 'rgba(16,14,10,0.6)',
+                  border: '1px solid rgba(246,196,0,0.12)',
+                  marginBottom: 56,
+                }}
+                className="landing-stats-grid"
+              >
+                <StatBlock value={formatCount(stats.mixes_total)} label="Mixes" />
+                <StatBlock value={formatCount(stats.voices_total)} label="Voices" />
+                <StatBlock value={formatCount(stats.plays_total)} label="Plays" />
+                <StatBlock value={formatCount(stats.live_now)} label="Live now" />
+              </div>
+            </Reveal>
+          )}
+
+          {mixes.length > 0 && (
+            <>
+              <Reveal>
+                <SectionHeading eyebrow="Fresh from the hive" title="Now playing underground" />
+              </Reveal>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                  gap: 18,
+                  marginTop: 36,
+                }}
+              >
+                {mixes.slice(0, 6).map((mix, i) => (
+                  <Reveal key={mix.id} index={i} from="up">
+                    <Link to={`/mix/${mix.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+                      <motion.div
+                        whileHover={{ y: -4 }}
+                        transition={{ duration: 0.16 }}
+                        style={{
+                          borderRadius: 14,
+                          overflow: 'hidden',
+                          background: 'rgba(14,12,8,0.7)',
+                          border: '1px solid rgba(246,196,0,0.12)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            height: 140,
+                            background: mix.artwork_url
+                              ? `url(${mix.artwork_url}) center/cover`
+                              : 'linear-gradient(135deg, rgba(246,196,0,0.18), rgba(10,9,6,0.9))',
+                            display: 'grid',
+                            placeItems: 'center',
+                          }}
+                        >
+                          {!mix.artwork_url && <BeeMark size={40} color="rgba(246,196,0,0.5)" />}
+                        </div>
+                        <div style={{ padding: '14px 16px' }}>
+                          <div
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 700,
+                              color: 'var(--hive-text, #f5f3e7)',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {mix.title}
+                          </div>
+                          <div style={{ fontSize: 12, color: 'var(--hive-muted, #a9a390)', marginTop: 3 }}>
+                            @{mix.dj_username} · {formatCount(mix.play_count)} plays
+                          </div>
+                        </div>
+                      </motion.div>
+                    </Link>
+                  </Reveal>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ═══ BIG CTA ═══ */}
+      <section style={{ padding: '20px clamp(16px, 5vw, 64px) 100px' }}>
+        <Reveal from="scale">
+          <div
+            style={{
+              maxWidth: 1000,
+              margin: '0 auto',
+              padding: 'clamp(40px, 7vw, 80px) clamp(24px, 5vw, 64px)',
+              borderRadius: 28,
+              textAlign: 'center',
+              background:
+                'radial-gradient(ellipse at 50% 0%, rgba(246,196,0,0.16), rgba(10,9,6,0.9) 70%), linear-gradient(160deg, rgba(20,17,10,0.9), rgba(8,7,4,0.95))',
+              border: '1px solid rgba(246,196,0,0.22)',
+              boxShadow: '0 0 60px rgba(246,196,0,0.1)',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <ParticleField count={24} />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-display, system-ui)',
+                  fontSize: 'clamp(32px, 6vw, 64px)',
+                  lineHeight: 1,
+                  margin: 0,
+                  textTransform: 'uppercase',
+                }}
+              >
+                <GlowText variant="gradient">Join the Hive</GlowText>
+              </h2>
+              <p
+                style={{
+                  margin: '18px auto 32px',
+                  maxWidth: 520,
+                  fontSize: 16,
+                  lineHeight: 1.6,
+                  color: 'var(--hive-text-soft, #d4cdb0)',
+                }}
+              >
+                The scene is building itself a home. Claim your cell, drop your first
+                mix, and start collaborating with the underground.
+              </p>
+              <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>
+                  Create your account
+                </HiveButton>
+                <HiveButton variant="ghost" size="lg" onClick={() => navigate('/login')}>
+                  Sign in
+                </HiveButton>
+              </div>
             </div>
-          </HiveCard>
+          </div>
+        </Reveal>
+      </section>
 
-          {/* Map */}
-          <HiveMap />
-        </section>
-      </main>
+      {/* ═══ FOOTER ═══ */}
+      <footer
+        style={{
+          borderTop: '1px solid rgba(246,196,0,0.12)',
+          padding: '44px clamp(16px, 5vw, 64px)',
+          background: 'rgba(5,5,4,0.6)',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: '0 auto',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 24,
+            flexWrap: 'wrap',
+          }}
+        >
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <BeeMark size={26} color="#f6c400" />
+            <MixhiveWordmark height={16} color="var(--hive-text, #f5f3e7)" />
+          </Link>
+          <div style={{ display: 'flex', gap: 22, flexWrap: 'wrap' }}>
+            {[
+              { to: '/discover', label: 'Explore' },
+              { to: '/hub', label: 'Features' },
+              { to: '/hive-story', label: 'Hive Story' },
+              { to: '/marketplace/gear', label: 'Marketplace' },
+              { to: '/register', label: 'Join' },
+            ].map(l => (
+              <Link
+                key={l.to}
+                to={l.to}
+                style={{
+                  color: 'var(--hive-muted, #a9a390)',
+                  textDecoration: 'none',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--hive-dim, #6a624a)', fontFamily: 'var(--font-mono, monospace)' }}>
+            © {new Date().getFullYear()} MixHive · The Hive Never Sleeps
+          </div>
+        </div>
+      </footer>
 
-      {/* Responsive overrides */}
+      {/* responsive: collapse hero to one column, stack stats on mobile */}
       <style>{`
-        @media (max-width: 900px) {
-          .lp-hero {
-            grid-template-columns: minmax(0,1fr) !important;
-            min-height: auto !important;
-            padding-top: 36px !important;
-          }
-          .lp-hero-crown { display: none !important; }
-          .lp-bottom { grid-template-columns: 1fr !important; }
+        @media (max-width: 860px) {
+          .landing-hero-grid { grid-template-columns: 1fr !important; }
+          .landing-hero-mascot { order: -1; }
+          .landing-hero-mascot picture img { width: 280px !important; height: 280px !important; }
+          .ecosystem-arrow { transform: rotate(90deg); }
         }
-        @media (max-width: 760px) {
-          .lp-stats { grid-template-columns: repeat(2,1fr) !important; }
+        @media (max-width: 560px) {
+          .landing-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
       `}</style>
-    </motion.div>
+    </div>
   );
 }

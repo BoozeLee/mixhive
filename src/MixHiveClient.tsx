@@ -1,10 +1,12 @@
 'use client';
 
 import { StrictMode, useEffect } from 'react';
+import { MotionConfig } from 'framer-motion';
 import * as Sentry from '@sentry/react';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { registerSW } from './lib/pushSubscription';
+import { useLenis } from './lib/useLenis';
 
 let sentryReady = false;
 
@@ -28,6 +30,9 @@ function initSentry() {
 }
 
 export default function MixHiveClient() {
+  // Studio-grade smooth scroll (auto-disabled on touch + reduced-motion)
+  useLenis();
+
   useEffect(() => {
     initSentry();
     registerSW(); // silent — no permission requested here, opt-in via bell
@@ -35,9 +40,12 @@ export default function MixHiveClient() {
 
   return (
     <StrictMode>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
+      {/* reducedMotion="user" makes every Framer animation honor the OS setting */}
+      <MotionConfig reducedMotion="user">
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </MotionConfig>
     </StrictMode>
   );
 }

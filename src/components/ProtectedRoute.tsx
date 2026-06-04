@@ -1,5 +1,7 @@
 import { Navigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
+import { BeeMark } from './brand/BeeMark';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -12,13 +14,36 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '60vh',
+          height: '70vh',
           flexDirection: 'column',
-          gap: 12,
+          gap: 18,
         }}
       >
-        <div style={{ color: '#f0c040', fontSize: 18, fontWeight: 600 }}>MixHive</div>
-        <div style={{ color: '#888', fontSize: 14 }}>Checking your session...</div>
+        <motion.div
+          animate={{
+            filter: [
+              'drop-shadow(0 0 6px rgba(246,196,0,0.25))',
+              'drop-shadow(0 0 20px rgba(246,196,0,0.6))',
+              'drop-shadow(0 0 6px rgba(246,196,0,0.25))',
+            ],
+            scale: [1, 1.06, 1],
+          }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <BeeMark size={48} color="#f6c400" />
+        </motion.div>
+        <div
+          style={{
+            color: 'var(--hive-muted, #a9a390)',
+            fontSize: 12,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            fontFamily: 'var(--font-mono, monospace)',
+          }}
+        >
+          Entering the hive…
+        </div>
       </div>
     );
 

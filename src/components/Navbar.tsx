@@ -4,7 +4,8 @@ import { useAuth } from '../hooks/useAuth';
 import { NotificationsBell } from './NotificationsBell';
 import { SearchBar } from './SearchBar';
 import { Button } from './ui/Button';
-import { Logo } from './Logo';
+import { BeeMark } from './brand/BeeMark';
+import { MixhiveWordmark } from './brand/MixhiveWordmark';
 import { colors, space } from '../styles/tokens';
 
 const navLinks = [
@@ -39,6 +40,7 @@ export function Navbar() {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,6 +54,16 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', onClickOutside);
   }, [menuOpen]);
 
+  // Scroll-aware: stronger blur/border once the page scrolls past the hero
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 12);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <nav
       className="hive-panel"
@@ -61,21 +73,29 @@ export function Navbar() {
         justifyContent: 'space-between',
         gap: space[6],
         padding: `0 clamp(14px, 4vw, 48px)`,
-        height: 64,
-        background:
-          'linear-gradient(90deg, rgba(3,3,3,0.96), rgba(13,10,2,0.88), rgba(3,3,3,0.96))',
+        height: scrolled ? 58 : 64,
+        background: scrolled
+          ? 'linear-gradient(90deg, rgba(3,3,3,0.98), rgba(13,10,2,0.94), rgba(3,3,3,0.98))'
+          : 'linear-gradient(90deg, rgba(3,3,3,0.92), rgba(13,10,2,0.82), rgba(3,3,3,0.92))',
+        backdropFilter: 'blur(18px)',
         borderWidth: '0 0 1px',
-        borderColor: 'rgba(240,192,64,0.14)',
+        borderColor: scrolled ? 'rgba(240,192,64,0.24)' : 'rgba(240,192,64,0.12)',
         borderRadius: 0,
         position: 'sticky',
         top: 0,
         zIndex: 100,
+        transition: 'height 0.25s ease, border-color 0.25s ease, background 0.25s ease',
       }}
     >
       {/* Left: Logo + nav links */}
       <div style={{ display: 'flex', alignItems: 'center', gap: space[8], minWidth: 0, flex: '0 0 auto' }}>
-        <Link to="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
-          <Logo size="medium" variant="business" showText={true} />
+        <Link
+          to="/"
+          aria-label="MixHive home"
+          style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 9 }}
+        >
+          <BeeMark size={28} color="var(--hive-gold, #f6c400)" glow />
+          <MixhiveWordmark height={17} color="var(--hive-text, #f5f3e7)" />
         </Link>
         {user && (
           <div

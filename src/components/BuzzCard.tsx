@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { Icon } from './ui/Icon';
 import {
   likeBuzz,
   unlikeBuzz,
@@ -317,7 +318,7 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
                 color: colors.text.muted,
               }}
             >
-              🎵 Audio clip
+              <Icon name="music" size={13} /> Audio clip
             </p>
             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <audio
@@ -431,7 +432,7 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  🎧 {buzz.attached_mix.title}
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Icon name="headphones" size={13} /> {buzz.attached_mix.title}</span>
                 </div>
                 <div style={{ fontSize: fontSize.xs, color: colors.text.muted, marginTop: 2 }}>
                   {buzz.attached_mix.dj?.display_name || buzz.attached_mix.dj?.username || ''}

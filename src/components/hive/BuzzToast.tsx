@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BeeMark } from '../brand/BeeMark';
 
 type Tone = 'info' | 'success' | 'danger';
 
@@ -17,7 +18,7 @@ const toneStyle: Record<Tone, { bg: string; border: string; fg: string; glyph: s
     bg: 'rgba(7,7,5,0.92)',
     border: 'var(--hive-gold, #f6c400)',
     fg: 'var(--hive-gold-hot, #ffd84a)',
-    glyph: '🐝',
+    glyph: '',
   },
   success: {
     bg: 'rgba(7,30,12,0.92)',
@@ -76,8 +77,8 @@ export function BuzzToast({ open, message, tone = 'info', duration = 4000, onClo
             fontFamily: 'var(--font-ui)',
           }}
         >
-          <span aria-hidden="true" style={{ color: cfg.fg, fontSize: 18, lineHeight: 1 }}>
-            {cfg.glyph}
+          <span aria-hidden="true" style={{ color: cfg.fg, fontSize: 18, lineHeight: 0, display: 'inline-flex' }}>
+            {tone === 'info' ? <BeeMark size={16} color="currentColor" /> : cfg.glyph}
           </span>
           <span style={{ flex: 1, fontSize: 13, lineHeight: 1.4 }}>{message}</span>
           {onClose && (

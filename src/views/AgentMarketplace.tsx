@@ -269,7 +269,7 @@ function AgentCard({
       {/* Footer: stats + action */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #1a1a1a' }}>
         <div style={{ fontSize: 12, color: '#555' }}>
-          {pkg.avg_rating > 0 && <span>★ {pkg.avg_rating.toFixed(1)} · </span>}
+          {pkg.avg_rating > 0 && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><Icon name="rating" size={11} /> {pkg.avg_rating.toFixed(1)} · </span>}
           {pkg.install_count} installs
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

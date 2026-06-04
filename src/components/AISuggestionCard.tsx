@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import type { AISuggestion } from '../lib/types';
 import { colors, space, radius, fontSize, fontWeight, transition } from '../styles/tokens';
 import { trackEvent } from '../lib/experiments';
+import { Icon } from './ui/Icon';
+import type { IconKey } from '../lib/icons';
 
 const typeLabels: Record<string, string> = {
   profile_bio: 'Bio',
@@ -13,13 +15,13 @@ const typeLabels: Record<string, string> = {
   web3_proposal: 'Web3 Pass',
 };
 
-const typeIcons: Record<string, string> = {
-  profile_bio: '✎',
-  profile_coach: '⬡',
-  epk: '◈',
-  opportunity_match: '◇',
-  collab_match: '✦',
-  web3_proposal: '⬡',
+const typeIcons: Record<string, IconKey> = {
+  profile_bio: 'edit',
+  profile_coach: 'profile',
+  epk: 'epk',
+  opportunity_match: 'events',
+  collab_match: 'quests',
+  web3_proposal: 'sparkles',
 };
 
 interface Props {
@@ -277,12 +279,12 @@ function StarRating({ onRate }: { onRate: (r: number) => void }) {
             border: 'none',
             padding: `${space[1]}px`,
             cursor: 'pointer',
-            fontSize: 16,
+            lineHeight: 0,
             color: n <= hovered ? colors.accent : colors.text.faint,
             transition: transition.fast,
           }}
         >
-          ★
+          <Icon name="rating" size={16} color="currentColor" />
         </button>
       ))}
     </div>
@@ -316,7 +318,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
   const canEdit = getEditableText(suggestion) !== null;
 
   const label = typeLabels[suggestion.suggestion_type] ?? suggestion.suggestion_type;
-  const icon = typeIcons[suggestion.suggestion_type] ?? '✦';
+  const iconKey: IconKey = typeIcons[suggestion.suggestion_type] ?? 'sparkles';
 
   function handleApply() {
     setLocalStatus('applied');
@@ -388,7 +390,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
             fontWeight: fontWeight.bold,
           }}
         >
-          {isApplied ? '✓' : isRejected ? '✗' : icon}
+          {isApplied ? '✓' : isRejected ? '✗' : <Icon name={iconKey} size={15} color="currentColor" />}
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>

@@ -48,6 +48,10 @@ import {
   Trophy,
   Network,
   ShoppingBag,
+  Pencil,
+  ExternalLink,
+  LifeBuoy,
+  Link as LinkIcon,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -94,7 +98,12 @@ export type IconKey =
   | 'sparkles'
   | 'visual'
   | 'organizer'
-  | 'producer';
+  | 'producer'
+  | 'rating'
+  | 'edit'
+  | 'external'
+  | 'help'
+  | 'link';
 
 export const ICONS: Record<IconKey, LucideIcon> = {
   // navigation / features
@@ -140,6 +149,11 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   visual: ImageIcon,
   organizer: Megaphone,
   producer: Wand2,
+  rating: Star,
+  edit: Pencil,
+  external: ExternalLink,
+  help: LifeBuoy,
+  link: LinkIcon,
 };
 
 // Less-common one-offs that consumers may import directly when not worth a key.

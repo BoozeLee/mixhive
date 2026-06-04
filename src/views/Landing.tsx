@@ -11,32 +11,34 @@ import { GlowText } from '../components/ui/GlowText';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { NeonDivider } from '../components/ui/NeonDivider';
 import { ParticleField } from '../components/ui/ParticleField';
+import { Icon } from '../components/ui/Icon';
+import type { IconKey } from '../lib/icons';
 import { DURATION, EASE_OUT } from '../lib/motion';
 
 // ─── Static content ─────────────────────────────────────────────────────────
 
-const ECOSYSTEM = [
-  { label: 'Create', sub: 'in Beehive Studio', glyph: '✦' },
-  { label: 'Distribute', sub: 'on MixHive', glyph: '⌁' },
-  { label: 'Get discovered', sub: 'Scene Radar', glyph: '◈' },
-  { label: 'Collaborate', sub: 'Collab Quests', glyph: '⚔' },
-  { label: 'Get paid', sub: 'Marketplace', glyph: '◆' },
+const ECOSYSTEM: { label: string; sub: string; icon: IconKey }[] = [
+  { label: 'Create', sub: 'in Beehive Studio', icon: 'producer' },
+  { label: 'Distribute', sub: 'on MixHive', icon: 'feed' },
+  { label: 'Get discovered', sub: 'Scene Radar', icon: 'radar' },
+  { label: 'Collaborate', sub: 'Collab Quests', icon: 'quests' },
+  { label: 'Get paid', sub: 'Marketplace', icon: 'gear' },
 ];
 
-const PILLARS = [
-  { glyph: '⌁', title: 'Mixes & Feed', desc: 'Upload sets with waveforms. A living feed of the underground, not an algorithm feeding you.', to: '/discover' },
-  { glyph: '✦', title: 'AI Lua Agents', desc: 'Automation agents that work your profile while you sleep — yours to build, fork, and sell.', to: '/agents/gallery' },
-  { glyph: '⚔', title: 'Collab Quests', desc: 'RPG-style team quests. Assemble crews across every creative discipline and ship together.', to: '/collab-quests' },
-  { glyph: '◆', title: 'Gear + Agent Market', desc: 'Buy and sell gear with escrow. Install paid agents. The economy is yours, not a middleman’s.', to: '/marketplace/gear' },
-  { glyph: '◈', title: 'Scene Radar', desc: 'Vector + graph recommendations that surface the artists and nights actually near your sound.', to: '/scene-radar' },
-  { glyph: '♕', title: 'MythicNode Graph', desc: 'A living career knowledge graph for every artist — your scene, mapped and growing.', to: '/hub' },
+const PILLARS: { icon: IconKey; title: string; desc: string; to: string }[] = [
+  { icon: 'feed', title: 'Mixes & Feed', desc: 'Upload sets with waveforms. A living feed of the underground, not an algorithm feeding you.', to: '/discover' },
+  { icon: 'agents', title: 'AI Lua Agents', desc: 'Automation agents that work your profile while you sleep — yours to build, fork, and sell.', to: '/agents/gallery' },
+  { icon: 'quests', title: 'Collab Quests', desc: 'RPG-style team quests. Assemble crews across every creative discipline and ship together.', to: '/collab-quests' },
+  { icon: 'gear', title: 'Gear + Agent Market', desc: 'Buy and sell gear with escrow. Install paid agents. The economy is yours, not a middleman’s.', to: '/marketplace/gear' },
+  { icon: 'radar', title: 'Scene Radar', desc: 'Vector + graph recommendations that surface the artists and nights actually near your sound.', to: '/scene-radar' },
+  { icon: 'mythic', title: 'MythicNode Graph', desc: 'A living career knowledge graph for every artist — your scene, mapped and growing.', to: '/hub' },
 ];
 
-const CREATORS = [
-  { glyph: '⌁', label: 'DJs', line: 'Share sets, get booked, build a following.' },
-  { glyph: '✦', label: 'Producers', line: 'Release tracks, find collaborators, sell sounds.' },
-  { glyph: '◈', label: 'Visual artists', line: 'Cover art, visuals, AV collabs — get commissioned.' },
-  { glyph: '◆', label: 'Organizers', line: 'Cast lineups, post quests, find the next wave.' },
+const CREATORS: { icon: IconKey; label: string; line: string }[] = [
+  { icon: 'headphones', label: 'DJs', line: 'Share sets, get booked, build a following.' },
+  { icon: 'producer', label: 'Producers', line: 'Release tracks, find collaborators, sell sounds.' },
+  { icon: 'visual', label: 'Visual artists', line: 'Cover art, visuals, AV collabs — get commissioned.' },
+  { icon: 'organizer', label: 'Organizers', line: 'Cast lineups, post quests, find the next wave.' },
 ];
 
 function formatCount(n: number): string {
@@ -352,7 +354,7 @@ export function Landing() {
                         fontWeight: 900,
                       }}
                     >
-                      {step.glyph}
+                      <Icon name={step.icon} size={18} color="currentColor" />
                     </div>
                     <div
                       style={{
@@ -434,7 +436,7 @@ export function Landing() {
                         filter: 'drop-shadow(0 0 10px rgba(246,196,0,0.3))',
                       }}
                     >
-                      {p.glyph}
+                      <Icon name={p.icon} size={24} color="currentColor" />
                     </div>
                     <h3
                       style={{
@@ -484,7 +486,9 @@ export function Landing() {
                     border: '1px solid rgba(246,196,0,0.1)',
                   }}
                 >
-                  <div style={{ fontSize: 30, marginBottom: 12 }}>{c.glyph}</div>
+                  <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center', color: '#f6c400' }}>
+                    <Icon name={c.icon} size={28} color="currentColor" />
+                  </div>
                   <div
                     style={{
                       fontSize: 17,
@@ -681,6 +685,7 @@ export function Landing() {
               { to: '/hub', label: 'Features' },
               { to: '/hive-story', label: 'Hive Story' },
               { to: '/marketplace/gear', label: 'Marketplace' },
+              { to: '/help', label: 'Help' },
               { to: '/register', label: 'Join' },
             ].map(l => (
               <Link

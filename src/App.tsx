@@ -97,6 +97,12 @@ const HiveStoryIssue = lazy(() =>
 const Hub = lazy(() =>
   import('./views/Hub').then(m => ({ default: m.Hub }))
 );
+const HelpCenter = lazy(() =>
+  import('./views/HelpCenter').then(m => ({ default: m.HelpCenter }))
+);
+const HelpArticle = lazy(() =>
+  import('./views/HelpArticle').then(m => ({ default: m.HelpArticle }))
+);
 // SessionFab is small and always available to authenticated users — not lazy-loaded
 import { SessionFab } from './components/SessionFab';
 
@@ -262,6 +268,9 @@ function AnimatedRoutes() {
         <Route path="/hive-story/:slug" element={<HiveStoryIssue />} />
         {/* Hub — feature navigation */}
         <Route path="/hub" element={<Hub />} />
+        {/* Help Center */}
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/help/:slug" element={<HelpArticle />} />
         {/* Phase 15 — Collab Quests */}
         <Route path="/collab-quests" element={<CollabQuests />} />
         <Route path="/collab-quests/:id" element={<CollabQuestDetail />} />

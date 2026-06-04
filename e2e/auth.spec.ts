@@ -8,19 +8,23 @@ test.describe('Auth flows', () => {
     await expect(page.locator('#main-content')).toBeVisible();
   });
 
+  // Scope to the auth form so the navbar search input/button can't cause
+  // strict-mode multiple-match failures.
   test('login page renders form fields', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.locator('input[type="email"]')).toBeVisible();
-    await expect(page.locator('input[type="password"]')).toBeVisible();
-    await expect(page.locator('button[type="submit"]')).toBeVisible();
+    const form = page.locator('form');
+    await expect(form.locator('input[type="email"]')).toBeVisible();
+    await expect(form.locator('input[type="password"]')).toBeVisible();
+    await expect(form.getByRole('button', { name: /sign in/i })).toBeVisible();
   });
 
   test('login with invalid credentials shows error', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'notreal@nowhere.test');
-    await page.fill('input[type="password"]', 'wrongpassword123');
-    await page.click('button[type="submit"]');
-    // Expect an error toast or error message — look for any error indicator
+    const form = page.locator('form');
+    await form.locator('input[type="email"]').fill('notreal@nowhere.test');
+    await form.locator('input[type="password"]').fill('wrongpassword123');
+    await form.getByRole('button', { name: /sign in/i }).click();
+    // Expect an error toast or message — look for any error indicator
     await expect(
       page.locator('[role="alert"], .toast, [data-sonner-toast], [class*="error"]').first()
     ).toBeVisible({ timeout: 8_000 });
@@ -28,15 +32,22 @@ test.describe('Auth flows', () => {
 
   test('register page renders all fields', async ({ page }) => {
     await page.goto('/register');
-    await expect(page.locator('input[type="email"]')).toBeVisible();
-    await expect(page.locator('input[type="password"]')).toBeVisible();
+    const form = page.locator('form');
+    await expect(form.locator('input[type="email"]')).toBeVisible();
+    await expect(form.locator('input[type="password"]')).toBeVisible();
     await expect(page.locator('#main-content')).toBeVisible();
   });
 
   test('forgot password page renders', async ({ page }) => {
     await page.goto('/auth/forgot-password');
-    await expect(page.locator('input[type="email"]')).toBeVisible();
-    await expect(page.locator('button[type="submit"]')).toBeVisible();
+    const form = page.locator('form');
+    await expect(form.locator('input[type="email"]')).toBeVisible();
+    await expect(form.getByRole('button', { name: /send reset link/i })).toBeVisible();
+  });
+
+  test('login shows Google sign-in option', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.getByRole('button', { name: /google/i })).toBeVisible();
   });
 
   test('unauthenticated access to /dashboard redirects to login', async ({ browser }) => {

@@ -11,6 +11,7 @@ function makeFile(name: string, type: string, size: number) {
 
 function makeReq(file: { name: string; type: string; size: number } | null) {
   return {
+    headers: new Headers({ 'content-type': 'multipart/form-data; boundary=test' }),
     formData: async () => ({ get: (key: string) => (key === 'file' ? file : null) }),
   } as unknown as NextRequest;
 }

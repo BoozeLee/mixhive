@@ -19,6 +19,7 @@ const TYPE_ICON: Record<string, IconKey> = {
   mention: 'mention',
   buzz_like: 'like',
   repost: 'repost',
+  verification: 'verified',
 };
 
 export function NotificationsPage() {
@@ -59,6 +60,14 @@ export function NotificationsPage() {
         return `${actor} liked your buzz`;
       case 'repost':
         return `${actor} reposted your buzz`;
+      case 'verification': {
+        const status = notification.data?.status;
+        const badge = notification.data?.badge_type;
+        if (badge === 'trusted_seller') return 'You earned the Trusted Seller badge';
+        if (status === 'approved') return 'Your verification request was approved';
+        if (status === 'rejected') return 'Your verification request was reviewed';
+        return 'Verification update';
+      }
       default:
         return `${actor} interacted with you`;
     }
@@ -77,6 +86,8 @@ export function NotificationsPage() {
       case 'buzz_like':
       case 'repost':
         return notification.buzz_id ? `/buzz/${notification.buzz_id}` : '#';
+      case 'verification':
+        return '/profile';
       default:
         return '#';
     }

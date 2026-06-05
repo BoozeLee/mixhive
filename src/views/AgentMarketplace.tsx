@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
+import { getProfileBadgesFor } from '../lib/api';
+import type { VerificationBadge } from '../lib/types';
+import { VerificationBadgeSystem } from '../components/VerificationBadgeSystem';
 
 interface AgentPackage {
   id: string;
@@ -47,6 +50,7 @@ export function AgentMarketplace() {
   const [installing, setInstalling] = useState<string | null>(null);
   const [buying, setBuying] = useState<string | null>(null);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
+  const [creatorBadges, setCreatorBadges] = useState<Record<string, VerificationBadge[]>>({});
   const location = useLocation();
 
   const fetchPackages = async (cat: string, disc: string, free: boolean) => {
@@ -60,7 +64,10 @@ export function AgentMarketplace() {
       const res = await fetch(`/api/marketplace/agents?${params}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Failed to load');
-      setPackages(data.packages ?? []);
+      const pkgs: AgentPackage[] = data.packages ?? [];
+      setPackages(pkgs);
+      // One batched badge query for all creators on the page (avoids N+1 per card).
+      setCreatorBadges(await getProfileBadgesFor(pkgs.map(p => p.creator_profile_id)));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load');
     } finally {
@@ -173,6 +180,7 @@ export function AgentMarketplace() {
             <AgentCard
               key={pkg.id}
               pkg={pkg}
+              creatorBadges={creatorBadges[pkg.creator_profile_id] ?? []}
               installed={installed.has(pkg.id)}
               installing={installing === pkg.id}
               buying={buying === pkg.id}
@@ -195,9 +203,10 @@ export function AgentMarketplace() {
 }
 
 function AgentCard({
-  pkg, installed, installing, buying, onInstall, onBuy,
+  pkg, creatorBadges, installed, installing, buying, onInstall, onBuy,
 }: {
   pkg: AgentPackage;
+  creatorBadges: VerificationBadge[];
   installed: boolean;
   installing: boolean;
   buying: boolean;
@@ -241,6 +250,11 @@ function AgentCard({
       <div>
         <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 700, margin: 0, marginBottom: 4 }}>{pkg.name}</h3>
         {pkg.tagline && <p style={{ color: '#888', fontSize: 13, margin: 0, lineHeight: 1.4 }}>{pkg.tagline}</p>}
+        {creatorBadges.length > 0 && (
+          <div style={{ marginTop: 6 }}>
+            <VerificationBadgeSystem badges={creatorBadges} compact />
+          </div>
+        )}
       </div>
 
       {/* Disciplines */}

@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getProfileBadgesFor } from '../lib/api';
+import type { VerificationBadge } from '../lib/types';
+import { VerificationBadgeSystem } from '../components/VerificationBadgeSystem';
 
 interface Listing {
   id: string;
@@ -15,6 +18,7 @@ interface Listing {
   photos: string[];
   status: string;
   created_at: string;
+  seller_profile_id: string;
 }
 
 const CATEGORIES = [
@@ -57,6 +61,7 @@ export function GearMarketplace() {
   const [maxPrice, setMaxPrice] = useState('');
   const [total, setTotal] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [sellerBadges, setSellerBadges] = useState<Record<string, VerificationBadge[]>>({});
   const limit = 24;
 
   const fetchListings = async (cat: string, cond: string, max: string, off: number) => {
@@ -73,6 +78,9 @@ export function GearMarketplace() {
       if (!res.ok) throw new Error(data.error ?? 'Failed to load');
       setListings(data.listings);
       setTotal(data.total);
+      // One batched badge query for all sellers on the page (avoids N+1 per card).
+      const ids = (data.listings as Listing[]).map(l => l.seller_profile_id);
+      setSellerBadges(await getProfileBadgesFor(ids));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load listings');
     } finally {
@@ -187,7 +195,11 @@ export function GearMarketplace() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
           {listings.map(listing => (
-            <GearCard key={listing.id} listing={listing} />
+            <GearCard
+              key={listing.id}
+              listing={listing}
+              badges={sellerBadges[listing.seller_profile_id] ?? []}
+            />
           ))}
         </div>
       )}
@@ -204,7 +216,7 @@ export function GearMarketplace() {
   );
 }
 
-function GearCard({ listing }: { listing: Listing }) {
+function GearCard({ listing, badges }: { listing: Listing; badges: VerificationBadge[] }) {
   const condColor = CONDITION_COLORS[listing.condition] ?? '#888';
   const photo = listing.photos[0];
 
@@ -273,6 +285,11 @@ function GearCard({ listing }: { listing: Listing }) {
               {listing.location_city}{listing.location_country ? `, ${listing.location_country}` : ''}
             </span>
           </div>
+          {badges.length > 0 && (
+            <div style={{ marginTop: 8 }}>
+              <VerificationBadgeSystem badges={badges} compact />
+            </div>
+          )}
         </div>
       </div>
     </Link>

@@ -10,7 +10,7 @@ export const Events = {
   USER_LOGIN: 'User Login',
   USER_LOGOUT: 'User Logout',
   USER_PROFILE_UPDATE: 'User Profile Update',
-  
+
   // Music events
   MUSIC_SEARCH: 'Music Search',
   MUSIC_PLAY: 'Music Play',
@@ -18,23 +18,23 @@ export const Events = {
   MUSIC_SKIP: 'Music Skip',
   MUSIC_LIKE: 'Music Like',
   MUSIC_ADD_TO_PLAYLIST: 'Music Add to Playlist',
-  
+
   // DJ events
   DJ_MIX_CREATE: 'DJ Mix Create',
   DJ_MIX_PUBLISH: 'DJ Mix Publish',
   DJ_mix_SHARE: 'DJ Mix Share',
   DJ_MIX_DOWNLOAD: 'DJ Mix Download',
-  
+
   // Social events
   SOCIAL_FOLLOW: 'Social Follow',
   SOCIAL_COMMENT: 'Social Comment',
   SOCIAL_SHARE: 'Social Share',
   SOCIAL_LIKE: 'Social Like',
-  
+
   // Navigation events
   PAGE_VIEW: 'Page View',
   NAVIGATION_CLICK: 'Navigation Click',
-  
+
   // Feature usage
   FEATURE_USAGE: 'Feature Usage',
 } as const;

@@ -136,7 +136,7 @@ describe('POST /api/notifications/mark-read', () => {
           'Content-Type': 'application/json',
           ...(includeAuth ? authHeader() : {}),
         },
-      }),
+      })
     );
   }
 

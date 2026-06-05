@@ -34,16 +34,10 @@ export function handleApiError(error: unknown, context?: string) {
     }
 
     // Generic safe error for client
-    return NextResponse.json(
-      { error: error.message },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.json(
-    { error: 'Internal server error' },
-    { status: 500 }
-  );
+  return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
 }
 
 export function unauthorized() {
@@ -55,10 +49,7 @@ export function forbidden(message = 'Forbidden') {
 }
 
 export function badRequest(message: string, issues?: any) {
-  return NextResponse.json(
-    { error: message, ...(issues && { issues }) },
-    { status: 400 }
-  );
+  return NextResponse.json({ error: message, ...(issues && { issues }) }, { status: 400 });
 }
 
 export function notFound(message = 'Resource not found') {

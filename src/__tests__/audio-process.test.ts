@@ -37,7 +37,7 @@ function makeChain(result = { data: null as unknown, error: null as unknown }) {
 
 function makeSupabase(
   fromResult: { data: unknown; error: unknown },
-  rpcResult: { data: unknown; error: unknown } = { data: 'job-uuid', error: null },
+  rpcResult: { data: unknown; error: unknown } = { data: 'job-uuid', error: null }
 ) {
   const fromChain = makeChain(fromResult);
   const rpcChain = makeChain(rpcResult);
@@ -69,35 +69,49 @@ describe('/api/audio/process POST', () => {
 
   it('returns 404 when mix not found', async () => {
     mockCreateClient.mockReturnValue(makeSupabase({ data: null, error: { message: 'not found' } }));
-    const res = await POST(makeReq({
-      headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
-      body: { mixId: 'nonexistent', jobType: 'waveform' },
-    }));
+    const res = await POST(
+      makeReq({
+        headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
+        body: { mixId: 'nonexistent', jobType: 'waveform' },
+      })
+    );
     expect(res.status).toBe(404);
   });
 
   it('returns 200 with queued status on success', async () => {
-    mockCreateClient.mockReturnValue(makeSupabase(
-      { data: { id: 'mix-1', upload_status: 'uploaded', file_url: 'https://cdn/mix.mp3' }, error: null },
-      { data: 'job-uuid-1', error: null },
-    ));
-    const res = await POST(makeReq({
-      headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
-      body: { mixId: 'mix-1', jobType: 'waveform' },
-    }));
+    mockCreateClient.mockReturnValue(
+      makeSupabase(
+        {
+          data: { id: 'mix-1', upload_status: 'uploaded', file_url: 'https://cdn/mix.mp3' },
+          error: null,
+        },
+        { data: 'job-uuid-1', error: null }
+      )
+    );
+    const res = await POST(
+      makeReq({
+        headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
+        body: { mixId: 'mix-1', jobType: 'waveform' },
+      })
+    );
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.status).toBe('queued');
   });
 
   it('returns 200 with already_complete when mix upload_status is ready', async () => {
-    mockCreateClient.mockReturnValue(makeSupabase(
-      { data: { id: 'mix-1', upload_status: 'ready', file_url: 'https://cdn/mix.mp3' }, error: null },
-    ));
-    const res = await POST(makeReq({
-      headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
-      body: { mixId: 'mix-1', jobType: 'waveform' },
-    }));
+    mockCreateClient.mockReturnValue(
+      makeSupabase({
+        data: { id: 'mix-1', upload_status: 'ready', file_url: 'https://cdn/mix.mp3' },
+        error: null,
+      })
+    );
+    const res = await POST(
+      makeReq({
+        headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
+        body: { mixId: 'mix-1', jobType: 'waveform' },
+      })
+    );
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.status).toBe('already_complete');

@@ -9,12 +9,16 @@ export async function POST(req: NextRequest) {
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? '';
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY ?? '';
+  const supabaseAnonKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY ?? '';
   const sb = createClient(supabaseUrl, supabaseAnonKey, {
     global: { headers: { Authorization: authHeader } },
     auth: { persistSession: false },
   });
-  const { data: { user }, error: authErr } = await sb.auth.getUser();
+  const {
+    data: { user },
+    error: authErr,
+  } = await sb.auth.getUser();
   if (authErr || !user) {
     return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
   }

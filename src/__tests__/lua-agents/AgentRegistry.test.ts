@@ -5,24 +5,54 @@ import { loadAgentConfig, _cache } from '@/server/lua-agents/AgentRegistry';
 import type { AgentId } from '@/server/lua-agents/agent.types';
 
 const ALL_AGENT_IDS: AgentId[] = [
-  'profile_coach', 'release_strategy', 'booking_scout', 'opportunity_match',
-  'collaboration_match', 'scene_radar', 'fan_insights', 'event_organizer',
-  'venue_fit', 'press_kit', 'grant_assistant', 'moderation', 'trend_intelligence',
-  'label_scout', 'visual_identity', 'dj_set_analyzer', 'community_manager',
-  'notification_prioritizer', 'mythic_scene_orbit', 'mythic_collab_weaver',
-  'mythic_narrator', 'mythic_yield_analyst',
+  'profile_coach',
+  'release_strategy',
+  'booking_scout',
+  'opportunity_match',
+  'collaboration_match',
+  'scene_radar',
+  'fan_insights',
+  'event_organizer',
+  'venue_fit',
+  'press_kit',
+  'grant_assistant',
+  'moderation',
+  'trend_intelligence',
+  'label_scout',
+  'visual_identity',
+  'dj_set_analyzer',
+  'community_manager',
+  'notification_prioritizer',
+  'mythic_scene_orbit',
+  'mythic_collab_weaver',
+  'mythic_narrator',
+  'mythic_yield_analyst',
 ];
 
 const VALID_TIERS = new Set(['free', 'pro', 'partner']);
 const VALID_APPROVAL = new Set(['auto', 'always', 'on_action']);
 const KNOWN_TOOLS = new Set([
-  'db.read', 'db.read_one', 'db.insert', 'db.upsert', 'db.update', 'db.rpc',
-  'llm.call', 'llm.json',
-  'vector.embed', 'vector.search', 'vector.upsert',
-  'audio.features', 'audio.tracklist', 'audio.trigger_analysis',
-  'http.get', 'http.post',
-  'mythic.quest.get_active', 'mythic.graph.query', 'mythic.yield.get_summary',
-  'mythic.node.find_or_create', 'mythic.edge.create',
+  'db.read',
+  'db.read_one',
+  'db.insert',
+  'db.upsert',
+  'db.update',
+  'db.rpc',
+  'llm.call',
+  'llm.json',
+  'vector.embed',
+  'vector.search',
+  'vector.upsert',
+  'audio.features',
+  'audio.tracklist',
+  'audio.trigger_analysis',
+  'http.get',
+  'http.post',
+  'mythic.quest.get_active',
+  'mythic.graph.query',
+  'mythic.yield.get_summary',
+  'mythic.node.find_or_create',
+  'mythic.edge.create',
   'runtime.allowed_tools',
 ]);
 
@@ -31,7 +61,7 @@ beforeEach(() => {
 });
 
 describe('AgentRegistry', () => {
-  it.each(ALL_AGENT_IDS)('loadAgentConfig("%s") returns valid shape', async (id) => {
+  it.each(ALL_AGENT_IDS)('loadAgentConfig("%s") returns valid shape', async id => {
     const config = await loadAgentConfig(id);
 
     expect(config.id).toBe(id);

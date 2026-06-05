@@ -10,7 +10,11 @@ import { handleApiError, unauthorized } from '@/lib/api-errors';
 // We do manual SIWE parsing to avoid adding a heavy dependency that would require
 // a paid build step. The message format is EIP-4361 compliant.
 
-function parseSiweMessage(message: string): { address?: string; nonce?: string; expirationTime?: string } {
+function parseSiweMessage(message: string): {
+  address?: string;
+  nonce?: string;
+  expirationTime?: string;
+} {
   const addressMatch = message.match(/^(0x[0-9a-fA-F]{40})/m);
   const nonceMatch = message.match(/Nonce: ([a-f0-9]+)/i);
   const expMatch = message.match(/Expiration Time: (.+)/i);
@@ -32,7 +36,7 @@ function verifySignature(message: string, signature: string, expectedAddress: st
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, signature } = await request.json() as { message: string; signature: string };
+    const { message, signature } = (await request.json()) as { message: string; signature: string };
 
     if (!message || !signature) {
       return NextResponse.json({ error: 'message and signature are required' }, { status: 400 });
@@ -64,12 +68,17 @@ export async function POST(request: NextRequest) {
         .eq('nonce', nonce)
         .gt('expires_at', new Date().toISOString());
       if (nonceErr) {
-        console.warn('[wallet:connect] nonce consume failed (table may not exist):', nonceErr.message);
+        console.warn(
+          '[wallet:connect] nonce consume failed (table may not exist):',
+          nonceErr.message
+        );
       }
     }
 
     // Require auth
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return unauthorized();
 
     const normalised = address.toLowerCase();
@@ -82,25 +91,27 @@ export async function POST(request: NextRequest) {
 
     if (updateErr) {
       if (updateErr.code === '23505') {
-        return NextResponse.json({ error: 'This wallet is already linked to another account' }, { status: 409 });
+        return NextResponse.json(
+          { error: 'This wallet is already linked to another account' },
+          { status: 409 }
+        );
       }
       throw updateErr;
     }
 
     // Record in wallet_links for multi-wallet support (soft-fail: table may not exist yet)
-    await supabase.from('wallet_links').upsert(
-      { profile_id: user.id, wallet_address: normalised, chain: 'base', wallet_type: 'external' },
-      { onConflict: 'profile_id,wallet_address,chain', ignoreDuplicates: true }
-    ).then(({ error: wlErr }) => {
-      if (wlErr) console.warn('[wallet:connect] wallet_links upsert failed:', wlErr.message);
-    });
+    await supabase
+      .from('wallet_links')
+      .upsert(
+        { profile_id: user.id, wallet_address: normalised, chain: 'base', wallet_type: 'external' },
+        { onConflict: 'profile_id,wallet_address,chain', ignoreDuplicates: true }
+      )
+      .then(({ error: wlErr }) => {
+        if (wlErr) console.warn('[wallet:connect] wallet_links upsert failed:', wlErr.message);
+      });
 
     // Advance web3_tier to at least 1 (wallet connected, can verify NFTs)
-    await supabase
-      .from('profiles')
-      .update({ web3_tier: 1 })
-      .eq('id', user.id)
-      .lt('web3_tier', 1);
+    await supabase.from('profiles').update({ web3_tier: 1 }).eq('id', user.id).lt('web3_tier', 1);
 
     // ENS resolution is a best-effort enhancement — never block the response on it
     let ensName: string | null = null;
@@ -120,7 +131,9 @@ export async function POST(request: NextRequest) {
 export async function DELETE(_request: NextRequest) {
   try {
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return unauthorized();
 
     const { data: profile } = await supabase

@@ -44,10 +44,7 @@ if (envContent.includes('NEXT_PUBLIC_SENTRY_DSN')) {
 }
 
 // Check if Sentry environment variables are set
-const requiredVars = [
-  'NEXT_PUBLIC_SENTRY_DSN',
-  'SENTRY_DSN'
-];
+const requiredVars = ['NEXT_PUBLIC_SENTRY_DSN', 'SENTRY_DSN'];
 
 console.log(chalk.blue('\n🔍 Checking Sentry configuration:'));
 let allConfigured = true;
@@ -72,10 +69,7 @@ try {
 }
 
 // Check if Sentry configuration files exist
-const configFiles = [
-  'sentry.client.config.js',
-  'sentry.server.config.js'
-];
+const configFiles = ['sentry.client.config.js', 'sentry.server.config.js'];
 
 configFiles.forEach(file => {
   const filePath = path.join(process.cwd(), file);

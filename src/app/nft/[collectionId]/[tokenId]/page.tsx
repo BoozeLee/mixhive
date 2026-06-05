@@ -31,7 +31,8 @@ export default async function NftReceiptPage({ params }: Props) {
 
   const { data: token } = await supabase
     .from('nft_tokens')
-    .select(`
+    .select(
+      `
       id,
       token_id,
       holder_address,
@@ -42,7 +43,8 @@ export default async function NftReceiptPage({ params }: Props) {
       collection:nft_collections (
         id, name, description, image_url, chain, max_supply, soulbound, owner_id
       )
-    `)
+    `
+    )
     .eq('collection_id', collectionId)
     .eq('token_id', parseInt(tokenId, 10))
     .maybeSingle();
@@ -50,32 +52,45 @@ export default async function NftReceiptPage({ params }: Props) {
   if (!token || !token.collection) return notFound();
 
   const collection = token.collection as {
-    id: string; name: string; description: string | null;
-    image_url: string | null; chain: string; max_supply: number | null;
-    soulbound: boolean; owner_id: string;
+    id: string;
+    name: string;
+    description: string | null;
+    image_url: string | null;
+    chain: string;
+    max_supply: number | null;
+    soulbound: boolean;
+    owner_id: string;
   };
 
-  const baseScanTx = token.tx_hash
-    ? `https://basescan.org/tx/${token.tx_hash}`
-    : null;
+  const baseScanTx = token.tx_hash ? `https://basescan.org/tx/${token.tx_hash}` : null;
 
   const truncate = (addr: string) =>
     addr.length > 10 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
 
   return (
-    <main style={{
-      minHeight: '100vh',
-      background: '#0a0a0a',
-      color: '#eee',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'flex-start',
-      padding: '48px 16px 96px',
-    }}>
+    <main
+      style={{
+        minHeight: '100vh',
+        background: '#0a0a0a',
+        color: '#eee',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        padding: '48px 16px 96px',
+      }}
+    >
       <div style={{ maxWidth: 480, width: '100%' }}>
         {/* MIXHIVE wordmark */}
-        <div style={{ fontSize: 13, letterSpacing: 3, color: '#f0c040', marginBottom: 32, textTransform: 'uppercase' }}>
+        <div
+          style={{
+            fontSize: 13,
+            letterSpacing: 3,
+            color: '#f0c040',
+            marginBottom: 32,
+            textTransform: 'uppercase',
+          }}
+        >
           MIXHIVE
         </div>
 
@@ -108,18 +123,20 @@ export default async function NftReceiptPage({ params }: Props) {
 
         {/* Soulbound badge */}
         {(token.soulbound || collection.soulbound) && (
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            background: 'rgba(240,192,64,0.1)',
-            border: '1px solid rgba(240,192,64,0.3)',
-            borderRadius: 999,
-            padding: '4px 12px',
-            fontSize: 12,
-            color: '#f0c040',
-            marginBottom: 24,
-          }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              background: 'rgba(240,192,64,0.1)',
+              border: '1px solid rgba(240,192,64,0.3)',
+              borderRadius: 999,
+              padding: '4px 12px',
+              fontSize: 12,
+              color: '#f0c040',
+              marginBottom: 24,
+            }}
+          >
             ⬡ Soulbound · Cannot be transferred
           </div>
         )}
@@ -132,17 +149,34 @@ export default async function NftReceiptPage({ params }: Props) {
         )}
 
         {/* Provenance details */}
-        <div style={{
-          background: '#111',
-          border: '1px solid #222',
-          borderRadius: 10,
-          padding: 20,
-          marginBottom: 20,
-        }}>
-          <h2 style={{ margin: '0 0 16px', fontSize: 13, color: '#666', textTransform: 'uppercase', letterSpacing: 1 }}>
+        <div
+          style={{
+            background: '#111',
+            border: '1px solid #222',
+            borderRadius: 10,
+            padding: 20,
+            marginBottom: 20,
+          }}
+        >
+          <h2
+            style={{
+              margin: '0 0 16px',
+              fontSize: 13,
+              color: '#666',
+              textTransform: 'uppercase',
+              letterSpacing: 1,
+            }}
+          >
             Provenance
           </h2>
-          <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '10px 16px', margin: 0 }}>
+          <dl
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'auto 1fr',
+              gap: '10px 16px',
+              margin: 0,
+            }}
+          >
             <ProvenanceRow label="Chain" value="Base L2" />
             {token.holder_address && (
               <ProvenanceRow label="Holder" value={truncate(token.holder_address)} mono />
@@ -151,7 +185,9 @@ export default async function NftReceiptPage({ params }: Props) {
               <ProvenanceRow
                 label="Minted"
                 value={new Date(token.minted_at).toLocaleDateString('en-GB', {
-                  day: 'numeric', month: 'long', year: 'numeric',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
                 })}
               />
             )}
@@ -184,8 +220,8 @@ export default async function NftReceiptPage({ params }: Props) {
         )}
 
         <p style={{ fontSize: 12, color: '#444', textAlign: 'center' }}>
-          This receipt is permanently stored on the Base blockchain.
-          MIXHIVE does not show price data or enable trading.
+          This receipt is permanently stored on the Base blockchain. MIXHIVE does not show price
+          data or enable trading.
         </p>
       </div>
     </main>
@@ -196,7 +232,14 @@ function ProvenanceRow({ label, value, mono }: { label: string; value: string; m
   return (
     <>
       <dt style={{ fontSize: 13, color: '#666', margin: 0 }}>{label}</dt>
-      <dd style={{ fontSize: 13, color: '#ccc', margin: 0, fontFamily: mono ? 'monospace' : 'inherit' }}>
+      <dd
+        style={{
+          fontSize: 13,
+          color: '#ccc',
+          margin: 0,
+          fontFamily: mono ? 'monospace' : 'inherit',
+        }}
+      >
         {value}
       </dd>
     </>

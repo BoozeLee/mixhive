@@ -634,7 +634,9 @@ export function ProfilePage() {
         {profileTab === 'story' && (
           <HiveStory
             profileId={profile.id}
-            showJourney={(profile as unknown as Record<string, unknown>)?.show_journey as boolean ?? false}
+            showJourney={
+              ((profile as unknown as Record<string, unknown>)?.show_journey as boolean) ?? false
+            }
             isOwn={isOwn}
           />
         )}

@@ -64,7 +64,9 @@ const AgentInbox = lazy(() => import('./views/AgentInbox').then(m => ({ default:
 const Opportunities = lazy(() =>
   import('./views/Opportunities').then(m => ({ default: m.Opportunities }))
 );
-const QuestDetail = lazy(() => import('./views/QuestDetail').then(m => ({ default: m.QuestDetail })));
+const QuestDetail = lazy(() =>
+  import('./views/QuestDetail').then(m => ({ default: m.QuestDetail }))
+);
 const QuestsList = lazy(() => import('./views/QuestsList').then(m => ({ default: m.QuestsList })));
 const GearMarketplace = lazy(() => import('./views/GearMarketplace').then(m => ({ default: m.GearMarketplace })));
 const GearListingDetail = lazy(() => import('./views/GearListingDetail').then(m => ({ default: m.GearListingDetail })));
@@ -79,9 +81,7 @@ const PressKitStudio = lazy(() =>
 const PublicPressKit = lazy(() =>
   import('./views/PublicPressKit').then(m => ({ default: m.PublicPressKit }))
 );
-const SceneRadar = lazy(() =>
-  import('./views/SceneRadar').then(m => ({ default: m.SceneRadar }))
-);
+const SceneRadar = lazy(() => import('./views/SceneRadar').then(m => ({ default: m.SceneRadar })));
 const CollabSessionRoom = lazy(() =>
   import('./views/CollabSessionRoom').then(m => ({ default: m.CollabSessionRoom }))
 );
@@ -313,29 +313,29 @@ export default function App() {
       <PlayerProvider>
         <NotificationProvider>
           <div className="mixhive-shell">
-          <CyberHiveBackdrop />
-          <Navbar />
-          <a href="#main-content" className="skip-link">
-            Skip to main content
-          </a>
-          <div className="app-body">
-            <DesktopSidebar />
-            <main id="main-content" className="mixhive-main app-main">
-              <ErrorBoundary>
-                <Suspense fallback={<RoutePending />}>
-                  <AnimatedRoutes />
-                </Suspense>
-              </ErrorBoundary>
-            </main>
+            <CyberHiveBackdrop />
+            <Navbar />
+            <a href="#main-content" className="skip-link">
+              Skip to main content
+            </a>
+            <div className="app-body">
+              <DesktopSidebar />
+              <main id="main-content" className="mixhive-main app-main">
+                <ErrorBoundary>
+                  <Suspense fallback={<RoutePending />}>
+                    <AnimatedRoutes />
+                  </Suspense>
+                </ErrorBoundary>
+              </main>
+            </div>
+            <GlobalPlayer />
+            <MobileNav />
+            <SessionFab />
+            {loadVercelTelemetry && <Analytics />}
+            {loadVercelTelemetry && <SpeedInsights />}
           </div>
-          <GlobalPlayer />
-          <MobileNav />
-          <SessionFab />
-        {loadVercelTelemetry && <Analytics />}
-        {loadVercelTelemetry && <SpeedInsights />}
-      </div>
-    </NotificationProvider>
-  </PlayerProvider>
-</BrowserRouter>
-);
+        </NotificationProvider>
+      </PlayerProvider>
+    </BrowserRouter>
+  );
 }

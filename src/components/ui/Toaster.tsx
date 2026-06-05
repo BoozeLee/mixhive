@@ -2,7 +2,13 @@ import React from 'react';
 import { Toaster as HotToaster } from 'react-hot-toast';
 
 interface ToasterProps {
-  position?: 'top-right' | 'top-center' | 'top-left' | 'bottom-right' | 'bottom-center' | 'bottom-left';
+  position?:
+    | 'top-right'
+    | 'top-center'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-center'
+    | 'bottom-left';
 }
 
 export function Toaster({ position = 'top-right' }: ToasterProps) {

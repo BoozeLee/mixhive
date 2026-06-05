@@ -42,19 +42,17 @@ export function buildStateTools(agentId: AgentId, profileId: string) {
           ? new Date(Date.now() + ttlSeconds * 1000).toISOString()
           : null;
 
-      const { error } = await adminClient()
-        .from('lua_agent_states')
-        .upsert(
-          {
-            agent_id:    agentId,
-            profile_id:  profileId,
-            state_key:   key,
-            state_value: value,
-            expires_at:  expiresAt,
-            updated_at:  new Date().toISOString(),
-          },
-          { onConflict: 'agent_id,profile_id,state_key' }
-        );
+      const { error } = await adminClient().from('lua_agent_states').upsert(
+        {
+          agent_id: agentId,
+          profile_id: profileId,
+          state_key: key,
+          state_value: value,
+          expires_at: expiresAt,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'agent_id,profile_id,state_key' }
+      );
 
       if (error) throw new Error(`state_set: ${error.message}`);
       return true;

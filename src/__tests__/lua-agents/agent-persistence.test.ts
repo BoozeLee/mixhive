@@ -66,11 +66,15 @@ function setupLuaResult(overrides: Record<string, unknown> = {}) {
   mockGlobal.get.mockReturnValue({
     status: 'ok',
     suggestions: [
-      { type: 'profile_tip', payload: { bio: 'test' }, confidence: 0.8, rationale: 'add bio', requires_approval: false },
+      {
+        type: 'profile_tip',
+        payload: { bio: 'test' },
+        confidence: 0.8,
+        rationale: 'add bio',
+        requires_approval: false,
+      },
     ],
-    tasks: [
-      { title: 'Update bio', priority: 'medium' },
-    ],
+    tasks: [{ title: 'Update bio', priority: 'medium' }],
     notifications: [
       { channel: 'in_app', subject: 'Tip', body: 'Update your bio', cta_url: '/profile' },
     ],
@@ -81,7 +85,12 @@ function setupLuaResult(overrides: Record<string, unknown> = {}) {
 describe('persistRun on non-dry-run', () => {
   it('inserts agent_runs row', async () => {
     setupLuaResult();
-    await runAgent({ agent_id: 'profile_coach', profile_id: 'user-1', trigger: 'event:user_request', dry_run: false });
+    await runAgent({
+      agent_id: 'profile_coach',
+      profile_id: 'user-1',
+      trigger: 'event:user_request',
+      dry_run: false,
+    });
     // Give fire-and-forget a tick to resolve
     await new Promise(r => setTimeout(r, 20));
 
@@ -91,7 +100,12 @@ describe('persistRun on non-dry-run', () => {
 
   it('inserts ai_suggestions for each suggestion', async () => {
     setupLuaResult();
-    await runAgent({ agent_id: 'profile_coach', profile_id: 'user-1', trigger: 'event:user_request', dry_run: false });
+    await runAgent({
+      agent_id: 'profile_coach',
+      profile_id: 'user-1',
+      trigger: 'event:user_request',
+      dry_run: false,
+    });
     await new Promise(r => setTimeout(r, 20));
 
     const calledTables = mockFrom.mock.calls.map(([t]: [string]) => t);
@@ -100,7 +114,12 @@ describe('persistRun on non-dry-run', () => {
 
   it('inserts creator_tasks for each task', async () => {
     setupLuaResult();
-    await runAgent({ agent_id: 'profile_coach', profile_id: 'user-1', trigger: 'event:user_request', dry_run: false });
+    await runAgent({
+      agent_id: 'profile_coach',
+      profile_id: 'user-1',
+      trigger: 'event:user_request',
+      dry_run: false,
+    });
     await new Promise(r => setTimeout(r, 20));
 
     const calledTables = mockFrom.mock.calls.map(([t]: [string]) => t);
@@ -109,7 +128,12 @@ describe('persistRun on non-dry-run', () => {
 
   it('inserts notifications for each notification', async () => {
     setupLuaResult();
-    await runAgent({ agent_id: 'profile_coach', profile_id: 'user-1', trigger: 'event:user_request', dry_run: false });
+    await runAgent({
+      agent_id: 'profile_coach',
+      profile_id: 'user-1',
+      trigger: 'event:user_request',
+      dry_run: false,
+    });
     await new Promise(r => setTimeout(r, 20));
 
     const calledTables = mockFrom.mock.calls.map(([t]: [string]) => t);
@@ -120,7 +144,12 @@ describe('persistRun on non-dry-run', () => {
 describe('persistRun on dry_run=true', () => {
   it('skips all DB inserts', async () => {
     setupLuaResult();
-    await runAgent({ agent_id: 'profile_coach', profile_id: 'user-1', trigger: 'event:user_request', dry_run: true });
+    await runAgent({
+      agent_id: 'profile_coach',
+      profile_id: 'user-1',
+      trigger: 'event:user_request',
+      dry_run: true,
+    });
     await new Promise(r => setTimeout(r, 20));
 
     expect(mockFrom).not.toHaveBeenCalled();
@@ -129,8 +158,19 @@ describe('persistRun on dry_run=true', () => {
 
 describe('persistRun on error output', () => {
   it('still inserts agent_runs even on Lua error', async () => {
-    mockGlobal.get.mockReturnValue({ status: 'error', message: 'boom', suggestions: [], tasks: [], notifications: [] });
-    await runAgent({ agent_id: 'profile_coach', profile_id: 'user-1', trigger: 'event:user_request', dry_run: false });
+    mockGlobal.get.mockReturnValue({
+      status: 'error',
+      message: 'boom',
+      suggestions: [],
+      tasks: [],
+      notifications: [],
+    });
+    await runAgent({
+      agent_id: 'profile_coach',
+      profile_id: 'user-1',
+      trigger: 'event:user_request',
+      dry_run: false,
+    });
     await new Promise(r => setTimeout(r, 20));
 
     const calledTables = mockFrom.mock.calls.map(([t]: [string]) => t);

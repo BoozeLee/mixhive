@@ -27,8 +27,8 @@ export const colors = {
     primary: '#eee',
     secondary: '#ccc',
     muted: '#888',
-    dim: '#777',    // 4.6:1 on #111 — passes AA normal text
-    faint: '#666',  // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
+    dim: '#777', // 4.6:1 on #111 — passes AA normal text
+    faint: '#666', // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
   },
 
   // Semantic
@@ -67,8 +67,8 @@ export const radius = {
 } as const;
 
 export const fontSize = {
-  xs: 11,   // was 10 — minimum legible size for metadata labels
-  sm: 12,   // was 11
+  xs: 11, // was 10 — minimum legible size for metadata labels
+  sm: 12, // was 11
   base: 13,
   md: 14,
   lg: 16,
@@ -200,30 +200,30 @@ export const tokens: Tokens = {
 
 export const genreColors: Record<string, string> = {
   // Electronic underground
-  techno:           'hsl(210, 90%, 55%)',
-  industrial:       'hsl(0, 0%, 65%)',
-  hardcore:         'hsl(0, 85%, 55%)',
-  trance:           'hsl(300, 70%, 55%)',
-  ambient:          'hsl(195, 60%, 50%)',
+  techno: 'hsl(210, 90%, 55%)',
+  industrial: 'hsl(0, 0%, 65%)',
+  hardcore: 'hsl(0, 85%, 55%)',
+  trance: 'hsl(300, 70%, 55%)',
+  ambient: 'hsl(195, 60%, 50%)',
   // Bass
-  'drum and bass':  'hsl(82, 80%, 48%)',
-  dnb:              'hsl(82, 80%, 48%)',
-  jungle:           'hsl(95, 75%, 45%)',
-  garage:           'hsl(170, 75%, 48%)',
-  grime:            'hsl(150, 70%, 45%)',
+  'drum and bass': 'hsl(82, 80%, 48%)',
+  dnb: 'hsl(82, 80%, 48%)',
+  jungle: 'hsl(95, 75%, 45%)',
+  garage: 'hsl(170, 75%, 48%)',
+  grime: 'hsl(150, 70%, 45%)',
   // Dance
-  house:            'hsl(38, 80%, 52%)',
-  'afro house':     'hsl(15, 85%, 55%)',
-  breaks:           'hsl(55, 80%, 50%)',
-  electro:          'hsl(230, 80%, 60%)',
+  house: 'hsl(38, 80%, 52%)',
+  'afro house': 'hsl(15, 85%, 55%)',
+  breaks: 'hsl(55, 80%, 50%)',
+  electro: 'hsl(230, 80%, 60%)',
   // Trap / Urban
-  trap:             'hsl(270, 70%, 55%)',
-  'hip hop':        'hsl(260, 60%, 55%)',
+  trap: 'hsl(270, 70%, 55%)',
+  'hip hop': 'hsl(260, 60%, 55%)',
   // Experimental
-  experimental:     'hsl(175, 55%, 48%)',
-  noise:            'hsl(0, 10%, 60%)',
+  experimental: 'hsl(175, 55%, 48%)',
+  noise: 'hsl(0, 10%, 60%)',
   // Default — MixHive gold
-  default:          'hsl(38, 95%, 52%)',
+  default: 'hsl(38, 95%, 52%)',
 };
 
 export function getGenreColor(genre?: string | null): string {
@@ -237,9 +237,9 @@ export function getGenreColor(genre?: string | null): string {
 // and evolution score bars. Distinct from genre colors — moods are situational.
 
 export const moodColors: Record<string, string> = {
-  peak:       'hsl(82,80%,48%)',   // acid green — high energy, peak time
-  groove:     'hsl(38,95%,52%)',   // gold — warm, building momentum
-  ambient:    'hsl(210,70%,55%)',  // cool blue — atmospheric, low energy
+  peak: 'hsl(82,80%,48%)', // acid green — high energy, peak time
+  groove: 'hsl(38,95%,52%)', // gold — warm, building momentum
+  ambient: 'hsl(210,70%,55%)', // cool blue — atmospheric, low energy
   transition: 'hsl(270,70%,55%)', // purple — key change, genre bridge
 };
 

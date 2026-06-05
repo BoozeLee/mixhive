@@ -119,12 +119,15 @@ export class ErrorBoundary extends Component<Props, State> {
           <button
             onClick={() => {
               const text = `Error: ${error.message}\n\n${error.stack || ''}`;
-              navigator.clipboard?.writeText(text).then(() => {
-                alert('Error details copied to clipboard');
-              }).catch(() => {
-                // fallback
-                prompt('Copy this error:', text);
-              });
+              navigator.clipboard
+                ?.writeText(text)
+                .then(() => {
+                  alert('Error details copied to clipboard');
+                })
+                .catch(() => {
+                  // fallback
+                  prompt('Copy this error:', text);
+                });
             }}
             style={{
               padding: '6px 12px',

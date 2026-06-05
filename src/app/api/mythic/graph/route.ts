@@ -10,7 +10,8 @@ export async function GET(req: NextRequest) {
     const jwt = authHeader.slice(7);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
@@ -20,7 +21,10 @@ export async function GET(req: NextRequest) {
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
@@ -52,7 +56,9 @@ export async function GET(req: NextRequest) {
     // Get outgoing edges
     let edgesQuery = sb
       .from('mythic_edges')
-      .select('*, from_node:mythic_nodes!mythic_edges_from_node_id_fkey(*), to_node:mythic_nodes!mythic_edges_to_node_id_fkey(*)')
+      .select(
+        '*, from_node:mythic_nodes!mythic_edges_from_node_id_fkey(*), to_node:mythic_nodes!mythic_edges_to_node_id_fkey(*)'
+      )
       .or(`from_node_id.eq.${artistNode.id},to_node_id.eq.${artistNode.id}`)
       .limit(limit);
 
@@ -87,7 +93,9 @@ export async function GET(req: NextRequest) {
       if (neighborIds.length > 0) {
         const hop2Query = sb
           .from('mythic_edges')
-          .select('*, from_node:mythic_nodes!mythic_edges_from_node_id_fkey(*), to_node:mythic_nodes!mythic_edges_to_node_id_fkey(*)')
+          .select(
+            '*, from_node:mythic_nodes!mythic_edges_from_node_id_fkey(*), to_node:mythic_nodes!mythic_edges_to_node_id_fkey(*)'
+          )
           .in('from_node_id', neighborIds)
           .limit(limit);
 

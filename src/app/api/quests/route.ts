@@ -10,7 +10,8 @@ export async function GET(req: NextRequest) {
     const jwt = authHeader.slice(7);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
@@ -20,7 +21,10 @@ export async function GET(req: NextRequest) {
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
@@ -63,7 +67,8 @@ export async function POST(req: NextRequest) {
     const jwt = authHeader.slice(7);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
@@ -73,12 +78,16 @@ export async function POST(req: NextRequest) {
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
 
-    const { title, description, target_scene_tags, timeframe_days, created_by_agent_id } = await req.json();
+    const { title, description, target_scene_tags, timeframe_days, created_by_agent_id } =
+      await req.json();
 
     if (!title || typeof title !== 'string' || title.trim().length === 0) {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 });
@@ -101,7 +110,7 @@ export async function POST(req: NextRequest) {
 
     // Fire-and-forget experiment event
     const hash = user.id.replace(/-/g, '').slice(0, 8);
-    const variant = (parseInt(hash, 16) % 2) === 0 ? 'treatment' : 'control';
+    const variant = parseInt(hash, 16) % 2 === 0 ? 'treatment' : 'control';
     void sb.from('experiment_events').insert({
       profile_id: user.id,
       event_type: 'mythic_quest_started',

@@ -18,7 +18,12 @@ export default function AuthCallbackPage() {
 
     const next = params.get('next') ?? '/feed';
     let redirected = false;
-    const redirect = () => { if (!redirected) { redirected = true; router.replace(next); } };
+    const redirect = () => {
+      if (!redirected) {
+        redirected = true;
+        router.replace(next);
+      }
+    };
 
     // Implicit flow: Google/Supabase returns tokens in the hash fragment.
     // The module-level supabase singleton may have been created during SSR
@@ -42,20 +47,26 @@ export default function AuthCallbackPage() {
 
     // PKCE / code flow: session may already be set by detectSessionInUrl.
     supabase.auth.getSession().then(({ data: { session }, error: sessionError }) => {
-      if (sessionError) { setError(sessionError.message); return; }
-      if (session) { redirect(); return; }
+      if (sessionError) {
+        setError(sessionError.message);
+        return;
+      }
+      if (session) {
+        redirect();
+        return;
+      }
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (event, newSession) => {
-          if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && newSession) {
-            subscription.unsubscribe();
-            redirect();
-          } else if (event === 'SIGNED_OUT') {
-            subscription.unsubscribe();
-            setError('Sign in failed. Please try again.');
-          }
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, newSession) => {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && newSession) {
+          subscription.unsubscribe();
+          redirect();
+        } else if (event === 'SIGNED_OUT') {
+          subscription.unsubscribe();
+          setError('Sign in failed. Please try again.');
         }
-      );
+      });
 
       const timeout = setTimeout(() => {
         subscription.unsubscribe();

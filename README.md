@@ -4,6 +4,10 @@
 
 MixHive lets DJs, producers, organizers, visual artists, and underground creators publish mixes, post short-form Buzz updates, follow each other, discover music scenes, automate fan workflows with Lua agents, and track creator growth from a cyber-hive dashboard.
 
+## Portfolio Summary
+
+This is the flagship full-stack product in the portfolio. It demonstrates product thinking, frontend architecture, Supabase-backed social features, media workflows, agent automation, deployment discipline, and end-to-end validation for a real creator platform.
+
 ## Stack
 
 - **Frontend** - Next.js 16 App Router, React 19, TypeScript 6, React Router v7 client bridge
@@ -94,7 +98,7 @@ The app expects a Supabase project with migrations applied and storage buckets f
 Run the standard local gates before deploy:
 
 ```bash
-npx tsc --noEmit
+npm run type-check
 npm run lint
 npm run build
 npm run preview -- -p 3003

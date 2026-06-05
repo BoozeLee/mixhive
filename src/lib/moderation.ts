@@ -19,17 +19,15 @@ export async function moderateContent(
 
   const supabase = getServiceClient();
 
-  const { error: signalError } = await supabase
-    .from('moderation_signals')
-    .insert({
-      source_table: sourceTable,
-      source_id: sourceId,
-      signal_type: 'text_flagged',
-      severity: 'low',
-      action_taken: null,
-      flagged_by: 'moderation_agent',
-      payload: { text, status: 'pending' },
-    });
+  const { error: signalError } = await supabase.from('moderation_signals').insert({
+    source_table: sourceTable,
+    source_id: sourceId,
+    signal_type: 'text_flagged',
+    severity: 'low',
+    action_taken: null,
+    flagged_by: 'moderation_agent',
+    payload: { text, status: 'pending' },
+  });
 
   if (signalError) {
     console.error('Failed to create moderation signal:', signalError);

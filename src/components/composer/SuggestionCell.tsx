@@ -22,10 +22,10 @@ interface SuggestionCellProps {
 
 function bpmTransitionLabel(lastBpm: number, thisBpm: number): { label: string; color: string } {
   const diff = Math.abs(thisBpm - lastBpm);
-  if (diff === 0)  return { label: 'Same tempo',    color: colors.success };
-  if (diff <= 5)   return { label: 'Easy transition', color: colors.accent };
-  if (diff <= 15)  return { label: 'Gradual build',  color: colors.warning };
-  return { label: `+${diff} BPM`,               color: colors.text.dim };
+  if (diff === 0) return { label: 'Same tempo', color: colors.success };
+  if (diff <= 5) return { label: 'Easy transition', color: colors.accent };
+  if (diff <= 15) return { label: 'Gradual build', color: colors.warning };
+  return { label: `+${diff} BPM`, color: colors.text.dim };
 }
 
 function isCompatibleKey(a: string, b: string): boolean {
@@ -38,18 +38,25 @@ function isCompatibleKey(a: string, b: string): boolean {
 }
 
 export function SuggestionCell({ suggestion, lastBpm, onAccept, onDismiss }: SuggestionCellProps) {
-  const bpmNote =
-    lastBpm && suggestion.bpm
-      ? bpmTransitionLabel(lastBpm, suggestion.bpm)
-      : null;
+  const bpmNote = lastBpm && suggestion.bpm ? bpmTransitionLabel(lastBpm, suggestion.bpm) : null;
 
-  const keyCompatible =
-    suggestion.key_camelot ? (
-      lastBpm ? isCompatibleKey(suggestion.key_camelot, String(lastBpm)) : undefined
-    ) : undefined;
+  const keyCompatible = suggestion.key_camelot
+    ? lastBpm
+      ? isCompatibleKey(suggestion.key_camelot, String(lastBpm))
+      : undefined
+    : undefined;
 
   return (
-    <div className="suggestion-enter" style={{ position: 'relative', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+    <div
+      className="suggestion-enter"
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 4,
+      }}
+    >
       <HexCell
         variant="suggestion"
         size="md"
@@ -61,7 +68,15 @@ export function SuggestionCell({ suggestion, lastBpm, onAccept, onDismiss }: Sug
         onClick={() => onAccept(suggestion)}
         onDismiss={() => onDismiss(suggestion.mix_id)}
       />
-      <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 4,
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}
+      >
         {suggestion.key_camelot && (
           <KeyChip keyCamelot={suggestion.key_camelot} compatible={keyCompatible} />
         )}

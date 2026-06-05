@@ -32,11 +32,7 @@ function makeChain(result = { data: null as unknown, error: null as unknown }) {
   return chain;
 }
 
-function makeReq(opts: {
-  headers?: Record<string, string>;
-  body?: unknown;
-  url?: string;
-}) {
+function makeReq(opts: { headers?: Record<string, string>; body?: unknown; url?: string }) {
   return {
     headers: { get: (k: string) => (opts.headers ?? {})[k.toLowerCase()] ?? null },
     json: async () => opts.body ?? {},
@@ -55,10 +51,17 @@ describe('/api/moderation/signals POST', () => {
   it('returns 400 for invalid severity enum', async () => {
     const chain = makeChain();
     mockCreateClient.mockReturnValue({ from: () => chain });
-    const res = await POST(makeReq({
-      headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
-      body: { source_table: 'buzzes', source_id: 'uuid-1', signal_type: 'hate_speech', severity: 'extreme' },
-    }));
+    const res = await POST(
+      makeReq({
+        headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
+        body: {
+          source_table: 'buzzes',
+          source_id: 'uuid-1',
+          signal_type: 'hate_speech',
+          severity: 'extreme',
+        },
+      })
+    );
     expect(res.status).toBe(400);
     const body = await res.json();
     expect(body.error).toMatch(/Invalid severity/);
@@ -66,16 +69,28 @@ describe('/api/moderation/signals POST', () => {
 
   it('returns 201 on valid signal creation', async () => {
     const signal = {
-      id: 'sig-1', source_table: 'buzzes', source_id: 'uuid-1',
-      signal_type: 'hate_speech', severity: 'high',
-      flagged_by: 'moderation_agent', payload: {}, created_at: new Date().toISOString(),
+      id: 'sig-1',
+      source_table: 'buzzes',
+      source_id: 'uuid-1',
+      signal_type: 'hate_speech',
+      severity: 'high',
+      flagged_by: 'moderation_agent',
+      payload: {},
+      created_at: new Date().toISOString(),
     };
     const chain = makeChain({ data: signal, error: null });
     mockCreateClient.mockReturnValue({ from: () => chain });
-    const res = await POST(makeReq({
-      headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
-      body: { source_table: 'buzzes', source_id: 'uuid-1', signal_type: 'hate_speech', severity: 'high' },
-    }));
+    const res = await POST(
+      makeReq({
+        headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
+        body: {
+          source_table: 'buzzes',
+          source_id: 'uuid-1',
+          signal_type: 'hate_speech',
+          severity: 'high',
+        },
+      })
+    );
     expect(res.status).toBe(201);
     const body = await res.json();
     expect(body.id).toBe('sig-1');
@@ -94,10 +109,12 @@ describe('/api/moderation/signals GET', () => {
     const signals = [{ id: 'sig-1' }, { id: 'sig-2' }];
     const chain = makeChain({ data: signals, error: null });
     mockCreateClient.mockReturnValue({ from: () => chain });
-    const res = await GET(makeReq({
-      headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
-      url: 'http://localhost/api/moderation/signals?limit=10&offset=0',
-    }));
+    const res = await GET(
+      makeReq({
+        headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
+        url: 'http://localhost/api/moderation/signals?limit=10&offset=0',
+      })
+    );
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveLength(2);
@@ -116,8 +133,11 @@ describe('/api/moderation/signals/[id] PATCH', () => {
     const chain = makeChain({ data: null, error: { code: 'PGRST116', message: 'not found' } });
     mockCreateClient.mockReturnValue({ from: () => chain });
     const res = await PATCH(
-      makeReq({ headers: { authorization: `Bearer ${SERVICE_TOKEN}` }, body: { action_taken: 'flagged' } }),
-      { params: Promise.resolve({ id: 'nonexistent' }) },
+      makeReq({
+        headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
+        body: { action_taken: 'flagged' },
+      }),
+      { params: Promise.resolve({ id: 'nonexistent' }) }
     );
     expect(res.status).toBe(404);
   });
@@ -127,8 +147,11 @@ describe('/api/moderation/signals/[id] PATCH', () => {
     const chain = makeChain({ data: updated, error: null });
     mockCreateClient.mockReturnValue({ from: () => chain });
     const res = await PATCH(
-      makeReq({ headers: { authorization: `Bearer ${SERVICE_TOKEN}` }, body: { action_taken: 'flagged' } }),
-      { params: Promise.resolve({ id: 'sig-1' }) },
+      makeReq({
+        headers: { authorization: `Bearer ${SERVICE_TOKEN}` },
+        body: { action_taken: 'flagged' },
+      }),
+      { params: Promise.resolve({ id: 'sig-1' }) }
     );
     expect(res.status).toBe(200);
     const body = await res.json();

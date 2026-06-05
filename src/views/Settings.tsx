@@ -128,7 +128,7 @@ export function Settings() {
 
   // Web3 / wallet state
   const [walletAddress, setWalletAddress] = useState<string | null>(
-    (profile as unknown as Record<string, unknown>)?.wallet_address as string | null ?? null
+    ((profile as unknown as Record<string, unknown>)?.wallet_address as string | null) ?? null
   );
   const [showNftInFeed, setShowNftInFeed] = useState<boolean>(
     ((profile as unknown as Record<string, unknown>)?.show_nft_in_feed as boolean) ?? false
@@ -276,19 +276,13 @@ export function Settings() {
   async function handleNftFeedToggle(enabled: boolean) {
     if (!user) return;
     setShowNftInFeed(enabled);
-    await supabase
-      .from('profiles')
-      .update({ show_nft_in_feed: enabled })
-      .eq('id', user.id);
+    await supabase.from('profiles').update({ show_nft_in_feed: enabled }).eq('id', user.id);
   }
 
   async function handleShowJourneyToggle(enabled: boolean) {
     if (!user) return;
     setShowJourney(enabled);
-    await supabase
-      .from('profiles')
-      .update({ show_journey: enabled })
-      .eq('id', user.id);
+    await supabase.from('profiles').update({ show_journey: enabled }).eq('id', user.id);
   }
 
   return (
@@ -958,9 +952,7 @@ export function Settings() {
             onChange={e => handleShowJourneyToggle(e.target.checked)}
             style={{ accentColor: colors.accent, width: 16, height: 16 }}
           />
-          <span style={{ fontSize: 13, color: colors.text.primary }}>
-            Share my journey
-          </span>
+          <span style={{ fontSize: 13, color: colors.text.primary }}>Share my journey</span>
         </label>
       </div>
 
@@ -1014,7 +1006,13 @@ export function Settings() {
               <div style={{ fontSize: fontSize.xs, color: colors.text.dim, marginBottom: 4 }}>
                 Connected wallet
               </div>
-              <code style={{ fontSize: fontSize.sm, color: colors.text.primary, fontFamily: 'monospace' }}>
+              <code
+                style={{
+                  fontSize: fontSize.sm,
+                  color: colors.text.primary,
+                  fontFamily: 'monospace',
+                }}
+              >
                 {walletAddress.slice(0, 6)}…{walletAddress.slice(-4)}
               </code>
             </div>

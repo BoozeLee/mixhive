@@ -33,21 +33,22 @@ export function ComposerAgentPanel({ tracks, visible }: ComposerAgentPanelProps)
           agent_id: 'set_composer_agent',
           event: {
             event_type: 'manual',
-            mix_ids: tracks.map((t) => t.mix_id),
-            bpm_map: Object.fromEntries(
-              tracks.filter((t) => t.bpm).map((t) => [t.mix_id, t.bpm])
-            ),
+            mix_ids: tracks.map(t => t.mix_id),
+            bpm_map: Object.fromEntries(tracks.filter(t => t.bpm).map(t => [t.mix_id, t.bpm])),
           },
         }),
       });
 
       if (!res.ok) throw new Error('Agent request failed');
-      const data = await res.json() as { suggestions?: AgentResult[] };
+      const data = (await res.json()) as { suggestions?: AgentResult[] };
       const suggestion = data.suggestions?.[0];
       if (suggestion) {
         setResult(suggestion);
       } else {
-        setResult({ analysis: 'No analysis available for this set yet.', mix_count: tracks.length });
+        setResult({
+          analysis: 'No analysis available for this set yet.',
+          mix_count: tracks.length,
+        });
       }
     } catch {
       setError('Could not reach the set analysis agent. Try again shortly.');
@@ -110,9 +111,7 @@ export function ComposerAgentPanel({ tracks, visible }: ComposerAgentPanelProps)
         {loading ? 'Analysing…' : 'Analyse my set'}
       </button>
 
-      {error && (
-        <p style={{ fontSize: fontSize.sm, color: colors.danger, margin: 0 }}>{error}</p>
-      )}
+      {error && <p style={{ fontSize: fontSize.sm, color: colors.danger, margin: 0 }}>{error}</p>}
 
       {result && (
         <div
@@ -124,7 +123,14 @@ export function ComposerAgentPanel({ tracks, visible }: ComposerAgentPanelProps)
             padding: `${space[8]}px`,
           }}
         >
-          <p style={{ fontSize: fontSize.sm, color: colors.text.primary, margin: 0, lineHeight: 1.6 }}>
+          <p
+            style={{
+              fontSize: fontSize.sm,
+              color: colors.text.primary,
+              margin: 0,
+              lineHeight: 1.6,
+            }}
+          >
             {result.analysis}
           </p>
         </div>
@@ -144,14 +150,20 @@ export function ComposerAgentPanel({ tracks, visible }: ComposerAgentPanelProps)
           >
             Tracks in set
           </h4>
-          <ol style={{ margin: 0, padding: '0 0 0 16px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <ol
+            style={{
+              margin: 0,
+              padding: '0 0 0 16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+            }}
+          >
             {tracks.map((t, i) => (
               <li key={t.mix_id} style={{ fontSize: fontSize.xs, color: colors.text.secondary }}>
                 <span style={{ color: colors.text.dim }}>{i + 1}. </span>
                 {t.title}
-                {t.bpm && (
-                  <span style={{ color: colors.text.dim }}> · {t.bpm} BPM</span>
-                )}
+                {t.bpm && <span style={{ color: colors.text.dim }}> · {t.bpm} BPM</span>}
               </li>
             ))}
           </ol>

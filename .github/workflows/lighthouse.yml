@@ -13,24 +13,49 @@ jobs:
     name: Performance budget
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect maintenance-only changes
+        id: changes
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          changed="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
+          echo "$changed"
+          non_maintenance="$(printf '%s\n' "$changed" | grep -Ev '^(README\.md|LICENSE|NOTICE|SECURITY\.md|CONTRIBUTING\.md|CODE_OF_CONDUCT\.md|docs/|\.github/(workflows/(ci|lighthouse)\.yml|dependabot\.yml|CODEOWNERS|PULL_REQUEST_TEMPLATE\.md|ISSUE_TEMPLATE/|copilot-instructions\.md))' || true)"
+          if [ -z "$non_maintenance" ]; then
+            echo "maintenance_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "maintenance_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip Lighthouse for maintenance-only PR
+        if: github.event_name == 'pull_request' && steps.changes.outputs.maintenance_only == 'true'
+        run: echo "Maintenance-only PR; skipping Lighthouse."
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
 
       - name: Install
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         run: npm ci
 
       - name: Build
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
         run: npm run build
 
       - name: Run Lighthouse
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: .github/lighthouse/config.json

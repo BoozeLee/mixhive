@@ -49,17 +49,17 @@ export async function createCollection(input: CreateCollectionInput): Promise<Co
   const { data, error } = await supabase
     .from('nft_collections')
     .insert({
-      owner_id:      input.owner_id,
-      name:          input.name,
-      description:   input.description ?? null,
-      image_url:     input.image_url ?? null,
-      max_supply:    input.max_supply ?? null,
-      soulbound:     input.soulbound ?? false,
-      mix_id:        input.mix_id ?? null,
-      quest_id:      input.quest_id ?? null,
+      owner_id: input.owner_id,
+      name: input.name,
+      description: input.description ?? null,
+      image_url: input.image_url ?? null,
+      max_supply: input.max_supply ?? null,
+      soulbound: input.soulbound ?? false,
+      mix_id: input.mix_id ?? null,
+      quest_id: input.quest_id ?? null,
       event_node_id: input.event_node_id ?? null,
-      status:        'deploying',
-      chain:         'base',
+      status: 'deploying',
+      chain: 'base',
       token_standard: 'ERC1155',
     })
     .select('id')
@@ -101,10 +101,10 @@ export async function mintToken(
   const { data, error } = await supabase
     .from('nft_tokens')
     .insert({
-      collection_id:  collectionId,
+      collection_id: collectionId,
       holder_address: holderAddress.toLowerCase(),
       holder_profile: options?.holderProfile ?? null,
-      soulbound:      collection.soulbound,
+      soulbound: collection.soulbound,
     })
     .select('id, minted_at')
     .single();
@@ -112,7 +112,7 @@ export async function mintToken(
   if (error) throw error;
   return {
     token_id: data.id,
-    status:   data.minted_at ? 'live' : 'pending_mint',
+    status: data.minted_at ? 'live' : 'pending_mint',
   };
 }
 
@@ -128,10 +128,10 @@ export async function getTokenHolders(collectionId: string): Promise<Holder[]> {
 
   if (error) throw error;
   return (data ?? []).map(r => ({
-    token_id:       r.id,
+    token_id: r.id,
     holder_address: r.holder_address,
     holder_profile: r.holder_profile ?? undefined,
-    minted_at:      r.minted_at,
+    minted_at: r.minted_at,
   }));
 }
 
@@ -170,10 +170,7 @@ export async function verifyTokenOwnership(
  * no-op placeholder — the cron calls it to advance the cursor and the
  * body is where the Zora Transfer-event poll will live in Phase 10+.
  */
-export async function syncCollection(
-  collectionId: string,
-  fromBlock: number
-): Promise<SyncResult> {
+export async function syncCollection(collectionId: string, fromBlock: number): Promise<SyncResult> {
   const supabase = createServerClient();
 
   const { data: collection } = await supabase
@@ -186,10 +183,7 @@ export async function syncCollection(
     return { new_tokens: 0, sync_cursor: fromBlock };
   }
 
-  await supabase
-    .from('nft_collections')
-    .update({ sync_cursor: fromBlock })
-    .eq('id', collectionId);
+  await supabase.from('nft_collections').update({ sync_cursor: fromBlock }).eq('id', collectionId);
 
   return { new_tokens: 0, sync_cursor: fromBlock };
 }

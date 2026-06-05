@@ -19,11 +19,7 @@ interface ChatMessage {
   timestamp: string;
 }
 
-export function MythicSessionRoom({
-  sessionId,
-  title,
-  onEndSession,
-}: MythicSessionRoomProps) {
+export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSessionRoomProps) {
   const { profile } = useAuth();
   const currentUsername = profile?.display_name || profile?.username || 'You';
 
@@ -37,7 +33,11 @@ export function MythicSessionRoom({
   // Realtime state
   const [onlineUsers, setOnlineUsers] = useState<string[]>([currentUsername]);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { user: 'ArtistX', text: 'Just dropped a new bassline idea', timestamp: new Date().toISOString() },
+    {
+      user: 'ArtistX',
+      text: 'Just dropped a new bassline idea',
+      timestamp: new Date().toISOString(),
+    },
   ]);
   const [messageInput, setMessageInput] = useState('');
   const [isConnected, setIsConnected] = useState(false);
@@ -88,16 +88,16 @@ export function MythicSessionRoom({
         console.log('User left session:', leftPresences);
       })
       // Broadcast: simple chat
-      .on('broadcast', { event: 'chat-message' }, (payload) => {
+      .on('broadcast', { event: 'chat-message' }, payload => {
         const msg = payload.payload as ChatMessage;
-        setMessages((prev) => [...prev, msg]);
+        setMessages(prev => [...prev, msg]);
       })
       // Typing indicators
-      .on('broadcast', { event: 'typing' }, (payload) => {
+      .on('broadcast', { event: 'typing' }, payload => {
         const { username, isTyping } = payload.payload;
         if (username === currentUsername) return; // Ignore own typing
 
-        setTypingUsers((prev) => {
+        setTypingUsers(prev => {
           if (isTyping) {
             return prev.includes(username) ? prev : [...prev, username];
           } else {
@@ -105,7 +105,7 @@ export function MythicSessionRoom({
           }
         });
       })
-      .subscribe(async (status) => {
+      .subscribe(async status => {
         if (status === 'SUBSCRIBED') {
           setIsConnected(true);
 
@@ -148,7 +148,7 @@ export function MythicSessionRoom({
     });
 
     // Optimistically add to local list
-    setMessages((prev) => [...prev, msg]);
+    setMessages(prev => [...prev, msg]);
     setMessageInput('');
 
     // Stop typing indicator
@@ -221,7 +221,7 @@ export function MythicSessionRoom({
       id: `stem-${Date.now()}`,
       name: `new_stem_${Math.floor(Math.random() * 100)}.wav`,
     };
-    setStems((prev) => [...prev, newStem]);
+    setStems(prev => [...prev, newStem]);
 
     // Record to session metadata so the job processor can see it for inspired_by
     try {
@@ -280,7 +280,13 @@ export function MythicSessionRoom({
         }}
       >
         <div>
-          <div style={{ fontSize: fontSize.lg, fontWeight: fontWeight.bold, color: colors.text.primary }}>
+          <div
+            style={{
+              fontSize: fontSize.lg,
+              fontWeight: fontWeight.bold,
+              color: colors.text.primary,
+            }}
+          >
             {title}
           </div>
           <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
@@ -291,7 +297,7 @@ export function MythicSessionRoom({
         <div style={{ display: 'flex', alignItems: 'center', gap: space[3] }}>
           {/* Placeholder participant avatars */}
           <div style={{ display: 'flex', marginRight: space[2] }}>
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3].map(i => (
               <div
                 key={i}
                 style={{
@@ -314,12 +320,29 @@ export function MythicSessionRoom({
           </div>
 
           {showEndConfirm ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: colors.text.secondary }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: 12,
+                color: colors.text.secondary,
+              }}
+            >
               End session and generate graph proposals?
-              <HiveButton variant="danger" onClick={handleEndSession} disabled={isEnding} style={{ padding: '4px 10px', fontSize: 12 }}>
+              <HiveButton
+                variant="danger"
+                onClick={handleEndSession}
+                disabled={isEnding}
+                style={{ padding: '4px 10px', fontSize: 12 }}
+              >
                 Yes, End
               </HiveButton>
-              <HiveButton variant="secondary" onClick={cancelEndConfirm} style={{ padding: '4px 10px', fontSize: 12 }}>
+              <HiveButton
+                variant="secondary"
+                onClick={cancelEndConfirm}
+                style={{ padding: '4px 10px', fontSize: 12 }}
+              >
                 Cancel
               </HiveButton>
             </div>
@@ -360,7 +383,11 @@ export function MythicSessionRoom({
             }}
           >
             <span>Stems & Assets</span>
-            <HiveButton variant="secondary" onClick={handleAddStem} style={{ fontSize: 12, padding: '4px 10px' }}>
+            <HiveButton
+              variant="secondary"
+              onClick={handleAddStem}
+              style={{ fontSize: 12, padding: '4px 10px' }}
+            >
               + Add Stem
             </HiveButton>
           </div>
@@ -438,10 +465,20 @@ export function MythicSessionRoom({
             )}
           </div>
 
-          <div style={{ padding: space[3], borderTop: `1px solid ${colors.border}`, display: 'flex', flexDirection: 'column', gap: space[1] }}>
+          <div
+            style={{
+              padding: space[3],
+              borderTop: `1px solid ${colors.border}`,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: space[1],
+            }}
+          >
             {/* Typing indicator */}
             {typingUsers.length > 0 && (
-              <div style={{ fontSize: fontSize.sm, color: colors.text.muted, paddingLeft: space[2] }}>
+              <div
+                style={{ fontSize: fontSize.sm, color: colors.text.muted, paddingLeft: space[2] }}
+              >
                 {typingUsers.join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
               </div>
             )}
@@ -450,8 +487,8 @@ export function MythicSessionRoom({
               <input
                 type="text"
                 value={messageInput}
-                onChange={(e) => handleTyping(e.target.value)}
-                onKeyDown={(e) => {
+                onChange={e => handleTyping(e.target.value)}
+                onKeyDown={e => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();

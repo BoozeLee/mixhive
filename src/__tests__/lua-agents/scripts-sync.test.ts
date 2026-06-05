@@ -8,18 +8,28 @@ import * as scripts from '@/server/lua-agents/scripts';
 const agentsDir = join(__dirname, '../../server/lua-agents/agents');
 
 describe('scripts.ts sync', () => {
-  const files = readdirSync(agentsDir).filter(f => f.endsWith('.lua')).sort();
+  const files = readdirSync(agentsDir)
+    .filter(f => f.endsWith('.lua'))
+    .sort();
 
   it('exports a constant for every .lua file', () => {
     for (const file of files) {
-      const name = file.replace(/\.lua$/, '').replace(/^_/, '').toUpperCase().replace(/-/g, '_');
+      const name = file
+        .replace(/\.lua$/, '')
+        .replace(/^_/, '')
+        .toUpperCase()
+        .replace(/-/g, '_');
       expect(scripts).toHaveProperty(name);
     }
   });
 
   it('every exported script matches its .lua source file', () => {
     for (const file of files) {
-      const name = file.replace(/\.lua$/, '').replace(/^_/, '').toUpperCase().replace(/-/g, '_');
+      const name = file
+        .replace(/\.lua$/, '')
+        .replace(/^_/, '')
+        .toUpperCase()
+        .replace(/-/g, '_');
       const src = readFileSync(join(agentsDir, file), 'utf8');
       const exported = (scripts as Record<string, string>)[name];
       // Strip leading newline that template literal adds

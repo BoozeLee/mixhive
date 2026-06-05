@@ -6,7 +6,8 @@ export const runtime = 'nodejs';
 
 function makeSupabase(jwt?: string) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? '';
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY ?? '';
+  const anon =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY ?? '';
   return createClient(url, anon, {
     global: jwt ? { headers: { Authorization: `Bearer ${jwt}` } } : undefined,
     auth: { persistSession: false },
@@ -69,7 +70,11 @@ async function handleTrending(genre: string, limit: number, cursorParam: string 
   // Populate Redis cache on first page
   if (!cursorParam) {
     try {
-      await redisCache.setTrendingCache(genre, rows, nextCursor ? JSON.stringify(nextCursor) : null);
+      await redisCache.setTrendingCache(
+        genre,
+        rows,
+        nextCursor ? JSON.stringify(nextCursor) : null
+      );
     } catch {
       // fail-open
     }
@@ -103,7 +108,10 @@ async function handleFollowing(userId: string, limit: number, jwt: string | unde
 
   // Verify JWT if provided
   if (jwt) {
-    const { data: { user }, error } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await sb.auth.getUser();
     if (error || !user || user.id !== userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -170,7 +178,11 @@ async function handleFollowing(userId: string, limit: number, jwt: string | unde
 
   // Populate Redis
   try {
-    await redisCache.setFeedCache(userId, { data: merged, cursor: mixCursor, timestamp: Date.now() });
+    await redisCache.setFeedCache(userId, {
+      data: merged,
+      cursor: mixCursor,
+      timestamp: Date.now(),
+    });
   } catch {
     // fail-open
   }

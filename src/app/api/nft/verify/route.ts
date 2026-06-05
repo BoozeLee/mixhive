@@ -5,7 +5,9 @@ import { handleApiError, unauthorized } from '@/lib/api-errors';
 export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return unauthorized();
 
     const { searchParams } = new URL(request.url);

@@ -52,7 +52,7 @@ export function ComposerCanvas({
   }, [tracks.length]);
 
   const lastTrack = tracks[tracks.length - 1];
-  const visibleSuggestions = suggestions.filter((s) => !dismissedIds.has(s.mix_id));
+  const visibleSuggestions = suggestions.filter(s => !dismissedIds.has(s.mix_id));
 
   const handleDragStart = (idx: number) => {
     dragSrcIdx.current = idx;
@@ -103,12 +103,7 @@ export function ComposerCanvas({
         }}
       >
         {tracks.length === 0 ? (
-          <HexCell
-            variant="add"
-            size="md"
-            onClick={onAddTrack}
-            aria-label="Add first track"
-          />
+          <HexCell variant="add" size="md" onClick={onAddTrack} aria-label="Add first track" />
         ) : (
           <>
             {tracks.map((track, idx) => (
@@ -129,8 +124,8 @@ export function ComposerCanvas({
                 <div
                   draggable
                   onDragStart={() => handleDragStart(idx)}
-                  onDragOver={(e) => handleDragOver(e, idx)}
-                  onDrop={(e) => handleDrop(e, idx)}
+                  onDragOver={e => handleDragOver(e, idx)}
+                  onDrop={e => handleDrop(e, idx)}
                   onDragEnd={handleDragEnd}
                   style={{
                     opacity: dragSrcIdx.current === idx ? 0.45 : 1,
@@ -185,7 +180,7 @@ export function ComposerCanvas({
                     aria-hidden="true"
                   />
                 ))
-              : visibleSuggestions.map((s) => (
+              : visibleSuggestions.map(s => (
                   <SuggestionCell
                     key={s.mix_id}
                     suggestion={s}
@@ -196,12 +191,7 @@ export function ComposerCanvas({
                 ))}
 
             {/* Add cell at the end */}
-            <HexCell
-              variant="add"
-              size="md"
-              onClick={onAddTrack}
-              aria-label="Add another track"
-            />
+            <HexCell variant="add" size="md" onClick={onAddTrack} aria-label="Add another track" />
           </>
         )}
       </div>

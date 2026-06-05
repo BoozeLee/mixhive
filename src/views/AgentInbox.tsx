@@ -347,16 +347,20 @@ export function AgentInbox() {
     // web3_proposal: patch status then open the appropriate modal
     if (suggestion?.suggestion_type === 'web3_proposal') {
       await patchSuggestion(session.access_token, id, 'apply');
-      setSuggestions(prev => prev.map(s => (s.id === id ? { ...s, status: 'applied' as const } : s)));
+      setSuggestions(prev =>
+        prev.map(s => (s.id === id ? { ...s, status: 'applied' as const } : s))
+      );
       const p = suggestion.payload;
       const action = p.action as string | undefined;
       const sourceId = p.source_id as string | undefined;
       const estimatedSupply = (p.estimated_supply as number | undefined) ?? 50;
       if (sourceId) {
         const sourceType: 'mix' | 'quest' | 'event' =
-          action === 'open_quest_backing' ? 'quest'
-          : action === 'check_gig_proof' ? 'event'
-          : 'mix';
+          action === 'open_quest_backing'
+            ? 'quest'
+            : action === 'check_gig_proof'
+              ? 'event'
+              : 'mix';
         setWeb3Target({ sourceType, sourceId, estimatedSupply });
       }
       if (user) {

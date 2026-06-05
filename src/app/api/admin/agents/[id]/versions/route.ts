@@ -66,11 +66,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const { data: version, error } = await sb
     .from('agent_script_versions')
     .insert({
-      agent_id:   id,
-      version:    nextVersion,
+      agent_id: id,
+      version: nextVersion,
       lua_script: body.lua_script,
-      notes:      body.notes ?? null,
-      author:     body.author ?? 'admin',
+      notes: body.notes ?? null,
+      author: body.author ?? 'admin',
     })
     .select()
     .single();

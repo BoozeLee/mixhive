@@ -90,7 +90,7 @@ export interface AudioJobResult {
 export const AUDIO_WORKER_CONFIG = {
   maxRetries: 3,
   retryDelayMs: 5000,
-  timeoutMs: 300000,        // 5 minutes
+  timeoutMs: 300000, // 5 minutes
   waveformPoints: 200,
   supportedFormats: ['mp3', 'wav', 'flac', 'ogg', 'aac'] as const,
 };

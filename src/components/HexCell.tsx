@@ -11,9 +11,9 @@ export type HexVariant = 'track' | 'suggestion' | 'gap' | 'add' | 'chapter';
 export type HexSize = 'sm' | 'md' | 'lg';
 
 const SIZES: Record<HexSize, { w: number; h: number; pad: string }> = {
-  sm:  { w: 64,  h: 74,  pad: '6px 8px' },
-  md:  { w: 120, h: 138, pad: '10px 12px' },
-  lg:  { w: 180, h: 208, pad: '12px 16px' },
+  sm: { w: 64, h: 74, pad: '6px 8px' },
+  md: { w: 120, h: 138, pad: '10px 12px' },
+  lg: { w: 180, h: 208, pad: '12px 16px' },
 };
 
 export interface HexCellProps {
@@ -40,20 +40,28 @@ export interface HexCellProps {
 function variantBorder(variant: HexVariant, selected?: boolean): string {
   if (selected) return `2px solid ${colors.accent}`;
   switch (variant) {
-    case 'track':      return `1px solid ${colors.border}`;
-    case 'suggestion': return `2px dashed ${colors.accent}`;
-    case 'gap':        return `2px dashed ${colors.border}`;
-    case 'add':        return `1px solid ${colors.borderStrong}`;
-    case 'chapter':    return `1px solid ${colors.border}`;
+    case 'track':
+      return `1px solid ${colors.border}`;
+    case 'suggestion':
+      return `2px dashed ${colors.accent}`;
+    case 'gap':
+      return `2px dashed ${colors.border}`;
+    case 'add':
+      return `1px solid ${colors.borderStrong}`;
+    case 'chapter':
+      return `1px solid ${colors.border}`;
   }
 }
 
 function variantBackground(variant: HexVariant, selected?: boolean): string {
   if (selected) return colors.accentFaint;
   switch (variant) {
-    case 'track':   return colors.surface;
-    case 'chapter': return colors.surface;
-    default:        return 'transparent';
+    case 'track':
+      return colors.surface;
+    case 'chapter':
+      return colors.surface;
+    default:
+      return 'transparent';
   }
 }
 
@@ -150,9 +158,7 @@ export function HexCell({
 
       {variant === 'chapter' && (
         <>
-          {icon && (
-            <span style={{ fontSize: size === 'lg' ? 20 : 14, lineHeight: 1 }}>{icon}</span>
-          )}
+          {icon && <span style={{ fontSize: size === 'lg' ? 20 : 14, lineHeight: 1 }}>{icon}</span>}
           {size !== 'sm' && label && (
             <span
               style={{
@@ -168,9 +174,7 @@ export function HexCell({
               {label}
             </span>
           )}
-          {date && (
-            <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{date}</span>
-          )}
+          {date && <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{date}</span>}
         </>
       )}
 
@@ -207,7 +211,15 @@ export function HexCell({
             </span>
           )}
           {size !== 'sm' && (bpm || duration || keyCamelot) && (
-            <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: 4,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}
+            >
               {bpm && <BpmChip bpm={bpm} size="sm" />}
               {keyCamelot && (
                 <span
@@ -236,7 +248,12 @@ export function HexCell({
                 top: 4,
                 right: 4,
                 fontSize: fontSize.xs,
-                color: similarity >= 0.8 ? colors.accent : similarity >= 0.6 ? colors.text.muted : colors.text.dim,
+                color:
+                  similarity >= 0.8
+                    ? colors.accent
+                    : similarity >= 0.6
+                      ? colors.text.muted
+                      : colors.text.dim,
                 fontWeight: fontWeight.semibold,
               }}
             >
@@ -254,11 +271,7 @@ export function HexCell({
 
   if (disabled) {
     return (
-      <div
-        style={hexStyle}
-        aria-disabled="true"
-        role="presentation"
-      >
+      <div style={hexStyle} aria-disabled="true" role="presentation">
         {innerContent}
       </div>
     );
@@ -268,8 +281,8 @@ export function HexCell({
     variant === 'suggestion'
       ? `Suggestion: ${title ?? ''} — ${Math.round((similarity ?? 0) * 100)}% vibe match`
       : variant === 'chapter'
-      ? `${label ?? ''} ${date ?? ''}`
-      : `${title ?? ''} by ${artist ?? ''}${bpm ? `, BPM ${bpm}` : ''}`;
+        ? `${label ?? ''} ${date ?? ''}`
+        : `${title ?? ''} by ${artist ?? ''}${bpm ? `, BPM ${bpm}` : ''}`;
 
   return (
     <button
@@ -286,7 +299,10 @@ export function HexCell({
       {variant === 'suggestion' && onDismiss && (
         <button
           type="button"
-          onClick={(e) => { e.stopPropagation(); onDismiss(); }}
+          onClick={e => {
+            e.stopPropagation();
+            onDismiss();
+          }}
           aria-label="Dismiss suggestion"
           style={{
             position: 'absolute',

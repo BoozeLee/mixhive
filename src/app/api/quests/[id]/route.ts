@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-export async function GET(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
 
@@ -15,7 +12,8 @@ export async function GET(
     const jwt = authHeader.slice(7);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
@@ -25,17 +23,22 @@ export async function GET(
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
 
     const { data: quest, error } = await sb
       .from('quests')
-      .select(`
+      .select(
+        `
         *,
         milestones:quest_milestones(*) 
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
@@ -59,10 +62,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
 
@@ -73,7 +73,8 @@ export async function PATCH(
     const jwt = authHeader.slice(7);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
@@ -83,7 +84,10 @@ export async function PATCH(
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
@@ -101,7 +105,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { title, description, target_scene_tags, timeframe_days, status, momentum } = await req.json();
+    const { title, description, target_scene_tags, timeframe_days, status, momentum } =
+      await req.json();
 
     const updates: Record<string, unknown> = {};
     if (title !== undefined) updates.title = title;
@@ -139,10 +144,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
 
@@ -153,7 +155,8 @@ export async function DELETE(
     const jwt = authHeader.slice(7);
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
     }
@@ -163,16 +166,15 @@ export async function DELETE(
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
 
-    const { data: existing } = await sb
-      .from('quests')
-      .select('id, owner_id')
-      .eq('id', id)
-      .single();
+    const { data: existing } = await sb.from('quests').select('id, owner_id').eq('id', id).single();
 
     if (!existing) {
       return NextResponse.json({ error: 'Quest not found' }, { status: 404 });

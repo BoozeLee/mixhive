@@ -172,6 +172,43 @@ func (s *Supabase) failJob(ctx context.Context, job *AudioJob, msg string) error
 	})
 }
 
+// upsertAudioFeatures writes the computed bpm/energy/mood to the audio_features
+// table, keyed by mix_id (on_conflict merge). musical_key is left null until a
+// chroma analyzer exists. Best-effort — failures are logged, not fatal.
+func (s *Supabase) upsertAudioFeatures(ctx context.Context, mixID string, a *AudioAnalysis) error {
+	row := map[string]any{
+		"mix_id":     mixID,
+		"status":     "complete",
+		"mood":       a.Mood,
+		"energy":     a.Energy,
+		"source":     "go-worker",
+		"model":      "ffmpeg-autocorr-v1",
+		"updated_at": time.Now().UTC().Format(time.RFC3339),
+	}
+	if a.BPM > 0 {
+		row["bpm"] = a.BPM
+	}
+	b, _ := json.Marshal(row)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		s.baseURL+"/rest/v1/audio_features?on_conflict=mix_id", bytes.NewReader(b))
+	if err != nil {
+		return err
+	}
+	s.auth(req)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Prefer", "resolution=merge-duplicates,return=minimal")
+	resp, err := s.http.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode >= 300 {
+		bb, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("audio_features upsert: %s: %s", resp.Status, string(bb))
+	}
+	return nil
+}
+
 // download fetches a (public or signed) URL to dst.
 func (s *Supabase) download(ctx context.Context, rawURL string) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, rawURL, nil)

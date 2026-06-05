@@ -267,19 +267,12 @@ export class JobProcessor {
   }
 }
 
-// Create default instance
+// Create default instance (class kept for tests/local tooling).
+//
+// NOTE: This in-process Node processor is intentionally NOT auto-started.
+// In production the audio queue is drained by the self-hosted Go worker
+// (worker/audio/) running under Podman — see docs/INFRA_INTEGRATION_REPORT.md.
+// Auto-starting here previously only ran in dev (NODE_ENV==='development'),
+// which left audio_jobs unprocessed in production. The Go worker is now the
+// single source of truth; start this manually only for local debugging.
 export const jobProcessor = new JobProcessor();
-
-// Auto-start processor in development mode
-if (process.env.NODE_ENV === 'development') {
-  jobProcessor.start();
-}
-
-// Handle graceful shutdown
-process.on('SIGTERM', () => {
-  jobProcessor.stop();
-});
-
-process.on('SIGINT', () => {
-  jobProcessor.stop();
-});

@@ -1,0 +1,27 @@
+# Cloudflare Tunnel config for the MixHive Active Worker Tier.
+#
+# Exposes the worker-box health endpoint (and any future inbound webhook receiver)
+# to the internet without opening a port, so Vercel/uptime checks can reach the box.
+#
+# One-time setup (needs your Cloudflare account):
+#   cloudflared tunnel login
+#   cloudflared tunnel create mixhive-worker
+#   # put the resulting <TUNNEL_ID>.json credentials path below, set your hostname,
+#   # then add a DNS route:
+#   cloudflared tunnel route dns mixhive-worker worker.mixhive.app
+#   cloudflared tunnel --config worker/cloudflared-config.yml run
+#
+# Quick test (no account, ephemeral URL) — validate reachability now:
+#   cloudflared tunnel --url http://localhost:3000   # prints a trycloudflare.com URL
+#
+# The worker tier itself does NOT need inbound to function (it polls Supabase
+# outbound). This tunnel is only for health visibility + future push receivers.
+
+tunnel: mixhive-worker
+credentials-file: /home/kilisan/.cloudflared/mixhive-worker.json
+
+ingress:
+  # Worker/health surface (the Next app's /api/health/worker proxied, or a local probe).
+  - hostname: worker.mixhive.app
+    service: http://localhost:3000
+  - service: http_status:404

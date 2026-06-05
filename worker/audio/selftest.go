@@ -32,6 +32,7 @@ func runSelfTest(path string) {
 	}
 	// Print a compact summary + a few sample peaks.
 	fmt.Printf("selftest OK: duration=%.2fs points=%d\n", a.DurationSec, len(a.Peaks))
+	fmt.Printf("bpm=%.1f energy=%.3f mood=%s key=null(pending)\n", a.BPM, a.Energy, a.Mood)
 	fmt.Printf("first 8 peaks: %v\n", a.Peaks[:8])
 	var sum float64
 	for _, p := range a.Peaks {

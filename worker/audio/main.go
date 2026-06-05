@@ -126,10 +126,20 @@ func processJob(ctx context.Context, cfg *Config, sb *Supabase, job *AudioJob) e
 		}); err != nil {
 			return err
 		}
+		// For bpm_key_mood jobs, also upsert the computed audio features.
+		// (waveform jobs do it too — cheap, and keeps features fresh.)
+		if err := sb.upsertAudioFeatures(ctx, job.MixID, a); err != nil {
+			log.Printf("job %s: audio_features upsert warning: %v", job.ID, err)
+		}
 		return sb.completeJob(ctx, job.ID, map[string]any{
 			"success":          true,
 			"duration_seconds": a.DurationSec,
 			"waveform_points":  len(a.Peaks),
+			"bpm":              a.BPM,
+			"energy":           a.Energy,
+			"mood":             a.Mood,
+			"key":              nil,
+			"key_note":         "key detection pending (chroma analyzer)",
 			"job_type":         job.JobType,
 		})
 	case "tracklist":

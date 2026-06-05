@@ -15,8 +15,8 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
-    ports:
-      - "127.0.0.1:6379:6379"
+    # No host port binding — Redis is only reachable inside the compose network.
+    # This avoids conflicts with any Redis already running on the host.
 
   audio-worker:
     build:

@@ -7,8 +7,8 @@ import { getStripe, makeServiceClient, releaseGearEscrow, type GearTxn } from '@
 // finish onboarding. Fired by the self-hosted Ruby scheduler and Vercel cron,
 // both sending Authorization: Bearer <CRON_SECRET>.
 //
-// PREREQUISITE: CRON_SECRET must be set in Vercel before this ships — otherwise
-// the route is open. The gate below only enforces when the secret is present.
+// PREREQUISITE: CRON_SECRET must be set before this ships. Unlike lower-risk
+// maintenance crons, payout release never runs without an explicit shared secret.
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -18,7 +18,10 @@ const HOLD_DAYS = 3;
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 503 });
+  }
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   if (!process.env.STRIPE_SECRET_KEY) {

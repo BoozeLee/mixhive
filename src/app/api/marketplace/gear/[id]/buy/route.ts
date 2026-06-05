@@ -61,7 +61,6 @@ export async function POST(
 
     const priceInCents = Math.round(listing.price * 100);
     const fee = feeRate(listing.price);
-    const applicationFeeAmount = Math.round(priceInCents * fee);
 
     const origin = req.headers.get('origin') || 'https://mixhive.vercel.app';
 
@@ -83,10 +82,11 @@ export async function POST(
           quantity: 1,
         },
       ],
-      // Capture manually so funds go into escrow until buyer confirms receipt
+      // Capture manually so funds go into escrow until buyer confirms receipt.
+      // Funds settle to the platform balance; the net is transferred to the
+      // seller's connected account at release (separate charges & transfers).
       payment_intent_data: {
         capture_method: 'manual',
-        application_fee_amount: applicationFeeAmount,
       },
       success_url: `${origin}/marketplace/gear/${id}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${origin}/marketplace/gear/${id}?payment=cancelled`,

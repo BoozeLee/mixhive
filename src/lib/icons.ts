@@ -48,6 +48,7 @@ import {
   Trophy,
   Network,
   ShoppingBag,
+  Wallet,
   Pencil,
   ExternalLink,
   LifeBuoy,
@@ -73,6 +74,7 @@ export type IconKey =
   | 'events'
   | 'market'
   | 'gear'
+  | 'earnings'
   | 'quests'
   | 'hub'
   | 'dashboard'
@@ -130,6 +132,7 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   events: Calendar,
   market: Store,
   gear: ShoppingBag,
+  earnings: Wallet,
   quests: Swords,
   hub: LayoutGrid,
   dashboard: LayoutDashboard,

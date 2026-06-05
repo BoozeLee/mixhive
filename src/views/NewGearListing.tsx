@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const CATEGORIES = [
@@ -39,6 +39,25 @@ export function NewGearListing() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [payoutsEnabled, setPayoutsEnabled] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      try {
+        const res = await fetch('/api/stripe/connect/status', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPayoutsEnabled(Boolean(data.payouts_enabled));
+        }
+      } catch {
+        // status check is best-effort; publish gate still enforces server-side
+      }
+    })();
+  }, []);
 
   const update = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }));
 
@@ -119,6 +138,15 @@ export function NewGearListing() {
           }} />
         ))}
       </div>
+
+      {payoutsEnabled === false && (
+        <div style={{ background: '#1a1400', border: '1px solid #f0c04044', color: '#e8d5a0', padding: 14, borderRadius: 8, marginBottom: 16, fontSize: 14 }}>
+          Connect a payout account to sell gear —{' '}
+          <Link to="/earnings" style={{ color: 'var(--hive-gold)', fontWeight: 700 }}>
+            Set up payouts
+          </Link>
+        </div>
+      )}
 
       {error && (
         <div style={{ background: '#1a0000', border: '1px solid #ef444466', color: '#ef4444', padding: 12, borderRadius: 8, marginBottom: 16, fontSize: 14 }}>

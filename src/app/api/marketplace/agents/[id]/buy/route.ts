@@ -69,7 +69,6 @@ export async function POST(
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2026-05-27.dahlia' });
     const priceInCents = Math.round(pkg.price * 100);
-    const platformFee = Math.round(priceInCents * (PLATFORM_FEE_PCT / 100));
     const origin = req.headers.get('origin') || 'https://mixhive.vercel.app';
 
     const session = await stripe.checkout.sessions.create({
@@ -88,9 +87,6 @@ export async function POST(
           quantity: 1,
         },
       ],
-      payment_intent_data: {
-        application_fee_amount: platformFee,
-      },
       success_url: `${origin}/marketplace/agents?payment=success&package_id=${id}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/marketplace/agents?payment=cancelled`,
       metadata: {

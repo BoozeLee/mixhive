@@ -5,7 +5,7 @@
 > re-derivation. Read this first, then the linked docs.
 >
 > **Date:** 2026-06-05 · **Repo:** `/home/kilisan/dj-nef-website/mixhive` · **Prod:** `https://mixhive.vercel.app`
-> **Status:** Phase 1 shipped + deployed + verified. Phase 2 planned, not started.
+> **Status:** Phase 1 shipped + deployed + verified. Phase 2 in progress (code complete locally; migrations 084/085 pending apply + deploy).
 
 ---
 
@@ -85,7 +85,7 @@ curl -s https://mixhive.vercel.app/api/health/worker
 Source of truth: `docs/ENGINEERING_ROADMAP.md` (gap-analysis grounded, 10+ steps each).
 
 1. **Phase 1 — Activate the Worker Tier & Audio Pipeline** ✅ *DONE (this handoff)*
-2. **Phase 2 — Complete Monetization (Payouts & Escrow Loop)** ⬅ *next; see §4*
+2. **Phase 2 — Complete Monetization (Payouts & Escrow Loop)** ⬅ *in progress; see §4*
 3. **Phase 3 — Trust, Identity & Moderation** (incl. the Phase-1 `CRON_SECRET` security fix)
 4. **Phase 4 — Messaging & Real-time Social** (Phase 17 core — currently absent)
 5. **Phase 5 — Scene Pages & Discovery 2.0** (Phase 17)

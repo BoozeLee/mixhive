@@ -29,6 +29,7 @@ const topItems: SidebarItem[] = [
   { path: '/composer', icon: 'composer', label: 'Composer', ariaLabel: 'Hive Composer' },
   { path: '/hive-story', icon: 'story', label: 'Hive Story', ariaLabel: 'Hive Story editorial' },
   { path: '/hub', icon: 'hub', label: 'Hub', ariaLabel: 'Feature hub' },
+  { path: '/earnings', icon: 'earnings', label: 'Earnings', ariaLabel: 'Marketplace earnings and payouts' },
 ];
 
 function isActive(itemPath: string, currentPath: string): boolean {

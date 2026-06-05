@@ -27,6 +27,8 @@ export async function GET(req: NextRequest) {
       .from('equipment_listings')
       .select('*', { count: 'exact' })
       .eq('status', 'active')
+      // Boosted listings surface first while their window is active.
+      .order('boosted_until', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -58,6 +60,19 @@ export async function POST(req: NextRequest) {
     const { data: { user }, error: authErr } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
+    }
+
+    // Gate publishing on a working payout account so sellers can actually be paid.
+    const { data: profile } = await sb
+      .from('profiles')
+      .select('payouts_enabled')
+      .eq('id', user.id)
+      .single();
+    if (!profile?.payouts_enabled) {
+      return NextResponse.json(
+        { error: 'Set up payouts before listing gear for sale', code: 'payouts_required' },
+        { status: 403 }
+      );
     }
 
     const body = await req.json();

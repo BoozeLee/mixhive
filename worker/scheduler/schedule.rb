@@ -29,8 +29,9 @@ JOBS = {
   '/api/cron/notification-prioritizer' => Integer(ENV.fetch('IV_NOTIF', 3600)),        # hourly
   '/api/cron/strategic-agents'         => Integer(ENV.fetch('IV_STRATEGIC', 86_400)),  # daily
   '/api/cron/embed-refresh'            => Integer(ENV.fetch('IV_EMBED', 86_400)),       # daily
-  '/api/cleanup'                       => Integer(ENV.fetch('IV_CLEANUP', 86_400)),     # daily (stub)
-  '/api/analytics/daily'               => Integer(ENV.fetch('IV_ANALYTICS', 86_400))    # daily (stub)
+  '/api/cron/payouts-auto-release'     => Integer(ENV.fetch('IV_PAYOUTS', 86_400)),     # daily
+  '/api/cleanup'                       => Integer(ENV.fetch('IV_CLEANUP', 86_400)),     # daily
+  '/api/analytics/daily'               => Integer(ENV.fetch('IV_ANALYTICS', 86_400))    # daily
 }.freeze
 
 def fire(path)

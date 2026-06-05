@@ -103,6 +103,9 @@ const HelpCenter = lazy(() =>
 const HelpArticle = lazy(() =>
   import('./views/HelpArticle').then(m => ({ default: m.HelpArticle }))
 );
+const Earnings = lazy(() =>
+  import('./views/Earnings').then(m => ({ default: m.Earnings }))
+);
 // SessionFab is small and always available to authenticated users — not lazy-loaded
 import { SessionFab } from './components/SessionFab';
 
@@ -271,6 +274,15 @@ function AnimatedRoutes() {
         {/* Help Center */}
         <Route path="/help" element={<HelpCenter />} />
         <Route path="/help/:slug" element={<HelpArticle />} />
+        {/* Phase 2 — Marketplace payouts */}
+        <Route
+          path="/earnings"
+          element={
+            <ProtectedRoute>
+              <Earnings />
+            </ProtectedRoute>
+          }
+        />
         {/* Phase 15 — Collab Quests */}
         <Route path="/collab-quests" element={<CollabQuests />} />
         <Route path="/collab-quests/:id" element={<CollabQuestDetail />} />

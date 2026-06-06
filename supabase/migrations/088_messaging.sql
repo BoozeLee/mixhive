@@ -36,8 +36,6 @@ create table if not exists public.conversation_members (
 create index if not exists idx_conversation_members_profile_id
   on public.conversation_members(profile_id);
 
-create index if not exists idx_user_blocks_pair
-  on public.user_blocks(blocker_id, blocked_id);
 
 -- ===== 3. messages =====
 create table if not exists public.messages (
@@ -51,6 +49,24 @@ create table if not exists public.messages (
 
 create index if not exists idx_messages_conversation_created
   on public.messages(conversation_id, created_at desc);
+
+-- ===== Block-check helper (SECURITY DEFINER to bypass user_blocks RLS) =====
+create or replace function public.is_either_blocked(user_a uuid, user_b uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.user_blocks
+    where (blocker_id = user_a and blocked_id = user_b)
+       or (blocker_id = user_b and blocked_id = user_a)
+  );
+$$;
+
+revoke execute on function public.is_either_blocked(uuid, uuid) from public, anon;
+grant execute on function public.is_either_blocked(uuid, uuid) to authenticated;
 
 -- ===== 4. RLS =====
 alter table public.conversations enable row level security;
@@ -96,20 +112,10 @@ create policy messages_insert_member
       where m.conversation_id = messages.conversation_id and m.profile_id = auth.uid()
     )
     and not exists (
-      select 1 from public.user_blocks b
-      where (
-        (b.blocker_id = auth.uid() and b.blocked_id = (
-          select cm.profile_id from public.conversation_members cm
-          where cm.conversation_id = messages.conversation_id and cm.profile_id != auth.uid()
-          limit 1
-        ))
-        or
-        (b.blocked_id = auth.uid() and b.blocker_id = (
-          select cm.profile_id from public.conversation_members cm
-          where cm.conversation_id = messages.conversation_id and cm.profile_id != auth.uid()
-          limit 1
-        ))
-      )
+      select 1 from public.conversation_members cm
+      where cm.conversation_id = messages.conversation_id
+        and cm.profile_id != auth.uid()
+        and public.is_either_blocked(auth.uid(), cm.profile_id)
     )
   );
 

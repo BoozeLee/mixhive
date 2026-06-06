@@ -36,6 +36,9 @@ create table if not exists public.conversation_members (
 create index if not exists idx_conversation_members_profile_id
   on public.conversation_members(profile_id);
 
+create index if not exists idx_user_blocks_pair
+  on public.user_blocks(blocker_id, blocked_id);
+
 -- ===== 3. messages =====
 create table if not exists public.messages (
   id uuid primary key, -- client-supplied (reused as DB row id for dedupe)
@@ -55,7 +58,8 @@ alter table public.conversation_members enable row level security;
 alter table public.messages enable row level security;
 
 -- Conversations: SELECT if member
-create policy if not exists conversations_select_member
+drop policy if exists conversations_select_member on public.conversations;
+create policy conversations_select_member
   on public.conversations for select
   using (exists (
     select 1 from public.conversation_members m
@@ -63,7 +67,8 @@ create policy if not exists conversations_select_member
   ));
 
 -- Conversation members: SELECT if member of same conversation
-create policy if not exists conversation_members_select_member
+drop policy if exists conversation_members_select_member on public.conversation_members;
+create policy conversation_members_select_member
   on public.conversation_members for select
   using (exists (
     select 1 from public.conversation_members m
@@ -72,7 +77,8 @@ create policy if not exists conversation_members_select_member
   ));
 
 -- Messages: SELECT if member of the conversation
-create policy if not exists messages_select_member
+drop policy if exists messages_select_member on public.messages;
+create policy messages_select_member
   on public.messages for select
   using (exists (
     select 1 from public.conversation_members m
@@ -80,7 +86,8 @@ create policy if not exists messages_select_member
   ));
 
 -- Messages: INSERT = sender is me AND I'm a member AND not blocked
-create policy if not exists messages_insert_member
+drop policy if exists messages_insert_member on public.messages;
+create policy messages_insert_member
   on public.messages for insert
   with check (
     sender_id = auth.uid()
@@ -107,9 +114,31 @@ create policy if not exists messages_insert_member
   );
 
 -- Conversation members: UPDATE last_read_at = own row only
-create policy if not exists conversation_members_update_own
+drop policy if exists conversation_members_update_own on public.conversation_members;
+create policy conversation_members_update_own
   on public.conversation_members for update
-  using (profile_id = auth.uid());
+  using (profile_id = auth.uid())
+  with check (profile_id = auth.uid());
+
+-- ===== Immutable guard on conversation_members =====
+create or replace function public.trg_conversation_members_immutable()
+returns trigger
+language plpgsql
+as $$
+begin
+  if old.conversation_id is distinct from new.conversation_id
+     or old.profile_id is distinct from new.profile_id
+     or old.created_at is distinct from new.created_at then
+    raise exception 'Immutable columns cannot be updated';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_conversation_members_immutable on public.conversation_members;
+create trigger trg_conversation_members_immutable
+  before update on public.conversation_members
+  for each row execute function public.trg_conversation_members_immutable();
 
 -- ===== 5. get_or_create_dm RPC =====
 create or replace function public.get_or_create_dm(p_other uuid)
@@ -155,7 +184,7 @@ begin
   if v_conversation_id is null then
     select id into v_conversation_id
     from public.conversations
-    where dm_key = v_dm_key;
+    where dm_key = v_dm_key and is_group = false;
   end if;
 
   insert into public.conversation_members (conversation_id, profile_id)

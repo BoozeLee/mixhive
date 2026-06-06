@@ -166,6 +166,44 @@ mh.notify_session(session_id, event_type, payload?)
   -- Use event_type "agent_suggestion_added" for collab session suggestions.
 ```
 
+### Automation primitives (stdlib v3)
+
+Sandbox-safe building blocks for multi-step automations. All state persists in
+this agent's durable user state (same 64 KB budget), under a reserved namespace —
+they do not collide with `mh.agent_state_*`.
+
+```lua
+mh.state_set(path, value)   -- path is a list of keys, e.g. {"counters","welcomes"}
+mh.state_get(path)          -- returns the value at path, or nil
+mh.state_merge(path, tbl)   -- shallow-merge a table into the node at path
+
+mh.rate_ok(key, seconds)    -- true at most once per `seconds` for `key`; false if
+                            -- called again inside the window (debounce bursts).
+mh.history_add(entry)       -- append entry (any value) to a bounded (50) ring buffer
+mh.history(limit?)          -- most-recent entries: [{ t = iso8601, entry = ... }]
+
+mh.workflow(name, steps)    -- run ordered steps; each is a function or
+                            -- { name=?, run=fn, stop_on_error=true }. Logs per-step
+                            -- status via mh.print; stops on error unless stop_on_error=false.
+                            -- returns [{ name, ok, err? }].
+```
+
+Example — debounced, multi-step with running state:
+
+```lua
+function on_follow(e)
+  if not mh.rate_ok("welcome:" .. e.actor_id, 86400) then return end  -- once/day per follower
+  mh.workflow("welcome", {
+    { name = "greet",  run = function() mh.notify(e.actor_id, "follow", { msg = "Welcome!" }) end },
+    { name = "count",  run = function()
+        local n = (mh.state_get({"welcomes"}) or 0) + 1
+        mh.state_set({"welcomes"}, n)
+      end },
+  })
+  mh.history_add({ kind = "welcome", who = e.actor_id })
+end
+```
+
 Example — Collab Cartographer persisting state across runs:
 
 ```lua

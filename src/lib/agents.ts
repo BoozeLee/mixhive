@@ -279,14 +279,19 @@ export async function testRunAgent(
   } = await supabase.auth.getSession();
   if (!session) throw new Error('not signed in');
 
-  const res = await fetch('/api/agents/test-run', {
+  // User-authored agents run on the Python runtime via the owner-gated proxy.
+  // (/api/agents/test-run is for strategic agent_registry agents on wasmoon.)
+  const res = await fetch('/api/lua-agent/test', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${session.access_token}`,
     },
-    body: JSON.stringify({ agent_id: agentId, triggered_by: 'manual', event }),
+    body: JSON.stringify({ agent_id: agentId, event }),
   });
-  if (!res.ok) throw new Error(`runtime returned ${res.status}`);
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null);
+    throw new Error(detail?.error ? `${detail.error} (${res.status})` : `runtime returned ${res.status}`);
+  }
   return res.json();
 }

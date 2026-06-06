@@ -948,6 +948,113 @@ def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
         return _python_to_lua_table(lua, parsed)
 
     # -----------------------------------------------------------------
+    # stdlib v3 — sandbox-safe automation primitives (reverse-engineered
+    # from the hypercube concept: multidimensional state, rate limiting,
+    # history). Persisted in agent_state_user.state_json under a reserved
+    # "__hc" namespace. Pure host functions — no os/io/exec.
+    # -----------------------------------------------------------------
+    def _hc_load() -> dict:
+        try:
+            r = client_svc.get(
+                _rest("/rest/v1/agent_state_user"),
+                params={"user_id": f"eq.{owner_id}", "agent_id": f"eq.{agent_id}",
+                        "select": "state_json", "limit": "1"},
+            )
+            r.raise_for_status()
+            rows = r.json()
+            if rows and isinstance(rows[0].get("state_json"), dict):
+                return rows[0]["state_json"]
+        except Exception:
+            pass
+        return {}
+
+    def _hc_save(full: dict) -> None:
+        if len(json.dumps(full, ensure_ascii=False).encode()) > 65536:
+            raise AgentDeniedError("agent state exceeds 64KB limit")
+        now = datetime.now(timezone.utc).isoformat()
+        try:
+            r = client_svc.post(
+                _rest("/rest/v1/agent_state_user"),
+                json={"user_id": owner_id, "agent_id": agent_id, "state_json": full, "updated_at": now},
+                headers={**_service_headers(), "Prefer": "resolution=merge-duplicates,return=minimal"},
+            )
+            r.raise_for_status()
+        except Exception:
+            pass
+
+    def _hc_keys(path_table) -> list[str]:
+        p = _lua_table_to_python(lua, path_table)
+        if isinstance(p, list):
+            return [str(k) for k in p]
+        if p is None:
+            return []
+        return [str(p)]
+
+    def state_get(path_table) -> Any:
+        node: Any = _hc_load().get("__hc", {}).get("state", {})
+        for k in _hc_keys(path_table):
+            if isinstance(node, dict) and k in node:
+                node = node[k]
+            else:
+                return None
+        return _python_to_lua_table(lua, node) if isinstance(node, (dict, list)) else node
+
+    def state_set(path_table, value) -> None:
+        keys = _hc_keys(path_table)
+        if not keys:
+            raise AgentDeniedError("state_set: non-empty path required")
+        val = _lua_table_to_python(lua, value)
+        full = _hc_load()
+        node = full.setdefault("__hc", {}).setdefault("state", {})
+        for k in keys[:-1]:
+            node = node.setdefault(k, {})
+            if not isinstance(node, dict):
+                raise AgentDeniedError("state_set: path crosses a non-table value")
+        node[keys[-1]] = val
+        _hc_save(full)
+
+    def state_merge(path_table, table) -> None:
+        incoming = _lua_table_to_python(lua, table)
+        if not isinstance(incoming, dict):
+            raise AgentDeniedError("state_merge: value must be a table")
+        full = _hc_load()
+        node = full.setdefault("__hc", {}).setdefault("state", {})
+        for k in _hc_keys(path_table):
+            node = node.setdefault(k, {})
+            if not isinstance(node, dict):
+                raise AgentDeniedError("state_merge: path crosses a non-table value")
+        node.update(incoming)
+        _hc_save(full)
+
+    def rate_ok(key: Any, seconds: Any) -> bool:
+        k = str(key)
+        win = float(seconds)
+        now = time.time()
+        full = _hc_load()
+        rates = full.setdefault("__hc", {}).setdefault("rate", {})
+        last = rates.get(k)
+        if isinstance(last, (int, float)) and (now - last) < win:
+            return False
+        rates[k] = now
+        _hc_save(full)
+        return True
+
+    def history_add(entry) -> None:
+        full = _hc_load()
+        hist = full.setdefault("__hc", {}).setdefault("history", [])
+        hist.append({"t": datetime.now(timezone.utc).isoformat(), "entry": _lua_table_to_python(lua, entry)})
+        if len(hist) > 50:
+            del hist[: len(hist) - 50]
+        _hc_save(full)
+
+    def history(limit: Any = 20) -> Any:
+        try:
+            n = max(1, min(50, int(limit)))
+        except (TypeError, ValueError):
+            n = 20
+        return _python_to_lua_table(lua, _hc_load().get("__hc", {}).get("history", [])[-n:])
+
+    # -----------------------------------------------------------------
     # Compose the mh.* table
     # -----------------------------------------------------------------
     mh = lua.table_from({
@@ -1007,10 +1114,40 @@ def _build_runtime(agent: dict[str, Any], stdout: list[str]) -> LuaRuntime:
         "find_similar_mixes":           find_similar_mixes,
         "find_collab_candidates":       find_collab_candidates,
         "find_set_continuations":       find_set_continuations,
+        # Automation primitives (Phase 4B / stdlib v3) — nested state, rate
+        # limiting, history. mh.workflow is added by the Lua prelude below.
+        "state_get":                    state_get,
+        "state_set":                    state_set,
+        "state_merge":                  state_merge,
+        "rate_ok":                      rate_ok,
+        "history_add":                  history_add,
+        "history":                      history,
     })
     lua.globals().mh = mh
     lua.globals().print = lua_print
+    # Injected-Lua workflow runner: ordered steps, per-step status to the run
+    # log, early-stop on error unless stop_on_error=false. Pure sandboxed Lua.
+    lua.execute(_WORKFLOW_PRELUDE)
     return lua
+
+
+# Sandbox-safe workflow orchestration (the hypercube "workflow" concept),
+# defined in Lua so step bodies are ordinary sandboxed functions.
+_WORKFLOW_PRELUDE = """
+mh.workflow = function(name, steps)
+  local results = {}
+  for i, step in ipairs(steps or {}) do
+    local fn = step.run or step
+    local label = step.name or tostring(i)
+    local ok, err = pcall(fn)
+    results[i] = { name = label, ok = ok, err = (not ok) and tostring(err) or nil }
+    mh.print('[workflow:' .. tostring(name) .. '] ' .. label .. ' => '
+      .. (ok and 'ok' or ('ERROR: ' .. tostring(err))))
+    if (not ok) and step.stop_on_error ~= false then break end
+  end
+  return results
+end
+"""
 
 
 # --------------------------------------------------------------------- #
@@ -1022,6 +1159,7 @@ def _execute(payload: dict[str, Any]) -> dict[str, Any]:
     agent_id = payload.get("agent_id")
     triggered_by = payload.get("triggered_by", "manual")
     event = payload.get("event") or {}
+    is_test = bool(payload.get("test"))
 
     if not agent_id or not isinstance(agent_id, str):
         return {"status": 400, "body": {"error": "agent_id required"}}
@@ -1029,7 +1167,9 @@ def _execute(payload: dict[str, Any]) -> dict[str, Any]:
     agent = _load_agent(agent_id)
     if not agent:
         return {"status": 404, "body": {"error": "agent not found"}}
-    if not agent.get("enabled"):
+    # Manual test runs (owner-gated by /api/lua-agent/test) execute even when the
+    # agent is disabled, so drafts are testable; real event/cron dispatch does not.
+    if not agent.get("enabled") and not is_test:
         return {"status": 200, "body": {"skipped": True, "reason": "agent disabled"}}
 
     stdout: list[str] = []
@@ -1103,4 +1243,4 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel convention
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
-        self.wfile.write(b'{"ok":true,"runtime":"mixhive-lua-agent","stdlib_version":"2"}')
+        self.wfile.write(b'{"ok":true,"runtime":"mixhive-lua-agent","stdlib_version":"3"}')

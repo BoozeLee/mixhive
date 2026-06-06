@@ -20,6 +20,7 @@ import { MixCard } from '../components/MixCard';
 import { BuzzCard } from '../components/BuzzCard';
 import { PlaylistCard } from '../components/PlaylistCard';
 import { BlockButton } from '../components/BlockButton';
+import { MessageButton } from '../components/MessageButton';
 import { SkeletonProfile } from '../components/Skeleton';
 import { EmptyState, NotFoundState } from '../components/EmptyState';
 import { VerificationBadgeSystem } from '../components/VerificationBadgeSystem';
@@ -377,6 +378,7 @@ export function ProfilePage() {
               >
                 {following ? 'Following' : 'Follow'}
               </button>
+              <MessageButton targetUserId={profile.id} />
               <BlockButton targetUserId={profile.id} currentUserId={user.id} />
             </>
           )}

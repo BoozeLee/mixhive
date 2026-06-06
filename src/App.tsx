@@ -11,6 +11,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { RoutePending } from './components/RoutePending';
 import { PlayerProvider } from './lib/playerStore';
 import { NotificationProvider } from './lib/notificationStore';
+import { MessagesProvider } from './lib/messagesStore';
 import { MobileNav } from './components/MobileNav';
 import { DesktopSidebar } from './components/DesktopSidebar';
 import { CyberHiveBackdrop } from './components/CyberHiveBackdrop';
@@ -312,7 +313,8 @@ export default function App() {
     <BrowserRouter>
       <PlayerProvider>
         <NotificationProvider>
-          <div className="mixhive-shell">
+          <MessagesProvider>
+            <div className="mixhive-shell">
             <CyberHiveBackdrop />
             <Navbar />
             <a href="#main-content" className="skip-link">
@@ -334,6 +336,7 @@ export default function App() {
             {loadVercelTelemetry && <Analytics />}
             {loadVercelTelemetry && <SpeedInsights />}
           </div>
+        </MessagesProvider>
         </NotificationProvider>
       </PlayerProvider>
     </BrowserRouter>

@@ -107,6 +107,8 @@ const HelpArticle = lazy(() =>
 const Earnings = lazy(() =>
   import('./views/Earnings').then(m => ({ default: m.Earnings }))
 );
+const MessagesPage = lazy(() => import('./views/Messages').then(m => ({ default: m.MessagesPage })));
+const MessageThreadPage = lazy(() => import('./views/MessageThread').then(m => ({ default: m.MessageThreadPage })));
 // SessionFab is small and always available to authenticated users — not lazy-loaded
 import { SessionFab } from './components/SessionFab';
 
@@ -281,6 +283,23 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <Earnings />
+            </ProtectedRoute>
+          }
+        />
+        {/* Phase 4 — Messaging */}
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <MessagesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages/:conversationId"
+          element={
+            <ProtectedRoute>
+              <MessageThreadPage />
             </ProtectedRoute>
           }
         />

@@ -181,15 +181,29 @@ export interface Notification {
   mix?: Mix;
 }
 
+export type ModerationSignalStatus = 'open' | 'reviewing' | 'actioned' | 'dismissed';
+export type ModerationAction = 'hide' | 'ban' | 'dismiss';
+
 export interface ModerationSignal {
   id: string;
   source_table: string;
   source_id: string | null;
-  signal_type: 'hate_speech' | 'fraud' | 'doxxing' | 'csam' | 'violent_threat' | 'text_flagged';
+  signal_type:
+    | 'hate_speech'
+    | 'fraud'
+    | 'doxxing'
+    | 'csam'
+    | 'violent_threat'
+    | 'text_flagged'
+    | 'user_report';
   severity: 'low' | 'medium' | 'high' | 'critical';
   action_taken: string | null;
   flagged_by: string;
   payload: Record<string, unknown>;
+  status: ModerationSignalStatus;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  resolution_notes: string | null;
   created_at: string;
 }
 

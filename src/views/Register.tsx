@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { RegisterSchema, formatZodError } from '../lib/schemas';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { isDisposableEmail } from '../lib/disposableEmail';
 
 export function Register() {
   const [formData, setFormData] = useState({
@@ -36,6 +37,12 @@ export function Register() {
 
     setErrors({});
     setGeneralError('');
+
+    // Friendly pre-check; the signup trigger (migration 087) is the hard block.
+    if (isDisposableEmail(formData.email)) {
+      setErrors({ email: 'Disposable email addresses are not allowed.' });
+      return;
+    }
 
     if (isSupabaseConfigured) {
       const { data: existingProfile, error: usernameCheckError } = await supabase

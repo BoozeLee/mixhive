@@ -56,6 +56,9 @@ const DevLogin = lazy(() => import('./views/DevLogin').then(m => ({ default: m.D
 const AdminVerification = lazy(() =>
   import('./views/AdminVerification').then(m => ({ default: m.AdminVerification }))
 );
+const AdminModeration = lazy(() =>
+  import('./views/AdminModeration').then(m => ({ default: m.AdminModeration }))
+);
 const BuzzDetail = lazy(() => import('./views/BuzzDetail').then(m => ({ default: m.BuzzDetail })));
 const ProfileSetup = lazy(() =>
   import('./views/ProfileSetup').then(m => ({ default: m.ProfileSetup }))
@@ -174,6 +177,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <AdminVerification />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/moderation"
+          element={
+            <ProtectedRoute>
+              <AdminModeration />
             </ProtectedRoute>
           }
         />

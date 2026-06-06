@@ -20,6 +20,7 @@ import { MixCard } from '../components/MixCard';
 import { BuzzCard } from '../components/BuzzCard';
 import { PlaylistCard } from '../components/PlaylistCard';
 import { BlockButton } from '../components/BlockButton';
+import { ReportButton } from '../components/ReportButton';
 import { SkeletonProfile } from '../components/Skeleton';
 import { EmptyState, NotFoundState } from '../components/EmptyState';
 import { VerificationBadgeSystem } from '../components/VerificationBadgeSystem';
@@ -378,6 +379,7 @@ export function ProfilePage() {
                 {following ? 'Following' : 'Follow'}
               </button>
               <BlockButton targetUserId={profile.id} currentUserId={user.id} />
+              <ReportButton sourceTable="profiles" sourceId={profile.id} />
             </>
           )}
           {isOwn && (
@@ -431,6 +433,24 @@ export function ProfilePage() {
                   }}
                 >
                   Verification Admin
+                </Link>
+              )}
+              {profile.is_admin && (
+                <Link
+                  to="/admin/moderation"
+                  style={{
+                    minHeight: 40,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '9px 22px',
+                    borderRadius: radius.md,
+                    border: `1px solid ${colors.borderStrong}`,
+                    color: colors.text.secondary,
+                    textDecoration: 'none',
+                    fontWeight: 700,
+                  }}
+                >
+                  Moderation
                 </Link>
               )}
             </>

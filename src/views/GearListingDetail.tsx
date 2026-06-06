@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { ReportButton } from '../components/ReportButton';
 
 interface Listing {
   id: string;
@@ -234,6 +235,11 @@ export function GearListingDetail() {
           <p style={{ color: '#444', fontSize: 12, textAlign: 'center', margin: '8px 0 0' }}>
             {listing.views_count} views · Listed {new Date(listing.created_at).toLocaleDateString()}
           </p>
+          {userId && userId !== listing.seller_profile_id && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+              <ReportButton sourceTable="equipment_listings" sourceId={listing.id} />
+            </div>
+          )}
         </div>
       </div>
     </div>

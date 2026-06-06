@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getBuzz, getBuzzReplies, replyToBuzz } from '../lib/api';
 import { BuzzCard } from '../components/BuzzCard';
+import { ReportButton } from '../components/ReportButton';
 import { SkeletonFeed } from '../components/Skeleton';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 import { BuzzToast } from '../components/hive/BuzzToast';
@@ -93,6 +94,11 @@ export function BuzzDetail() {
         <>
           {/* Parent buzz */}
           <BuzzCard buzz={buzz} onDeleted={() => navigate(-1)} />
+          {user && user.id !== buzz.author_id && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 6 }}>
+              <ReportButton sourceTable="buzzes" sourceId={buzz.id} />
+            </div>
+          )}
 
           {/* Reply composer */}
           {user ? (

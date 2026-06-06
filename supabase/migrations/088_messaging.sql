@@ -68,6 +68,26 @@ $$;
 revoke execute on function public.is_either_blocked(uuid, uuid) from public, anon;
 grant execute on function public.is_either_blocked(uuid, uuid) to authenticated;
 
+-- ===== Membership helper (SECURITY DEFINER bypasses RLS to avoid policy recursion) =====
+-- Querying conversation_members from inside conversation_members' own SELECT policy
+-- causes "infinite recursion detected in policy". Resolve membership through this
+-- definer function so the policies never re-enter RLS.
+create or replace function public.is_conversation_member(p_conversation_id uuid, p_user uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.conversation_members m
+    where m.conversation_id = p_conversation_id and m.profile_id = p_user
+  );
+$$;
+
+revoke execute on function public.is_conversation_member(uuid, uuid) from public, anon;
+grant execute on function public.is_conversation_member(uuid, uuid) to authenticated;
+
 -- ===== 4. RLS =====
 alter table public.conversations enable row level security;
 alter table public.conversation_members enable row level security;
@@ -77,29 +97,19 @@ alter table public.messages enable row level security;
 drop policy if exists conversations_select_member on public.conversations;
 create policy conversations_select_member
   on public.conversations for select
-  using (exists (
-    select 1 from public.conversation_members m
-    where m.conversation_id = conversations.id and m.profile_id = auth.uid()
-  ));
+  using (public.is_conversation_member(conversations.id, auth.uid()));
 
 -- Conversation members: SELECT if member of same conversation
 drop policy if exists conversation_members_select_member on public.conversation_members;
 create policy conversation_members_select_member
   on public.conversation_members for select
-  using (exists (
-    select 1 from public.conversation_members m
-    where m.conversation_id = conversation_members.conversation_id
-      and m.profile_id = auth.uid()
-  ));
+  using (public.is_conversation_member(conversation_members.conversation_id, auth.uid()));
 
 -- Messages: SELECT if member of the conversation
 drop policy if exists messages_select_member on public.messages;
 create policy messages_select_member
   on public.messages for select
-  using (exists (
-    select 1 from public.conversation_members m
-    where m.conversation_id = messages.conversation_id and m.profile_id = auth.uid()
-  ));
+  using (public.is_conversation_member(messages.conversation_id, auth.uid()));
 
 -- Messages: INSERT = sender is me AND I'm a member AND not blocked
 drop policy if exists messages_insert_member on public.messages;
@@ -107,10 +117,7 @@ create policy messages_insert_member
   on public.messages for insert
   with check (
     sender_id = auth.uid()
-    and exists (
-      select 1 from public.conversation_members m
-      where m.conversation_id = messages.conversation_id and m.profile_id = auth.uid()
-    )
+    and public.is_conversation_member(messages.conversation_id, auth.uid())
     and not exists (
       select 1 from public.conversation_members cm
       where cm.conversation_id = messages.conversation_id

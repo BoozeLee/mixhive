@@ -170,7 +170,7 @@ export interface Comment {
 export interface Notification {
   id: string;
   user_id: string;
-  type: 'like' | 'follow' | 'comment' | 'reply' | 'mix_upload' | 'mention' | 'buzz_like' | 'repost';
+  type: 'like' | 'follow' | 'comment' | 'reply' | 'mix_upload' | 'mention' | 'buzz_like' | 'repost' | 'message';
   actor_id: string;
   mix_id: string | null;
   buzz_id: string | null;
@@ -179,6 +179,43 @@ export interface Notification {
   created_at: string;
   actor?: Profile;
   mix?: Mix;
+}
+
+export interface Conversation {
+  id: string;
+  is_group: boolean;
+  title: string | null;
+  created_by: string | null;
+  dm_key: string | null;
+  created_at: string;
+  updated_at: string;
+  last_message_at: string | null;
+}
+
+export interface ConversationMember {
+  conversation_id: string;
+  profile_id: string;
+  last_read_at: string;
+  created_at: string;
+  profile?: Profile;
+}
+
+export interface DirectMessage {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  body: string;
+  attachment: Record<string, unknown> | null;
+  created_at: string;
+  sender?: Profile;
+  status?: 'pending' | 'sent' | 'failed';
+}
+
+export interface ConversationSummary {
+  conversation: Conversation;
+  otherMember: Profile;
+  lastMessage: DirectMessage | null;
+  unread: boolean;
 }
 
 export interface ModerationSignal {

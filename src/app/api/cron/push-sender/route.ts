@@ -23,6 +23,7 @@ const NOTIFICATION_TYPE_TITLES: Record<string, string> = {
   agent_purchased: '✦ Agent purchase complete',
   agent_sale: '✦ Your agent was purchased',
   gear_sale: '📦 Gear listing sold',
+  message: '💬 New message',
 };
 
 export async function GET(req: NextRequest) {

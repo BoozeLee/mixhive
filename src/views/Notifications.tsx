@@ -19,6 +19,7 @@ const TYPE_ICON: Record<string, IconKey> = {
   mention: 'mention',
   buzz_like: 'like',
   repost: 'repost',
+  message: 'messages',
 };
 
 export function NotificationsPage() {
@@ -59,6 +60,8 @@ export function NotificationsPage() {
         return `${actor} liked your buzz`;
       case 'repost':
         return `${actor} reposted your buzz`;
+      case 'message':
+        return `${actor} sent you a message`;
       default:
         return `${actor} interacted with you`;
     }
@@ -77,6 +80,10 @@ export function NotificationsPage() {
       case 'buzz_like':
       case 'repost':
         return notification.buzz_id ? `/buzz/${notification.buzz_id}` : '#';
+      case 'message':
+        return (notification.data as { conversation_id?: string })?.conversation_id
+          ? `/messages/${(notification.data as { conversation_id: string }).conversation_id}`
+          : '/messages';
       default:
         return '#';
     }

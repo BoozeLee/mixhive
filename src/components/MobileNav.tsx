@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useMessages } from '../lib/messagesStore';
 import { LogoIcon } from './Logo';
 import { Icon } from './ui/Icon';
 import type { IconKey } from '../lib/icons';
@@ -16,6 +17,7 @@ const navItems: NavItem[] = [
   { path: '/dashboard', icon: 'dashboard', label: 'Growth', ariaLabel: 'Creator dashboard' },
   { path: '/feed', icon: 'feed', label: 'Feed', ariaLabel: 'Hive Feed' },
   { path: '/search', icon: 'network', label: 'Radar', ariaLabel: 'Hive Radar' },
+  { path: '/messages', icon: 'messages', label: 'DMs', ariaLabel: 'Direct messages' },
   { path: '/profile', icon: 'profile', label: 'Cell', ariaLabel: 'Profile cell' },
 ];
 
@@ -29,6 +31,7 @@ const logoItem = {
 export function MobileNav() {
   const location = useLocation();
   const { user, profile } = useAuth();
+  const { unreadTotal } = useMessages();
 
   if (!user) return null;
 
@@ -157,9 +160,30 @@ export function MobileNav() {
                 background: isActive ? colors.accent : 'rgba(240,192,64,0.08)',
                 color: isActive ? colors.bg : colors.accent,
                 border: `1px solid ${isActive ? colors.accent : colors.accentMuted}`,
+                position: 'relative',
               }}
             >
               <Icon name={item.icon} size={17} color="currentColor" />
+              {item.path === '/messages' && unreadTotal > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: -4,
+                  right: -4,
+                  background: colors.accent,
+                  color: colors.bg,
+                  fontSize: 9,
+                  fontWeight: 700,
+                  width: 14,
+                  height: 14,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 2,
+                }}>
+                  {unreadTotal > 9 ? '9+' : unreadTotal}
+                </span>
+              )}
             </span>
             <span
               style={{

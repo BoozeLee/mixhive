@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useMessages } from '../lib/messagesStore';
 import { Logo } from './Logo';
 import { Icon, HexIcon } from './ui/Icon';
 import type { IconKey } from '../lib/icons';
@@ -23,6 +24,7 @@ const topItems: SidebarItem[] = [
   { path: '/epk', icon: 'epk', label: 'EPK', ariaLabel: 'Press Kit Studio' },
   { path: '/upload', icon: 'upload', label: 'Upload', ariaLabel: 'Nectar Upload' },
   { path: '/agents/inbox', icon: 'inbox', label: 'Inbox', ariaLabel: 'Agent Inbox' },
+  { path: '/messages', icon: 'messages', label: 'Messages', ariaLabel: 'Direct messages' },
   { path: '/agents/gallery', icon: 'agents', label: 'BeeCast', ariaLabel: 'BeeCast agents' },
   { path: '/quests', icon: 'quests', label: 'Quests', ariaLabel: 'Mythic Quest Lines' },
   { path: '/scene-radar', icon: 'radar', label: 'Radar', ariaLabel: 'Scene Radar' },
@@ -42,6 +44,7 @@ function isActive(itemPath: string, currentPath: string): boolean {
 export function DesktopSidebar() {
   const location = useLocation();
   const { user, profile } = useAuth();
+  const { unreadTotal } = useMessages();
 
   if (!user) return null;
 
@@ -134,6 +137,7 @@ export function DesktopSidebar() {
                 fontWeight: active ? fontWeight.bold : fontWeight.normal,
                 fontSize: fontSize.md,
                 transition: transition.base,
+                position: 'relative',
               }}
               onMouseEnter={e => {
                 if (!active) {
@@ -150,6 +154,27 @@ export function DesktopSidebar() {
             >
               <HexIcon name={item.icon} cell={32} size={16} active={active} />
               <span>{item.label}</span>
+              {item.path === '/messages' && unreadTotal > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 12,
+                  background: colors.accent,
+                  color: colors.bg,
+                  fontSize: 10,
+                  fontWeight: 700,
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  lineHeight: 1,
+                  zIndex: 2,
+                }}>
+                  {unreadTotal > 9 ? '9+' : unreadTotal}
+                </span>
+              )}
             </Link>
           );
         })}

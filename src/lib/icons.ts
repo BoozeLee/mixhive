@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   Bot,
   Inbox,
+  MessageSquare,
   SlidersHorizontal,
   Radar,
   FileText,
@@ -81,6 +82,7 @@ export type IconKey =
   | 'agents'
   | 'agentMarket'
   | 'inbox'
+  | 'messages'
   | 'composer'
   | 'radar'
   | 'epk'
@@ -139,6 +141,7 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   agents: Bot,
   agentMarket: Sparkles,
   inbox: Inbox,
+  messages: MessageSquare,
   composer: SlidersHorizontal,
   radar: Radar,
   epk: FileText,

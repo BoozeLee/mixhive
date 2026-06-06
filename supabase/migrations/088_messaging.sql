@@ -62,10 +62,14 @@ create policy if not exists conversations_select_member
     where m.conversation_id = conversations.id and m.profile_id = auth.uid()
   ));
 
--- Conversation members: SELECT if own row
+-- Conversation members: SELECT if member of same conversation
 create policy if not exists conversation_members_select_member
   on public.conversation_members for select
-  using (profile_id = auth.uid());
+  using (exists (
+    select 1 from public.conversation_members m
+    where m.conversation_id = conversation_members.conversation_id
+      and m.profile_id = auth.uid()
+  ));
 
 -- Messages: SELECT if member of the conversation
 create policy if not exists messages_select_member
@@ -143,20 +147,20 @@ begin
 
   v_dm_key := least(v_me::text, p_other::text) || ':' || greatest(v_me::text, p_other::text);
 
-  select id into v_conversation_id
-  from public.conversations
-  where dm_key = v_dm_key;
-
-  if v_conversation_id is not null then
-    return v_conversation_id;
-  end if;
-
   insert into public.conversations (is_group, dm_key, created_by)
   values (false, v_dm_key, v_me)
+  on conflict (dm_key) do nothing
   returning id into v_conversation_id;
 
+  if v_conversation_id is null then
+    select id into v_conversation_id
+    from public.conversations
+    where dm_key = v_dm_key;
+  end if;
+
   insert into public.conversation_members (conversation_id, profile_id)
-  values (v_conversation_id, v_me), (v_conversation_id, p_other);
+  values (v_conversation_id, v_me), (v_conversation_id, p_other)
+  on conflict (conversation_id, profile_id) do nothing;
 
   return v_conversation_id;
 end;

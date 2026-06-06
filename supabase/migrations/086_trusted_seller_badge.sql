@@ -105,21 +105,32 @@ create trigger trusted_seller_on_release
 -- ===== 5. Notify on verification approve/reject =====
 -- CREATE OR REPLACE of the existing RPC (migration 017): keep all prior behavior and
 -- add a notification to the requesting user on both outcomes.
+-- Drop the original migration-017 overload (p_reviewer_id uuid). Changing the
+-- signature below would otherwise leave that vulnerable overload callable.
+drop function if exists public.review_verification_request(uuid, uuid, text, text, text);
+
+-- Reviewer identity comes from auth.uid(), never a parameter — a SECURITY DEFINER
+-- function that trusted a caller-supplied reviewer id would let any authenticated
+-- user pass an admin's uuid and approve/grant badges (privilege escalation).
 create or replace function public.review_verification_request(
   p_request_id uuid,
-  p_reviewer_id uuid,
   p_status text,
   p_reason text default null,
   p_badge_type text default null
 ) returns void as $$
 declare
+  v_reviewer uuid := auth.uid();
   v_request public.verification_requests%rowtype;
   v_is_admin boolean;
   v_badge text;
 begin
+  if v_reviewer is null then
+    raise exception 'Not authenticated';
+  end if;
+
   select coalesce(is_admin, false) into v_is_admin
   from public.profiles
-  where id = p_reviewer_id;
+  where id = v_reviewer;
 
   if not coalesce(v_is_admin, false) then
     raise exception 'Only admins can review verification requests';
@@ -142,7 +153,7 @@ begin
   set
     status = p_status,
     rejection_reason = case when p_status = 'rejected' then p_reason else null end,
-    reviewed_by = p_reviewer_id,
+    reviewed_by = v_reviewer,
     reviewed_at = now(),
     updated_at = now()
   where id = p_request_id;
@@ -160,7 +171,7 @@ begin
         else 'Verified'
       end,
       p_reason,
-      p_reviewer_id
+      v_reviewer
     )
     on conflict (profile_id, badge_type)
     do update set
@@ -175,7 +186,7 @@ begin
     insert into public.analytics_events (profile_id, actor_id, event_type, metadata)
     values (
       v_request.profile_id,
-      p_reviewer_id,
+      v_reviewer,
       'verification',
       jsonb_build_object('badge_type', v_badge, 'request_id', p_request_id)
     );
@@ -186,7 +197,7 @@ begin
   values (
     v_request.profile_id,
     'verification',
-    p_reviewer_id,
+    v_reviewer,
     jsonb_build_object(
       'status', p_status,
       'badge_type', case when p_status = 'approved' then coalesce(v_badge, v_request.requested_badge) else null end,
@@ -196,6 +207,10 @@ begin
   );
 end;
 $$ language plpgsql security definer;
+
+-- Only signed-in users may call it (the admin check inside is still authoritative).
+revoke execute on function public.review_verification_request(uuid, text, text, text) from public, anon;
+grant execute on function public.review_verification_request(uuid, text, text, text) to authenticated;
 
 -- ===== 6. Backfill: grant to sellers already over the threshold =====
 do $$

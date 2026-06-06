@@ -170,15 +170,14 @@ export async function listVerificationRequests(): Promise<VerificationRequest[]>
 
 export async function reviewVerificationRequest(input: {
   requestId: string;
-  reviewerId: string;
   status: 'approved' | 'rejected';
   reason?: string;
   badgeType?: VerificationBadgeType;
 }): Promise<void> {
   if (!isSupabaseConfigured) return;
+  // Reviewer is derived server-side from auth.uid() — never sent from the client.
   const { error } = await supabase.rpc('review_verification_request', {
     p_request_id: input.requestId,
-    p_reviewer_id: input.reviewerId,
     p_status: input.status,
     p_reason: input.reason || null,
     p_badge_type: input.badgeType || null,

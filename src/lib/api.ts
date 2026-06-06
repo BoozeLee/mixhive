@@ -185,14 +185,13 @@ export async function listModerationSignals(
 
 export async function reviewModerationSignal(input: {
   signalId: string;
-  reviewerId: string;
   action: ModerationAction;
   notes?: string;
 }): Promise<void> {
   if (!isSupabaseConfigured) return;
+  // Reviewer is derived server-side from auth.uid() — never sent from the client.
   const { error } = await supabase.rpc('review_moderation_signal', {
     p_signal_id: input.signalId,
-    p_reviewer_id: input.reviewerId,
     p_action: input.action,
     p_notes: input.notes || null,
   });

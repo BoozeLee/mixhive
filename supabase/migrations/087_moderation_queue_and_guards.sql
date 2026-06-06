@@ -33,19 +33,26 @@ create policy "Admins update moderation signals"
   using (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin));
 
 -- ===== 2. Admin action RPC =====
+-- Reviewer identity is taken from the session (auth.uid()), never from a
+-- parameter — a SECURITY DEFINER function that trusted a caller-supplied
+-- reviewer id would let any authenticated user pass an admin's uuid and escalate.
 create or replace function public.review_moderation_signal(
   p_signal_id uuid,
-  p_reviewer_id uuid,
   p_action text,
   p_notes text default null
 ) returns void as $$
 declare
+  v_reviewer uuid := auth.uid();
   v_is_admin boolean;
   v_sig public.moderation_signals%rowtype;
   v_owner uuid;
 begin
+  if v_reviewer is null then
+    raise exception 'Not authenticated';
+  end if;
+
   select coalesce(is_admin, false) into v_is_admin
-  from public.profiles where id = p_reviewer_id;
+  from public.profiles where id = v_reviewer;
   if not coalesce(v_is_admin, false) then
     raise exception 'Only admins can review moderation signals';
   end if;
@@ -62,7 +69,7 @@ begin
   update public.moderation_signals
   set status = case when p_action = 'dismiss' then 'dismissed' else 'actioned' end,
       action_taken = p_action,
-      resolved_by = p_reviewer_id,
+      resolved_by = v_reviewer,
       resolved_at = now(),
       resolution_notes = p_notes
   where id = p_signal_id;
@@ -94,6 +101,10 @@ begin
   end if;
 end;
 $$ language plpgsql security definer;
+
+-- Only signed-in users may call it (the admin check inside is still authoritative).
+revoke execute on function public.review_moderation_signal(uuid, text, text) from public, anon;
+grant execute on function public.review_moderation_signal(uuid, text, text) to authenticated;
 
 -- ===== 3. Disposable-email guard at signup =====
 create table if not exists public.disposable_email_domains (

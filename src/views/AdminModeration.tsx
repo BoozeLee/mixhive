@@ -50,7 +50,6 @@ export function AdminModeration() {
     try {
       await reviewModerationSignal({
         signalId: signal.id,
-        reviewerId: user.id,
         action,
         notes: notes.trim() || undefined,
       });

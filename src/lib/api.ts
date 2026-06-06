@@ -30,6 +30,10 @@ import type {
   AnalyticsEventType,
   ArtistGoals,
   Buzz,
+  Conversation,
+  ConversationMember,
+  ConversationSummary,
+  DirectMessage,
   MythicQuest,
   QuestWithMilestones,
   BuzzFeedResult,
@@ -767,6 +771,133 @@ export async function hasBlocked(blockerId: string, targetId: string): Promise<b
     .eq('blocked_id', targetId)
     .maybeSingle();
   return !!data;
+}
+
+// --- Messaging ---
+
+export async function getOrCreateDm(otherProfileId: string): Promise<string | null> {
+  if (!isSupabaseConfigured) return null;
+  const { data, error } = await supabase.rpc('get_or_create_dm', { p_other: otherProfileId });
+  if (error) {
+    console.error('getOrCreateDm error:', error.message);
+    return null;
+  }
+  return data as string;
+}
+
+export async function listConversations(): Promise<ConversationSummary[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data: { user } } = await supabase.auth.getUser();
+  const userId = user?.id ?? '';
+  if (!userId) return [];
+
+  const { data, error } = await supabase
+    .from('conversation_members')
+    .select(`
+      conversation_id,
+      last_read_at,
+      conversation:conversations!inner(*),
+      member_profiles:conversation_members(profile_id, profile:profiles(*))
+    `)
+    .eq('profile_id', userId);
+
+  if (error || !data) {
+    console.error('listConversations error:', error?.message);
+    return [];
+  }
+
+  const summaries: ConversationSummary[] = [];
+
+  for (const row of data as any[]) {
+    const conversation: Conversation = row.conversation;
+    const members: { profile_id: string; profile: Profile }[] = row.member_profiles ?? [];
+    const otherMember = members.find(m => m.profile_id !== userId)?.profile;
+    if (!otherMember) continue;
+
+    const { data: msgData } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('conversation_id', conversation.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const lastMessage: DirectMessage | null = msgData;
+    const unread = !!lastMessage && lastMessage.sender_id !== userId && new Date(lastMessage.created_at) > new Date(row.last_read_at);
+
+    summaries.push({ conversation, otherMember, lastMessage, unread });
+  }
+
+  return summaries.sort((a, b) => {
+    const aTime = a.lastMessage?.created_at ?? a.conversation.created_at;
+    const bTime = b.lastMessage?.created_at ?? b.conversation.created_at;
+    return new Date(bTime).getTime() - new Date(aTime).getTime();
+  });
+}
+
+export async function getMessages(
+  conversationId: string,
+  beforeCursor?: string,
+  limit = 50
+): Promise<{ messages: DirectMessage[]; nextCursor?: string }> {
+  if (!isSupabaseConfigured) return { messages: [] };
+  let query = supabase
+    .from('messages')
+    .select('*, sender:profiles(id, username, display_name, avatar_url)')
+    .eq('conversation_id', conversationId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (beforeCursor) {
+    query = query.lt('created_at', beforeCursor);
+  }
+
+  const { data, error } = await query;
+  if (error || !data) {
+    console.error('getMessages error:', error?.message);
+    return { messages: [] };
+  }
+
+  const messages = (data as any[]).reverse();
+  const nextCursor = data.length === limit ? (data[data.length - 1] as DirectMessage).created_at : undefined;
+
+  return { messages, nextCursor };
+}
+
+export async function sendMessage(payload: {
+  conversationId: string;
+  id: string;
+  body: string;
+  attachment?: Record<string, unknown>;
+}): Promise<DirectMessage | null> {
+  if (!isSupabaseConfigured) return null;
+  const { data, error } = await supabase
+    .from('messages')
+    .insert({
+      id: payload.id,
+      conversation_id: payload.conversationId,
+      body: payload.body,
+      attachment: payload.attachment ?? null,
+    })
+    .select('*, sender:profiles(id, username, display_name, avatar_url)')
+    .single();
+
+  if (error) {
+    console.error('sendMessage error:', error.message);
+    return null;
+  }
+  return data as DirectMessage;
+}
+
+export async function markConversationRead(conversationId: string): Promise<void> {
+  if (!isSupabaseConfigured) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase
+    .from('conversation_members')
+    .update({ last_read_at: new Date().toISOString() })
+    .eq('conversation_id', conversationId)
+    .eq('profile_id', user.id);
 }
 
 // --- Activity / Recommendations ---

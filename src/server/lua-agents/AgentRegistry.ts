@@ -24,6 +24,7 @@ import {
   MYTHIC_NARRATOR,
   MYTHIC_YIELD_ANALYST,
   MYTHIC_STRATEGIST,
+  SET_COMPOSER_AGENT,
 } from './scripts';
 
 const SCRIPT_MAP: Partial<Record<AgentId, string>> = {
@@ -51,6 +52,8 @@ const SCRIPT_MAP: Partial<Record<AgentId, string>> = {
   mythic_narrator: MYTHIC_NARRATOR,
   mythic_yield_analyst: MYTHIC_YIELD_ANALYST,
   mythic_strategist: MYTHIC_STRATEGIST,
+  // Composer
+  set_composer_agent: SET_COMPOSER_AGENT,
 };
 
 function loadScript(agentId: AgentId): string {
@@ -315,6 +318,14 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
       'mythic.quest.get_active',
       'mythic.edge.create',
     ],
+  },
+  set_composer_agent: {
+    display_name: 'Set Composer',
+    description: "Analyses a Hive Composer set's BPM arc and flow on demand.",
+    tier: 'free',
+    approval: 'auto',
+    timeout_ms: 25000,
+    tools: ['llm.call'],
   },
 };
 

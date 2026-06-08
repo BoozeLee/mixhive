@@ -41,6 +41,9 @@ import type {
   FeedResult,
   Mix,
   MixedFeedResult,
+  ModerationAction,
+  ModerationSignal,
+  ModerationSignalStatus,
   Notification,
   Opportunity,
   OpportunitySave,
@@ -185,6 +188,70 @@ export async function reviewVerificationRequest(input: {
   if (error) throw error;
 }
 
+// --- Moderation (admin) ---
+
+export async function listModerationSignals(
+  status?: ModerationSignalStatus
+): Promise<ModerationSignal[]> {
+  if (!isSupabaseConfigured) return [];
+  let query = supabase
+    .from('moderation_signals')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(200);
+  if (status) query = query.eq('status', status);
+  const { data } = await query;
+  return (data || []) as ModerationSignal[];
+}
+
+export async function reviewModerationSignal(input: {
+  signalId: string;
+  action: ModerationAction;
+  notes?: string;
+}): Promise<void> {
+  if (!isSupabaseConfigured) return;
+  // Reviewer is derived server-side from auth.uid() — never sent from the client.
+  const { error } = await supabase.rpc('review_moderation_signal', {
+    p_signal_id: input.signalId,
+    p_action: input.action,
+    p_notes: input.notes || null,
+  });
+  if (error) throw error;
+}
+
+/** File a user report on a piece of content. Goes through /api/reports (which
+ *  verifies the session, rate-limits, and inserts via the service role). */
+export async function reportContent(input: {
+  sourceTable: 'buzzes' | 'mixes' | 'profiles' | 'equipment_listings';
+  sourceId: string;
+  reason: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  if (!isSupabaseConfigured) return { ok: false, error: 'not configured' };
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return { ok: false, error: 'Sign in to report' };
+  try {
+    const res = await fetch('/api/reports', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        source_table: input.sourceTable,
+        source_id: input.sourceId,
+        reason: input.reason,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return { ok: false, error: data.error ?? 'Report failed' };
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Network error' };
+  }
+}
+
 export async function searchProfiles(query: string): Promise<Profile[]> {
   if (!isSupabaseConfigured) return [];
   const { data } = await supabase
@@ -283,6 +350,8 @@ export async function getMix(id: string): Promise<Mix | null> {
 
 export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
   if (!isSupabaseConfigured) return null;
+  // Abuse guard: cap uploads per user (10/hour) — mirrors createBuzz.
+  if (mix.dj_id && !(await checkRateLimit('upload', mix.dj_id))) return null;
   const { data } = await supabase.from('mixes').insert(mix).select().single();
   if (data?.id && typeof window !== 'undefined') {
     fetch('/api/embed', {

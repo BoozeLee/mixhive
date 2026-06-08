@@ -20,6 +20,7 @@ import {
 import { WaveformPlayer } from '../components/WaveformPlayer';
 import { SkeletonMixDetail } from '../components/Skeleton';
 import { FollowButton } from '../components/FollowButton';
+import { ReportButton } from '../components/ReportButton';
 import { AddToPlaylistModal } from '../components/AddToPlaylistModal';
 import { MentionRenderer } from '../components/MentionRenderer';
 import { MixCard } from '../components/MixCard';
@@ -201,6 +202,9 @@ export function MixDetail() {
             </Link>
             {user && user.id !== mix.dj_id && (
               <FollowButton targetUserId={mix.dj_id} currentUserId={user.id} />
+            )}
+            {user && user.id !== mix.dj_id && (
+              <ReportButton sourceTable="mixes" sourceId={mix.id} />
             )}
           </div>
         )}

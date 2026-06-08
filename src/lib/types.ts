@@ -21,7 +21,7 @@ export interface Profile {
   updated_at: string;
 }
 
-export type VerificationBadgeType = 'verified' | 'artist' | 'official';
+export type VerificationBadgeType = 'verified' | 'artist' | 'official' | 'trusted_seller';
 export type VerificationRequestStatus = 'pending' | 'approved' | 'rejected';
 export type AnalyticsEventType =
   | 'profile_view'
@@ -170,7 +170,16 @@ export interface Comment {
 export interface Notification {
   id: string;
   user_id: string;
-  type: 'like' | 'follow' | 'comment' | 'reply' | 'mix_upload' | 'mention' | 'buzz_like' | 'repost';
+  type:
+    | 'like'
+    | 'follow'
+    | 'comment'
+    | 'reply'
+    | 'mix_upload'
+    | 'mention'
+    | 'buzz_like'
+    | 'repost'
+    | 'verification';
   actor_id: string;
   mix_id: string | null;
   buzz_id: string | null;

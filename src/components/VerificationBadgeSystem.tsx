@@ -7,10 +7,27 @@ const badgeMeta = {
   verified: { icon: 'verified', label: 'Verified', title: 'Verified DJ profile' },
   artist: { icon: 'music', label: 'Artist', title: 'Verified artist account' },
   official: { icon: 'rating', label: 'Official', title: 'Official representative account' },
+  trusted_seller: {
+    icon: 'package',
+    label: 'Trusted Seller',
+    title: 'Trusted seller — multiple dispute-free sales',
+  },
 } as const satisfies Record<string, { icon: IconKey; label: string; title: string }>;
 
+function badgeColors(type: keyof typeof badgeMeta) {
+  if (type === 'official') {
+    return { background: colors.accent, color: colors.bg, border: colors.accent };
+  }
+  if (type === 'trusted_seller') {
+    return { background: colors.surfaceHover, color: colors.success, border: colors.success };
+  }
+  return { background: colors.surfaceHover, color: colors.accent, border: colors.accentMuted };
+}
+
 interface Props {
-  profile: Profile;
+  /** Optional — only needed for the legacy `profile.verified` fallback. List
+   *  surfaces (gear/agent cards) pass real badge rows and omit it. */
+  profile?: Profile;
   badges: VerificationBadge[];
   compact?: boolean;
 }
@@ -19,7 +36,7 @@ export function VerificationBadgeSystem({ profile, badges, compact = false }: Pr
   const effectiveBadges =
     badges.length > 0
       ? badges
-      : profile.verified
+      : profile?.verified
         ? [
             {
               id: 'legacy-verified',
@@ -40,6 +57,7 @@ export function VerificationBadgeSystem({ profile, badges, compact = false }: Pr
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: space[3], flexWrap: 'wrap' }}>
       {effectiveBadges.map(badge => {
         const meta = badgeMeta[badge.badge_type];
+        const tone = badgeColors(badge.badge_type);
         const title = `${meta.title}${badge.reason ? `: ${badge.reason}` : ''}`;
         return (
           <span
@@ -53,16 +71,18 @@ export function VerificationBadgeSystem({ profile, badges, compact = false }: Pr
               minHeight: compact ? 20 : 24,
               padding: compact ? '2px 6px' : '3px 8px',
               borderRadius: radius.pill,
-              background: badge.badge_type === 'official' ? colors.accent : colors.surfaceHover,
-              color: badge.badge_type === 'official' ? colors.bg : colors.accent,
-              border: `1px solid ${badge.badge_type === 'official' ? colors.accent : colors.accentMuted}`,
+              background: tone.background,
+              color: tone.color,
+              border: `1px solid ${tone.border}`,
               fontSize: compact ? 11 : 12,
               fontWeight: 700,
               lineHeight: 1,
               whiteSpace: 'nowrap',
             }}
           >
-            <span aria-hidden="true" style={{ display: 'inline-flex' }}><Icon name={meta.icon} size={13} color="currentColor" /></span>
+            <span aria-hidden="true" style={{ display: 'inline-flex' }}>
+              <Icon name={meta.icon} size={13} color="currentColor" />
+            </span>
             {!compact && <span>{badge.label || meta.label}</span>}
           </span>
         );

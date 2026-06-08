@@ -165,22 +165,24 @@ export function MobileNav() {
             >
               <Icon name={item.icon} size={17} color="currentColor" />
               {item.path === '/messages' && unreadTotal > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: -4,
-                  right: -4,
-                  background: colors.accent,
-                  color: colors.bg,
-                  fontSize: 9,
-                  fontWeight: 700,
-                  width: 14,
-                  height: 14,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 2,
-                }}>
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: -4,
+                    right: -4,
+                    background: colors.accent,
+                    color: colors.bg,
+                    fontSize: 9,
+                    fontWeight: 700,
+                    width: 14,
+                    height: 14,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 2,
+                  }}
+                >
                   {unreadTotal > 9 ? '9+' : unreadTotal}
                 </span>
               )}

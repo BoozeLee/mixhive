@@ -60,9 +60,7 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
     async (conversationId: string) => {
       if (!user) return;
       setConversations(prev =>
-        prev.map(c =>
-          c.conversation.id === conversationId ? { ...c, unread: false } : c
-        )
+        prev.map(c => (c.conversation.id === conversationId ? { ...c, unread: false } : c))
       );
       await markConversationRead(conversationId);
       void fetchConversations();

@@ -57,6 +57,9 @@ const DevLogin = lazy(() => import('./views/DevLogin').then(m => ({ default: m.D
 const AdminVerification = lazy(() =>
   import('./views/AdminVerification').then(m => ({ default: m.AdminVerification }))
 );
+const AdminModeration = lazy(() =>
+  import('./views/AdminModeration').then(m => ({ default: m.AdminModeration }))
+);
 const BuzzDetail = lazy(() => import('./views/BuzzDetail').then(m => ({ default: m.BuzzDetail })));
 const ProfileSetup = lazy(() =>
   import('./views/ProfileSetup').then(m => ({ default: m.ProfileSetup }))
@@ -69,13 +72,27 @@ const QuestDetail = lazy(() =>
   import('./views/QuestDetail').then(m => ({ default: m.QuestDetail }))
 );
 const QuestsList = lazy(() => import('./views/QuestsList').then(m => ({ default: m.QuestsList })));
-const GearMarketplace = lazy(() => import('./views/GearMarketplace').then(m => ({ default: m.GearMarketplace })));
-const GearListingDetail = lazy(() => import('./views/GearListingDetail').then(m => ({ default: m.GearListingDetail })));
-const NewGearListing = lazy(() => import('./views/NewGearListing').then(m => ({ default: m.NewGearListing })));
-const AgentMarketplace = lazy(() => import('./views/AgentMarketplace').then(m => ({ default: m.AgentMarketplace })));
-const CollabQuests = lazy(() => import('./views/CollabQuests').then(m => ({ default: m.CollabQuests })));
-const NewCollabQuest = lazy(() => import('./views/NewCollabQuest').then(m => ({ default: m.NewCollabQuest })));
-const CollabQuestDetail = lazy(() => import('./views/CollabQuestDetail').then(m => ({ default: m.CollabQuestDetail })));
+const GearMarketplace = lazy(() =>
+  import('./views/GearMarketplace').then(m => ({ default: m.GearMarketplace }))
+);
+const GearListingDetail = lazy(() =>
+  import('./views/GearListingDetail').then(m => ({ default: m.GearListingDetail }))
+);
+const NewGearListing = lazy(() =>
+  import('./views/NewGearListing').then(m => ({ default: m.NewGearListing }))
+);
+const AgentMarketplace = lazy(() =>
+  import('./views/AgentMarketplace').then(m => ({ default: m.AgentMarketplace }))
+);
+const CollabQuests = lazy(() =>
+  import('./views/CollabQuests').then(m => ({ default: m.CollabQuests }))
+);
+const NewCollabQuest = lazy(() =>
+  import('./views/NewCollabQuest').then(m => ({ default: m.NewCollabQuest }))
+);
+const CollabQuestDetail = lazy(() =>
+  import('./views/CollabQuestDetail').then(m => ({ default: m.CollabQuestDetail }))
+);
 const PressKitStudio = lazy(() =>
   import('./views/PressKitStudio').then(m => ({ default: m.PressKitStudio }))
 );
@@ -95,20 +112,18 @@ const HiveStoryLanding = lazy(() =>
 const HiveStoryIssue = lazy(() =>
   import('./views/HiveStoryIssue').then(m => ({ default: m.HiveStoryIssue }))
 );
-const Hub = lazy(() =>
-  import('./views/Hub').then(m => ({ default: m.Hub }))
-);
-const HelpCenter = lazy(() =>
-  import('./views/HelpCenter').then(m => ({ default: m.HelpCenter }))
-);
+const Hub = lazy(() => import('./views/Hub').then(m => ({ default: m.Hub })));
+const HelpCenter = lazy(() => import('./views/HelpCenter').then(m => ({ default: m.HelpCenter })));
 const HelpArticle = lazy(() =>
   import('./views/HelpArticle').then(m => ({ default: m.HelpArticle }))
 );
-const Earnings = lazy(() =>
-  import('./views/Earnings').then(m => ({ default: m.Earnings }))
+const Earnings = lazy(() => import('./views/Earnings').then(m => ({ default: m.Earnings })));
+const MessagesPage = lazy(() =>
+  import('./views/Messages').then(m => ({ default: m.MessagesPage }))
 );
-const MessagesPage = lazy(() => import('./views/Messages').then(m => ({ default: m.MessagesPage })));
-const MessageThreadPage = lazy(() => import('./views/MessageThread').then(m => ({ default: m.MessageThreadPage })));
+const MessageThreadPage = lazy(() =>
+  import('./views/MessageThread').then(m => ({ default: m.MessageThreadPage }))
+);
 // SessionFab is small and always available to authenticated users — not lazy-loaded
 import { SessionFab } from './components/SessionFab';
 
@@ -177,6 +192,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <AdminVerification />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/moderation"
+          element={
+            <ProtectedRoute>
+              <AdminModeration />
             </ProtectedRoute>
           }
         />
@@ -334,28 +357,28 @@ export default function App() {
         <NotificationProvider>
           <MessagesProvider>
             <div className="mixhive-shell">
-            <CyberHiveBackdrop />
-            <Navbar />
-            <a href="#main-content" className="skip-link">
-              Skip to main content
-            </a>
-            <div className="app-body">
-              <DesktopSidebar />
-              <main id="main-content" className="mixhive-main app-main">
-                <ErrorBoundary>
-                  <Suspense fallback={<RoutePending />}>
-                    <AnimatedRoutes />
-                  </Suspense>
-                </ErrorBoundary>
-              </main>
+              <CyberHiveBackdrop />
+              <Navbar />
+              <a href="#main-content" className="skip-link">
+                Skip to main content
+              </a>
+              <div className="app-body">
+                <DesktopSidebar />
+                <main id="main-content" className="mixhive-main app-main">
+                  <ErrorBoundary>
+                    <Suspense fallback={<RoutePending />}>
+                      <AnimatedRoutes />
+                    </Suspense>
+                  </ErrorBoundary>
+                </main>
+              </div>
+              <GlobalPlayer />
+              <MobileNav />
+              <SessionFab />
+              {loadVercelTelemetry && <Analytics />}
+              {loadVercelTelemetry && <SpeedInsights />}
             </div>
-            <GlobalPlayer />
-            <MobileNav />
-            <SessionFab />
-            {loadVercelTelemetry && <Analytics />}
-            {loadVercelTelemetry && <SpeedInsights />}
-          </div>
-        </MessagesProvider>
+          </MessagesProvider>
         </NotificationProvider>
       </PlayerProvider>
     </BrowserRouter>

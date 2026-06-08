@@ -23,17 +23,20 @@ export function MessageThreadPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<any>(null);
 
-  const loadHistory = useCallback(async (before?: string) => {
-    if (!conversationId) return;
-    const { messages: data, nextCursor: cursor } = await getMessages(conversationId, before);
-    if (before) {
-      setMessages(prev => [...data, ...prev]);
-    } else {
-      setMessages(data);
-    }
-    setNextCursor(cursor);
-    setLoading(false);
-  }, [conversationId]);
+  const loadHistory = useCallback(
+    async (before?: string) => {
+      if (!conversationId) return;
+      const { messages: data, nextCursor: cursor } = await getMessages(conversationId, before);
+      if (before) {
+        setMessages(prev => [...data, ...prev]);
+      } else {
+        setMessages(data);
+      }
+      setNextCursor(cursor);
+      setLoading(false);
+    },
+    [conversationId]
+  );
 
   useEffect(() => {
     if (!conversationId || !user) return;
@@ -141,9 +144,7 @@ export function MessageThreadPage() {
         prev.map(m => (m.id === id ? { ...persisted, status: 'sent' as const } : m))
       );
     } else {
-      setMessages(prev =>
-        prev.map(m => (m.id === id ? { ...m, status: 'failed' as const } : m))
-      );
+      setMessages(prev => prev.map(m => (m.id === id ? { ...m, status: 'failed' as const } : m)));
       toast.error('Failed to send message');
     }
   }
@@ -151,8 +152,27 @@ export function MessageThreadPage() {
   if (!conversationId) return null;
 
   return (
-    <div id="main-content" style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px', display: 'flex', flexDirection: 'column', height: 'calc(100vh - var(--navbar-height, 73px))' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: space[4], marginBottom: space[6], borderBottom: `1px solid ${colors.border}`, paddingBottom: space[4] }}>
+    <div
+      id="main-content"
+      style={{
+        maxWidth: 640,
+        margin: '0 auto',
+        padding: '32px 16px 96px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: 'calc(100vh - var(--navbar-height, 73px))',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: space[4],
+          marginBottom: space[6],
+          borderBottom: `1px solid ${colors.border}`,
+          paddingBottom: space[4],
+        }}
+      >
         <Link to="/messages" style={{ color: colors.text.muted, textDecoration: 'none' }}>
           ← Back
         </Link>
@@ -168,12 +188,25 @@ export function MessageThreadPage() {
 
       <div
         ref={scrollRef}
-        style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: space[3] }}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: space[3],
+        }}
       >
         {nextCursor && (
           <button
             onClick={() => loadHistory(nextCursor)}
-            style={{ alignSelf: 'center', fontSize: fontSize.sm, color: colors.accent, background: 'transparent', border: 'none', cursor: 'pointer' }}
+            style={{
+              alignSelf: 'center',
+              fontSize: fontSize.sm,
+              color: colors.accent,
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+            }}
           >
             Load more
           </button>
@@ -208,7 +241,14 @@ export function MessageThreadPage() {
         })}
       </div>
 
-      <div style={{ display: 'flex', gap: space[2], paddingTop: space[4], borderTop: `1px solid ${colors.border}` }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: space[2],
+          paddingTop: space[4],
+          borderTop: `1px solid ${colors.border}`,
+        }}
+      >
         <input
           type="text"
           value={input}

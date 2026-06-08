@@ -24,7 +24,9 @@ export function MessagesPage() {
     return (
       <div id="main-content" style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
         <p style={{ marginBottom: space[6] }}>Sign in to see your messages</p>
-        <Link to="/login" style={{ color: colors.accent }}>Sign in</Link>
+        <Link to="/login" style={{ color: colors.accent }}>
+          Sign in
+        </Link>
       </div>
     );
   }
@@ -79,7 +81,9 @@ export function MessagesPage() {
                   <span style={{ fontWeight: fontWeight.semibold, color: colors.text.primary }}>
                     {conv.otherMember.display_name || conv.otherMember.username}
                   </span>
-                  <span style={{ fontSize: fontSize.sm, color: colors.text.dim, marginLeft: 'auto' }}>
+                  <span
+                    style={{ fontSize: fontSize.sm, color: colors.text.dim, marginLeft: 'auto' }}
+                  >
                     {conv.lastMessage ? relativeTime(conv.lastMessage.created_at) : ''}
                   </span>
                 </div>

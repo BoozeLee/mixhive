@@ -39,7 +39,6 @@ export function AdminVerification() {
     try {
       await reviewVerificationRequest({
         requestId: request.id,
-        reviewerId: user.id,
         status,
         badgeType,
         reason: reason.trim() || undefined,
@@ -61,7 +60,6 @@ export function AdminVerification() {
       for (const request of selectedRequests) {
         await reviewVerificationRequest({
           requestId: request.id,
-          reviewerId: user.id,
           status,
           badgeType: badgeType || request.requested_badge,
           reason: reason.trim() || undefined,

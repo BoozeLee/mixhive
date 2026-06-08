@@ -20,13 +20,12 @@ export function MessageButton({ targetUserId }: Props) {
       setChecking(false);
       return;
     }
-    Promise.all([
-      hasBlocked(user.id, targetUserId),
-      isBlocked(user.id, targetUserId),
-    ]).then(([hasB, isB]) => {
-      setBlocked(hasB || isB);
-      setChecking(false);
-    });
+    Promise.all([hasBlocked(user.id, targetUserId), isBlocked(user.id, targetUserId)]).then(
+      ([hasB, isB]) => {
+        setBlocked(hasB || isB);
+        setChecking(false);
+      }
+    );
   }, [user, targetUserId]);
 
   async function handleClick() {

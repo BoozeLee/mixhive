@@ -15,7 +15,13 @@ interface SidebarItem {
 }
 
 const topItems: SidebarItem[] = [
-  { path: '/feed?compose=1', icon: 'buzz', label: 'Buzz', ariaLabel: 'Post a Buzz', highlight: true },
+  {
+    path: '/feed?compose=1',
+    icon: 'buzz',
+    label: 'Buzz',
+    ariaLabel: 'Post a Buzz',
+    highlight: true,
+  },
   { path: '/dashboard', icon: 'dashboard', label: 'Dashboard', ariaLabel: 'Creator dashboard' },
   { path: '/feed', icon: 'feed', label: 'Feed', ariaLabel: 'Hive Feed' },
   { path: '/discover', icon: 'discover', label: 'Explore', ariaLabel: 'Explore MixHive' },
@@ -31,7 +37,12 @@ const topItems: SidebarItem[] = [
   { path: '/composer', icon: 'composer', label: 'Composer', ariaLabel: 'Hive Composer' },
   { path: '/hive-story', icon: 'story', label: 'Hive Story', ariaLabel: 'Hive Story editorial' },
   { path: '/hub', icon: 'hub', label: 'Hub', ariaLabel: 'Feature hub' },
-  { path: '/earnings', icon: 'earnings', label: 'Earnings', ariaLabel: 'Marketplace earnings and payouts' },
+  {
+    path: '/earnings',
+    icon: 'earnings',
+    label: 'Earnings',
+    ariaLabel: 'Marketplace earnings and payouts',
+  },
 ];
 
 function isActive(itemPath: string, currentPath: string): boolean {
@@ -155,23 +166,25 @@ export function DesktopSidebar() {
               <HexIcon name={item.icon} cell={32} size={16} active={active} />
               <span>{item.label}</span>
               {item.path === '/messages' && unreadTotal > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: 6,
-                  right: 12,
-                  background: colors.accent,
-                  color: colors.bg,
-                  fontSize: 10,
-                  fontWeight: 700,
-                  width: 16,
-                  height: 16,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  lineHeight: 1,
-                  zIndex: 2,
-                }}>
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 6,
+                    right: 12,
+                    background: colors.accent,
+                    color: colors.bg,
+                    fontSize: 10,
+                    fontWeight: 700,
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    lineHeight: 1,
+                    zIndex: 2,
+                  }}
+                >
                   {unreadTotal > 9 ? '9+' : unreadTotal}
                 </span>
               )}

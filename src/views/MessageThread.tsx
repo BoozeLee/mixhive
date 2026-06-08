@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../lib/messagesStore';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { getMessages, sendMessage, markConversationRead, isBlocked, hasBlocked } from '../lib/api';
+import { getMessages, sendMessage, isBlocked, hasBlocked } from '../lib/api';
 import type { DirectMessage, Profile } from '../lib/types';
 import { colors, space, fontSize, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from '../components/hive/HiveButton';

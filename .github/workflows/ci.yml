@@ -66,9 +66,23 @@ jobs:
         if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         run: npm run lint
 
-      - name: Check formatting with Prettier
+      - name: Check formatting with Prettier (changed files on PRs)
         if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
-        run: npm run format:check
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            files="$(git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}"...HEAD \
+              | grep -E '\.(ts|tsx|js|jsx|mjs|cjs|json|md|css|yml|yaml)$' || true)"
+            if [ -z "$files" ]; then
+              echo "No changed files to format-check."
+            else
+              echo "Checking changed files:"; echo "$files"
+              printf '%s\n' "$files" | xargs npx prettier --check
+            fi
+          else
+            npm run format:check
+          fi
 
   # Build and test
   build-and-test:

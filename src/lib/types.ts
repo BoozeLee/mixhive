@@ -14,6 +14,9 @@ export interface Profile {
   is_admin?: boolean;
   is_pro?: boolean;
   onboarding_complete?: boolean;
+  xp?: number;
+  level?: number;
+  reputation_score?: number;
   dj_equipment?: string[];
   dj_daw?: string[];
   dj_style?: string | null;

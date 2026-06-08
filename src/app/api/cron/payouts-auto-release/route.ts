@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { handleApiError } from '@/lib/api-errors';
-import { getStripe, makeServiceClient, releaseGearEscrow, type GearTxn } from '@/lib/stripe-connect';
+import {
+  getStripe,
+  makeServiceClient,
+  releaseGearEscrow,
+  type GearTxn,
+} from '@/lib/stripe-connect';
 
 // Auto-release cron. Releases gear escrow that the buyer never confirmed, after a
 // 3-day hold past delivery, and sweeps held creator/seller earnings once they

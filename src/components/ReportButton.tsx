@@ -31,9 +31,7 @@ export function ReportButton({ sourceTable, sourceId }: Props) {
   }
 
   if (done) {
-    return (
-      <span style={{ color: colors.text.dim, fontSize: 11 }}>✓ Reported — thanks</span>
-    );
+    return <span style={{ color: colors.text.dim, fontSize: 11 }}>✓ Reported — thanks</span>;
   }
 
   if (!open) {

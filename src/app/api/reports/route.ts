@@ -87,7 +87,10 @@ export async function POST(req: NextRequest) {
         severity: 'low',
         status: 'open',
         flagged_by: user.id,
-        payload: { reason: typeof reason === 'string' ? reason.slice(0, 1000) : '', reporter_id: user.id },
+        payload: {
+          reason: typeof reason === 'string' ? reason.slice(0, 1000) : '',
+          reporter_id: user.id,
+        },
       })
       .select('id')
       .single();

@@ -177,7 +177,9 @@ export function AdminModeration() {
                 </div>
 
                 {reason && (
-                  <p style={{ color: colors.text.secondary, fontSize: 14, lineHeight: 1.5 }}>{reason}</p>
+                  <p style={{ color: colors.text.secondary, fontSize: 14, lineHeight: 1.5 }}>
+                    {reason}
+                  </p>
                 )}
                 {signal.source_id && (
                   <p style={{ color: colors.text.dim, fontSize: 12, margin: '0 0 12px' }}>

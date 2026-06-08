@@ -70,9 +70,10 @@ export function Register() {
     });
     if (err) {
       // 23505 = unique constraint violation — username was taken between our check and the insert
-      const msg = (err as { code?: string }).code === '23505'
-        ? 'Username already taken. Please choose a different one.'
-        : err.message;
+      const msg =
+        (err as { code?: string }).code === '23505'
+          ? 'Username already taken. Please choose a different one.'
+          : err.message;
       setGeneralError(msg);
     } else {
       navigate('/setup');

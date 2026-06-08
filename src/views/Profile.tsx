@@ -341,6 +341,8 @@ export function ProfilePage() {
               [followingCount, 'following'],
               [mixes.length, 'mixes'],
               [analytics?.totalPlays || 0, 'plays'],
+              [profile?.level || 1, 'level'],
+              [profile?.xp || 0, 'XP'],
             ].map(([value, label]) => (
               <div
                 key={label}

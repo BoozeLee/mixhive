@@ -41,6 +41,9 @@ import type {
   FeedResult,
   Mix,
   MixedFeedResult,
+  ModerationAction,
+  ModerationSignal,
+  ModerationSignalStatus,
   Notification,
   Opportunity,
   OpportunitySave,
@@ -97,6 +100,28 @@ export async function getProfileBadges(profileId: string): Promise<VerificationB
   return data || [];
 }
 
+/**
+ * Batched badge fetch for lists (gear/mix/agent cards) — one query for many
+ * profiles, grouped by profile_id, so rendering a feed doesn't fan out into N
+ * per-card requests.
+ */
+export async function getProfileBadgesFor(
+  profileIds: string[]
+): Promise<Record<string, VerificationBadge[]>> {
+  const out: Record<string, VerificationBadge[]> = {};
+  const ids = Array.from(new Set(profileIds.filter(Boolean)));
+  if (!isSupabaseConfigured || ids.length === 0) return out;
+  const { data } = await supabase
+    .from('verification_badges')
+    .select('*')
+    .in('profile_id', ids)
+    .order('granted_at', { ascending: false });
+  for (const badge of data || []) {
+    (out[badge.profile_id] ??= []).push(badge);
+  }
+  return out;
+}
+
 export async function getMyVerificationRequest(
   profileId: string
 ): Promise<VerificationRequest | null> {
@@ -148,20 +173,83 @@ export async function listVerificationRequests(): Promise<VerificationRequest[]>
 
 export async function reviewVerificationRequest(input: {
   requestId: string;
-  reviewerId: string;
   status: 'approved' | 'rejected';
   reason?: string;
   badgeType?: VerificationBadgeType;
 }): Promise<void> {
   if (!isSupabaseConfigured) return;
+  // Reviewer is derived server-side from auth.uid() — never sent from the client.
   const { error } = await supabase.rpc('review_verification_request', {
     p_request_id: input.requestId,
-    p_reviewer_id: input.reviewerId,
     p_status: input.status,
     p_reason: input.reason || null,
     p_badge_type: input.badgeType || null,
   });
   if (error) throw error;
+}
+
+// --- Moderation (admin) ---
+
+export async function listModerationSignals(
+  status?: ModerationSignalStatus
+): Promise<ModerationSignal[]> {
+  if (!isSupabaseConfigured) return [];
+  let query = supabase
+    .from('moderation_signals')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(200);
+  if (status) query = query.eq('status', status);
+  const { data } = await query;
+  return (data || []) as ModerationSignal[];
+}
+
+export async function reviewModerationSignal(input: {
+  signalId: string;
+  action: ModerationAction;
+  notes?: string;
+}): Promise<void> {
+  if (!isSupabaseConfigured) return;
+  // Reviewer is derived server-side from auth.uid() — never sent from the client.
+  const { error } = await supabase.rpc('review_moderation_signal', {
+    p_signal_id: input.signalId,
+    p_action: input.action,
+    p_notes: input.notes || null,
+  });
+  if (error) throw error;
+}
+
+/** File a user report on a piece of content. Goes through /api/reports (which
+ *  verifies the session, rate-limits, and inserts via the service role). */
+export async function reportContent(input: {
+  sourceTable: 'buzzes' | 'mixes' | 'profiles' | 'equipment_listings';
+  sourceId: string;
+  reason: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  if (!isSupabaseConfigured) return { ok: false, error: 'not configured' };
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return { ok: false, error: 'Sign in to report' };
+  try {
+    const res = await fetch('/api/reports', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        source_table: input.sourceTable,
+        source_id: input.sourceId,
+        reason: input.reason,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return { ok: false, error: data.error ?? 'Report failed' };
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Network error' };
+  }
 }
 
 export async function searchProfiles(query: string): Promise<Profile[]> {
@@ -262,6 +350,8 @@ export async function getMix(id: string): Promise<Mix | null> {
 
 export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
   if (!isSupabaseConfigured) return null;
+  // Abuse guard: cap uploads per user (10/hour) — mirrors createBuzz.
+  if (mix.dj_id && !(await checkRateLimit('upload', mix.dj_id))) return null;
   const { data } = await supabase.from('mixes').insert(mix).select().single();
   if (data?.id && typeof window !== 'undefined') {
     fetch('/api/embed', {

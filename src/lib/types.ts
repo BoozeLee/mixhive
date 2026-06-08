@@ -21,7 +21,7 @@ export interface Profile {
   updated_at: string;
 }
 
-export type VerificationBadgeType = 'verified' | 'artist' | 'official';
+export type VerificationBadgeType = 'verified' | 'artist' | 'official' | 'trusted_seller';
 export type VerificationRequestStatus = 'pending' | 'approved' | 'rejected';
 export type AnalyticsEventType =
   | 'profile_view'
@@ -170,7 +170,16 @@ export interface Comment {
 export interface Notification {
   id: string;
   user_id: string;
-  type: 'like' | 'follow' | 'comment' | 'reply' | 'mix_upload' | 'mention' | 'buzz_like' | 'repost';
+  type:
+    | 'like'
+    | 'follow'
+    | 'comment'
+    | 'reply'
+    | 'mix_upload'
+    | 'mention'
+    | 'buzz_like'
+    | 'repost'
+    | 'verification';
   actor_id: string;
   mix_id: string | null;
   buzz_id: string | null;
@@ -181,15 +190,29 @@ export interface Notification {
   mix?: Mix;
 }
 
+export type ModerationSignalStatus = 'open' | 'reviewing' | 'actioned' | 'dismissed';
+export type ModerationAction = 'hide' | 'ban' | 'dismiss';
+
 export interface ModerationSignal {
   id: string;
   source_table: string;
   source_id: string | null;
-  signal_type: 'hate_speech' | 'fraud' | 'doxxing' | 'csam' | 'violent_threat' | 'text_flagged';
+  signal_type:
+    | 'hate_speech'
+    | 'fraud'
+    | 'doxxing'
+    | 'csam'
+    | 'violent_threat'
+    | 'text_flagged'
+    | 'user_report';
   severity: 'low' | 'medium' | 'high' | 'critical';
   action_taken: string | null;
   flagged_by: string;
   payload: Record<string, unknown>;
+  status: ModerationSignalStatus;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  resolution_notes: string | null;
   created_at: string;
 }
 

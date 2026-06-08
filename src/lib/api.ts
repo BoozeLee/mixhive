@@ -97,6 +97,28 @@ export async function getProfileBadges(profileId: string): Promise<VerificationB
   return data || [];
 }
 
+/**
+ * Batched badge fetch for lists (gear/mix/agent cards) — one query for many
+ * profiles, grouped by profile_id, so rendering a feed doesn't fan out into N
+ * per-card requests.
+ */
+export async function getProfileBadgesFor(
+  profileIds: string[]
+): Promise<Record<string, VerificationBadge[]>> {
+  const out: Record<string, VerificationBadge[]> = {};
+  const ids = Array.from(new Set(profileIds.filter(Boolean)));
+  if (!isSupabaseConfigured || ids.length === 0) return out;
+  const { data } = await supabase
+    .from('verification_badges')
+    .select('*')
+    .in('profile_id', ids)
+    .order('granted_at', { ascending: false });
+  for (const badge of data || []) {
+    (out[badge.profile_id] ??= []).push(badge);
+  }
+  return out;
+}
+
 export async function getMyVerificationRequest(
   profileId: string
 ): Promise<VerificationRequest | null> {
@@ -148,15 +170,14 @@ export async function listVerificationRequests(): Promise<VerificationRequest[]>
 
 export async function reviewVerificationRequest(input: {
   requestId: string;
-  reviewerId: string;
   status: 'approved' | 'rejected';
   reason?: string;
   badgeType?: VerificationBadgeType;
 }): Promise<void> {
   if (!isSupabaseConfigured) return;
+  // Reviewer is derived server-side from auth.uid() — never sent from the client.
   const { error } = await supabase.rpc('review_verification_request', {
     p_request_id: input.requestId,
-    p_reviewer_id: input.reviewerId,
     p_status: input.status,
     p_reason: input.reason || null,
     p_badge_type: input.badgeType || null,

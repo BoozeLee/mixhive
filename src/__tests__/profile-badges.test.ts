@@ -21,9 +21,11 @@ jest.mock('@/lib/supabase', () => {
 import { getProfileBadgesFor } from '@/lib/api';
 import * as supa from '@/lib/supabase';
 
-const { order, inFn, from } = (supa as unknown as {
-  __mocks: { order: jest.Mock; inFn: jest.Mock; from: jest.Mock };
-}).__mocks;
+const { order, inFn, from } = (
+  supa as unknown as {
+    __mocks: { order: jest.Mock; inFn: jest.Mock; from: jest.Mock };
+  }
+).__mocks;
 
 describe('getProfileBadgesFor', () => {
   beforeEach(() => {

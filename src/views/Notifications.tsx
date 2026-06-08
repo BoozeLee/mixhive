@@ -125,7 +125,12 @@ export function NotificationsPage() {
         }}
       >
         <SectionHeading eyebrow="Activity" title="Notifications" />
-        <Button size="sm" variant="ghost" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleMarkAllAsRead}
+          disabled={unreadCount === 0}
+        >
           Mark all read
         </Button>
       </div>
@@ -153,8 +158,14 @@ export function NotificationsPage() {
                   opacity: notification.read ? 0.7 : 1,
                   transition: 'border-color 0.15s, background 0.15s',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = colors.accent; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = notification.read ? colors.border : colors.accentMuted; }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = colors.accent;
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = notification.read
+                    ? colors.border
+                    : colors.accentMuted;
+                }}
               >
                 <div
                   style={{
@@ -173,7 +184,11 @@ export function NotificationsPage() {
                   }}
                 >
                   {!notification.actor?.avatar_url && (
-                    <Icon name={TYPE_ICON[notification.type] ?? 'notifications'} size={18} color="currentColor" />
+                    <Icon
+                      name={TYPE_ICON[notification.type] ?? 'notifications'}
+                      size={18}
+                      color="currentColor"
+                    />
                   )}
                   {/* type badge on the corner */}
                   <span
@@ -192,11 +207,22 @@ export function NotificationsPage() {
                       color: colors.accent,
                     }}
                   >
-                    <Icon name={TYPE_ICON[notification.type] ?? 'notifications'} size={10} color="currentColor" />
+                    <Icon
+                      name={TYPE_ICON[notification.type] ?? 'notifications'}
+                      size={10}
+                      color="currentColor"
+                    />
                   </span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: fontSize.md, color: colors.text.secondary, margin: 0, lineHeight: 1.4 }}>
+                  <p
+                    style={{
+                      fontSize: fontSize.md,
+                      color: colors.text.secondary,
+                      margin: 0,
+                      lineHeight: 1.4,
+                    }}
+                  >
                     {notificationText(notification)}
                   </p>
                   <p style={{ fontSize: fontSize.sm, color: colors.text.dim, margin: '4px 0 0' }}>

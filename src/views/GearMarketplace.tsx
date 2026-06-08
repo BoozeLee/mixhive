@@ -102,9 +102,25 @@ export function GearMarketplace() {
   return (
     <div style={{ padding: '24px 20px', maxWidth: 1200, margin: '0 auto' }}>
       {/* Header */}
-      <div className="p15-page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+      <div
+        className="p15-page-header"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 24,
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: 28, fontFamily: 'var(--font-display)', color: 'var(--hive-gold)', margin: 0, letterSpacing: '0.05em' }}>
+          <h1
+            style={{
+              fontSize: 28,
+              fontFamily: 'var(--font-display)',
+              color: 'var(--hive-gold)',
+              margin: 0,
+              letterSpacing: '0.05em',
+            }}
+          >
             GEAR MARKET
           </h1>
           <p style={{ color: '#888', margin: '4px 0 0', fontSize: 14 }}>
@@ -129,23 +145,19 @@ export function GearMarketplace() {
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
-        <select
-          value={category}
-          onChange={e => setCategory(e.target.value)}
-          style={selectStyle}
-        >
+        <select value={category} onChange={e => setCategory(e.target.value)} style={selectStyle}>
           {CATEGORIES.map(c => (
-            <option key={c.value} value={c.value}>{c.label}</option>
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
           ))}
         </select>
-        <select
-          value={condition}
-          onChange={e => setCondition(e.target.value)}
-          style={selectStyle}
-        >
+        <select value={condition} onChange={e => setCondition(e.target.value)} style={selectStyle}>
           <option value="">Any Condition</option>
           {Object.entries(CONDITIONS).map(([v, l]) => (
-            <option key={v} value={v}>{l}</option>
+            <option key={v} value={v}>
+              {l}
+            </option>
           ))}
         </select>
         <input
@@ -157,8 +169,20 @@ export function GearMarketplace() {
         />
         {(category || condition || maxPrice) && (
           <button
-            onClick={() => { setCategory(''); setCondition(''); setMaxPrice(''); }}
-            style={{ background: 'transparent', border: '1px solid #444', color: '#aaa', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: 13 }}
+            onClick={() => {
+              setCategory('');
+              setCondition('');
+              setMaxPrice('');
+            }}
+            style={{
+              background: 'transparent',
+              border: '1px solid #444',
+              color: '#aaa',
+              borderRadius: 8,
+              padding: '8px 14px',
+              cursor: 'pointer',
+              fontSize: 13,
+            }}
           >
             Clear filters
           </button>
@@ -174,26 +198,59 @@ export function GearMarketplace() {
 
       {/* Error */}
       {error && (
-        <div style={{ color: '#ef4444', padding: 16, background: '#1a0000', borderRadius: 8, marginBottom: 16 }}>
+        <div
+          style={{
+            color: '#ef4444',
+            padding: 16,
+            background: '#1a0000',
+            borderRadius: 8,
+            marginBottom: 16,
+          }}
+        >
           {error}
         </div>
       )}
 
       {/* Grid */}
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+            gap: 16,
+          }}
+        >
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} style={{ height: 280, background: '#111', borderRadius: 12, animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div
+              key={i}
+              style={{
+                height: 280,
+                background: '#111',
+                borderRadius: 12,
+                animation: 'pulse 1.5s ease-in-out infinite',
+              }}
+            />
           ))}
         </div>
       ) : listings.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '64px 20px', color: '#555' }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>🎛</div>
           <p style={{ fontSize: 18 }}>No listings found</p>
-          <p style={{ fontSize: 14 }}>Try different filters or <Link to="/marketplace/gear/new" style={{ color: 'var(--hive-gold)' }}>list your gear</Link></p>
+          <p style={{ fontSize: 14 }}>
+            Try different filters or{' '}
+            <Link to="/marketplace/gear/new" style={{ color: 'var(--hive-gold)' }}>
+              list your gear
+            </Link>
+          </p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+            gap: 16,
+          }}
+        >
           {listings.map(listing => (
             <GearCard
               key={listing.id}
@@ -225,13 +282,14 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
       to={`/marketplace/gear/${listing.id}`}
       style={{ textDecoration: 'none', display: 'block' }}
     >
-      <div style={{
-        background: '#111',
-        borderRadius: 12,
-        overflow: 'hidden',
-        border: '1px solid #1e1e1e',
-        transition: 'border-color 0.2s, transform 0.2s',
-      }}
+      <div
+        style={{
+          background: '#111',
+          borderRadius: 12,
+          overflow: 'hidden',
+          border: '1px solid #1e1e1e',
+          transition: 'border-color 0.2s, transform 0.2s',
+        }}
         onMouseEnter={e => {
           (e.currentTarget as HTMLElement).style.borderColor = '#f6c40044';
           (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
@@ -242,7 +300,14 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
         }}
       >
         {/* Photo */}
-        <div style={{ aspectRatio: '4/3', background: '#0a0a0a', overflow: 'hidden', position: 'relative' }}>
+        <div
+          style={{
+            aspectRatio: '4/3',
+            background: '#0a0a0a',
+            overflow: 'hidden',
+            position: 'relative',
+          }}
+        >
           {photo ? (
             <img
               src={photo}
@@ -251,30 +316,63 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#333', fontSize: 40 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+                color: '#333',
+                fontSize: 40,
+              }}
+            >
               🎛
             </div>
           )}
-          <span style={{
-            position: 'absolute', top: 8, right: 8,
-            background: '#000a',
-            color: condColor,
-            border: `1px solid ${condColor}44`,
-            borderRadius: 6,
-            padding: '2px 8px',
-            fontSize: 11,
-            fontWeight: 600,
-          }}>
+          <span
+            style={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              background: '#000a',
+              color: condColor,
+              border: `1px solid ${condColor}44`,
+              borderRadius: 6,
+              padding: '2px 8px',
+              fontSize: 11,
+              fontWeight: 600,
+            }}
+          >
             {CONDITIONS[listing.condition]}
           </span>
         </div>
 
         {/* Info */}
         <div style={{ padding: '12px 14px' }}>
-          <p style={{ color: '#888', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 4px' }}>
+          <p
+            style={{
+              color: '#888',
+              fontSize: 11,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              margin: '0 0 4px',
+            }}
+          >
             {listing.category.replace('_', ' ')}
           </p>
-          <h3 style={{ color: '#fff', fontSize: 15, fontWeight: 600, margin: '0 0 8px', lineHeight: 1.3, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+          <h3
+            style={{
+              color: '#fff',
+              fontSize: 15,
+              fontWeight: 600,
+              margin: '0 0 8px',
+              lineHeight: 1.3,
+              overflow: 'hidden',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
             {listing.title}
           </h3>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -282,7 +380,8 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
               €{listing.price.toLocaleString()}
             </span>
             <span style={{ color: '#555', fontSize: 12 }}>
-              {listing.location_city}{listing.location_country ? `, ${listing.location_country}` : ''}
+              {listing.location_city}
+              {listing.location_country ? `, ${listing.location_country}` : ''}
             </span>
           </div>
           {badges.length > 0 && (

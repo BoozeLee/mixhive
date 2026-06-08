@@ -92,8 +92,13 @@ export function AgentMarketplace() {
     if (buying) return;
     setBuying(pkg.id);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { setError('Sign in to purchase agents'); return; }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        setError('Sign in to purchase agents');
+        return;
+      }
       const res = await fetch(`/api/marketplace/agents/${pkg.id}/buy`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${session.access_token}` },
@@ -111,11 +116,19 @@ export function AgentMarketplace() {
     if (installing) return;
     setInstalling(pkg.id);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { setError('Sign in to install agents'); return; }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        setError('Sign in to install agents');
+        return;
+      }
       const res = await fetch(`/api/marketplace/agents/${pkg.id}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({}),
       });
       const data = await res.json();
@@ -131,7 +144,15 @@ export function AgentMarketplace() {
   return (
     <div style={{ padding: '24px 20px', maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 28, fontFamily: 'var(--font-display)', color: 'var(--hive-gold)', margin: 0, letterSpacing: '0.05em' }}>
+        <h1
+          style={{
+            fontSize: 28,
+            fontFamily: 'var(--font-display)',
+            color: 'var(--hive-gold)',
+            margin: 0,
+            letterSpacing: '0.05em',
+          }}
+        >
           AGENT MARKETPLACE
         </h1>
         <p style={{ color: '#888', margin: '4px 0 0', fontSize: 14 }}>
@@ -142,28 +163,72 @@ export function AgentMarketplace() {
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
         <select value={category} onChange={e => setCategory(e.target.value)} style={selectStyle}>
-          {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+          {CATEGORIES.map(c => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
         </select>
-        <select value={discipline} onChange={e => setDiscipline(e.target.value)} style={selectStyle}>
+        <select
+          value={discipline}
+          onChange={e => setDiscipline(e.target.value)}
+          style={selectStyle}
+        >
           <option value="">All Disciplines</option>
-          {DISCIPLINES.map(d => <option key={d} value={d}>{d.replace('_', ' ')}</option>)}
+          {DISCIPLINES.map(d => (
+            <option key={d} value={d}>
+              {d.replace('_', ' ')}
+            </option>
+          ))}
         </select>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#aaa', fontSize: 13, cursor: 'pointer' }}>
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            color: '#aaa',
+            fontSize: 13,
+            cursor: 'pointer',
+          }}
+        >
           <input type="checkbox" checked={freeOnly} onChange={e => setFreeOnly(e.target.checked)} />
           Free only
         </label>
       </div>
 
       {error && (
-        <div style={{ color: '#ef4444', padding: 12, background: '#1a0000', borderRadius: 8, marginBottom: 16, fontSize: 14 }}>
+        <div
+          style={{
+            color: '#ef4444',
+            padding: 12,
+            background: '#1a0000',
+            borderRadius: 8,
+            marginBottom: 16,
+            fontSize: 14,
+          }}
+        >
           {error}
         </div>
       )}
 
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: 16,
+          }}
+        >
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} style={{ height: 200, background: '#111', borderRadius: 12, animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div
+              key={i}
+              style={{
+                height: 200,
+                background: '#111',
+                borderRadius: 12,
+                animation: 'pulse 1.5s ease-in-out infinite',
+              }}
+            />
           ))}
         </div>
       ) : packages.length === 0 ? (
@@ -175,7 +240,13 @@ export function AgentMarketplace() {
           <p style={{ fontSize: 14 }}>Try different filters</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: 16,
+          }}
+        >
           {packages.map(pkg => (
             <AgentCard
               key={pkg.id}
@@ -192,9 +263,21 @@ export function AgentMarketplace() {
       )}
 
       {/* Link to personal agents */}
-      <div style={{ marginTop: 40, paddingTop: 24, borderTop: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          marginTop: 40,
+          paddingTop: 24,
+          borderTop: '1px solid #1a1a1a',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <span style={{ color: '#666', fontSize: 14 }}>Have your own agent idea?</span>
-        <Link to="/agents" style={{ color: 'var(--hive-gold)', fontSize: 14, textDecoration: 'none' }}>
+        <Link
+          to="/agents"
+          style={{ color: 'var(--hive-gold)', fontSize: 14, textDecoration: 'none' }}
+        >
           Build with the Lua Builder →
         </Link>
       </div>
@@ -203,7 +286,13 @@ export function AgentMarketplace() {
 }
 
 function AgentCard({
-  pkg, creatorBadges, installed, installing, buying, onInstall, onBuy,
+  pkg,
+  creatorBadges,
+  installed,
+  installing,
+  buying,
+  onInstall,
+  onBuy,
 }: {
   pkg: AgentPackage;
   creatorBadges: VerificationBadge[];
@@ -214,32 +303,58 @@ function AgentCard({
   onBuy: () => void;
 }) {
   return (
-    <div style={{
-      background: '#111',
-      border: '1px solid #1e1e1e',
-      borderRadius: 12,
-      padding: 20,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 12,
-      transition: 'border-color 0.2s',
-    }}
+    <div
+      style={{
+        background: '#111',
+        border: '1px solid #1e1e1e',
+        borderRadius: 12,
+        padding: 20,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+        transition: 'border-color 0.2s',
+      }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = '#f6c40033')}
       onMouseLeave={e => (e.currentTarget.style.borderColor = '#1e1e1e')}
     >
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#666' }}>
+        <span
+          style={{
+            fontSize: 11,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            color: '#666',
+          }}
+        >
           {pkg.category.replace('_', ' ')}
         </span>
         <div style={{ display: 'flex', gap: 4 }}>
           {pkg.official && (
-            <span style={{ background: '#f6c40022', color: 'var(--hive-gold)', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>
+            <span
+              style={{
+                background: '#f6c40022',
+                color: 'var(--hive-gold)',
+                fontSize: 10,
+                padding: '2px 6px',
+                borderRadius: 4,
+                fontWeight: 700,
+              }}
+            >
               OFFICIAL
             </span>
           )}
           {pkg.verified && !pkg.official && (
-            <span style={{ background: '#22c55e22', color: '#22c55e', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>
+            <span
+              style={{
+                background: '#22c55e22',
+                color: '#22c55e',
+                fontSize: 10,
+                padding: '2px 6px',
+                borderRadius: 4,
+                fontWeight: 700,
+              }}
+            >
               VERIFIED
             </span>
           )}
@@ -248,8 +363,12 @@ function AgentCard({
 
       {/* Name + tagline */}
       <div>
-        <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 700, margin: 0, marginBottom: 4 }}>{pkg.name}</h3>
-        {pkg.tagline && <p style={{ color: '#888', fontSize: 13, margin: 0, lineHeight: 1.4 }}>{pkg.tagline}</p>}
+        <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 700, margin: 0, marginBottom: 4 }}>
+          {pkg.name}
+        </h3>
+        {pkg.tagline && (
+          <p style={{ color: '#888', fontSize: 13, margin: 0, lineHeight: 1.4 }}>{pkg.tagline}</p>
+        )}
         {creatorBadges.length > 0 && (
           <div style={{ marginTop: 6 }}>
             <VerificationBadgeSystem badges={creatorBadges} compact />
@@ -261,7 +380,16 @@ function AgentCard({
       {pkg.discipline_focus.length > 0 && (
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {pkg.discipline_focus.slice(0, 3).map(d => (
-            <span key={d} style={{ background: '#1a1a1a', color: '#888', fontSize: 11, padding: '2px 8px', borderRadius: 4 }}>
+            <span
+              key={d}
+              style={{
+                background: '#1a1a1a',
+                color: '#888',
+                fontSize: 11,
+                padding: '2px 8px',
+                borderRadius: 4,
+              }}
+            >
               {d.replace('_', ' ')}
             </span>
           ))}
@@ -270,9 +398,27 @@ function AgentCard({
 
       {/* Capabilities */}
       {pkg.capabilities.length > 0 && (
-        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <ul
+          style={{
+            margin: 0,
+            padding: 0,
+            listStyle: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3,
+          }}
+        >
           {pkg.capabilities.slice(0, 3).map((cap, i) => (
-            <li key={i} style={{ color: '#aaa', fontSize: 12, display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+            <li
+              key={i}
+              style={{
+                color: '#aaa',
+                fontSize: 12,
+                display: 'flex',
+                gap: 6,
+                alignItems: 'flex-start',
+              }}
+            >
               <span style={{ color: '#22c55e', flexShrink: 0 }}>✓</span>
               {cap}
             </li>
@@ -281,13 +427,32 @@ function AgentCard({
       )}
 
       {/* Footer: stats + action */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #1a1a1a' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginTop: 'auto',
+          paddingTop: 8,
+          borderTop: '1px solid #1a1a1a',
+        }}
+      >
         <div style={{ fontSize: 12, color: '#555' }}>
-          {pkg.avg_rating > 0 && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><Icon name="rating" size={11} /> {pkg.avg_rating.toFixed(1)} · </span>}
+          {pkg.avg_rating > 0 && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+              <Icon name="rating" size={11} /> {pkg.avg_rating.toFixed(1)} ·{' '}
+            </span>
+          )}
           {pkg.install_count} installs
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span style={{ color: pkg.price === 0 ? '#22c55e' : 'var(--hive-gold)', fontSize: 14, fontWeight: 700 }}>
+          <span
+            style={{
+              color: pkg.price === 0 ? '#22c55e' : 'var(--hive-gold)',
+              fontSize: 14,
+              fontWeight: 700,
+            }}
+          >
             {pkg.price === 0 ? 'FREE' : `€${pkg.price}`}
           </span>
           {pkg.price === 0 ? (
@@ -334,6 +499,11 @@ function AgentCard({
 }
 
 const selectStyle: React.CSSProperties = {
-  background: '#111', border: '1px solid #2a2a2a', color: '#ccc', borderRadius: 8,
-  padding: '8px 12px', fontSize: 13, cursor: 'pointer',
+  background: '#111',
+  border: '1px solid #2a2a2a',
+  color: '#ccc',
+  borderRadius: 8,
+  padding: '8px 12px',
+  fontSize: 13,
+  cursor: 'pointer',
 };

@@ -80,7 +80,9 @@ export function VerificationBadgeSystem({ profile, badges, compact = false }: Pr
               whiteSpace: 'nowrap',
             }}
           >
-            <span aria-hidden="true" style={{ display: 'inline-flex' }}><Icon name={meta.icon} size={13} color="currentColor" /></span>
+            <span aria-hidden="true" style={{ display: 'inline-flex' }}>
+              <Icon name={meta.icon} size={13} color="currentColor" />
+            </span>
             {!compact && <span>{badge.label || meta.label}</span>}
           </span>
         );

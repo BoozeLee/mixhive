@@ -26,6 +26,8 @@ const Register = lazy(() => import('./views/Register').then(m => ({ default: m.R
 const Feed = lazy(() => import('./views/Feed').then(m => ({ default: m.Feed })));
 const Dashboard = lazy(() => import('./views/Dashboard').then(m => ({ default: m.Dashboard })));
 const Discover = lazy(() => import('./views/Discover').then(m => ({ default: m.Discover })));
+const Scenes = lazy(() => import('./views/Scenes').then(m => ({ default: m.Scenes })));
+const SceneDetail = lazy(() => import('./views/SceneDetail').then(m => ({ default: m.SceneDetail })));
 const ProfilePage = lazy(() => import('./views/Profile').then(m => ({ default: m.ProfilePage })));
 const MixDetail = lazy(() => import('./views/MixDetail').then(m => ({ default: m.MixDetail })));
 const Upload = lazy(() => import('./views/Upload').then(m => ({ default: m.Upload })));
@@ -146,6 +148,8 @@ function AnimatedRoutes() {
           }
         />
         <Route path="/discover" element={<Discover />} />
+        <Route path="/scenes" element={<Scenes />} />
+        <Route path="/scene/:slug" element={<SceneDetail />} />
         <Route path="/trending" element={<Feed />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />

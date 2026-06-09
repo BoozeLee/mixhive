@@ -25,6 +25,7 @@ const topItems: SidebarItem[] = [
   { path: '/dashboard', icon: 'dashboard', label: 'Dashboard', ariaLabel: 'Creator dashboard' },
   { path: '/feed', icon: 'feed', label: 'Feed', ariaLabel: 'Hive Feed' },
   { path: '/discover', icon: 'discover', label: 'Explore', ariaLabel: 'Explore MixHive' },
+  { path: '/scenes', icon: 'events', label: 'Scenes', ariaLabel: 'Scene communities' },
   { path: '/search', icon: 'network', label: 'Network', ariaLabel: 'Hive Radar' },
   { path: '/opportunities', icon: 'events', label: 'Opportunities', ariaLabel: 'Opportunity Hub' },
   { path: '/epk', icon: 'epk', label: 'EPK', ariaLabel: 'Press Kit Studio' },

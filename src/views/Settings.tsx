@@ -1074,6 +1074,80 @@ export function Settings() {
         )}
       </div>
 
+      <div style={{ marginTop: space[8] }}>
+        <h2 style={{ fontSize: fontSize.lg, fontWeight: 600, color: colors.text.primary, marginBottom: space[4] }}>
+          Privacy &amp; Data
+        </h2>
+        <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginBottom: space[4] }}>
+          Export a copy of your data, or request account deletion (processed within 30 days). See our{' '}
+          <a href="/privacy" style={{ color: colors.accent }}>Privacy Policy</a>.
+        </p>
+        <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap' }}>
+          <button
+            onClick={async () => {
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+              if (!session) return;
+              const res = await fetch('/api/account/export', {
+                headers: { Authorization: `Bearer ${session.access_token}` },
+              });
+              if (!res.ok) return;
+              const blob = await res.blob();
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'mixhive-data.json';
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            style={{
+              padding: `${space[3]}px ${space[6]}px`,
+              borderRadius: radius.md,
+              border: `1px solid ${colors.border}`,
+              background: 'transparent',
+              color: colors.text.primary,
+              fontSize: fontSize.sm,
+              cursor: 'pointer',
+            }}
+          >
+            Download my data
+          </button>
+          <button
+            onClick={async () => {
+              if (
+                !window.confirm(
+                  'Request account deletion? Your account and data will be removed within 30 days, and you will be signed out.'
+                )
+              )
+                return;
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+              if (!session) return;
+              await fetch('/api/account/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+                body: JSON.stringify({}),
+              });
+              await supabase.auth.signOut();
+              window.location.href = '/';
+            }}
+            style={{
+              padding: `${space[3]}px ${space[6]}px`,
+              borderRadius: radius.md,
+              border: `1px solid ${colors.danger}`,
+              background: 'transparent',
+              color: colors.danger,
+              fontSize: fontSize.sm,
+              cursor: 'pointer',
+            }}
+          >
+            Delete my account
+          </button>
+        </div>
+      </div>
+
       <WalletConnectModal
         isOpen={walletModalOpen}
         onClose={() => setWalletModalOpen(false)}

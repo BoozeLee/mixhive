@@ -15,6 +15,8 @@ import { MessagesProvider } from './lib/messagesStore';
 import { MobileNav } from './components/MobileNav';
 import { DesktopSidebar } from './components/DesktopSidebar';
 import { CyberHiveBackdrop } from './components/CyberHiveBackdrop';
+import { ConsentBanner } from './components/ConsentBanner';
+import { hasConsent } from './lib/consent';
 import './styles/global.css';
 
 // Routes are code-split so the initial bundle only ships what the user
@@ -28,6 +30,9 @@ const Dashboard = lazy(() => import('./views/Dashboard').then(m => ({ default: m
 const Discover = lazy(() => import('./views/Discover').then(m => ({ default: m.Discover })));
 const Scenes = lazy(() => import('./views/Scenes').then(m => ({ default: m.Scenes })));
 const SceneDetail = lazy(() => import('./views/SceneDetail').then(m => ({ default: m.SceneDetail })));
+const Privacy = lazy(() => import('./views/Privacy').then(m => ({ default: m.Privacy })));
+const Terms = lazy(() => import('./views/Terms').then(m => ({ default: m.Terms })));
+const CookiePolicy = lazy(() => import('./views/CookiePolicy').then(m => ({ default: m.CookiePolicy })));
 const ProfilePage = lazy(() => import('./views/Profile').then(m => ({ default: m.ProfilePage })));
 const MixDetail = lazy(() => import('./views/MixDetail').then(m => ({ default: m.MixDetail })));
 const Upload = lazy(() => import('./views/Upload').then(m => ({ default: m.Upload })));
@@ -150,6 +155,9 @@ function AnimatedRoutes() {
         <Route path="/discover" element={<Discover />} />
         <Route path="/scenes" element={<Scenes />} />
         <Route path="/scene/:slug" element={<SceneDetail />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/cookies" element={<CookiePolicy />} />
         <Route path="/trending" element={<Feed />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
@@ -353,7 +361,7 @@ function shouldLoadVercelTelemetry() {
 }
 
 export default function App() {
-  const loadVercelTelemetry = shouldLoadVercelTelemetry();
+  const loadVercelTelemetry = shouldLoadVercelTelemetry() && hasConsent('analytics');
 
   return (
     <BrowserRouter>
@@ -381,6 +389,7 @@ export default function App() {
               <SessionFab />
               {loadVercelTelemetry && <Analytics />}
               {loadVercelTelemetry && <SpeedInsights />}
+              <ConsentBanner />
             </div>
           </MessagesProvider>
         </NotificationProvider>

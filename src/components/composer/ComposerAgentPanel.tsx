@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { colors, fontSize, fontWeight, radius, space } from '@/styles/tokens';
 import type { TrackCell } from '@/components/composer/ComposerCanvas';
+import { supabase } from '@/lib/supabase';
 
 interface ComposerAgentPanelProps {
   tracks: TrackCell[];
@@ -26,30 +27,35 @@ export function ComposerAgentPanel({ tracks, visible }: ComposerAgentPanelProps)
     setResult(null);
 
     try {
-      const res = await fetch('/api/lua-agent/run', {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        setError('Sign in to analyse your set.');
+        return;
+      }
+
+      // JWT-validated proxy → wasmoon set_composer_agent (never the secret endpoint).
+      const res = await fetch('/api/composer/analyse', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({
-          agent_id: 'set_composer_agent',
-          event: {
-            event_type: 'manual',
-            mix_ids: tracks.map(t => t.mix_id),
-            bpm_map: Object.fromEntries(tracks.filter(t => t.bpm).map(t => [t.mix_id, t.bpm])),
-          },
+          mix_ids: tracks.map(t => t.mix_id),
+          bpm_map: Object.fromEntries(tracks.filter(t => t.bpm).map(t => [t.mix_id, t.bpm])),
         }),
       });
 
       if (!res.ok) throw new Error('Agent request failed');
-      const data = (await res.json()) as { suggestions?: AgentResult[] };
-      const suggestion = data.suggestions?.[0];
-      if (suggestion) {
-        setResult(suggestion);
-      } else {
-        setResult({
-          analysis: 'No analysis available for this set yet.',
-          mix_count: tracks.length,
-        });
-      }
+      const data = (await res.json()) as {
+        suggestions?: Array<{ payload?: AgentResult }>;
+      };
+      const payload = data.suggestions?.[0]?.payload;
+      setResult(
+        payload ?? { analysis: 'No analysis available for this set yet.', mix_count: tracks.length }
+      );
     } catch {
       setError('Could not reach the set analysis agent. Try again shortly.');
     } finally {

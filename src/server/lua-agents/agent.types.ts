@@ -22,7 +22,9 @@ export type AgentId =
   | 'mythic_collab_weaver'
   | 'mythic_narrator'
   | 'mythic_yield_analyst'
-  | 'mythic_strategist';
+  | 'mythic_strategist'
+  // Composer
+  | 'set_composer_agent';
 
 export type AgentTier = 'free' | 'pro' | 'partner';
 export type ApprovalPolicy = 'auto' | 'always' | 'on_action';

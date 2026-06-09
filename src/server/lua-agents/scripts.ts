@@ -2244,8 +2244,8 @@ end
 export const SET_COMPOSER_AGENT = `
 -- set_composer_agent.lua
 -- On-demand agent for the Hive Composer "Analyse my set" panel.
--- Trigger: manual   Approval: on_action
--- Input: ctx.event.mix_ids (array), ctx.event.bpm_map ({mix_id → bpm})
+-- Runtime: wasmoon (AgentRegistry). Trigger: event:user_request. Approval: auto.
+-- Input: ctx.context.mix_ids (array), ctx.context.bpm_map ({mix_id -> bpm})
 
 local function suggestion(stype, payload, confidence, description, requires_action)
   return {
@@ -2258,25 +2258,25 @@ local function suggestion(stype, payload, confidence, description, requires_acti
 end
 
 function run(ctx)
-  local mix_ids = ctx.event and ctx.event.mix_ids or {}
-  local bpm_map = ctx.event and ctx.event.bpm_map or {}
+  local input = ctx.context or {}
+  local mix_ids = input.mix_ids or {}
+  local bpm_map = input.bpm_map or {}
 
   if #mix_ids < 3 then
     return { status = "ok", suggestions = {}, tasks = {}, notifications = {} }
   end
 
-  -- Collect BPM values
+  -- Collect BPM values (fallback 128 when a track has no detected BPM).
   local bpm_values = {}
   for i, mix_id in ipairs(mix_ids) do
     local bpm = bpm_map[mix_id]
     if bpm and type(bpm) == "number" then
       bpm_values[#bpm_values + 1] = bpm
     else
-      bpm_values[#bpm_values + 1] = 128  -- fallback
+      bpm_values[#bpm_values + 1] = 128
     end
   end
 
-  -- Compute BPM range
   local bpm_min = bpm_values[1]
   local bpm_max = bpm_values[1]
   for _, v in ipairs(bpm_values) do
@@ -2294,25 +2294,20 @@ function run(ctx)
     arc_desc = "dramatic sweep"
   end
 
-  -- Use vector similarity to derive genre context for the first track
-  local genre_hint = ""
-  if mix_ids[1] then
-    local similar = mh.find_similar_mixes(mix_ids[1], 3)
-    if similar and #similar > 0 and similar[1] then
-      genre_hint = " The opening track has a strong vector signature."
-    end
-  end
-
-  -- Build LLM prompt
   local prompt = string.format(
-    "Analyse this %d-track DJ set with a %s BPM arc (%d→%d BPM).%s " ..
+    "Analyse this %d-track DJ set with a %s BPM arc (%d->%d BPM). " ..
     "Give 1-2 specific observations about the set's flow in plain language. Max 40 words.",
-    #mix_ids, arc_desc, bpm_min, bpm_max, genre_hint
+    #mix_ids, arc_desc, bpm_min, bpm_max
   )
 
+  -- LLM is optional: llm.call throws when OPENAI_API_KEY is unset (no-paid-API
+  -- mode), so guard it and fall back to a deterministic summary.
   local analysis = ""
-  if mh.llm and mh.llm.call then
-    analysis = mh.llm.call(prompt, "haiku") or ""
+  local ok, res = pcall(function()
+    return mixhive["llm.call"](prompt, "haiku"):await()
+  end)
+  if ok and type(res) == "string" then
+    analysis = res
   end
 
   if analysis == "" then

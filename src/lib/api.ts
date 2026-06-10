@@ -1740,14 +1740,16 @@ export async function completeMilestone(
   if (!user) return false;
 
   try {
-    // 1. Update the milestone status
-    const { error: updateErr } = await supabase
+    // 1. Update the milestone status (capture quest_id for the rollup below)
+    const { data: updatedMilestone, error: updateErr } = await supabase
       .from('quest_milestones')
       .update({
         status: 'completed',
         completed_at: new Date().toISOString(),
       })
-      .eq('id', milestoneId);
+      .eq('id', milestoneId)
+      .select('quest_id')
+      .single();
 
     if (updateErr) throw updateErr;
 
@@ -1768,14 +1770,74 @@ export async function completeMilestone(
       }
     }
 
-    // 3. (Future) Enqueue a graph job to recalculate quest momentum if desired
-    // await enqueue_mythic_graph_job({ milestone_id: milestoneId }, 'recalculate_quest_momentum');
+    // 3. Roll up: bump momentum, and auto-complete the quest when every
+    //    milestone is done so the lifecycle actually terminates.
+    const questId = updatedMilestone?.quest_id;
+    if (questId) {
+      const { data: siblings } = await supabase
+        .from('quest_milestones')
+        .select('status')
+        .eq('quest_id', questId);
+      const rows = siblings || [];
+      const total = rows.length;
+      const done = rows.filter(r => (r as { status: string }).status === 'completed').length;
+      const allDone = total > 0 && done === total;
+
+      const { data: questRow } = await supabase
+        .from('quests')
+        .select('momentum')
+        .eq('id', questId)
+        .single();
+      const momentum = Math.min(100, ((questRow as { momentum: number } | null)?.momentum ?? 30) + 10);
+
+      await supabase
+        .from('quests')
+        .update({
+          momentum,
+          status: allDone ? 'completed' : 'active',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', questId);
+    }
 
     return true;
   } catch (e) {
     console.error('completeMilestone error', e);
     return false;
   }
+}
+
+/**
+ * Add a milestone to a quest you own. Appends after existing milestones.
+ * Without this the quest lifecycle dead-ends (createQuest makes a quest with
+ * zero milestones and there was no way to add steps).
+ */
+export async function createQuestMilestone(
+  questId: string,
+  title: string
+): Promise<boolean> {
+  if (!isSupabaseConfigured) return false;
+  const trimmed = title.trim();
+  if (!trimmed) return false;
+
+  // Next sort_order = current count (append to the end).
+  const { count } = await supabase
+    .from('quest_milestones')
+    .select('id', { count: 'exact', head: true })
+    .eq('quest_id', questId);
+
+  const { error } = await supabase.from('quest_milestones').insert({
+    quest_id: questId,
+    title: trimmed,
+    sort_order: count ?? 0,
+    status: 'pending',
+  });
+
+  if (error) {
+    console.error('createQuestMilestone error', error);
+    return false;
+  }
+  return true;
 }
 
 // --- Helpers ---

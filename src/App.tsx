@@ -33,6 +33,7 @@ const SceneDetail = lazy(() => import('./views/SceneDetail').then(m => ({ defaul
 const Privacy = lazy(() => import('./views/Privacy').then(m => ({ default: m.Privacy })));
 const Terms = lazy(() => import('./views/Terms').then(m => ({ default: m.Terms })));
 const CookiePolicy = lazy(() => import('./views/CookiePolicy').then(m => ({ default: m.CookiePolicy })));
+const Styleguide = lazy(() => import('./views/Styleguide').then(m => ({ default: m.Styleguide })));
 const ProfilePage = lazy(() => import('./views/Profile').then(m => ({ default: m.ProfilePage })));
 const MixDetail = lazy(() => import('./views/MixDetail').then(m => ({ default: m.MixDetail })));
 const Upload = lazy(() => import('./views/Upload').then(m => ({ default: m.Upload })));
@@ -158,6 +159,7 @@ function AnimatedRoutes() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/cookies" element={<CookiePolicy />} />
+        <Route path="/styleguide" element={<Styleguide />} />
         <Route path="/trending" element={<Feed />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />

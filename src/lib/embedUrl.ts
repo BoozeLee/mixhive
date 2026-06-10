@@ -10,7 +10,12 @@ export function toEmbed(rawUrl: string): Embed {
   try {
     u = new URL(rawUrl);
   } catch {
-    return { kind: 'link', url: rawUrl, label: rawUrl };
+    return { kind: 'link', url: '#', label: rawUrl };
+  }
+  // Only ever surface http(s) URLs — never a javascript:/data:/vbscript: scheme
+  // in an iframe src or a link href (social_links is user-controlled).
+  if (u.protocol !== 'http:' && u.protocol !== 'https:') {
+    return { kind: 'link', url: '#', label: rawUrl };
   }
   const host = u.hostname.replace(/^www\./, '').toLowerCase();
 

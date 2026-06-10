@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { HiveCard, HiveStat, WaveBar } from '../components/hive';
 import { SkeletonFeed } from '../components/Skeleton';
 import { ProfileCoachPanel } from '../components/ProfileCoachPanel';
+import { CreatorRecap } from '../components/CreatorRecap';
 import type { ActivityEvent, Mix, ProfileAnalytics } from '../lib/types';
 import { colors, radius, space } from '../styles/tokens';
 
@@ -180,6 +181,8 @@ export function Dashboard() {
           <HiveStat label="followers" value={analytics?.followers ?? 0} />
         </HiveCard>
       </section>
+
+      <CreatorRecap />
 
       <section style={{ marginBottom: space[10] }}>
         <ProfileCoachPanel compact />

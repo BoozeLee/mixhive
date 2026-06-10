@@ -4,6 +4,7 @@ import type { IconKey } from '../lib/icons';
 import { ProfileBannerUpload } from './ProfileBannerUpload';
 import { useAuth } from '../hooks/useAuth';
 import type { Profile } from '../lib/types';
+import { PortfolioEmbeds } from './PortfolioEmbeds';
 
 interface EnhancedProfileHeaderProps {
   profile: Profile | null;
@@ -149,6 +150,8 @@ export function EnhancedProfileHeader({
                   ))}
                 </div>
               )}
+
+              <PortfolioEmbeds links={profile.social_links as Record<string, string> | null} />
             </div>
 
             {/* Stats */}

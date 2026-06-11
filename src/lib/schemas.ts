@@ -100,8 +100,10 @@ export const LoginSchema = z.object({
 
 // Search schema
 export const SearchSchema = z.object({
-  query: z.string().min(1, 'Search query is required').max(100, 'Search query too long'),
-  type: z.enum(['mixes', 'profiles', 'all']).default('all'),
+  query: z.string().trim().min(2, 'Enter at least 2 characters').max(100, 'Search query too long'),
+  type: z.enum(['mixes', 'profiles', 'scenes', 'all']).default('all'),
+  genre: z.string().max(80).optional(),
+  location: z.string().max(100).optional(),
 });
 
 // Playlist schema

@@ -1,14 +1,11 @@
-import { searchMixes, searchProfiles } from './api';
 import type { FeedMix, Profile } from './types';
 
-// Search types
+export type SearchEntityType = 'mixes' | 'profiles' | 'scenes' | 'all';
+
 export interface SearchFilters {
   genre?: string;
-  tempo?: { min: number; max: number };
-  duration?: { min: number; max: number };
-  dateRange?: { start: string; end: string };
-  explicit?: boolean;
-  type: 'mixes' | 'profiles' | 'all';
+  location?: string;
+  type: SearchEntityType;
 }
 
 export interface SearchHistoryItem {
@@ -18,12 +15,52 @@ export interface SearchHistoryItem {
 }
 
 export interface SearchSuggestion {
-  type: 'mix' | 'profile' | 'genre';
+  type: 'mix' | 'profile' | 'scene' | 'genre';
   title: string;
   subtitle?: string;
-  id?: string;
+  href?: string;
   imageUrl?: string;
 }
+
+export interface SceneSearchResult {
+  id: string;
+  slug: string;
+  name: string;
+  city: string | null;
+  country: string | null;
+  genre: string | null;
+  description: string | null;
+  hero_image_url: string | null;
+  relevance?: number;
+}
+
+export interface SearchSection<T> {
+  items: T[];
+  total: number;
+  hasMore: boolean;
+}
+
+export interface SearchResponse {
+  query: string;
+  type: SearchEntityType;
+  filters: { genre?: string; location?: string };
+  sections: {
+    mixes: SearchSection<FeedMix>;
+    profiles: SearchSection<Profile>;
+    scenes: SearchSection<SceneSearchResult>;
+  };
+}
+
+export const emptySearchResponse = (): SearchResponse => ({
+  query: '',
+  type: 'all',
+  filters: {},
+  sections: {
+    mixes: { items: [], total: 0, hasMore: false },
+    profiles: { items: [], total: 0, hasMore: false },
+    scenes: { items: [], total: 0, hasMore: false },
+  },
+});
 
 // Search history management (localStorage based)
 const SEARCH_HISTORY_KEY = 'mixhive_search_history';
@@ -69,49 +106,39 @@ export function clearSearchHistory(): void {
 
 // Search autocomplete suggestions
 export async function getSearchSuggestions(query: string, limit = 5): Promise<SearchSuggestion[]> {
-  if (!query.trim()) return [];
-
-  const suggestions: SearchSuggestion[] = [];
-
+  if (query.trim().length < 2) return [];
   try {
-    // Get mix suggestions
-    const mixes = await searchMixes(query);
-    mixes.slice(0, 3).forEach(mix => {
-      suggestions.push({
+    const results = await enhancedSearch(query, { type: 'all' }, 0, 4);
+    return [
+      ...results.sections.scenes.items.map(scene => ({
+        type: 'scene' as const,
+        title: scene.name,
+        subtitle: [scene.city, scene.country, scene.genre].filter(Boolean).join(' · '),
+        href: `/scene/${scene.slug}`,
+        imageUrl: scene.hero_image_url || undefined,
+      })),
+      ...results.sections.profiles.items.map(profile => ({
+        type: 'profile' as const,
+        title: profile.display_name || profile.username,
+        subtitle: `@${profile.username}`,
+        href: `/u/${profile.username}`,
+        imageUrl: profile.avatar_url || undefined,
+      })),
+      ...results.sections.mixes.items.map(mix => ({
         type: 'mix',
         title: mix.title,
         subtitle: mix.dj_display_name || mix.dj_username,
-        id: mix.id,
+        href: `/mix/${mix.id}`,
         imageUrl: mix.artwork_url || undefined,
-      });
-    });
-
-    // Get profile suggestions
-    const profiles = await searchProfiles(query);
-    profiles.slice(0, 2).forEach(profile => {
-      suggestions.push({
-        type: 'profile',
-        title: profile.display_name || profile.username,
-        subtitle: `@${profile.username}`,
-        id: profile.id,
-        imageUrl: profile.avatar_url || undefined,
-      });
-    });
-
-    // Add genre suggestions (hardcoded for now, could come from API)
-    const genres = ['House', 'Techno', 'Deep House', 'Tech House', 'Trance'];
-    genres
-      .filter(genre => genre.toLowerCase().includes(query.toLowerCase()))
-      .slice(0, 2)
-      .forEach(genre => {
-        suggestions.push({
+      })),
+      ...['House', 'Techno', 'Deep House', 'Tech House', 'Trance']
+        .filter(genre => genre.toLowerCase().includes(query.toLowerCase()))
+        .map(genre => ({
           type: 'genre',
           title: genre,
           subtitle: 'Browse mixes',
-        });
-      });
-
-    return suggestions.slice(0, limit);
+        }) as SearchSuggestion),
+    ].slice(0, limit);
   } catch (error) {
     console.error('Failed to get search suggestions:', error);
     return [];
@@ -121,93 +148,22 @@ export async function getSearchSuggestions(query: string, limit = 5): Promise<Se
 // Enhanced search with filters
 export async function enhancedSearch(
   query: string,
-  filters?: SearchFilters,
-  page = 1,
+  filters: SearchFilters = { type: 'all' },
+  offset = 0,
   limit = 20
-): Promise<{
-  mixes: FeedMix[];
-  profiles: Profile[];
-  total: number;
-  hasMore: boolean;
-}> {
-  try {
-    const results: { mixes: FeedMix[]; profiles: Profile[]; total: number; hasMore: boolean } = {
-      mixes: [],
-      profiles: [],
-      total: 0,
-      hasMore: false,
-    };
-
-    if (filters?.type === 'mixes' || filters?.type === 'all') {
-      const mixResults = await searchMixes(query);
-      results.mixes = applyFilters(mixResults, filters);
-      results.total = results.mixes.length;
-      results.hasMore = results.mixes.length >= limit * page;
-    }
-
-    if (filters?.type === 'profiles' || filters?.type === 'all') {
-      const profileResults = await searchProfiles(query);
-      results.profiles = applyProfileFilters(profileResults, filters);
-      results.total += results.profiles.length;
-      results.hasMore = results.profiles.length >= limit * page;
-    }
-
-    return results;
-  } catch (error) {
-    console.error('Failed to perform enhanced search:', error);
-    return {
-      mixes: [],
-      profiles: [],
-      total: 0,
-      hasMore: false,
-    };
-  }
-}
-
-// Apply filters to search results
-function applyFilters(mixes: FeedMix[], filters?: SearchFilters): FeedMix[] {
-  if (!filters) return mixes;
-
-  return mixes.filter(mix => {
-    // Genre filter
-    if (filters.genre && mix.genre_name !== filters.genre) {
-      return false;
-    }
-
-    // Tempo filter (assuming tempo is available)
-    if (filters.tempo) {
-      // This would need tempo data from the API
-      // For now, skip this filter
-    }
-
-    // Duration filter
-    if (filters.duration && mix.duration_seconds) {
-      const duration = mix.duration_seconds;
-      if (duration < filters.duration.min || duration > filters.duration.max) {
-        return false;
-      }
-    }
-
-    // Explicit content filter
-    if (filters.explicit !== undefined && mix.is_explicit !== filters.explicit) {
-      return false;
-    }
-
-    return true;
+): Promise<SearchResponse> {
+  const params = new URLSearchParams({
+    q: query.trim(),
+    type: filters.type,
+    limit: String(limit),
+    offset: String(offset),
   });
-}
-
-function applyProfileFilters(profiles: Profile[], filters?: SearchFilters): Profile[] {
-  if (!filters) return profiles;
-
-  return profiles.filter(profile => {
-    // Genre filter for profiles
-    if (filters.genre && !profile.genres.includes(filters.genre)) {
-      return false;
-    }
-
-    return true;
-  });
+  if (filters.genre) params.set('genre', filters.genre);
+  if (filters.location) params.set('location', filters.location);
+  const response = await fetch(`/api/search?${params}`);
+  const body = (await response.json()) as SearchResponse & { error?: string };
+  if (!response.ok) throw new Error(body.error || 'Search failed');
+  return body;
 }
 
 // Popular search queries (trending searches)

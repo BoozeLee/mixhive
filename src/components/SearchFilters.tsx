@@ -49,7 +49,7 @@ export function SearchFilters({
   }
 
   function reset() {
-    const resetFilters: SearchFiltersValue = { type: 'mixes' };
+    const resetFilters: SearchFiltersValue = { type: 'all' };
     setLocalFilters(resetFilters);
     onFiltersChange(resetFilters);
     onReset();
@@ -57,9 +57,8 @@ export function SearchFilters({
 
   const hasActiveFilters = Boolean(
     localFilters.genre ||
-    localFilters.duration ||
-    localFilters.explicit !== undefined ||
-    localFilters.type !== 'mixes'
+    localFilters.location ||
+    localFilters.type !== 'all'
   );
 
   return (
@@ -120,7 +119,7 @@ export function SearchFilters({
             Content
           </legend>
           <div style={{ display: 'flex', gap: space[4] }}>
-            {(['mixes', 'profiles', 'all'] as const).map(type => (
+            {(['all', 'mixes', 'profiles', 'scenes'] as const).map(type => (
               <Button
                 key={type}
                 type="button"
@@ -129,7 +128,7 @@ export function SearchFilters({
                 onClick={() => update({ type })}
                 style={{ flex: 1, textTransform: 'capitalize' }}
               >
-                {type === 'profiles' ? 'DJs' : type}
+                {type === 'profiles' ? 'Artists' : type}
               </Button>
             ))}
           </div>
@@ -172,92 +171,27 @@ export function SearchFilters({
           </select>
         </div>
 
-        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend
+        <div>
+          <label
+            htmlFor="search-location"
             style={{
+              display: 'block',
               fontSize: 12,
               fontWeight: 600,
               color: colors.text.muted,
               marginBottom: space[5],
             }}
           >
-            Duration
-          </legend>
-          <div style={{ display: 'flex', alignItems: 'center', gap: space[5] }}>
-            <Input
-              type="number"
-              min={0}
-              placeholder="Min"
-              value={localFilters.duration?.min ?? ''}
-              onChange={event =>
-                update({
-                  duration: {
-                    min: event.target.value ? Number(event.target.value) : 0,
-                    max: localFilters.duration?.max ?? 0,
-                  },
-                })
-              }
-              style={{ width: 76 }}
-            />
-            <span style={{ color: colors.text.dim, fontSize: 12 }}>to</span>
-            <Input
-              type="number"
-              min={0}
-              placeholder="Max"
-              value={localFilters.duration?.max ?? ''}
-              onChange={event =>
-                update({
-                  duration: {
-                    min: localFilters.duration?.min ?? 0,
-                    max: event.target.value ? Number(event.target.value) : 0,
-                  },
-                })
-              }
-              style={{ width: 76 }}
-            />
-          </div>
-        </fieldset>
-      </div>
-
-      <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
-        <legend
-          style={{
-            display: 'block',
-            fontSize: 12,
-            fontWeight: 600,
-            color: colors.text.muted,
-            marginBottom: space[5],
-          }}
-        >
-          Explicit
-        </legend>
-        <div style={{ display: 'flex', gap: space[4] }}>
-          <Button
-            type="button"
-            variant={localFilters.explicit === undefined ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => update({ explicit: undefined })}
-          >
-            All
-          </Button>
-          <Button
-            type="button"
-            variant={localFilters.explicit === false ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => update({ explicit: false })}
-          >
-            Clean
-          </Button>
-          <Button
-            type="button"
-            variant={localFilters.explicit === true ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => update({ explicit: true })}
-          >
-            Explicit
-          </Button>
+            Location
+          </label>
+          <Input
+            id="search-location"
+            placeholder="City or country"
+            value={localFilters.location || ''}
+            onChange={event => update({ location: event.target.value || undefined })}
+          />
         </div>
-      </fieldset>
+      </div>
     </section>
   );
 }

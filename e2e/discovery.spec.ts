@@ -22,17 +22,27 @@ test.describe('Public discovery pages', () => {
   test('search page renders input', async ({ page }) => {
     await page.goto('/search');
     await expect(page.locator('#main-content')).toBeVisible();
-    await expect(page.locator('input[type="search"], input[placeholder*="earch"]').first()).toBeVisible();
+    await expect(page.locator('#main-content input[placeholder*="Search"]').first()).toBeVisible();
   });
 
   test('search query does not crash the page', async ({ page }) => {
     await page.goto('/search');
-    const input = page.locator('input[type="search"], input[placeholder*="earch"]').first();
+    const input = page.locator('#main-content input[placeholder*="Search"]').first();
     await input.fill('techno');
     await input.press('Enter');
     await expect(page.locator('#main-content')).toBeVisible();
     // No unhandled error overlay
     await expect(page.locator('text=Something went wrong')).not.toBeVisible({ timeout: 5_000 }).catch(() => {});
+  });
+
+  test('search exposes mixes, artists, scenes, and shareable filters', async ({ page }) => {
+    await page.goto('/search?q=techno');
+    for (const tab of ['All', 'Mixes', 'Artists', 'Scenes']) {
+      await expect(page.getByRole('tab', { name: new RegExp(tab, 'i') })).toBeVisible();
+    }
+    await page.getByRole('button', { name: /filters/i }).click();
+    await expect(page.getByLabel('Genre')).toBeVisible();
+    await expect(page.getByLabel('Location')).toBeVisible();
   });
 
   test('hub page renders with 7 tabs', async ({ page }) => {

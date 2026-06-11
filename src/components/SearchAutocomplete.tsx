@@ -14,7 +14,7 @@ interface SearchAutocompleteProps {
 
 export function SearchAutocomplete({
   onSearch,
-  placeholder = 'Search mixes, DJs, genres...',
+  placeholder = 'Search mixes, artists, scenes...',
   className,
 }: SearchAutocompleteProps) {
   const [query, setQuery] = useState('');
@@ -58,8 +58,7 @@ export function SearchAutocomplete({
   }
 
   function choose(suggestion: SearchSuggestion) {
-    if (suggestion.type === 'mix' && suggestion.id) navigate(`/mix/${suggestion.id}`);
-    else if (suggestion.type === 'profile' && suggestion.id) navigate(`/u/${suggestion.id}`);
+    if (suggestion.href) navigate(suggestion.href);
     else submit(suggestion.title);
     setOpen(false);
   }
@@ -132,7 +131,13 @@ export function SearchAutocomplete({
               }}
             >
               <span aria-hidden="true">
-                {suggestion.type === 'profile' ? '@' : suggestion.type === 'mix' ? '♪' : '#'}
+                {suggestion.type === 'profile'
+                  ? '@'
+                  : suggestion.type === 'mix'
+                    ? '♪'
+                    : suggestion.type === 'scene'
+                      ? '⌖'
+                      : '#'}
               </span>
               <span style={{ flex: 1, minWidth: 0 }}>
                 <span

@@ -73,7 +73,9 @@ class FeedService {
       case 'trending': {
         const trendingCursor = cursor ? (JSON.parse(cursor) as TrendingCursor) : undefined;
         const trendingResult = await this.getTrendingWithCache(genre, limit, trendingCursor);
-        freshData = trendingResult.data.map(this.enhanceFeedItem);
+        // Bind via arrow — enhanceFeedItem uses `this`; a bare method ref loses it
+        // and throws on the first row (silently empties trending when data exists).
+        freshData = trendingResult.data.map(m => this.enhanceFeedItem(m));
         newCursor = trendingResult.cursor ? JSON.stringify(trendingResult.cursor) : null;
         hasMore = !!trendingResult.cursor;
         break;
@@ -82,7 +84,7 @@ class FeedService {
       case 'latest': {
         const latestCursor = cursor ? (JSON.parse(cursor) as FeedCursor) : undefined;
         const latestResult = await this.getRecentMixesWithCache(limit, latestCursor);
-        freshData = latestResult.data.map(this.enhanceFeedItem);
+        freshData = latestResult.data.map(m => this.enhanceFeedItem(m));
         newCursor = latestResult.cursor ? JSON.stringify(latestResult.cursor) : null;
         hasMore = !!latestResult.cursor;
         break;

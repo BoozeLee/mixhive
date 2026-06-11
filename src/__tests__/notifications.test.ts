@@ -27,13 +27,11 @@ const mockCache = redisCache as {
   invalidateUserCache: jest.Mock;
 };
 
-const AUTH_COOKIE = 'sb-wlfjbzdzmrqiiguyoulj-auth-token';
 const USER_ID = 'user-abc';
 const ACCESS_TOKEN = 'token-xyz';
 
 function authHeader() {
-  const v = encodeURIComponent(JSON.stringify({ access_token: ACCESS_TOKEN }));
-  return { Cookie: `${AUTH_COOKIE}=${v}` };
+  return { Authorization: `Bearer ${ACCESS_TOKEN}` };
 }
 
 // Returns a chainable mock query builder that resolves to `result` when awaited.
@@ -78,7 +76,7 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('GET /api/notifications', () => {
-  it('returns 401 when auth cookie is absent', async () => {
+  it('returns 401 when auth header is absent', async () => {
     const req = new NextRequest(`http://localhost/api/notifications?userId=${USER_ID}`);
     const res = await GET(req);
     expect(res.status).toBe(401);
@@ -140,7 +138,7 @@ describe('POST /api/notifications/mark-read', () => {
     );
   }
 
-  it('returns 401 when auth cookie is absent', async () => {
+  it('returns 401 when auth header is absent', async () => {
     const res = await postMarkRead({ userId: USER_ID }, false);
     expect(res.status).toBe(401);
   });

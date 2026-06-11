@@ -28,7 +28,12 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const res = await fetch(`/api/notifications?userId=${user.id}`);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const res = await fetch(`/api/notifications?userId=${user.id}`, {
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+      });
       if (!res.ok) throw new Error('Failed to fetch notifications');
       const data = await res.json();
       setNotifications(data.notifications ?? []);

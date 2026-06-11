@@ -1,7 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { redisCache } from '@/lib/redis';
 
-const AUTH_COOKIE_NAME = 'sb-wlfjbzdzmrqiiguyoulj-auth-token';
+// Auth: prefer the `Authorization: Bearer <jwt>` header (the browser client
+// stores its session in localStorage, not a cookie, so there is no
+// `sb-*-auth-token` cookie). Fall back to a Supabase auth cookie derived from
+// the CURRENT project ref if one exists. The old hardcoded ref pointed at the
+// pre-migration project, so every request 401'd.
+function getAccessToken(req: NextRequest): string | null {
+  const authz = req.headers.get('authorization');
+  if (authz?.startsWith('Bearer ')) return authz.slice(7);
+  const ref = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').match(
+    /https?:\/\/([^.]+)\./
+  )?.[1];
+  const cookie = ref ? req.cookies.get(`sb-${ref}-auth-token`)?.value : undefined;
+  if (!cookie) return null;
+  try {
+    return JSON.parse(decodeURIComponent(cookie))?.access_token ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,13 +35,7 @@ export async function GET(req: NextRequest) {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey);
 
-    const authToken = req.cookies.get(AUTH_COOKIE_NAME)?.value;
-    if (!authToken) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const parsed = JSON.parse(decodeURIComponent(authToken));
-    const accessToken = parsed?.access_token;
+    const accessToken = getAccessToken(req);
     if (!accessToken) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

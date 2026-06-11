@@ -677,7 +677,12 @@ export async function hasReposted(userId: string, mixId: string): Promise<boolea
 export async function getNotifications(userId: string): Promise<Notification[]> {
   if (!isSupabaseConfigured || typeof window === 'undefined') return [];
   try {
-    const res = await fetch(`/api/notifications?userId=${userId}`);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const res = await fetch(`/api/notifications?userId=${userId}`, {
+      headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+    });
     if (!res.ok) throw new Error('Failed to fetch notifications');
     return await res.json();
   } catch (error) {
@@ -689,9 +694,15 @@ export async function getNotifications(userId: string): Promise<Notification[]> 
 export async function markNotificationsRead(userId: string) {
   if (!isSupabaseConfigured || typeof window === 'undefined') return;
   try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     const res = await fetch(`/api/notifications/mark-read`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+      },
       body: JSON.stringify({ userId }),
     });
     if (!res.ok) throw new Error('Failed to mark notifications as read');
@@ -883,14 +894,15 @@ export async function listConversations(): Promise<ConversationSummary[]> {
   const userId = user?.id ?? '';
   if (!userId) return [];
 
+  // Members are embedded THROUGH the conversation (reverse embed) — a sibling
+  // self-embed on conversation_members is not a resolvable PostgREST relationship.
   const { data, error } = await supabase
     .from('conversation_members')
     .select(
       `
       conversation_id,
       last_read_at,
-      conversation:conversations!inner(*),
-      member_profiles:conversation_members(profile_id, profile:profiles(*))
+      conversation:conversations!inner(*, members:conversation_members(profile_id, profile:profiles(*)))
     `
     )
     .eq('profile_id', userId);
@@ -904,7 +916,7 @@ export async function listConversations(): Promise<ConversationSummary[]> {
 
   for (const row of data as any[]) {
     const conversation: Conversation = row.conversation;
-    const members: { profile_id: string; profile: Profile }[] = row.member_profiles ?? [];
+    const members: { profile_id: string; profile: Profile }[] = row.conversation?.members ?? [];
     const otherMember = members.find(m => m.profile_id !== userId)?.profile;
     if (!otherMember) continue;
 

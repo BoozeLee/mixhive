@@ -164,7 +164,8 @@ export function Upload() {
         const waveform = await generateWaveform(audioFile);
         const jsonStr = waveformToJson(waveform);
         const blob = new Blob([jsonStr], { type: 'application/json' });
-        const waveformPath = `${crypto.randomUUID()}.json`;
+        // Owner-scoped path: migration 091 requires the first segment == auth.uid()
+        const waveformPath = `${user.id}/${crypto.randomUUID()}.json`;
         const { error: wfErr } = await supabase.storage
           .from(WAVEFORM_BUCKET)
           .upload(waveformPath, blob, { contentType: 'application/json' });
@@ -237,7 +238,9 @@ export function Upload() {
   async function uploadFile(file: File, bucket: string): Promise<string | null> {
     if (!isSupabaseConfigured) return null;
     const ext = file.name.split('.').pop();
-    const path = `${crypto.randomUUID()}.${ext}`;
+    // Owner-scoped path: migration 091 storage RLS requires the object name's
+    // first path segment to equal auth.uid(), else the upload is denied.
+    const path = `${user!.id}/${crypto.randomUUID()}.${ext}`;
     const { error: uploadErr } = await supabase.storage.from(bucket).upload(path, file);
     if (uploadErr) throw uploadErr;
     const {

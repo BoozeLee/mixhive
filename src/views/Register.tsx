@@ -8,6 +8,7 @@ import { RegisterSchema, formatZodError } from '../lib/schemas';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { isDisposableEmail } from '../lib/disposableEmail';
 import { colors, space, radius, fontSize, fontWeight, display, gradient } from '../styles/tokens';
+import { getPostAuthDestination } from '../lib/authRouting';
 
 function GoogleMark() {
   return (
@@ -31,12 +32,13 @@ export function Register() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const { user, loading, signUpWithEmail, signInWithGoogle } = useAuth();
+  const [confirmationEmail, setConfirmationEmail] = useState('');
+  const { user, profile, loading, signUpWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user) navigate('/feed', { replace: true });
-  }, [user, loading, navigate]);
+    if (!loading && user) navigate(getPostAuthDestination(profile), { replace: true });
+  }, [user, profile, loading, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,7 +71,7 @@ export function Register() {
           return;
         }
       }
-      const { error: err } = await signUpWithEmail(formData.email, formData.password, {
+      const { data, error: err } = await signUpWithEmail(formData.email, formData.password, {
         preferred_username: formData.username,
         username: formData.username,
         display_name: formData.display_name,
@@ -81,8 +83,10 @@ export function Register() {
             ? 'Username already taken. Please choose a different one.'
             : err.message
         );
-      } else {
+      } else if (data.session) {
         navigate('/setup');
+      } else {
+        setConfirmationEmail(formData.email);
       }
     } finally {
       setSubmitting(false);
@@ -98,6 +102,33 @@ export function Register() {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
+
+  if (confirmationEmail) {
+    return (
+      <main
+        style={{
+          minHeight: 'calc(100vh - 60px)',
+          display: 'grid',
+          placeItems: 'center',
+          padding: space[8],
+        }}
+      >
+        <div style={{ width: '100%', maxWidth: 440, textAlign: 'center' }}>
+          <MixhiveWordmark height={26} color={colors.text.primary} />
+          <h1 style={{ color: colors.text.primary, fontSize: display.sm, marginTop: space[10] }}>
+            Check your email
+          </h1>
+          <p style={{ color: colors.text.secondary, lineHeight: 1.6 }}>
+            We sent a confirmation link to <strong>{confirmationEmail}</strong>. Confirm your
+            address to continue to your required artist profile setup.
+          </p>
+          <Link to="/login" style={{ color: colors.accent }}>
+            Back to sign in
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <div className="auth-shell" style={{ display: 'flex', minHeight: 'calc(100vh - 60px)' }}>

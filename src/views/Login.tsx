@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { LoginSchema, formatZodError } from '../lib/schemas';
+import { getPostAuthDestination } from '../lib/authRouting';
 
 export function Login() {
   const [formData, setFormData] = useState({
@@ -12,13 +13,13 @@ export function Login() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
-  const { user, loading, signInWithEmail, signInWithGoogle } = useAuth();
+  const { user, profile, loading, signInWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   // Redirect already-authenticated users so they never see the login form
   useEffect(() => {
-    if (!loading && user) navigate('/feed', { replace: true });
-  }, [user, loading, navigate]);
+    if (!loading && user) navigate(getPostAuthDestination(profile), { replace: true });
+  }, [user, profile, loading, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,8 +38,6 @@ export function Login() {
     const { error: err } = await signInWithEmail(formData.email, formData.password);
     if (err) {
       setGeneralError(err.message);
-    } else {
-      navigate('/feed');
     }
   }
 

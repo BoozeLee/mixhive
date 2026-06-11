@@ -8,6 +8,7 @@ import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 import { BuzzToast } from '../components/hive/BuzzToast';
 import { callProfileCoach } from '../components/ProfileCoachPanel';
 import type { AISuggestion } from '../lib/types';
+import { OnboardingProfileSchema } from '../lib/schemas';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -162,6 +163,31 @@ export function ProfileSetup() {
     spotify: (profile?.social_links as Record<string, string>)?.spotify || '',
     instagram: (profile?.social_links as Record<string, string>)?.instagram || '',
   });
+
+  useEffect(() => {
+    if (!profile) return;
+    if (profile.onboarding_complete) {
+      navigate('/feed', { replace: true });
+      return;
+    }
+    setForm(current => ({
+      ...current,
+      username: profile.username || current.username,
+      displayName: profile.display_name || current.displayName,
+      location: profile.location || current.location,
+      avatarUrl: profile.avatar_url || current.avatarUrl,
+      bio: profile.bio || current.bio,
+      genres: profile.genres?.length ? profile.genres : current.genres,
+      equipment: profile.dj_equipment?.length ? profile.dj_equipment : current.equipment,
+      daw: profile.dj_daw?.length ? profile.dj_daw : current.daw,
+      djStyle: profile.dj_style || current.djStyle,
+      website: profile.website || current.website,
+      github: profile.social_links?.github || current.github,
+      soundcloud: profile.social_links?.soundcloud || current.soundcloud,
+      spotify: profile.social_links?.spotify || current.spotify,
+      instagram: profile.social_links?.instagram || current.instagram,
+    }));
+  }, [profile, navigate]);
 
   function setField<K extends keyof SetupForm>(k: K, v: SetupForm[K]) {
     setForm(prev => ({ ...prev, [k]: v }));
@@ -357,9 +383,18 @@ export function ProfileSetup() {
 
   async function handleFinish() {
     if (!user) return;
+    const validation = OnboardingProfileSchema.safeParse(form);
+    if (!validation.success) {
+      setToast({
+        open: true,
+        message: validation.error.issues[0]?.message || 'Complete the required profile fields.',
+        tone: 'danger',
+      });
+      return;
+    }
     setSaving(true);
     try {
-      await updateProfile({
+      const { error } = await updateProfile({
         username: form.username.trim(),
         display_name: form.displayName.trim() || null,
         location: form.location.trim() || null,
@@ -378,9 +413,14 @@ export function ProfileSetup() {
         dj_style: form.djStyle.trim() || null,
         onboarding_complete: true,
       });
+      if (error) throw error;
       navigate('/feed');
-    } catch {
-      setToast({ open: true, message: 'Could not save profile. Try again.', tone: 'danger' });
+    } catch (error) {
+      setToast({
+        open: true,
+        message: error instanceof Error ? error.message : 'Could not save profile. Try again.',
+        tone: 'danger',
+      });
     } finally {
       setSaving(false);
     }
@@ -388,11 +428,15 @@ export function ProfileSetup() {
 
   // ── Layout helpers ──
 
-  const canProceedStep1 = form.username.trim().length >= 3 && !usernameError && !usernameChecking;
-  const canProceedStep2 = true; // avatar is optional
-  const canProceedStep3 = true; // bio is optional
+  const canProceedStep1 =
+    form.username.trim().length >= 3 &&
+    form.displayName.trim().length > 0 &&
+    !usernameError &&
+    !usernameChecking;
+  const canProceedStep2 = Boolean(form.avatarUrl);
+  const canProceedStep3 = form.bio.trim().length > 0 && form.genres.length > 0;
   const canProceedStep4 = true;
-  const canFinish = canProceedStep1;
+  const canFinish = OnboardingProfileSchema.safeParse(form).success && !usernameError && !usernameChecking;
 
   return (
     <div
@@ -467,7 +511,7 @@ export function ProfileSetup() {
         >
           {/* ── Step 1: Identity ── */}
           {step === 1 && (
-            <StepShell title="Set up your identity" subtitle="Pick your username and display name.">
+            <StepShell title="Set up your identity" subtitle="Username and display name are required.">
               <FormField label="Username *" hint="3–30 chars, letters/numbers/underscores">
                 <input
                   type="text"
@@ -506,7 +550,7 @@ export function ProfileSetup() {
                   </p>
                 )}
               </FormField>
-              <FormField label="Display name">
+              <FormField label="Display name *">
                 <input
                   type="text"
                   value={form.displayName}
@@ -532,7 +576,7 @@ export function ProfileSetup() {
           {step === 2 && (
             <StepShell
               title="Your avatar"
-              subtitle="Upload a photo or let AI generate one for you."
+              subtitle="Upload a photo or let AI generate one for you. An avatar is required."
             >
               {/* Mode toggle */}
               <div
@@ -866,7 +910,7 @@ export function ProfileSetup() {
                 onBack={() => setStep(1)}
                 onNext={() => setStep(3)}
                 canNext={canProceedStep2}
-                nextLabel={form.avatarUrl ? 'Next' : 'Skip'}
+                nextLabel="Next"
               />
             </StepShell>
           )}
@@ -875,9 +919,9 @@ export function ProfileSetup() {
           {step === 3 && (
             <StepShell
               title="Your sound"
-              subtitle="Tell the hive what you're about. AI can write your bio."
+              subtitle="Choose at least one genre and add a bio. Both are required."
             >
-              <FormField label="Genres">
+              <FormField label="Genres *">
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
                   {GENRES.map(g => (
                     <button
@@ -929,7 +973,7 @@ export function ProfileSetup() {
                 }}
               >
                 <div style={{ flex: 1 }}>
-                  <FormField label="Bio">
+                  <FormField label="Bio *">
                     <textarea
                       value={form.bio}
                       onChange={e => setField('bio', e.target.value)}
@@ -1376,31 +1420,6 @@ export function ProfileSetup() {
           )}
         </div>
 
-        <p
-          style={{
-            textAlign: 'center',
-            marginTop: space[8],
-            fontSize: fontSize.sm,
-            color: colors.text.faint,
-          }}
-        >
-          <button
-            onClick={() => {
-              updateProfile({ onboarding_complete: true });
-              navigate('/feed');
-            }}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: colors.text.faint,
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              fontSize: fontSize.sm,
-            }}
-          >
-            Skip setup for now
-          </button>
-        </p>
       </div>
 
       <BuzzToast

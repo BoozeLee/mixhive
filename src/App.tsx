@@ -1,7 +1,7 @@
 'use client';
 
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Navbar } from './components/Navbar';
@@ -17,6 +17,8 @@ import { DesktopSidebar } from './components/DesktopSidebar';
 import { CyberHiveBackdrop } from './components/CyberHiveBackdrop';
 import { ConsentBanner } from './components/ConsentBanner';
 import { hasConsent } from './lib/consent';
+import { needsOnboarding } from './lib/authRouting';
+import { useAuth } from './hooks/useAuth';
 import './styles/global.css';
 
 // Routes are code-split so the initial bundle only ships what the user
@@ -224,7 +226,7 @@ function AnimatedRoutes() {
         <Route
           path="/setup"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowIncompleteProfile>
               <ProfileSetup />
             </ProtectedRoute>
           }
@@ -366,6 +368,21 @@ function AnimatedRoutes() {
   );
 }
 
+function OnboardingGate({ children }: { children: React.ReactNode }) {
+  const { user, profile, loading } = useAuth();
+  const location = useLocation();
+  const allowedWhileIncomplete =
+    location.pathname === '/setup' ||
+    location.pathname.startsWith('/auth/') ||
+    ['/privacy', '/terms', '/cookies'].includes(location.pathname);
+
+  if (!loading && user && needsOnboarding(profile) && !allowedWhileIncomplete) {
+    return <Navigate to="/setup" replace />;
+  }
+
+  return <>{children}</>;
+}
+
 function shouldLoadVercelTelemetry() {
   if (process.env.NODE_ENV !== 'production' || typeof window === 'undefined') return false;
   return !['localhost', '127.0.0.1'].includes(window.location.hostname);
@@ -390,7 +407,9 @@ export default function App() {
                 <main id="main-content" className="mixhive-main app-main">
                   <ErrorBoundary>
                     <Suspense fallback={<RoutePending />}>
-                      <AnimatedRoutes />
+                      <OnboardingGate>
+                        <AnimatedRoutes />
+                      </OnboardingGate>
                     </Suspense>
                   </ErrorBoundary>
                 </main>

@@ -51,6 +51,19 @@ export const ProfileSchema = z.object({
   social_links: z.record(z.string(), z.string()).optional(),
 });
 
+export const OnboardingProfileSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username too long')
+    .regex(/^[A-Za-z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
+  displayName: z.string().trim().min(1, 'Display name is required').max(50, 'Display name too long'),
+  avatarUrl: z.string().trim().url('Avatar is required'),
+  bio: z.string().trim().min(1, 'Bio is required').max(1000, 'Bio too long'),
+  genres: z.array(z.string()).min(1, 'Choose at least one genre').max(20, 'Maximum 20 genres'),
+});
+
 // Comment schema
 export const CommentSchema = z.object({
   body: z

@@ -2,9 +2,16 @@ import { Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { BeeMark } from './brand/BeeMark';
+import { needsOnboarding } from '../lib/authRouting';
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+export function ProtectedRoute({
+  children,
+  allowIncompleteProfile = false,
+}: {
+  children: React.ReactNode;
+  allowIncompleteProfile?: boolean;
+}) {
+  const { user, profile, loading } = useAuth();
 
   if (loading)
     return (
@@ -48,6 +55,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
 
   if (!user) return <Navigate to="/login" replace />;
+  if (!allowIncompleteProfile && needsOnboarding(profile)) {
+    return <Navigate to="/setup" replace />;
+  }
 
   return <>{children}</>;
 }

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { getPostAuthDestination } from '../lib/authRouting';
+import type { Profile } from '../lib/types';
 
 export function AuthCallback() {
   const navigate = useNavigate();
@@ -53,17 +55,21 @@ export function AuthCallback() {
         if (session?.user) {
           // Defence-in-depth: ensure profile exists (the onAuthStateChange in useAuth handles
           // this too, but doing it here guarantees it for Google signups with slow DB triggers).
+          let profile: Profile | null = null;
           try {
             const { data: existing } = await supabase
               .from('profiles')
-              .select('id')
+              .select('*')
               .eq('id', session.user.id)
               .maybeSingle();
 
-            if (!existing) {
+            if (existing) {
+              profile = existing;
+            } else {
               const metadata = session.user.user_metadata ?? {};
-              await supabase.from('profiles').upsert(
-                {
+              const { data: created, error: createError } = await supabase
+                .from('profiles')
+                .upsert({
                   id: session.user.id,
                   username:
                     metadata.preferred_username ||
@@ -75,16 +81,18 @@ export function AuthCallback() {
                     session.user.email?.split('@')[0] ||
                     'User',
                   avatar_url: metadata.avatar_url || metadata.picture || null,
-                },
-                { onConflict: 'id', ignoreDuplicates: true }
-              );
+                }, { onConflict: 'id', ignoreDuplicates: false })
+                .select()
+                .single();
+              if (createError) throw createError;
+              profile = created;
             }
           } catch (profileErr) {
             // Profile creation is non-fatal — useAuth will retry on next render
             console.warn('[AuthCallback] profile upsert (non-fatal):', profileErr);
           }
 
-          if (isMounted.current) navigate('/feed', { replace: true });
+          if (isMounted.current) navigate(getPostAuthDestination(profile), { replace: true });
           return;
         }
 
@@ -132,7 +140,7 @@ export function AuthCallback() {
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ color: '#f0c040', fontSize: 14, marginBottom: 8 }}>Completing sign in…</div>
-        <div style={{ color: '#555', fontSize: 12 }}>Redirecting you to the feed</div>
+        <div style={{ color: '#555', fontSize: 12 }}>Preparing your MixHive profile</div>
       </div>
     </div>
   );

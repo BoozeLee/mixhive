@@ -80,6 +80,7 @@ const QuestDetail = lazy(() =>
   import('./views/QuestDetail').then(m => ({ default: m.QuestDetail }))
 );
 const QuestsList = lazy(() => import('./views/QuestsList').then(m => ({ default: m.QuestsList })));
+const AvatarStudio = lazy(() => import('./views/AvatarStudio').then(m => ({ default: m.AvatarStudio })));
 const GearMarketplace = lazy(() =>
   import('./views/GearMarketplace').then(m => ({ default: m.GearMarketplace }))
 );
@@ -257,6 +258,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <QuestsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/studio/avatar"
+          element={
+            <ProtectedRoute>
+              <AvatarStudio />
             </ProtectedRoute>
           }
         />

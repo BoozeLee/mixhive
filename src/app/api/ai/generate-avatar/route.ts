@@ -28,10 +28,42 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const styleKey = body.style && STYLE_PROMPTS[body.style] ? body.style : 'cyber-hive';
-  const basePrompt = STYLE_PROMPTS[styleKey];
-  const userHint = body.prompt?.trim() ? ` Additional style: ${body.prompt.slice(0, 200)}.` : '';
-  const finalPrompt = `${basePrompt}${userHint}`;
+  // 'cosmic-funk' = the Profile Art Studio: the client sends a fully-compiled
+  // recipe prompt (already includes the locked style core); pass it through at a
+  // higher cap. Other styles keep the preset + short hint behaviour.
+  let finalPrompt: string;
+  if (body.style === 'cosmic-funk') {
+    finalPrompt = (body.prompt?.trim() || '').slice(0, 3500);
+    if (!finalPrompt) {
+      return NextResponse.json({ error: 'Empty prompt' }, { status: 400 });
+    }
+  } else {
+    const styleKey = body.style && STYLE_PROMPTS[body.style] ? body.style : 'cyber-hive';
+    const basePrompt = STYLE_PROMPTS[styleKey];
+    const userHint = body.prompt?.trim() ? ` Additional style: ${body.prompt.slice(0, 200)}.` : '';
+    finalPrompt = `${basePrompt}${userHint}`;
+  }
+
+  // Input moderation (free OpenAI endpoint) — refuse flagged prompts before
+  // spending the user's key. Best-effort: a moderation outage doesn't block.
+  try {
+    const modRes = await fetch('https://api.openai.com/v1/moderations', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${ctx.openaiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'omni-moderation-latest', input: finalPrompt }),
+    });
+    if (modRes.ok) {
+      const mod = (await modRes.json()) as { results?: Array<{ flagged?: boolean }> };
+      if (mod.results?.[0]?.flagged) {
+        return NextResponse.json(
+          { error: 'Your prompt was flagged by content moderation — please adjust it.' },
+          { status: 400 }
+        );
+      }
+    }
+  } catch {
+    /* moderation best-effort */
+  }
 
   const res = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',

@@ -127,7 +127,9 @@ export function Upload() {
 
     const result = UploadSchema.safeParse({
       ...validationData,
-      artworkFile: artworkFile,
+      // artwork is optional: pass undefined (not null) so the optional File
+      // schema accepts "no artwork" instead of silently failing validation.
+      artworkFile: artworkFile ?? undefined,
       audioFile: audioFile,
     });
 

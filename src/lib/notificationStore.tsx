@@ -75,6 +75,15 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     };
   }, [user, fetchNotifications]);
 
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return;
+    const onMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'mixhive-notification-refresh') void fetchNotifications();
+    };
+    navigator.serviceWorker.addEventListener('message', onMessage);
+    return () => navigator.serviceWorker.removeEventListener('message', onMessage);
+  }, [fetchNotifications]);
+
   const markAsRead = useCallback(
     async (ids: string[]) => {
       if (!user || ids.length === 0) return;
@@ -89,7 +98,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         );
 
         // Call API to persist
-        await markNotificationsRead(user.id);
+        await markNotificationsRead(user.id, ids);
 
         // Refetch to ensure consistency (handles rollback on failure)
         void fetchNotifications();

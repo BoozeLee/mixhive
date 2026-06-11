@@ -54,5 +54,6 @@ services:
     environment:
       APP_BASE_URL: ${APP_BASE_URL:-https://mixhive.vercel.app}
       CRON_SECRET: ${CRON_SECRET}
+      IV_PUSH: ${IV_PUSH:-300}
     depends_on:
       - audio-worker

@@ -691,7 +691,7 @@ export async function getNotifications(userId: string): Promise<Notification[]> 
   }
 }
 
-export async function markNotificationsRead(userId: string) {
+export async function markNotificationsRead(userId: string, ids?: string[]) {
   if (!isSupabaseConfigured || typeof window === 'undefined') return;
   try {
     const {
@@ -703,7 +703,7 @@ export async function markNotificationsRead(userId: string) {
         'Content-Type': 'application/json',
         ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
       },
-      body: JSON.stringify({ userId }),
+      body: JSON.stringify({ userId, ...(ids?.length ? { ids } : {}) }),
     });
     if (!res.ok) throw new Error('Failed to mark notifications as read');
   } catch (error) {

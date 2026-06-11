@@ -41,6 +41,7 @@ function makeChain(result: unknown = { data: [], error: null }) {
   const chain: Record<string, unknown> = {};
   chain.select = jest.fn().mockReturnValue(chain);
   chain.eq = jest.fn().mockReturnValue(chain);
+  chain.in = jest.fn().mockReturnValue(chain);
   chain.order = jest.fn().mockReturnValue(chain);
   chain.update = jest.fn().mockReturnValue(chain);
   chain.limit = jest.fn().mockReturnValue(leaf);
@@ -154,5 +155,14 @@ describe('POST /api/notifications/mark-read', () => {
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
     expect(mockCache.invalidateUserCache).toHaveBeenCalledWith(USER_ID);
+  });
+
+  it('can mark only selected notification IDs read', async () => {
+    const client = mockSupabase();
+    mockedCreateClient.mockReturnValue(client);
+    const res = await postMarkRead({ userId: USER_ID, ids: ['n1'] });
+    expect(res.status).toBe(200);
+    const chain = client.from.mock.results[0].value;
+    expect(chain.in).toHaveBeenCalledWith('id', ['n1']);
   });
 });

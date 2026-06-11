@@ -48,6 +48,9 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json().catch(() => ({}));
     const userId = body.userId;
+    const ids = Array.isArray(body.ids)
+      ? body.ids.filter((id: unknown): id is string => typeof id === 'string').slice(0, 100)
+      : [];
 
     if (!userId) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 });
@@ -57,11 +60,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { error: updateError } = await supabase
+    let query = supabase
       .from('notifications')
       .update({ read: true })
       .eq('user_id', userId)
       .eq('read', false);
+    if (ids.length) query = query.in('id', ids);
+    const { error: updateError } = await query;
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });

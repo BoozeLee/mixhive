@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../lib/notificationStore';
-import type { Notification } from '../lib/types';
 import { colors, space, fontSize } from '../styles/tokens';
 import { Button } from '../components/ui/Button';
 import { Icon } from '../components/ui/Icon';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
 import type { IconKey } from '../lib/icons';
+import { notificationPresentation } from '../lib/notificationPresentation';
 
 const TYPE_ICON: Record<string, IconKey> = {
   like: 'like',
@@ -40,64 +40,6 @@ export function NotificationsPage() {
   async function handleMarkAllAsRead() {
     if (!user) return;
     await markAllAsRead();
-  }
-
-  function notificationText(notification: Notification) {
-    const actor = notification.actor?.display_name || notification.actor?.username || 'Someone';
-    switch (notification.type) {
-      case 'like':
-        return `${actor} liked your mix`;
-      case 'follow':
-        return `${actor} followed you`;
-      case 'comment':
-        return `${actor} commented on your mix`;
-      case 'reply':
-        return `${actor} replied to your comment`;
-      case 'mix_upload':
-        return `${actor} uploaded a new mix`;
-      case 'mention':
-        return `${actor} mentioned you in a comment`;
-      case 'buzz_like':
-        return `${actor} liked your buzz`;
-      case 'repost':
-        return `${actor} reposted your buzz`;
-      case 'message':
-        return `${actor} sent you a message`;
-      case 'verification': {
-        const status = notification.data?.status;
-        const badge = notification.data?.badge_type;
-        if (badge === 'trusted_seller') return 'You earned the Trusted Seller badge';
-        if (status === 'approved') return 'Your verification request was approved';
-        if (status === 'rejected') return 'Your verification request was reviewed';
-        return 'Verification update';
-      }
-      default:
-        return `${actor} interacted with you`;
-    }
-  }
-
-  function notificationLink(notification: Notification): string {
-    switch (notification.type) {
-      case 'follow':
-        return `/u/${notification.actor?.username || notification.actor_id}`;
-      case 'like':
-      case 'comment':
-      case 'reply':
-      case 'mix_upload':
-      case 'mention':
-        return notification.mix_id ? `/mix/${notification.mix_id}` : '#';
-      case 'buzz_like':
-      case 'repost':
-        return notification.buzz_id ? `/buzz/${notification.buzz_id}` : '#';
-      case 'message':
-        return (notification.data as { conversation_id?: string })?.conversation_id
-          ? `/messages/${(notification.data as { conversation_id: string }).conversation_id}`
-          : '/messages';
-      case 'verification':
-        return '/profile';
-      default:
-        return '#';
-    }
   }
 
   if (loading) {
@@ -151,7 +93,10 @@ export function NotificationsPage() {
           {notifications.map((notification, i) => (
             <Reveal key={notification.id} index={i} from="up">
               <Link
-                to={notificationLink(notification)}
+                to={notificationPresentation(notification).url}
+                onClick={() => {
+                  if (!notification.read) void markAsRead([notification.id]);
+                }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -230,7 +175,7 @@ export function NotificationsPage() {
                       lineHeight: 1.4,
                     }}
                   >
-                    {notificationText(notification)}
+                    {notificationPresentation(notification).body}
                   </p>
                   <p style={{ fontSize: fontSize.sm, color: colors.text.dim, margin: '4px 0 0' }}>
                     {new Date(notification.created_at).toLocaleDateString('en-US', {

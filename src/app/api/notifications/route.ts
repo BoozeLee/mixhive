@@ -73,6 +73,7 @@ export async function GET(req: NextRequest) {
 
     const notifications = (data || []).map(n => ({
       ...n,
+      data: { ...(n.metadata ?? {}), ...(n.data ?? {}), ...(n.body ? { body: n.body } : {}) },
       actor: n.profiles,
     }));
 

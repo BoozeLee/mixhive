@@ -183,8 +183,19 @@ export interface Notification {
     | 'buzz_like'
     | 'repost'
     | 'verification'
-    | 'message';
-  actor_id: string;
+    | 'message'
+    | 'agent_notification'
+    | 'agent_purchased'
+    | 'agent_sale'
+    | 'gear_sale'
+    | 'gear_shipped'
+    | 'gear_delivered'
+    | 'gear_confirmed'
+    | 'gear_payout'
+    | 'gear_refunded'
+    | 'gear_disputed'
+    | 'earnings_paid';
+  actor_id: string | null;
   mix_id: string | null;
   buzz_id: string | null;
   data: Record<string, unknown>;

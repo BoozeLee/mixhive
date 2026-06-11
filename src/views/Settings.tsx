@@ -8,6 +8,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
 import { ProfilePictureUploadSmall } from '../components/ProfilePictureUploadSmall';
+import { NotificationSettings } from '../components/NotificationSettings';
 import { WalletConnectModal } from '../components/WalletConnectModal';
 import { ProfileSchema, formatZodError } from '../lib/schemas';
 import {
@@ -313,6 +314,23 @@ export function Settings() {
         >
           Design with Cosmic-Funk Studio
         </Button>
+      </div>
+
+      <div
+        id="notifications"
+        style={{
+          marginBottom: space[10],
+          borderTop: `1px solid ${colors.border}`,
+          paddingTop: space[8],
+        }}
+      >
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#ccc', marginBottom: space[3] }}>
+          Notifications
+        </h2>
+        <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginBottom: space[6] }}>
+          Choose what reaches this browser. System pushes stay quiet while MixHive is focused.
+        </p>
+        <NotificationSettings />
       </div>
 
       {error && (

@@ -45,24 +45,40 @@ export async function POST(req: NextRequest) {
   }
 
   // Input moderation (free OpenAI endpoint) — refuse flagged prompts before
-  // spending the user's key. Best-effort: a moderation outage doesn't block.
+  // spending the user's key. Fail closed: generation must never bypass a
+  // failed or malformed safety check.
   try {
     const modRes = await fetch('https://api.openai.com/v1/moderations', {
       method: 'POST',
       headers: { Authorization: `Bearer ${ctx.openaiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'omni-moderation-latest', input: finalPrompt }),
     });
-    if (modRes.ok) {
-      const mod = (await modRes.json()) as { results?: Array<{ flagged?: boolean }> };
-      if (mod.results?.[0]?.flagged) {
-        return NextResponse.json(
-          { error: 'Your prompt was flagged by content moderation — please adjust it.' },
-          { status: 400 }
-        );
-      }
+    if (!modRes.ok) {
+      return NextResponse.json(
+        { error: 'Safety check unavailable. Please try again.' },
+        { status: 503 }
+      );
+    }
+
+    const mod = (await modRes.json()) as { results?: Array<{ flagged?: boolean }> };
+    const flagged = mod.results?.[0]?.flagged;
+    if (typeof flagged !== 'boolean') {
+      return NextResponse.json(
+        { error: 'Safety check unavailable. Please try again.' },
+        { status: 503 }
+      );
+    }
+    if (flagged) {
+      return NextResponse.json(
+        { error: 'Your prompt was flagged by content moderation — please adjust it.' },
+        { status: 400 }
+      );
     }
   } catch {
-    /* moderation best-effort */
+    return NextResponse.json(
+      { error: 'Safety check unavailable. Please try again.' },
+      { status: 503 }
+    );
   }
 
   const res = await fetch('https://api.openai.com/v1/images/generations', {

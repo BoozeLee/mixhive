@@ -617,6 +617,27 @@ export function ProfileSetup() {
 
               {avatarMode === 'generate' && (
                 <div>
+                  <div
+                    style={{
+                      background: colors.accentFaint,
+                      border: `1px solid ${colors.accentMuted}`,
+                      borderRadius: radius.md,
+                      padding: `${space[5]}px ${space[6]}px`,
+                      marginBottom: space[7],
+                      fontSize: fontSize.sm,
+                      color: colors.text.secondary,
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    Want a guided psychedelic profile picture?{' '}
+                    <Link
+                      to="/studio/avatar"
+                      style={{ color: colors.accent, fontWeight: fontWeight.semibold }}
+                    >
+                      Open Cosmic-Funk Studio →
+                    </Link>
+                  </div>
+
                   {/* AI key status notice */}
                   {aiKeyReady === 'none' && (
                     <div

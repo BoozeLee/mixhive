@@ -304,6 +304,15 @@ export function Settings() {
           currentUserId={profile?.id || ''}
           onUploadComplete={handleAvatarUploadComplete}
         />
+        <Button
+          type="button"
+          variant="secondary"
+          size="lg"
+          onClick={() => navigate('/studio/avatar')}
+          style={{ marginTop: space[5] }}
+        >
+          Design with Cosmic-Funk Studio
+        </Button>
       </div>
 
       {error && (

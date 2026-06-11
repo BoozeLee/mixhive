@@ -37,6 +37,10 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!error) return this.props.children;
     if (this.props.fallback) return this.props.fallback(error, this.reset);
 
+    // Technical details (raw message, stack, copy button) are dev-only — in
+    // production users see a friendly message while Sentry receives the details.
+    const showDetails = process.env.NODE_ENV === 'development';
+
     return (
       <div
         role="alert"
@@ -75,73 +79,76 @@ export class ErrorBoundary extends Component<Props, State> {
             back to the feed.
           </p>
 
-          {/* Always show the actual error in production for remote debugging */}
-          <div
-            style={{
-              textAlign: 'left',
-              fontSize: 12,
-              color: '#ff9999',
-              background: '#1a0a0a',
-              padding: 12,
-              borderRadius: 6,
-              margin: '0 0 16px',
-              border: '1px solid #3a1010',
-              wordBreak: 'break-word',
-            }}
-          >
-            <strong>Error:</strong> {error.message}
-          </div>
-
-          {error.stack && (
-            <details style={{ marginBottom: 16 }}>
-              <summary style={{ cursor: 'pointer', color: '#888', fontSize: 12 }}>
-                Show stack trace (click to expand)
-              </summary>
-              <pre
+          {showDetails && (
+            <>
+              <div
                 style={{
                   textAlign: 'left',
-                  fontSize: 10,
-                  color: '#888',
-                  background: '#0a0a0a',
-                  padding: 8,
-                  borderRadius: 4,
-                  overflow: 'auto',
-                  maxHeight: 160,
-                  marginTop: 8,
-                  whiteSpace: 'pre-wrap',
+                  fontSize: 12,
+                  color: '#ff9999',
+                  background: '#1a0a0a',
+                  padding: 12,
+                  borderRadius: 6,
+                  margin: '0 0 16px',
+                  border: '1px solid #3a1010',
+                  wordBreak: 'break-word',
                 }}
               >
-                {error.stack}
-              </pre>
-            </details>
-          )}
+                <strong>Error:</strong> {error.message}
+              </div>
 
-          <button
-            onClick={() => {
-              const text = `Error: ${error.message}\n\n${error.stack || ''}`;
-              navigator.clipboard
-                ?.writeText(text)
-                .then(() => {
-                  alert('Error details copied to clipboard');
-                })
-                .catch(() => {
-                  // fallback
-                  prompt('Copy this error:', text);
-                });
-            }}
-            style={{
-              padding: '6px 12px',
-              borderRadius: 4,
-              background: 'transparent',
-              color: '#ccc',
-              border: '1px solid #444',
-              fontSize: 12,
-              cursor: 'pointer',
-              marginBottom: 16,
-            }}
-          >
-            Copy error details
-          </button>
+              {error.stack && (
+                <details style={{ marginBottom: 16 }}>
+                  <summary style={{ cursor: 'pointer', color: '#888', fontSize: 12 }}>
+                    Show stack trace (click to expand)
+                  </summary>
+                  <pre
+                    style={{
+                      textAlign: 'left',
+                      fontSize: 10,
+                      color: '#888',
+                      background: '#0a0a0a',
+                      padding: 8,
+                      borderRadius: 4,
+                      overflow: 'auto',
+                      maxHeight: 160,
+                      marginTop: 8,
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    {error.stack}
+                  </pre>
+                </details>
+              )}
+
+              <button
+                onClick={() => {
+                  const text = `Error: ${error.message}\n\n${error.stack || ''}`;
+                  navigator.clipboard
+                    ?.writeText(text)
+                    .then(() => {
+                      alert('Error details copied to clipboard');
+                    })
+                    .catch(() => {
+                      // fallback
+                      prompt('Copy this error:', text);
+                    });
+                }}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 4,
+                  background: 'transparent',
+                  color: '#ccc',
+                  border: '1px solid #444',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  marginBottom: 16,
+                }}
+              >
+                Copy error details
+              </button>
+            </>
+          )}
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
             <button
               onClick={this.reset}

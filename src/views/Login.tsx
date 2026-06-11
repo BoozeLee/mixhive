@@ -113,7 +113,7 @@ export function Login() {
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -8 }}>
             <Link
               to="/auth/forgot-password"
-              style={{ color: '#888', fontSize: 12, textDecoration: 'none' }}
+              style={{ color: '#888', fontSize: 12, textDecoration: 'underline' }}
             >
               Forgot password?
             </Link>
@@ -154,7 +154,7 @@ export function Login() {
 
         <p style={{ textAlign: 'center', marginTop: 24, color: '#555', fontSize: 13 }}>
           No account?{' '}
-          <Link to="/register" style={{ color: '#f0c040', textDecoration: 'none' }}>
+          <Link to="/register" style={{ color: '#f0c040', textDecoration: 'underline' }}>
             Join Mix Hive
           </Link>
         </p>

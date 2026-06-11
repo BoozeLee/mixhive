@@ -50,8 +50,14 @@ export function ConsentBanner() {
     >
       <p style={{ color: colors.text.secondary, fontSize: fontSize.sm, margin: 0 }}>
         We use necessary cookies to run MixHive, and optional analytics to improve it. Read our{' '}
-        <a href="/cookies" style={{ color: colors.text.primary }}>Cookie Policy</a> and{' '}
-        <a href="/privacy" style={{ color: colors.text.primary }}>Privacy Policy</a>.
+        <a href="/cookies" style={{ color: colors.text.primary, textDecoration: 'underline' }}>
+          Cookie Policy
+        </a>{' '}
+        and{' '}
+        <a href="/privacy" style={{ color: colors.text.primary, textDecoration: 'underline' }}>
+          Privacy Policy
+        </a>
+        .
       </p>
       <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
         <button onClick={() => decide(true)} style={btn(colors.success, '#000')}>

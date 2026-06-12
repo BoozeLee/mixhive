@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { usePlayer } from '../lib/playerStore';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
+import { colors } from '../styles/tokens';
 import {
   getMix,
   getComments,
@@ -176,27 +177,29 @@ export function MixDetail() {
           borderRadius: 12,
           background: mix.artwork_url
             ? `url(${mix.artwork_url}) center/cover`
-            : 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+            : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.accentFaint})`,
           marginBottom: 20,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: 48,
-          color: '#f0c04022',
+          color: colors.accentFaint,
         }}
       >
         {!mix.artwork_url && '♪'}
       </div>
 
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#eee', margin: '0 0 4px' }}>
+        <h1
+          style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, margin: '0 0 4px' }}
+        >
           {mix.title}
         </h1>
         {mix.dj && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Link
               to={`/u/${mix.dj.username}`}
-              style={{ color: '#999', fontSize: 14, textDecoration: 'none' }}
+              style={{ color: colors.text.dimmed, fontSize: 14, textDecoration: 'none' }}
             >
               {mix.dj.display_name || mix.dj.username}
             </Link>
@@ -209,7 +212,7 @@ export function MixDetail() {
           </div>
         )}
         {mix.description && (
-          <p style={{ color: '#777', fontSize: 14, marginTop: 12, lineHeight: 1.6 }}>
+          <p style={{ color: colors.text.dim, fontSize: 14, marginTop: 12, lineHeight: 1.6 }}>
             {mix.description}
           </p>
         )}
@@ -223,7 +226,7 @@ export function MixDetail() {
           style={{
             background: 'transparent',
             border: 'none',
-            color: liked ? '#f0c040' : '#666',
+            color: liked ? colors.accent : colors.text.faint,
             cursor: 'pointer',
             fontSize: 20,
             display: 'flex',
@@ -233,12 +236,14 @@ export function MixDetail() {
         >
           {liked ? '♥' : '♡'} <span style={{ fontSize: 14 }}>{likeCount}</span>
         </button>
-        <span style={{ color: '#666', fontSize: 14 }}>{mix.play_count} plays</span>
-        {mix.genre_name && <span style={{ color: '#666', fontSize: 13 }}>{mix.genre_name}</span>}
+        <span style={{ color: colors.text.faint, fontSize: 14 }}>{mix.play_count} plays</span>
+        {mix.genre_name && (
+          <span style={{ color: colors.text.faint, fontSize: 13 }}>{mix.genre_name}</span>
+        )}
         <span
           style={{
-            background: '#1a1a2e',
-            color: '#777',
+            background: colors.surfaceHover,
+            color: colors.text.dim,
             fontSize: 10,
             padding: '2px 6px',
             borderRadius: 4,
@@ -259,8 +264,8 @@ export function MixDetail() {
           }}
           style={{
             background: 'transparent',
-            border: '1px solid #333',
-            color: shareCopied ? '#6c6' : '#888',
+            border: `1px solid ${colors.borderStrong}`,
+            color: shareCopied ? colors.success : colors.text.muted,
             padding: '6px 14px',
             borderRadius: 6,
             cursor: 'pointer',
@@ -273,8 +278,8 @@ export function MixDetail() {
           onClick={() => setShowEmbed(!showEmbed)}
           style={{
             background: 'transparent',
-            border: '1px solid #333',
-            color: '#888',
+            border: `1px solid ${colors.borderStrong}`,
+            color: colors.text.muted,
             padding: '6px 14px',
             borderRadius: 6,
             cursor: 'pointer',
@@ -305,8 +310,8 @@ export function MixDetail() {
             }}
             style={{
               background: 'transparent',
-              border: '1px solid #333',
-              color: reposted ? '#6c6' : '#888',
+              border: `1px solid ${colors.borderStrong}`,
+              color: reposted ? colors.success : colors.text.muted,
               padding: '6px 14px',
               borderRadius: 6,
               cursor: repostBusy ? 'wait' : 'pointer',
@@ -334,8 +339,8 @@ export function MixDetail() {
                 );
               }}
               style={{
-                background: '#f0c040',
-                color: '#0a0a0a',
+                background: colors.accent,
+                color: colors.bg,
                 border: 'none',
                 padding: '6px 14px',
                 borderRadius: 6,
@@ -359,8 +364,8 @@ export function MixDetail() {
               }}
               style={{
                 background: 'transparent',
-                border: '1px solid #333',
-                color: '#888',
+                border: `1px solid ${colors.borderStrong}`,
+                color: colors.text.muted,
                 padding: '6px 14px',
                 borderRadius: 6,
                 cursor: 'pointer',
@@ -373,8 +378,8 @@ export function MixDetail() {
               onClick={() => setShowAddToPlaylist(true)}
               style={{
                 background: 'transparent',
-                border: '1px solid #333',
-                color: '#888',
+                border: `1px solid ${colors.borderStrong}`,
+                color: colors.text.muted,
                 padding: '6px 14px',
                 borderRadius: 6,
                 cursor: 'pointer',
@@ -398,8 +403,8 @@ export function MixDetail() {
             style={{
               textDecoration: 'none',
               background: 'transparent',
-              border: '1px solid #333',
-              color: '#888',
+              border: `1px solid ${colors.borderStrong}`,
+              color: colors.text.muted,
               padding: '6px 14px',
               borderRadius: 6,
               cursor: 'pointer',
@@ -415,7 +420,7 @@ export function MixDetail() {
             style={{
               background: 'transparent',
               border: '1px solid rgba(240,192,64,0.35)',
-              color: '#f0c040',
+              color: colors.accent,
               padding: '6px 14px',
               borderRadius: 6,
               cursor: 'pointer',
@@ -431,13 +436,13 @@ export function MixDetail() {
         <div
           style={{
             marginTop: 12,
-            background: '#0d0d0d',
-            border: '1px solid #222',
+            background: colors.surfaceMuted,
+            border: `1px solid ${colors.borderSubtle}`,
             borderRadius: 8,
             padding: 12,
           }}
         >
-          <p style={{ color: '#888', fontSize: 12, marginBottom: 6 }}>
+          <p style={{ color: colors.text.muted, fontSize: 12, marginBottom: 6 }}>
             Paste this HTML to embed this mix on any website:
           </p>
           <textarea
@@ -447,9 +452,9 @@ export function MixDetail() {
             onClick={e => (e.target as HTMLTextAreaElement).select()}
             style={{
               width: '100%',
-              background: '#111',
-              border: '1px solid #222',
-              color: '#888',
+              background: colors.surface,
+              border: `1px solid ${colors.borderSubtle}`,
+              color: colors.text.muted,
               padding: 8,
               borderRadius: 6,
               fontSize: 12,
@@ -465,8 +470,8 @@ export function MixDetail() {
             <span
               key={t}
               style={{
-                background: '#1a1a2e',
-                color: '#777',
+                background: colors.surfaceHover,
+                color: colors.text.dim,
                 padding: '4px 10px',
                 borderRadius: 12,
                 fontSize: 12,
@@ -480,10 +485,12 @@ export function MixDetail() {
 
       {mix.tracklist && mix.tracklist.length > 0 && (
         <div style={{ marginTop: 24 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: '#ccc', marginBottom: 8 }}>
+          <h3
+            style={{ fontSize: 14, fontWeight: 600, color: colors.text.secondary, marginBottom: 8 }}
+          >
             Tracklist
           </h3>
-          <div style={{ fontSize: 13, color: '#888', lineHeight: 2 }}>
+          <div style={{ fontSize: 13, color: colors.text.muted, lineHeight: 2 }}>
             {(mix.tracklist as { artist: string; title: string }[]).map((t, i) => (
               <div key={i}>
                 {i + 1}. {t.artist} — {t.title}
@@ -499,7 +506,14 @@ export function MixDetail() {
 
       {fansAlsoLiked.length > 0 && (
         <div style={{ marginTop: 32 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: '#ccc', marginBottom: 12 }}>
+          <h3
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: colors.text.secondary,
+              marginBottom: 12,
+            }}
+          >
             Fans Also Liked
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -513,14 +527,16 @@ export function MixDetail() {
       <SimilarMixesPanel mixId={mix.id} />
 
       <div style={{ marginTop: 32 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: '#ccc', marginBottom: 12 }}>
+        <h3
+          style={{ fontSize: 14, fontWeight: 600, color: colors.text.secondary, marginBottom: 12 }}
+        >
           Comments ({comments.length})
         </h3>
 
         {user ? (
           <form onSubmit={handleComment}>
             {replyTo && (
-              <div style={{ fontSize: 12, color: '#888', marginBottom: 6 }}>
+              <div style={{ fontSize: 12, color: colors.text.muted, marginBottom: 6 }}>
                 Replying to a comment{' '}
                 <button
                   type="button"
@@ -528,7 +544,7 @@ export function MixDetail() {
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#f0c040',
+                    color: colors.accent,
                     cursor: 'pointer',
                     fontSize: 12,
                   }}
@@ -545,9 +561,9 @@ export function MixDetail() {
                 required
                 style={{
                   flex: 1,
-                  background: '#111',
-                  border: '1px solid #222',
-                  color: '#eee',
+                  background: colors.surface,
+                  border: `1px solid ${colors.borderSubtle}`,
+                  color: colors.text.primary,
                   padding: '10px 14px',
                   borderRadius: 8,
                   fontSize: 14,
@@ -556,8 +572,8 @@ export function MixDetail() {
               <button
                 type="submit"
                 style={{
-                  background: '#f0c040',
-                  color: '#0a0a0a',
+                  background: colors.accent,
+                  color: colors.bg,
                   border: 'none',
                   padding: '10px 16px',
                   borderRadius: 8,
@@ -571,8 +587,8 @@ export function MixDetail() {
             </div>
           </form>
         ) : (
-          <p style={{ color: '#555', fontSize: 13 }}>
-            <Link to="/login" style={{ color: '#f0c040' }}>
+          <p style={{ color: colors.text.faintest, fontSize: 13 }}>
+            <Link to="/login" style={{ color: colors.accent }}>
               Sign in
             </Link>{' '}
             to comment
@@ -582,7 +598,7 @@ export function MixDetail() {
         <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
           {comments.map(c => (
             <div key={c.id}>
-              <div style={{ background: '#111', borderRadius: 8, padding: '10px 14px' }}>
+              <div style={{ background: colors.surface, borderRadius: 8, padding: '10px 14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                   {c.user?.avatar_url && (
                     <img
@@ -594,7 +610,7 @@ export function MixDetail() {
                   <Link
                     to={`/u/${c.user?.username}`}
                     style={{
-                      color: '#f0c040',
+                      color: colors.accent,
                       fontSize: 13,
                       fontWeight: 600,
                       textDecoration: 'none',
@@ -602,7 +618,7 @@ export function MixDetail() {
                   >
                     {c.user?.display_name || c.user?.username}
                   </Link>
-                  <span style={{ color: '#555', fontSize: 11, marginLeft: 'auto' }}>
+                  <span style={{ color: colors.text.faintest, fontSize: 11, marginLeft: 'auto' }}>
                     {timeAgo(c.created_at)}
                   </span>
                   <button
@@ -610,7 +626,7 @@ export function MixDetail() {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#555',
+                      color: colors.text.faintest,
                       fontSize: 12,
                       cursor: 'pointer',
                     }}
@@ -618,7 +634,7 @@ export function MixDetail() {
                     Reply
                   </button>
                 </div>
-                <p style={{ color: '#ccc', fontSize: 14, margin: 0 }}>
+                <p style={{ color: colors.text.secondary, fontSize: 14, margin: 0 }}>
                   <MentionRenderer body={c.body} />
                 </p>
               </div>
@@ -629,7 +645,7 @@ export function MixDetail() {
                     style={{
                       marginLeft: 24,
                       marginTop: 8,
-                      background: '#0d0d0d',
+                      background: colors.surfaceMuted,
                       borderRadius: 8,
                       padding: '8px 12px',
                     }}
@@ -645,7 +661,7 @@ export function MixDetail() {
                       <Link
                         to={`/u/${r.user?.username}`}
                         style={{
-                          color: '#f0c040',
+                          color: colors.accent,
                           fontSize: 12,
                           fontWeight: 600,
                           textDecoration: 'none',
@@ -653,11 +669,13 @@ export function MixDetail() {
                       >
                         {r.user?.display_name || r.user?.username}
                       </Link>
-                      <span style={{ color: '#555', fontSize: 10, marginLeft: 'auto' }}>
+                      <span
+                        style={{ color: colors.text.faintest, fontSize: 10, marginLeft: 'auto' }}
+                      >
                         {timeAgo(r.created_at)}
                       </span>
                     </div>
-                    <p style={{ color: '#bbb', fontSize: 13, margin: 0 }}>
+                    <p style={{ color: colors.text.secondary, fontSize: 13, margin: 0 }}>
                       <MentionRenderer body={r.body} />
                     </p>
                   </div>

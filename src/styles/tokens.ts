@@ -26,9 +26,11 @@ export const colors = {
   text: {
     primary: '#eee',
     secondary: '#ccc',
+    dimmed: '#999',
     muted: '#888',
     dim: '#777', // 4.6:1 on #111 — passes AA normal text
     faint: '#666', // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
+    faintest: '#555', // decorative/disabled only — below AA for text
   },
 
   // Semantic

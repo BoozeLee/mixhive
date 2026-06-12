@@ -99,3 +99,23 @@ again" / "Back to feed", while Sentry still receives the full exception in every
 - **Mix/Buzz detail invalid-id handling.** On prod, `/mix/<bad-id>` and `/buzz/<bad-id>`
   emit a console 400 because the Supabase query runs with a non-UUID id. A not-found guard
   before the query would avoid the network error for deleted/invalid links.
+
+## P6 completion — 2026-06-12
+
+The handoff items above are now implemented and production-verified:
+
+- Placeholder optional telemetry credentials are rejected; Sentry is single-init and silent
+  without a valid DSN. Mixpanel loads only after analytics consent and never records PII.
+- CSP source lists no longer emit `undefined`; both Next and Vercel production CSP allow the
+  consent-gated Mixpanel delivery endpoints.
+- Lighthouse critical budgets, deterministic bundle budgets, serious/critical axe checks, and
+  320px overflow checks run as CI gates. The final bundle measured 4.05 MB across 87 chunks;
+  the largest chunk was 723 KB against a 1.5 MB critical cap.
+- Route errors reset on navigation. Malformed and deleted Mix/Buzz links render not-found
+  without Supabase 400/406 responses.
+- `/api/health` now returns safe aggregate status with structured logging. Production release
+  `7c1331b` reported database, Redis, audio queue, and push queue healthy with zero failures.
+
+Verification: TypeScript green; 263/263 unit tests green; production build green; 16/16
+quality browser gates green; full local mocked-route smoke green. Optional Mixpanel/Sentry
+delivery remains disabled until valid provider credentials are configured.

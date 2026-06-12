@@ -59,18 +59,23 @@ export async function GET(req: NextRequest) {
     currentHour.setUTCMinutes(0, 0, 0);
     const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
 
-    const [{ data: notifications, error: notificationError }, { data: subscriptions }, { data: preferences }] =
-      await Promise.all([
-        sb
-          .from('notifications')
-          .select('id,user_id,type,actor_id,mix_id,buzz_id,data,body,metadata,created_at,profiles!notifications_actor_id_fkey(username,display_name)')
-          .eq('read', false)
-          .gte('created_at', since)
-          .order('created_at', { ascending: true })
-          .limit(1000),
-        sb.from('push_subscriptions').select('id,user_id,endpoint,p256dh,auth'),
-        sb.from('notification_preferences').select('*'),
-      ]);
+    const [
+      { data: notifications, error: notificationError },
+      { data: subscriptions },
+      { data: preferences },
+    ] = await Promise.all([
+      sb
+        .from('notifications')
+        .select(
+          'id,user_id,type,actor_id,mix_id,buzz_id,data,body,metadata,created_at,profiles!notifications_actor_id_fkey(username,display_name)'
+        )
+        .eq('read', false)
+        .gte('created_at', since)
+        .order('created_at', { ascending: true })
+        .limit(1000),
+      sb.from('push_subscriptions').select('id,user_id,endpoint,p256dh,auth'),
+      sb.from('notification_preferences').select('*'),
+    ]);
     if (notificationError) throw notificationError;
 
     const subsByUser = new Map<string, Subscription[]>();
@@ -142,7 +147,8 @@ export async function GET(req: NextRequest) {
           },
         });
         if (!error) enqueued += 1;
-        else if (error.code !== '23505') console.error('[push-sender] digest enqueue:', error.message);
+        else if (error.code !== '23505')
+          console.error('[push-sender] digest enqueue:', error.message);
       }
     }
 
@@ -179,7 +185,11 @@ export async function GET(req: NextRequest) {
         await Promise.all([
           sb
             .from('push_delivery_jobs')
-            .update({ status: 'delivered', delivered_at: new Date().toISOString(), last_error: null })
+            .update({
+              status: 'delivered',
+              delivered_at: new Date().toISOString(),
+              last_error: null,
+            })
             .eq('id', job.id),
           sb
             .from('push_subscriptions')

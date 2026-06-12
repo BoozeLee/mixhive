@@ -39,7 +39,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .maybeSingle();
 
     if (!txn) return notFound('No escrowed transaction to ship for this listing');
-    if (txn.seller_profile_id !== user.id) return forbidden('Only the seller can mark this shipped');
+    if (txn.seller_profile_id !== user.id)
+      return forbidden('Only the seller can mark this shipped');
 
     await svc
       .from('equipment_transactions')

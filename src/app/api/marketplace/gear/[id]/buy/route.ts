@@ -16,15 +16,12 @@ function makeClient(jwt: string) {
 
 function feeRate(price: number): number {
   if (price >= 2000) return 0.025;
-  if (price >= 500)  return 0.030;
-  if (price >= 100)  return 0.040;
-  return 0.050;
+  if (price >= 500) return 0.03;
+  if (price >= 100) return 0.04;
+  return 0.05;
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -39,7 +36,10 @@ export async function POST(
     }
     const sb = makeClient(authHeader.slice(7));
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     // Load listing
@@ -89,7 +89,7 @@ export async function POST(
         capture_method: 'manual',
       },
       success_url: `${origin}/marketplace/gear/${id}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${origin}/marketplace/gear/${id}?payment=cancelled`,
+      cancel_url: `${origin}/marketplace/gear/${id}?payment=cancelled`,
       metadata: {
         listing_id: id,
         buyer_profile_id: user.id,
@@ -114,10 +114,7 @@ export async function POST(
     });
 
     // Reserve the listing
-    await sb
-      .from('equipment_listings')
-      .update({ status: 'reserved' })
-      .eq('id', id);
+    await sb.from('equipment_listings').update({ status: 'reserved' }).eq('id', id);
 
     return NextResponse.json({ checkout_url: session.url });
   } catch (err) {

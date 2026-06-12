@@ -56,9 +56,7 @@ export function SearchFilters({
   }
 
   const hasActiveFilters = Boolean(
-    localFilters.genre ||
-    localFilters.location ||
-    localFilters.type !== 'all'
+    localFilters.genre || localFilters.location || localFilters.type !== 'all'
   );
 
   return (

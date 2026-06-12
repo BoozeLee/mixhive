@@ -89,11 +89,25 @@ export function Navbar() {
       }}
     >
       {/* Left: Logo + nav links */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: space[8], minWidth: 0, flex: '0 0 auto' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: space[8],
+          minWidth: 0,
+          flex: '0 0 auto',
+        }}
+      >
         <Link
           to="/"
           aria-label="MixHive home"
-          style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 9 }}
+          style={{
+            textDecoration: 'none',
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 9,
+          }}
         >
           <BeeMark size={28} color="var(--hive-gold, #f6c400)" glow />
           <MixhiveWordmark height={17} color="var(--hive-text, #f5f3e7)" />
@@ -219,7 +233,14 @@ export function Navbar() {
                       borderBottom: '1px solid rgba(240,192,64,0.12)',
                     }}
                   >
-                    <div style={{ color: colors.accent, fontSize: 13, fontWeight: 700, lineHeight: 1.3 }}>
+                    <div
+                      style={{
+                        color: colors.accent,
+                        fontSize: 13,
+                        fontWeight: 700,
+                        lineHeight: 1.3,
+                      }}
+                    >
                       {profile?.display_name || profile?.username || 'DJ'}
                     </div>
                     <div style={{ color: colors.text.faint, fontSize: 11, marginTop: 2 }}>
@@ -231,8 +252,12 @@ export function Navbar() {
                     to={`/u/${profile?.username}`}
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
                   >
                     View Profile
                   </Link>
@@ -240,8 +265,12 @@ export function Navbar() {
                     to="/settings"
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
                   >
                     Settings
                   </Link>
@@ -249,8 +278,12 @@ export function Navbar() {
                     to="/upload"
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
                   >
                     Upload Mix
                   </Link>
@@ -259,9 +292,17 @@ export function Navbar() {
 
                   <button
                     style={{ ...menuItemStyle, color: '#e05555' }}
-                    onClick={() => { setMenuOpen(false); signOut(); navigate('/'); }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(224,85,85,0.10)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      signOut();
+                      navigate('/');
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(224,85,85,0.10)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
                   >
                     Sign out
                   </button>

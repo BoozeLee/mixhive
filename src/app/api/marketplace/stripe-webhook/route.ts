@@ -13,7 +13,12 @@
 // the auto-release cron (separate charges & transfers) — NOT here.
 import { NextRequest, NextResponse } from 'next/server';
 import type Stripe from 'stripe';
-import { getStripe, makeServiceClient, payoutToSeller, onboardingStateFromAccount } from '@/lib/stripe-connect';
+import {
+  getStripe,
+  makeServiceClient,
+  payoutToSeller,
+  onboardingStateFromAccount,
+} from '@/lib/stripe-connect';
 
 export const runtime = 'nodejs';
 
@@ -69,7 +74,8 @@ type Sb = ReturnType<typeof makeServiceClient>;
 
 async function handleCheckoutCompleted(stripe: Stripe, sb: Sb, session: Stripe.Checkout.Session) {
   const meta = session.metadata ?? {};
-  const { listing_id, buyer_profile_id, seller_profile_id, agent_package_id, creator_profile_id } = meta;
+  const { listing_id, buyer_profile_id, seller_profile_id, agent_package_id, creator_profile_id } =
+    meta;
 
   // --- Paid gear boost: extend the listing's boosted_until window ---
   if (meta.boost === '1' && listing_id) {
@@ -187,7 +193,8 @@ async function handleAccountUpdated(sb: Sb, account: Stripe.Account) {
 }
 
 async function handleChargeRefunded(sb: Sb, charge: Stripe.Charge) {
-  const pi = typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id;
+  const pi =
+    typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id;
   if (!pi) return;
 
   const { data: txn } = await sb
@@ -199,7 +206,11 @@ async function handleChargeRefunded(sb: Sb, charge: Stripe.Charge) {
 
   await sb
     .from('equipment_transactions')
-    .update({ transaction_state: 'refunded', resolved_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .update({
+      transaction_state: 'refunded',
+      resolved_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', txn.id)
     .neq('transaction_state', 'released');
 
@@ -208,8 +219,20 @@ async function handleChargeRefunded(sb: Sb, charge: Stripe.Charge) {
 
   try {
     await sb.from('notifications').insert([
-      { user_id: txn.buyer_profile_id, type: 'gear_refunded', body: `Your gear purchase was refunded.`, metadata: { transaction_id: txn.id }, read: false },
-      { user_id: txn.seller_profile_id, type: 'gear_refunded', body: `A gear transaction was refunded and the listing is active again.`, metadata: { transaction_id: txn.id }, read: false },
+      {
+        user_id: txn.buyer_profile_id,
+        type: 'gear_refunded',
+        body: `Your gear purchase was refunded.`,
+        metadata: { transaction_id: txn.id },
+        read: false,
+      },
+      {
+        user_id: txn.seller_profile_id,
+        type: 'gear_refunded',
+        body: `A gear transaction was refunded and the listing is active again.`,
+        metadata: { transaction_id: txn.id },
+        read: false,
+      },
     ]);
   } catch {
     // ignore
@@ -217,7 +240,10 @@ async function handleChargeRefunded(sb: Sb, charge: Stripe.Charge) {
 }
 
 async function handleDisputeCreated(sb: Sb, dispute: Stripe.Dispute) {
-  const pi = typeof dispute.payment_intent === 'string' ? dispute.payment_intent : dispute.payment_intent?.id;
+  const pi =
+    typeof dispute.payment_intent === 'string'
+      ? dispute.payment_intent
+      : dispute.payment_intent?.id;
   if (!pi) return;
 
   const { data: txn } = await sb
@@ -251,7 +277,10 @@ async function handleDisputeCreated(sb: Sb, dispute: Stripe.Dispute) {
 }
 
 async function handleDisputeClosed(sb: Sb, dispute: Stripe.Dispute) {
-  const pi = typeof dispute.payment_intent === 'string' ? dispute.payment_intent : dispute.payment_intent?.id;
+  const pi =
+    typeof dispute.payment_intent === 'string'
+      ? dispute.payment_intent
+      : dispute.payment_intent?.id;
   if (!pi) return;
 
   const { data: txn } = await sb
@@ -267,13 +296,21 @@ async function handleDisputeClosed(sb: Sb, dispute: Stripe.Dispute) {
     // release normally (buyer confirm or auto-release).
     await sb
       .from('equipment_transactions')
-      .update({ transaction_state: 'delivered', delivered_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+      .update({
+        transaction_state: 'delivered',
+        delivered_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', txn.id)
       .eq('transaction_state', 'disputed');
   } else if (dispute.status === 'lost') {
     await sb
       .from('equipment_transactions')
-      .update({ transaction_state: 'refunded', resolved_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+      .update({
+        transaction_state: 'refunded',
+        resolved_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', txn.id)
       .eq('transaction_state', 'disputed');
     await sb.from('equipment_listings').update({ status: 'active' }).eq('id', txn.listing_id);

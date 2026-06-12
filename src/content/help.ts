@@ -19,12 +19,22 @@ export interface HelpCategory {
 }
 
 export const HELP_CATEGORIES: HelpCategory[] = [
-  { id: 'start',     label: 'Getting Started', icon: 'home',     blurb: 'New to the hive? Start here.' },
-  { id: 'create',    label: 'Creating',        icon: 'upload',   blurb: 'Upload mixes, build releases.' },
-  { id: 'agents',    label: 'AI Agents',       icon: 'agents',   blurb: 'Automate your profile with Lua agents.' },
-  { id: 'community', label: 'Community',        icon: 'quests',   blurb: 'Collab quests and the scene.' },
-  { id: 'market',    label: 'Marketplace',      icon: 'gear',     blurb: 'Gear, agents, and getting paid.' },
-  { id: 'account',   label: 'Account & Security', icon: 'settings', blurb: 'Sign-in, privacy, notifications.' },
+  { id: 'start', label: 'Getting Started', icon: 'home', blurb: 'New to the hive? Start here.' },
+  { id: 'create', label: 'Creating', icon: 'upload', blurb: 'Upload mixes, build releases.' },
+  {
+    id: 'agents',
+    label: 'AI Agents',
+    icon: 'agents',
+    blurb: 'Automate your profile with Lua agents.',
+  },
+  { id: 'community', label: 'Community', icon: 'quests', blurb: 'Collab quests and the scene.' },
+  { id: 'market', label: 'Marketplace', icon: 'gear', blurb: 'Gear, agents, and getting paid.' },
+  {
+    id: 'account',
+    label: 'Account & Security',
+    icon: 'settings',
+    blurb: 'Sign-in, privacy, notifications.',
+  },
 ];
 
 export const HELP_ARTICLES: HelpArticle[] = [

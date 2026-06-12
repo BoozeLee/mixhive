@@ -3,10 +3,7 @@ import type { Notification } from './types';
 export type NotificationCategory = 'messages' | 'social' | 'uploads' | 'account';
 export type NotificationUrgency = 'immediate' | 'digest';
 
-type NotificationLike = Pick<
-  Notification,
-  'type' | 'actor_id' | 'mix_id' | 'buzz_id' | 'data'
-> & {
+type NotificationLike = Pick<Notification, 'type' | 'actor_id' | 'mix_id' | 'buzz_id' | 'data'> & {
   actor?: Notification['actor'] | null;
 };
 
@@ -40,7 +37,10 @@ export function safeNotificationPath(path: string | null | undefined): string {
 export function notificationPresentation(notification: NotificationLike): NotificationPresentation {
   const data = notification.data ?? {};
   const actor =
-    notification.actor?.display_name || notification.actor?.username || dataString(data, 'actor_name') || 'Someone';
+    notification.actor?.display_name ||
+    notification.actor?.username ||
+    dataString(data, 'actor_name') ||
+    'Someone';
   const customBody = dataString(data, 'body') || dataString(data, 'message');
   const listingId = dataString(data, 'listing_id');
   const conversationId = dataString(data, 'conversation_id');
@@ -61,7 +61,12 @@ export function notificationPresentation(notification: NotificationLike): Notifi
       return {
         category: 'social',
         urgency: 'immediate',
-        title: notification.type === 'reply' ? 'New reply' : notification.type === 'mention' ? 'You were mentioned' : 'New comment',
+        title:
+          notification.type === 'reply'
+            ? 'New reply'
+            : notification.type === 'mention'
+              ? 'You were mentioned'
+              : 'New comment',
         body:
           customBody ||
           `${actor} ${notification.type === 'reply' ? 'replied to your comment' : notification.type === 'mention' ? 'mentioned you' : 'commented on your mix'}`,
@@ -125,7 +130,9 @@ export function notificationPresentation(notification: NotificationLike): Notifi
         urgency: 'immediate',
         title: 'Marketplace update',
         body: customBody || 'Your gear transaction was updated',
-        url: safeNotificationPath(listingId ? `/marketplace/gear/${listingId}` : '/marketplace/gear'),
+        url: safeNotificationPath(
+          listingId ? `/marketplace/gear/${listingId}` : '/marketplace/gear'
+        ),
       };
     case 'gear_payout':
     case 'earnings_paid':

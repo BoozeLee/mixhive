@@ -308,7 +308,11 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
             )}
             {audioFile && (
               <AttachBadge
-                label={<><Icon name="music" size={13} /> {audioFile.name}</>}
+                label={
+                  <>
+                    <Icon name="music" size={13} /> {audioFile.name}
+                  </>
+                }
                 onRemove={() => clearAttachment('audio')}
               />
             )}
@@ -325,7 +329,14 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               />
             )}
             {attachedMixId && (
-              <AttachBadge label={<><Icon name="headphones" size={13} /> Mix attached</>} onRemove={() => clearAttachment('mix')} />
+              <AttachBadge
+                label={
+                  <>
+                    <Icon name="headphones" size={13} /> Mix attached
+                  </>
+                }
+                onRemove={() => clearAttachment('mix')}
+              />
             )}
 
             {/* Bottom toolbar */}
@@ -352,7 +363,11 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
                 title="Add code snippet"
                 onClick={() => setActiveAttach('code')}
               />
-              <AttachButton label={<Icon name="headphones" size={16} />} title="Attach mix" onClick={() => setActiveAttach('mix')} />
+              <AttachButton
+                label={<Icon name="headphones" size={16} />}
+                title="Attach mix"
+                onClick={() => setActiveAttach('mix')}
+              />
 
               <div style={{ flex: 1 }} />
 
@@ -386,7 +401,13 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
                   gap: space[2],
                 }}
               >
-                {submitting ? "…" : <><Icon name="buzz" size={14} /> Buzz</>}
+                {submitting ? (
+                  '…'
+                ) : (
+                  <>
+                    <Icon name="buzz" size={14} /> Buzz
+                  </>
+                )}
               </button>
             </div>
           </div>

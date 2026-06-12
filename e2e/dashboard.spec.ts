@@ -15,8 +15,8 @@ test.describe('Dashboard', () => {
 
   test('mixes section renders or shows empty state', async ({ page }) => {
     await page.goto('/dashboard');
-    await expect(
-      page.locator('[class*="mix"], [class*="upload"], p, h3').first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[class*="mix"], [class*="upload"], p, h3').first()).toBeVisible({
+      timeout: 10_000,
+    });
   });
 });

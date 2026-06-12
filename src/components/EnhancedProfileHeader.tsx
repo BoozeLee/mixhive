@@ -55,7 +55,9 @@ export function EnhancedProfileHeader({
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-purple-900/50 via-blue-900/50 to-indigo-900/50 flex items-center justify-center">
             <div className="text-center text-gray-400">
-              <div className="mb-2" style={{display:"inline-flex"}}><Icon name="music" size={36} /></div>
+              <div className="mb-2" style={{ display: 'inline-flex' }}>
+                <Icon name="music" size={36} />
+              </div>
               <div className="text-lg">Profile Banner</div>
             </div>
           </div>
@@ -207,9 +209,18 @@ export function EnhancedProfileHeader({
 
 function getPlatformIcon(platform: string): IconKey {
   const icons: Record<string, IconKey> = {
-    soundcloud: 'music', spotify: 'headphones', youtube: 'video', applemusic: 'music',
-    mixcloud: 'headphones', tiktok: 'video', bandcamp: 'music', beatport: 'music',
-    instagram: 'camera', website: 'link', twitter: 'external', facebook: 'external',
+    soundcloud: 'music',
+    spotify: 'headphones',
+    youtube: 'video',
+    applemusic: 'music',
+    mixcloud: 'headphones',
+    tiktok: 'video',
+    bandcamp: 'music',
+    beatport: 'music',
+    instagram: 'camera',
+    website: 'link',
+    twitter: 'external',
+    facebook: 'external',
   };
   return icons[platform.toLowerCase()] || 'link';
 }

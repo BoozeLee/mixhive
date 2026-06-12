@@ -8,7 +8,9 @@ let inserted: Record<string, unknown> | null = null;
 
 jest.mock('@supabase/supabase-js', () => ({
   createClient: () => ({
-    auth: { getUser: async () => ({ data: { user: mockUser }, error: mockUser ? null : new Error('no') }) },
+    auth: {
+      getUser: async () => ({ data: { user: mockUser }, error: mockUser ? null : new Error('no') }),
+    },
     from: () => ({
       insert: (row: Record<string, unknown>) => {
         inserted = row;

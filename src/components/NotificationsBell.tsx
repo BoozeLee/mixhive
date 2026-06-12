@@ -30,13 +30,24 @@ export function NotificationsBell() {
     const reg = swRegRef.current ?? (await registerSW());
     swRegRef.current = reg;
 
-    if (!reg) { setPushState('denied'); return; }
+    if (!reg) {
+      setPushState('denied');
+      return;
+    }
 
     const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-    if (!vapidKey) { setPushState('denied'); return; }
+    if (!vapidKey) {
+      setPushState('denied');
+      return;
+    }
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { setPushState('denied'); return; }
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      setPushState('denied');
+      return;
+    }
 
     const ok = await subscribeToPush(reg, vapidKey, session.access_token);
 

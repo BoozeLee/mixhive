@@ -8,9 +8,9 @@ test.describe('Notifications & Push', () => {
 
   test('notifications shows list or empty state', async ({ page }) => {
     await page.goto('/notifications');
-    await expect(
-      page.locator('[class*="notification"], h1, h2, p').first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[class*="notification"], h1, h2, p').first()).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test('notification bell visible in navbar when authenticated', async ({ page }) => {
@@ -26,8 +26,6 @@ test.describe('Notifications & Push', () => {
     // The bell nudge only appears if Notification.permission === 'default'
     // In test env (headless) this should be 'default', so the "Enable push" button may appear
     // Just verify the bell link is visible — nudge is a best-effort check
-    await expect(
-      page.locator('a[href="/notifications"]').first()
-    ).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('a[href="/notifications"]').first()).toBeVisible({ timeout: 8_000 });
   });
 });

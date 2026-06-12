@@ -291,7 +291,9 @@ export async function testRunAgent(
   });
   if (!res.ok) {
     const detail = await res.json().catch(() => null);
-    throw new Error(detail?.error ? `${detail.error} (${res.status})` : `runtime returned ${res.status}`);
+    throw new Error(
+      detail?.error ? `${detail.error} (${res.status})` : `runtime returned ${res.status}`
+    );
   }
   return res.json();
 }

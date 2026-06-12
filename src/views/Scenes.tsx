@@ -39,7 +39,9 @@ export function Scenes() {
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: 24 }}>
-      <h1 style={{ fontSize: fontSize['3xl'], fontWeight: 700, color: colors.text.primary }}>Scenes</h1>
+      <h1 style={{ fontSize: fontSize['3xl'], fontWeight: 700, color: colors.text.primary }}>
+        Scenes
+      </h1>
       <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 4 }}>
         Local underground communities — artists, labels and collectives.
       </p>

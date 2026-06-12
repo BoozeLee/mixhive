@@ -7,7 +7,9 @@ let mockUser: { id: string; email: string } | null = { id: 'u1', email: 'a@b.com
 
 jest.mock('@supabase/supabase-js', () => ({
   createClient: () => ({
-    auth: { getUser: async () => ({ data: { user: mockUser }, error: mockUser ? null : new Error('no') }) },
+    auth: {
+      getUser: async () => ({ data: { user: mockUser }, error: mockUser ? null : new Error('no') }),
+    },
     from: () => ({
       select: () => ({
         // .eq() is both awaitable (grab) and exposes maybeSingle (grabOne)

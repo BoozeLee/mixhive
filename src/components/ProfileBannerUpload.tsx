@@ -169,7 +169,9 @@ export function ProfileBannerUpload({
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-purple-900/50 via-blue-900/50 to-indigo-900/50 flex items-center justify-center">
             <div className="text-center text-gray-400">
-              <div className="mb-2" style={{display:"inline-flex"}}><Icon name="music" size={28} /></div>
+              <div className="mb-2" style={{ display: 'inline-flex' }}>
+                <Icon name="music" size={28} />
+              </div>
               <div className="text-sm">Profile Banner</div>
             </div>
           </div>
@@ -178,7 +180,9 @@ export function ProfileBannerUpload({
         {showUploadInterface && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <div className="text-center text-white">
-              <div className="mb-2" style={{display:"inline-flex"}}><Icon name="camera" size={24} /></div>
+              <div className="mb-2" style={{ display: 'inline-flex' }}>
+                <Icon name="camera" size={24} />
+              </div>
               <div className="text-sm">{uploading ? 'Uploading...' : 'Upload Banner'}</div>
             </div>
           </div>

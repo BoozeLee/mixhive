@@ -16,10 +16,7 @@ function makeClient(jwt: string) {
 
 const PLATFORM_FEE_PCT = 30;
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -34,7 +31,10 @@ export async function POST(
     }
     const sb = makeClient(authHeader.slice(7));
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     const { data: pkg, error: pkgErr } = await sb
@@ -48,7 +48,10 @@ export async function POST(
       return NextResponse.json({ error: 'Package not found' }, { status: 404 });
     }
     if (pkg.price <= 0) {
-      return NextResponse.json({ error: 'This package is free — use the install endpoint' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'This package is free — use the install endpoint' },
+        { status: 400 }
+      );
     }
     if (pkg.creator_profile_id === user.id) {
       return NextResponse.json({ error: 'Cannot purchase your own package' }, { status: 400 });

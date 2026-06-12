@@ -100,7 +100,17 @@ function OpportunityCard({ opp }: { opp: Opportunity }) {
               {oppTypeLabels[opp.opp_type] ?? opp.opp_type}
             </span>
             {opp.city && (
-              <span style={{ fontSize: fontSize.xs, color: colors.text.muted, display: "inline-flex", alignItems: "center", gap: 4 }}><Icon name="events" size={11} /> {opp.city}</span>
+              <span
+                style={{
+                  fontSize: fontSize.xs,
+                  color: colors.text.muted,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                <Icon name="events" size={11} /> {opp.city}
+              </span>
             )}
           </div>
           <h3
@@ -461,7 +471,9 @@ export function AgentInbox() {
           border: `1px solid ${colors.accentMuted}`,
         }}
       >
-        <span style={{ flexShrink: 0, display: "inline-flex", color: colors.accent }}><Icon name="sparkles" size={14} /></span>
+        <span style={{ flexShrink: 0, display: 'inline-flex', color: colors.accent }}>
+          <Icon name="sparkles" size={14} />
+        </span>
         <p style={{ margin: 0, fontSize: fontSize.xs, color: colors.text.dim, lineHeight: 1.5 }}>
           AI is <strong style={{ color: colors.text.muted }}>assistive, not autonomous</strong> —
           every suggestion requires your review and approval before it changes anything on your
@@ -541,7 +553,9 @@ export function AgentInbox() {
             <div
               style={{ textAlign: 'center', padding: `${space[12]}px 0`, color: colors.text.muted }}
             >
-              <div style={{ marginBottom: space[5], display: "flex" }}><Icon name="inbox" size={30} /></div>
+              <div style={{ marginBottom: space[5], display: 'flex' }}>
+                <Icon name="inbox" size={30} />
+              </div>
               <div style={{ fontSize: fontSize.md }}>No AI suggestions yet.</div>
               <div style={{ fontSize: fontSize.base, marginTop: space[3] }}>
                 Go to your Dashboard and click "Analyse profile" to get started.
@@ -604,7 +618,9 @@ export function AgentInbox() {
             <div
               style={{ textAlign: 'center', padding: `${space[12]}px 0`, color: colors.text.muted }}
             >
-              <div style={{ marginBottom: space[5], display: "flex" }}><Icon name="sparkles" size={30} /></div>
+              <div style={{ marginBottom: space[5], display: 'flex' }}>
+                <Icon name="sparkles" size={30} />
+              </div>
               <div style={{ fontSize: fontSize.md }}>No opportunities available.</div>
             </div>
           )}

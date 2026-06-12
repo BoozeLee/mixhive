@@ -31,10 +31,14 @@ const Feed = lazy(() => import('./views/Feed').then(m => ({ default: m.Feed })))
 const Dashboard = lazy(() => import('./views/Dashboard').then(m => ({ default: m.Dashboard })));
 const Discover = lazy(() => import('./views/Discover').then(m => ({ default: m.Discover })));
 const Scenes = lazy(() => import('./views/Scenes').then(m => ({ default: m.Scenes })));
-const SceneDetail = lazy(() => import('./views/SceneDetail').then(m => ({ default: m.SceneDetail })));
+const SceneDetail = lazy(() =>
+  import('./views/SceneDetail').then(m => ({ default: m.SceneDetail }))
+);
 const Privacy = lazy(() => import('./views/Privacy').then(m => ({ default: m.Privacy })));
 const Terms = lazy(() => import('./views/Terms').then(m => ({ default: m.Terms })));
-const CookiePolicy = lazy(() => import('./views/CookiePolicy').then(m => ({ default: m.CookiePolicy })));
+const CookiePolicy = lazy(() =>
+  import('./views/CookiePolicy').then(m => ({ default: m.CookiePolicy }))
+);
 const Styleguide = lazy(() => import('./views/Styleguide').then(m => ({ default: m.Styleguide })));
 const ProfilePage = lazy(() => import('./views/Profile').then(m => ({ default: m.ProfilePage })));
 const MixDetail = lazy(() => import('./views/MixDetail').then(m => ({ default: m.MixDetail })));
@@ -82,7 +86,9 @@ const QuestDetail = lazy(() =>
   import('./views/QuestDetail').then(m => ({ default: m.QuestDetail }))
 );
 const QuestsList = lazy(() => import('./views/QuestsList').then(m => ({ default: m.QuestsList })));
-const AvatarStudio = lazy(() => import('./views/AvatarStudio').then(m => ({ default: m.AvatarStudio })));
+const AvatarStudio = lazy(() =>
+  import('./views/AvatarStudio').then(m => ({ default: m.AvatarStudio }))
+);
 const GearMarketplace = lazy(() =>
   import('./views/GearMarketplace').then(m => ({ default: m.GearMarketplace }))
 );

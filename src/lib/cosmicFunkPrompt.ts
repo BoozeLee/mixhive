@@ -17,10 +17,54 @@ export const STYLE_CORE =
   'maximalist ornamental details, electric neon colors, deep black shadows';
 
 // ---- Option lists (imported by the editor UI for chips) ----
-export const CHARACTERS = ['DJ', 'astronaut', 'alien', 'robot', 'pirate', 'shaman', 'animal', 'superhero', 'cyborg', 'deity'] as const;
-export const THEMES = ['cosmic funk', 'psytrance', 'reggae', 'space', 'mushrooms', 'cyberpunk', 'carnival', 'Greek myth', 'jungle', 'underwater'] as const;
-export const OBJECTS = ['disco ball', 'planets', 'flowers', 'speakers', 'portals', 'mushrooms', 'stars', 'chains', 'lightning', 'lasers', 'vinyl records', 'sacred geometry'] as const;
-export const PALETTE = ['electric purple', 'acid green', 'hot pink', 'cosmic blue', 'bright orange', 'yellow gold', 'magenta', 'blacklight teal'] as const;
+export const CHARACTERS = [
+  'DJ',
+  'astronaut',
+  'alien',
+  'robot',
+  'pirate',
+  'shaman',
+  'animal',
+  'superhero',
+  'cyborg',
+  'deity',
+] as const;
+export const THEMES = [
+  'cosmic funk',
+  'psytrance',
+  'reggae',
+  'space',
+  'mushrooms',
+  'cyberpunk',
+  'carnival',
+  'Greek myth',
+  'jungle',
+  'underwater',
+] as const;
+export const OBJECTS = [
+  'disco ball',
+  'planets',
+  'flowers',
+  'speakers',
+  'portals',
+  'mushrooms',
+  'stars',
+  'chains',
+  'lightning',
+  'lasers',
+  'vinyl records',
+  'sacred geometry',
+] as const;
+export const PALETTE = [
+  'electric purple',
+  'acid green',
+  'hot pink',
+  'cosmic blue',
+  'bright orange',
+  'yellow gold',
+  'magenta',
+  'blacklight teal',
+] as const;
 
 export const ArtRecipeSchema = z.object({
   mode: z.enum(['avatar', 'poster', 'banner']).default('avatar'),
@@ -61,7 +105,9 @@ export function compileRecipe(input: ArtRecipe): string {
   const r = ArtRecipeSchema.parse(input);
   const isAvatar = r.mode === 'avatar';
   const objects = r.objects.length ? r.objects.join(', ') : 'planets, stars, glowing portals';
-  const palette = r.palette.length ? r.palette.join(', ') : 'electric purple, acid green, hot pink, cosmic blue, deep black';
+  const palette = r.palette.length
+    ? r.palette.join(', ')
+    : 'electric purple, acid green, hot pink, cosmic blue, deep black';
 
   const subject = [
     `a ${r.character} named ${r.subjectName}`,
@@ -91,7 +137,8 @@ export function compileRecipe(input: ArtRecipe): string {
   if (r.mode === 'poster' && r.text) {
     const t = r.text;
     const titles: string[] = [];
-    if (t.bottom) titles.push(`large dripping psychedelic bubble-letter title "${t.bottom}" at the bottom`);
+    if (t.bottom)
+      titles.push(`large dripping psychedelic bubble-letter title "${t.bottom}" at the bottom`);
     if (t.topLeft) titles.push(`"${t.topLeft}" top-left`);
     if (t.topRight) titles.push(`"${t.topRight}" top-right`);
     if (t.badge) titles.push(`a badge reading "${t.badge}"`);
@@ -101,7 +148,9 @@ export function compileRecipe(input: ArtRecipe): string {
   if (r.freeText) parts.push(r.freeText);
 
   // Negative guidance (DALL·E has no negative-prompt param; bake into the text).
-  parts.push('No minimalism, no plain background, no dull colors, no realistic photography, no empty space, no flat modern vector style.');
+  parts.push(
+    'No minimalism, no plain background, no dull colors, no realistic photography, no empty space, no flat modern vector style.'
+  );
 
   return parts.join(' ').replace(/\s+/g, ' ').trim();
 }

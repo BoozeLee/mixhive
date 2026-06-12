@@ -13,10 +13,22 @@ import { getPostAuthDestination } from '../lib/authRouting';
 function GoogleMark() {
   return (
     <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
-      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z" />
-      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
-      <path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.2C29.2 35 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.5l-6.5 5C9.6 39.6 16.2 44 24 44z" />
-      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.6l6.3 5.2C41.4 36.1 44 30.6 44 24c0-1.3-.1-2.3-.4-3.5z" />
+      <path
+        fill="#FFC107"
+        d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"
+      />
+      <path
+        fill="#FF3D00"
+        d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"
+      />
+      <path
+        fill="#4CAF50"
+        d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.2C29.2 35 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.5l-6.5 5C9.6 39.6 16.2 44 24 44z"
+      />
+      <path
+        fill="#1976D2"
+        d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.6l6.3 5.2C41.4 36.1 44 30.6 44 24c0-1.3-.1-2.3-.4-3.5z"
+      />
     </svg>
   );
 }
@@ -28,7 +40,12 @@ const valueProps = [
 ];
 
 export function Register() {
-  const [formData, setFormData] = useState({ username: '', email: '', password: '', display_name: '' });
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    display_name: '',
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -149,13 +166,41 @@ export function Register() {
         }}
       >
         <MixhiveWordmark height={26} color={colors.text.primary} />
-        <h1 style={{ fontFamily: 'var(--font-display, system-ui)', fontSize: display.md, lineHeight: 1.04, color: colors.text.primary, textTransform: 'uppercase', margin: 0 }}>
-          Join the<br />underground.
+        <h1
+          style={{
+            fontFamily: 'var(--font-display, system-ui)',
+            fontSize: display.md,
+            lineHeight: 1.04,
+            color: colors.text.primary,
+            textTransform: 'uppercase',
+            margin: 0,
+          }}
+        >
+          Join the
+          <br />
+          underground.
         </h1>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: space[6] }}>
           {valueProps.map(v => (
-            <li key={v} style={{ display: 'flex', alignItems: 'center', gap: space[5], color: colors.text.secondary, fontSize: fontSize.md }}>
-              <span style={{ width: 7, height: 7, borderRadius: 999, background: colors.accent, flex: 'none' }} />
+            <li
+              key={v}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: space[5],
+                color: colors.text.secondary,
+                fontSize: fontSize.md,
+              }}
+            >
+              <span
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: 999,
+                  background: colors.accent,
+                  flex: 'none',
+                }}
+              />
               {v}
             </li>
           ))}
@@ -166,13 +211,49 @@ export function Register() {
       </aside>
 
       {/* Right — form */}
-      <main className="auth-right" style={{ flex: '1 1 54%', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: `${space[11]}px ${space[8]}px` }}>
+      <main
+        className="auth-right"
+        style={{
+          flex: '1 1 54%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: `${space[11]}px ${space[8]}px`,
+        }}
+      >
         <div style={{ width: '100%', maxWidth: 400 }}>
-          <h2 style={{ fontSize: fontSize['2xl'], fontWeight: fontWeight.bold, color: colors.text.primary, margin: 0 }}>Create your account</h2>
-          <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginTop: space[2], marginBottom: space[9] }}>Free to join. No card required.</p>
+          <h2
+            style={{
+              fontSize: fontSize['2xl'],
+              fontWeight: fontWeight.bold,
+              color: colors.text.primary,
+              margin: 0,
+            }}
+          >
+            Create your account
+          </h2>
+          <p
+            style={{
+              fontSize: fontSize.sm,
+              color: colors.text.dim,
+              marginTop: space[2],
+              marginBottom: space[9],
+            }}
+          >
+            Free to join. No card required.
+          </p>
 
           {generalError && (
-            <div style={{ background: colors.dangerBg, color: colors.danger, padding: `${space[5]}px ${space[7]}px`, borderRadius: radius.lg, fontSize: fontSize.base, marginBottom: space[8] }}>
+            <div
+              style={{
+                background: colors.dangerBg,
+                color: colors.danger,
+                padding: `${space[5]}px ${space[7]}px`,
+                borderRadius: radius.lg,
+                fontSize: fontSize.base,
+                marginBottom: space[8],
+              }}
+            >
               {generalError}
             </div>
           )}
@@ -181,35 +262,116 @@ export function Register() {
             type="button"
             onClick={handleGoogle}
             style={{
-              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: space[5],
-              padding: `${space[6]}px ${space[8]}px`, borderRadius: radius.lg,
-              background: colors.text.primary, color: '#1a1a1a', border: 'none',
-              fontSize: fontSize.md, fontWeight: fontWeight.semibold, cursor: 'pointer',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: space[5],
+              padding: `${space[6]}px ${space[8]}px`,
+              borderRadius: radius.lg,
+              background: colors.text.primary,
+              color: '#1a1a1a',
+              border: 'none',
+              fontSize: fontSize.md,
+              fontWeight: fontWeight.semibold,
+              cursor: 'pointer',
             }}
           >
             <GoogleMark /> Continue with Google
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: space[6], margin: `${space[8]}px 0`, color: colors.text.faint, fontSize: fontSize.sm }}>
-            <div style={{ flex: 1, height: 1, background: colors.border }} /> or <div style={{ flex: 1, height: 1, background: colors.border }} />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: space[6],
+              margin: `${space[8]}px 0`,
+              color: colors.text.faint,
+              fontSize: fontSize.sm,
+            }}
+          >
+            <div style={{ flex: 1, height: 1, background: colors.border }} /> or{' '}
+            <div style={{ flex: 1, height: 1, background: colors.border }} />
           </div>
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: space[7] }}>
-            <Input type="text" autoComplete="username" placeholder="Username" value={formData.username} onChange={e => change('username', e.target.value)} error={errors.username} help="3–30 chars: letters, numbers, underscores" />
-            <Input type="email" autoComplete="email" placeholder="Email" value={formData.email} onChange={e => change('email', e.target.value)} error={errors.email} />
-            <Input type="password" autoComplete="new-password" placeholder="Password" value={formData.password} onChange={e => change('password', e.target.value)} error={errors.password} help="8+ chars with upper, lower & a number" />
-            <Input type="text" autoComplete="name" placeholder="Display name" value={formData.display_name} onChange={e => change('display_name', e.target.value)} error={errors.display_name} />
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: 'flex', flexDirection: 'column', gap: space[7] }}
+          >
+            <Input
+              type="text"
+              autoComplete="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={e => change('username', e.target.value)}
+              error={errors.username}
+              help="3–30 chars: letters, numbers, underscores"
+            />
+            <Input
+              type="email"
+              autoComplete="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={e => change('email', e.target.value)}
+              error={errors.email}
+            />
+            <Input
+              type="password"
+              autoComplete="new-password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={e => change('password', e.target.value)}
+              error={errors.password}
+              help="8+ chars with upper, lower & a number"
+            />
+            <Input
+              type="text"
+              autoComplete="name"
+              placeholder="Display name"
+              value={formData.display_name}
+              onChange={e => change('display_name', e.target.value)}
+              error={errors.display_name}
+            />
             <p style={{ color: colors.text.faint, fontSize: fontSize.xs, margin: 0 }}>
-              By joining you agree to the <Link to="/terms" style={{ color: colors.text.dim }}>Terms</Link> and <Link to="/privacy" style={{ color: colors.text.dim }}>Privacy Policy</Link>.
+              By joining you agree to the{' '}
+              <Link to="/terms" style={{ color: colors.text.dim }}>
+                Terms
+              </Link>{' '}
+              and{' '}
+              <Link to="/privacy" style={{ color: colors.text.dim }}>
+                Privacy Policy
+              </Link>
+              .
             </p>
-            <Button type="submit" variant="primary" disabled={submitting} style={{ width: '100%', marginTop: space[2] }}>
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={submitting}
+              style={{ width: '100%', marginTop: space[2] }}
+            >
               {submitting ? 'Creating account…' : 'Create account'}
             </Button>
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: space[10], color: colors.text.dim, fontSize: fontSize.base }}>
+          <p
+            style={{
+              textAlign: 'center',
+              marginTop: space[10],
+              color: colors.text.dim,
+              fontSize: fontSize.base,
+            }}
+          >
             Already have an account?{' '}
-            <Link to="/login" style={{ color: colors.accent, textDecoration: 'none', fontWeight: fontWeight.semibold }}>Sign in</Link>
+            <Link
+              to="/login"
+              style={{
+                color: colors.accent,
+                textDecoration: 'none',
+                fontWeight: fontWeight.semibold,
+              }}
+            >
+              Sign in
+            </Link>
           </p>
         </div>
       </main>

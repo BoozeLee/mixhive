@@ -70,10 +70,20 @@ const DAW_OPTIONS = [
 ];
 
 const AVATAR_STYLES = [
-  { key: 'cyber-hive', label: 'Cyber DJ', icon: 'mythic' as const, desc: 'Dark honeycomb, gold glow' },
+  {
+    key: 'cyber-hive',
+    label: 'Cyber DJ',
+    icon: 'mythic' as const,
+    desc: 'Dark honeycomb, gold glow',
+  },
   { key: 'abstract', label: 'Sound Waves', icon: 'wave' as const, desc: 'Abstract frequency art' },
   { key: 'neon', label: 'Neon Rave', icon: 'zap' as const, desc: 'Cyberpunk neon lights' },
-  { key: 'minimal', label: 'Minimal Dark', icon: 'square' as const, desc: 'Clean geometric minimal' },
+  {
+    key: 'minimal',
+    label: 'Minimal Dark',
+    icon: 'square' as const,
+    desc: 'Clean geometric minimal',
+  },
 ] as const;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -436,7 +446,8 @@ export function ProfileSetup() {
   const canProceedStep2 = Boolean(form.avatarUrl);
   const canProceedStep3 = form.bio.trim().length > 0 && form.genres.length > 0;
   const canProceedStep4 = true;
-  const canFinish = OnboardingProfileSchema.safeParse(form).success && !usernameError && !usernameChecking;
+  const canFinish =
+    OnboardingProfileSchema.safeParse(form).success && !usernameError && !usernameChecking;
 
   return (
     <div
@@ -511,7 +522,10 @@ export function ProfileSetup() {
         >
           {/* ── Step 1: Identity ── */}
           {step === 1 && (
-            <StepShell title="Set up your identity" subtitle="Username and display name are required.">
+            <StepShell
+              title="Set up your identity"
+              subtitle="Username and display name are required."
+            >
               <FormField label="Username *" hint="3–30 chars, letters/numbers/underscores">
                 <input
                   type="text"
@@ -605,7 +619,7 @@ export function ProfileSetup() {
                       cursor: 'pointer',
                     }}
                   >
-                    {m === "generate" ? "Generate with AI" : "Upload"}
+                    {m === 'generate' ? 'Generate with AI' : 'Upload'}
                   </button>
                 ))}
               </div>
@@ -642,7 +656,15 @@ export function ProfileSetup() {
                       />
                     ) : (
                       <>
-                        <div style={{ marginBottom: space[4], display: "flex", justifyContent: "center" }}><Icon name="camera" size={38} /></div>
+                        <div
+                          style={{
+                            marginBottom: space[4],
+                            display: 'flex',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Icon name="camera" size={38} />
+                        </div>
                         <p style={{ margin: 0, fontSize: fontSize.base }}>
                           {avatarUploading ? 'Uploading…' : 'Click to upload (max 5 MB)'}
                         </p>
@@ -696,7 +718,9 @@ export function ProfileSetup() {
                         marginBottom: space[7],
                       }}
                     >
-                      <span style={{ display: "inline-flex", flexShrink: 0 }}><Icon name="key" size={18} /></span>
+                      <span style={{ display: 'inline-flex', flexShrink: 0 }}>
+                        <Icon name="key" size={18} />
+                      </span>
                       <div
                         style={{
                           flex: 1,
@@ -770,7 +794,9 @@ export function ProfileSetup() {
                           transition: 'all 150ms',
                         }}
                       >
-                        <span style={{ display: "inline-flex" }}><Icon name={s.icon} size={24} /></span>
+                        <span style={{ display: 'inline-flex' }}>
+                          <Icon name={s.icon} size={24} />
+                        </span>
                         <p
                           style={{
                             margin: `${space[3]}px 0 ${space[1]}px`,
@@ -998,7 +1024,9 @@ export function ProfileSetup() {
                     marginBottom: space[5],
                   }}
                 >
-                  <span style={{ display: "inline-flex", flexShrink: 0 }}><Icon name="key" size={18} /></span>
+                  <span style={{ display: 'inline-flex', flexShrink: 0 }}>
+                    <Icon name="key" size={18} />
+                  </span>
                   <div
                     style={{
                       flex: 1,
@@ -1301,7 +1329,9 @@ export function ProfileSetup() {
                       border: `1px solid ${colors.accentMuted}`,
                       fontSize: 13,
                     }}
-                  ><Icon name="sparkles" size={24} color="currentColor" /></div>
+                  >
+                    <Icon name="sparkles" size={24} color="currentColor" />
+                  </div>
                   <div>
                     <div
                       style={{
@@ -1419,7 +1449,6 @@ export function ProfileSetup() {
             </StepShell>
           )}
         </div>
-
       </div>
 
       <BuzzToast

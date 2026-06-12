@@ -8,9 +8,9 @@ test.describe('Agents & AI', () => {
 
   test('agent gallery shows agent cards or empty state', async ({ page }) => {
     await page.goto('/agents/gallery');
-    await expect(
-      page.locator('[class*="agent"], [class*="card"], h1, h2, p').first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[class*="agent"], [class*="card"], h1, h2, p').first()).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test('agent builder page loads (authenticated)', async ({ page }) => {

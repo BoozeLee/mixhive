@@ -11,21 +11,26 @@ function makeClient(jwt: string) {
   });
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    if (!authHeader?.startsWith('Bearer '))
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const sb = makeClient(authHeader.slice(7));
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     // Verify creator
-    const { data: quest } = await sb.from('collab_quests').select('creator_profile_id').eq('id', id).single();
+    const { data: quest } = await sb
+      .from('collab_quests')
+      .select('creator_profile_id')
+      .eq('id', id)
+      .single();
     if (!quest || quest.creator_profile_id !== user.id) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
@@ -39,31 +44,42 @@ export async function GET(
     if (error) throw error;
     return NextResponse.json({ applications: data ?? [] });
   } catch (err) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : 'Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Error' },
+      { status: 500 }
+    );
   }
 }
 
 // Accept or reject an application; accepting fills the role slot
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    if (!authHeader?.startsWith('Bearer '))
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const sb = makeClient(authHeader.slice(7));
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     const { application_id, decision } = await req.json();
     if (!application_id || !['accepted', 'rejected'].includes(decision)) {
-      return NextResponse.json({ error: 'application_id and decision (accepted|rejected) required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'application_id and decision (accepted|rejected) required' },
+        { status: 400 }
+      );
     }
 
     // Verify creator
-    const { data: quest } = await sb.from('collab_quests').select('creator_profile_id').eq('id', id).single();
+    const { data: quest } = await sb
+      .from('collab_quests')
+      .select('creator_profile_id')
+      .eq('id', id)
+      .single();
     if (!quest || quest.creator_profile_id !== user.id) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
@@ -75,7 +91,8 @@ export async function PATCH(
       .eq('id', application_id)
       .eq('quest_id', id)
       .single();
-    if (appErr || !app) return NextResponse.json({ error: 'Application not found' }, { status: 404 });
+    if (appErr || !app)
+      return NextResponse.json({ error: 'Application not found' }, { status: 404 });
 
     // Update application status
     await sb
@@ -101,6 +118,9 @@ export async function PATCH(
 
     return NextResponse.json({ ok: true, decision });
   } catch (err) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : 'Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Error' },
+      { status: 500 }
+    );
   }
 }

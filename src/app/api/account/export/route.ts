@@ -40,7 +40,11 @@ export async function GET(req: NextRequest) {
     };
     const grabOne = async (table: string, column: string) => {
       try {
-        const { data } = await (sb as SupabaseClient).from(table).select('*').eq(column, uid).maybeSingle();
+        const { data } = await (sb as SupabaseClient)
+          .from(table)
+          .select('*')
+          .eq(column, uid)
+          .maybeSingle();
         return data ?? null;
       } catch {
         return null;

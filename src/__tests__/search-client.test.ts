@@ -6,7 +6,18 @@ const response = {
   filters: {},
   sections: {
     scenes: {
-      items: [{ id: 's1', slug: 'techno-brussels', name: 'Techno Brussels', city: 'Brussels', country: 'Belgium', genre: 'Techno', description: null, hero_image_url: null }],
+      items: [
+        {
+          id: 's1',
+          slug: 'techno-brussels',
+          name: 'Techno Brussels',
+          city: 'Brussels',
+          country: 'Belgium',
+          genre: 'Techno',
+          description: null,
+          hero_image_url: null,
+        },
+      ],
       total: 1,
       hasMore: false,
     },
@@ -16,7 +27,15 @@ const response = {
       hasMore: false,
     },
     mixes: {
-      items: [{ id: 'm1', title: 'Techno Signal', dj_username: 'dj_nef', dj_display_name: 'DJ Nef', artwork_url: null }],
+      items: [
+        {
+          id: 'm1',
+          title: 'Techno Signal',
+          dj_username: 'dj_nef',
+          dj_display_name: 'DJ Nef',
+          artwork_url: null,
+        },
+      ],
       total: 1,
       hasMore: false,
     },
@@ -33,7 +52,9 @@ beforeEach(() => {
 it('serializes type, filters, limit, and offset to the search endpoint', async () => {
   await enhancedSearch('techno', { type: 'scenes', genre: 'Techno', location: 'Brussels' }, 20, 10);
   expect(global.fetch).toHaveBeenCalledWith(
-    expect.stringContaining('/api/search?q=techno&type=scenes&limit=10&offset=20&genre=Techno&location=Brussels')
+    expect.stringContaining(
+      '/api/search?q=techno&type=scenes&limit=10&offset=20&genre=Techno&location=Brussels'
+    )
   );
 });
 

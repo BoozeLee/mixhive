@@ -82,7 +82,10 @@ export function SceneDetail() {
     return (
       <div style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
         <p style={{ color: colors.text.dim }}>{error || 'Scene not found.'}</p>
-        <button onClick={() => navigate('/scenes')} style={{ marginTop: 12, color: colors.text.secondary }}>
+        <button
+          onClick={() => navigate('/scenes')}
+          style={{ marginTop: 12, color: colors.text.secondary }}
+        >
           ← All scenes
         </button>
       </div>
@@ -93,7 +96,13 @@ export function SceneDetail() {
     <div style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
       <button
         onClick={() => navigate('/scenes')}
-        style={{ color: colors.text.dim, fontSize: fontSize.sm, background: 'none', border: 'none', cursor: 'pointer' }}
+        style={{
+          color: colors.text.dim,
+          fontSize: fontSize.sm,
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+        }}
       >
         ← All scenes
       </button>
@@ -103,24 +112,37 @@ export function SceneDetail() {
           marginTop: 12,
           padding: 24,
           borderRadius: radius.lg,
-          background: scene.hero_image_url ? `url(${scene.hero_image_url}) center/cover` : colors.surface,
+          background: scene.hero_image_url
+            ? `url(${scene.hero_image_url}) center/cover`
+            : colors.surface,
           border: `1px solid ${colors.border}`,
         }}
       >
-        <h1 style={{ fontSize: fontSize['3xl'], fontWeight: 700, color: colors.text.primary }}>{scene.name}</h1>
+        <h1 style={{ fontSize: fontSize['3xl'], fontWeight: 700, color: colors.text.primary }}>
+          {scene.name}
+        </h1>
         <div style={{ fontSize: fontSize.sm, color: colors.text.dim, marginTop: 4 }}>
           {[scene.city, scene.country].filter(Boolean).join(', ')}
           {scene.genre ? ` · ${scene.genre}` : ''}
         </div>
         {scene.description && (
-          <p style={{ fontSize: fontSize.md, color: colors.text.secondary, marginTop: 12, maxWidth: 640 }}>
+          <p
+            style={{
+              fontSize: fontSize.md,
+              color: colors.text.secondary,
+              marginTop: 12,
+              maxWidth: 640,
+            }}
+          >
             {scene.description}
           </p>
         )}
       </div>
 
       <section style={{ marginTop: 28 }}>
-        <h2 style={{ fontSize: fontSize.xl, fontWeight: 600, color: colors.text.primary }}>Active Artists</h2>
+        <h2 style={{ fontSize: fontSize.xl, fontWeight: 600, color: colors.text.primary }}>
+          Active Artists
+        </h2>
         {listings.length === 0 ? (
           <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 8 }}>
             No artists in this scene yet — be the first to set your location and genre.
@@ -167,7 +189,9 @@ export function SceneDetail() {
 
       {partners.length > 0 && (
         <section style={{ marginTop: 28 }}>
-          <h2 style={{ fontSize: fontSize.xl, fontWeight: 600, color: colors.text.primary }}>Label Partners</h2>
+          <h2 style={{ fontSize: fontSize.xl, fontWeight: 600, color: colors.text.primary }}>
+            Label Partners
+          </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 12 }}>
             {partners.map(p => (
               <a

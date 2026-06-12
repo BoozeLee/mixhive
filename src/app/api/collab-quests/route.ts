@@ -50,16 +50,31 @@ export async function POST(req: NextRequest) {
     const jwt = authHeader.slice(7);
     const sb = makeClient(jwt);
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
 
     const body = await req.json();
-    const { title, narrative, goals, genre_tags, discipline_tags, region, timeline_days, deadline, xp_reward, roles } = body;
+    const {
+      title,
+      narrative,
+      goals,
+      genre_tags,
+      discipline_tags,
+      region,
+      timeline_days,
+      deadline,
+      xp_reward,
+      roles,
+    } = body;
 
     if (!title?.trim()) return NextResponse.json({ error: 'Title required' }, { status: 400 });
-    if (!goals?.length) return NextResponse.json({ error: 'At least one goal required' }, { status: 400 });
+    if (!goals?.length)
+      return NextResponse.json({ error: 'At least one goal required' }, { status: 400 });
 
     const { data: quest, error: questErr } = await sb
       .from('collab_quests')

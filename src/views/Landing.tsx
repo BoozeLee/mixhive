@@ -6,7 +6,16 @@ import { motion } from 'framer-motion';
 import { getHiveStats, type HiveStats } from '../lib/api';
 import { HiveButton } from '../components/hive';
 import { MixhiveWordmark } from '../components/brand/MixhiveWordmark';
-import { colors, space, radius, fontSize, fontWeight, display, gradient, shadow } from '../styles/tokens';
+import {
+  colors,
+  space,
+  radius,
+  fontSize,
+  fontWeight,
+  display,
+  gradient,
+  shadow,
+} from '../styles/tokens';
 import { DURATION, EASE_OUT } from '../lib/motion';
 
 function formatCount(n: number): string {
@@ -23,8 +32,27 @@ const rise = {
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-display, system-ui)', fontSize: fontSize['2xl'], color: colors.text.primary, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: fontSize.xs, color: colors.text.dim, textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: space[2] }}>{label}</div>
+      <div
+        style={{
+          fontFamily: 'var(--font-display, system-ui)',
+          fontSize: fontSize['2xl'],
+          color: colors.text.primary,
+          lineHeight: 1,
+        }}
+      >
+        {value}
+      </div>
+      <div
+        style={{
+          fontSize: fontSize.xs,
+          color: colors.text.dim,
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          marginTop: space[2],
+        }}
+      >
+        {label}
+      </div>
     </div>
   );
 }
@@ -46,15 +74,35 @@ function AppPreview() {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: space[6] }}>
-        <div style={{ width: 56, height: 56, borderRadius: radius.md, background: gradient.honey, flex: 'none' }} />
+        <div
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: radius.md,
+            background: gradient.honey,
+            flex: 'none',
+          }}
+        />
         <div style={{ minWidth: 0 }}>
-          <div style={{ color: colors.text.primary, fontWeight: fontWeight.semibold }}>Midnight Warehouse</div>
-          <div style={{ color: colors.text.dim, fontSize: fontSize.sm }}>@ken_dovor · 128 BPM · Techno</div>
+          <div style={{ color: colors.text.primary, fontWeight: fontWeight.semibold }}>
+            Midnight Warehouse
+          </div>
+          <div style={{ color: colors.text.dim, fontSize: fontSize.sm }}>
+            @ken_dovor · 128 BPM · Techno
+          </div>
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 40 }}>
         {[10, 22, 14, 34, 26, 40, 18, 30, 12, 36, 20, 28, 16, 38, 24, 32].map((h, i) => (
-          <div key={i} style={{ flex: 1, height: h, background: i % 3 === 0 ? colors.accent : colors.borderStrong, borderRadius: 1 }} />
+          <div
+            key={i}
+            style={{
+              flex: 1,
+              height: h,
+              background: i % 3 === 0 ? colors.accent : colors.borderStrong,
+              borderRadius: 1,
+            }}
+          />
         ))}
       </div>
       <div style={{ display: 'flex', gap: space[8] }}>
@@ -63,8 +111,29 @@ function AppPreview() {
         <Stat value="18" label="reposts" />
       </div>
       <div style={{ display: 'flex', gap: space[5], flexWrap: 'wrap' }}>
-        <span style={{ fontSize: fontSize.xs, color: colors.bg, background: colors.accent, padding: '4px 10px', borderRadius: radius.pill, fontWeight: fontWeight.semibold }}>Quest · Remix wanted</span>
-        <span style={{ fontSize: fontSize.xs, color: colors.text.secondary, border: `1px solid ${colors.border}`, padding: '4px 10px', borderRadius: radius.pill }}>Scene · Techno Brussels</span>
+        <span
+          style={{
+            fontSize: fontSize.xs,
+            color: colors.bg,
+            background: colors.accent,
+            padding: '4px 10px',
+            borderRadius: radius.pill,
+            fontWeight: fontWeight.semibold,
+          }}
+        >
+          Quest · Remix wanted
+        </span>
+        <span
+          style={{
+            fontSize: fontSize.xs,
+            color: colors.text.secondary,
+            border: `1px solid ${colors.border}`,
+            padding: '4px 10px',
+            borderRadius: radius.pill,
+          }}
+        >
+          Scene · Techno Brussels
+        </span>
       </div>
     </div>
   );
@@ -81,7 +150,9 @@ export function Landing() {
   const [stats, setStats] = useState<HiveStats | null>(null);
 
   useEffect(() => {
-    getHiveStats().then(setStats).catch(() => setStats(null));
+    getHiveStats()
+      .then(setStats)
+      .catch(() => setStats(null));
   }, []);
 
   const s = stats ?? { mixes_total: 0, voices_total: 0, plays_total: 0, live_now: 0 };
@@ -89,8 +160,25 @@ export function Landing() {
   return (
     <div style={{ position: 'relative', overflow: 'hidden' }}>
       {/* atmosphere */}
-      <div aria-hidden style={{ position: 'absolute', inset: 0, background: `${gradient.meshTop}, ${gradient.meshBottom}`, pointerEvents: 'none' }} />
-      <div aria-hidden style={{ position: 'absolute', inset: 0, background: gradient.scanline, opacity: 0.4, pointerEvents: 'none' }} />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: `${gradient.meshTop}, ${gradient.meshBottom}`,
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: gradient.scanline,
+          opacity: 0.4,
+          pointerEvents: 'none',
+        }}
+      />
 
       {/* Hero */}
       <section
@@ -110,32 +198,88 @@ export function Landing() {
 
         <motion.div initial="initial" animate="animate" transition={{ staggerChildren: 0.08 }}>
           <motion.div variants={rise} transition={{ duration: DURATION.md, ease: EASE_OUT }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: space[5], color: colors.text.dim, fontSize: fontSize.xs, letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: 'var(--font-mono, monospace)' }}>
-              <span style={{ width: 7, height: 7, borderRadius: 999, background: colors.accent }} /> The underground creative OS
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: space[5],
+                color: colors.text.dim,
+                fontSize: fontSize.xs,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                fontFamily: 'var(--font-mono, monospace)',
+              }}
+            >
+              <span style={{ width: 7, height: 7, borderRadius: 999, background: colors.accent }} />{' '}
+              The underground creative OS
             </div>
           </motion.div>
 
           <motion.h1
             variants={rise}
             transition={{ duration: DURATION.md, ease: EASE_OUT }}
-            style={{ fontFamily: 'var(--font-display, system-ui)', fontSize: display.xl, lineHeight: 0.96, letterSpacing: '-0.01em', textTransform: 'uppercase', margin: `${space[8]}px 0 0`, color: colors.text.primary }}
+            style={{
+              fontFamily: 'var(--font-display, system-ui)',
+              fontSize: display.xl,
+              lineHeight: 0.96,
+              letterSpacing: '-0.01em',
+              textTransform: 'uppercase',
+              margin: `${space[8]}px 0 0`,
+              color: colors.text.primary,
+            }}
           >
             Where the{' '}
-            <span style={{ background: gradient.goldText, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>underground</span>{' '}
+            <span
+              style={{
+                background: gradient.goldText,
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+              }}
+            >
+              underground
+            </span>{' '}
             gets heard.
           </motion.h1>
 
-          <motion.p variants={rise} transition={{ duration: DURATION.md, ease: EASE_OUT }} style={{ margin: `${space[8]}px 0 0`, fontSize: 'clamp(15px, 1.7vw, 18px)', lineHeight: 1.6, color: colors.text.secondary, maxWidth: 520 }}>
-            Publish your mixes, join scenes, take quests and sell gear — one home
-            for DJs, producers and the people who power culture from the ground up.
+          <motion.p
+            variants={rise}
+            transition={{ duration: DURATION.md, ease: EASE_OUT }}
+            style={{
+              margin: `${space[8]}px 0 0`,
+              fontSize: 'clamp(15px, 1.7vw, 18px)',
+              lineHeight: 1.6,
+              color: colors.text.secondary,
+              maxWidth: 520,
+            }}
+          >
+            Publish your mixes, join scenes, take quests and sell gear — one home for DJs, producers
+            and the people who power culture from the ground up.
           </motion.p>
 
-          <motion.div variants={rise} transition={{ duration: DURATION.md, ease: EASE_OUT }} style={{ display: 'flex', gap: space[6], flexWrap: 'wrap', marginTop: space[10] }}>
-            <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>Join the Hive</HiveButton>
-            <HiveButton variant="ghost" size="lg" onClick={() => navigate('/discover')}>Explore mixes</HiveButton>
+          <motion.div
+            variants={rise}
+            transition={{ duration: DURATION.md, ease: EASE_OUT }}
+            style={{ display: 'flex', gap: space[6], flexWrap: 'wrap', marginTop: space[10] }}
+          >
+            <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>
+              Join the Hive
+            </HiveButton>
+            <HiveButton variant="ghost" size="lg" onClick={() => navigate('/discover')}>
+              Explore mixes
+            </HiveButton>
           </motion.div>
 
-          <motion.div variants={rise} transition={{ duration: DURATION.md, ease: EASE_OUT }} style={{ display: 'flex', gap: 'clamp(20px, 4vw, 44px)', marginTop: space[12], flexWrap: 'wrap' }}>
+          <motion.div
+            variants={rise}
+            transition={{ duration: DURATION.md, ease: EASE_OUT }}
+            style={{
+              display: 'flex',
+              gap: 'clamp(20px, 4vw, 44px)',
+              marginTop: space[12],
+              flexWrap: 'wrap',
+            }}
+          >
             <Stat value={formatCount(s.mixes_total)} label="Mixes" />
             <Stat value={formatCount(s.voices_total)} label="Voices" />
             <Stat value={formatCount(s.plays_total)} label="Plays" />
@@ -144,34 +288,113 @@ export function Landing() {
         </motion.div>
 
         <div className="preview" style={{ display: 'flex', justifyContent: 'center' }}>
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DURATION.lg, ease: EASE_OUT, delay: 0.15 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: DURATION.lg, ease: EASE_OUT, delay: 0.15 }}
+          >
             <AppPreview />
           </motion.div>
         </div>
       </section>
 
       {/* Pillars */}
-      <section style={{ position: 'relative', maxWidth: 1180, margin: '0 auto', padding: '0 clamp(16px, 5vw, 64px) clamp(48px, 7vw, 88px)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: space[8] }}>
+      <section
+        style={{
+          position: 'relative',
+          maxWidth: 1180,
+          margin: '0 auto',
+          padding: '0 clamp(16px, 5vw, 64px) clamp(48px, 7vw, 88px)',
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: space[8],
+          }}
+        >
           {pillars.map(p => (
-            <div key={p.t} style={{ background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: radius.lg, padding: space[10] }}>
-              <div style={{ fontFamily: 'var(--font-display, system-ui)', fontSize: fontSize['2xl'], color: colors.accent, textTransform: 'uppercase' }}>{p.t}</div>
-              <p style={{ color: colors.text.secondary, fontSize: fontSize.md, lineHeight: 1.6, marginTop: space[5] }}>{p.d}</p>
+            <div
+              key={p.t}
+              style={{
+                background: colors.surface,
+                border: `1px solid ${colors.border}`,
+                borderRadius: radius.lg,
+                padding: space[10],
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: 'var(--font-display, system-ui)',
+                  fontSize: fontSize['2xl'],
+                  color: colors.accent,
+                  textTransform: 'uppercase',
+                }}
+              >
+                {p.t}
+              </div>
+              <p
+                style={{
+                  color: colors.text.secondary,
+                  fontSize: fontSize.md,
+                  lineHeight: 1.6,
+                  marginTop: space[5],
+                }}
+              >
+                {p.d}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Final CTA */}
-      <section style={{ position: 'relative', maxWidth: 900, margin: '0 auto', padding: '0 clamp(16px, 5vw, 64px) clamp(64px, 9vw, 120px)', textAlign: 'center' }}>
-        <div style={{ background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: radius.xl, boxShadow: shadow.elevated, padding: 'clamp(32px, 5vw, 64px)' }}>
+      <section
+        style={{
+          position: 'relative',
+          maxWidth: 900,
+          margin: '0 auto',
+          padding: '0 clamp(16px, 5vw, 64px) clamp(64px, 9vw, 120px)',
+          textAlign: 'center',
+        }}
+      >
+        <div
+          style={{
+            background: colors.surface,
+            border: `1px solid ${colors.border}`,
+            borderRadius: radius.xl,
+            boxShadow: shadow.elevated,
+            padding: 'clamp(32px, 5vw, 64px)',
+          }}
+        >
           <MixhiveWordmark height={30} color={colors.text.primary} />
-          <h2 style={{ fontFamily: 'var(--font-display, system-ui)', fontSize: display.md, textTransform: 'uppercase', color: colors.text.primary, margin: `${space[8]}px 0 0` }}>
+          <h2
+            style={{
+              fontFamily: 'var(--font-display, system-ui)',
+              fontSize: display.md,
+              textTransform: 'uppercase',
+              color: colors.text.primary,
+              margin: `${space[8]}px 0 0`,
+            }}
+          >
             Your sound belongs here.
           </h2>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: space[6], marginTop: space[10], flexWrap: 'wrap' }}>
-            <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>Create your account</HiveButton>
-            <HiveButton variant="ghost" size="lg" onClick={() => navigate('/login')}>Sign in</HiveButton>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: space[6],
+              marginTop: space[10],
+              flexWrap: 'wrap',
+            }}
+          >
+            <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>
+              Create your account
+            </HiveButton>
+            <HiveButton variant="ghost" size="lg" onClick={() => navigate('/login')}>
+              Sign in
+            </HiveButton>
           </div>
         </div>
       </section>

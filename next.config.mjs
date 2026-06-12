@@ -124,7 +124,8 @@ const nextConfig = {
       process.env.VITE_RELEASE_SHA ||
       process.env.VERCEL_GIT_COMMIT_SHA,
     NEXT_PUBLIC_CDN_BASE_URL: process.env.NEXT_PUBLIC_CDN_BASE_URL,
-    NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY,
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY:
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY,
   },
 
   async headers() {
@@ -283,7 +284,6 @@ const nextConfig = {
 
   // Generate ETags
   generateEtags: false,
-
 };
 
 export default nextConfig;

@@ -23,14 +23,19 @@ const headers = {
 };
 
 async function rest(path, opts = {}) {
-  const res = await fetch(`${URL}/rest/v1/${path}`, { ...opts, headers: { ...headers, ...opts.headers } });
+  const res = await fetch(`${URL}/rest/v1/${path}`, {
+    ...opts,
+    headers: { ...headers, ...opts.headers },
+  });
   if (!res.ok) throw new Error(`${path}: ${res.status} ${await res.text()}`);
   return res.status === 204 ? null : res.json();
 }
 
 async function main() {
   // Mixes with audio but no waveform yet.
-  const mixes = await rest('mixes?select=id&waveform_data=is.null&audio_url=not.is.null&limit=1000');
+  const mixes = await rest(
+    'mixes?select=id&waveform_data=is.null&audio_url=not.is.null&limit=1000'
+  );
   console.log(`candidate mixes missing waveform_data: ${mixes.length}`);
   if (mixes.length === 0) {
     console.log('nothing to backfill ✓');
@@ -38,7 +43,9 @@ async function main() {
   }
 
   // Existing open jobs, to avoid duplicates.
-  const open = await rest("audio_jobs?select=mix_id&job_type=eq.waveform&status=in.(pending,processing)");
+  const open = await rest(
+    'audio_jobs?select=mix_id&job_type=eq.waveform&status=in.(pending,processing)'
+  );
   const openSet = new Set(open.map(j => j.mix_id));
 
   let enqueued = 0;
@@ -47,11 +54,20 @@ async function main() {
     await rest('audio_jobs', {
       method: 'POST',
       headers: { Prefer: 'return=minimal' },
-      body: JSON.stringify({ mix_id: m.id, job_type: 'waveform', status: 'pending', retry_count: 0, max_retries: 3 }),
+      body: JSON.stringify({
+        mix_id: m.id,
+        job_type: 'waveform',
+        status: 'pending',
+        retry_count: 0,
+        max_retries: 3,
+      }),
     });
     enqueued++;
   }
   console.log(`enqueued ${enqueued} waveform job(s); ${mixes.length - enqueued} already queued`);
 }
 
-main().catch(e => { console.error(e.message); process.exit(1); });
+main().catch(e => {
+  console.error(e.message);
+  process.exit(1);
+});

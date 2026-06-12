@@ -3,8 +3,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const CATEGORIES = [
-  'mixer','controller','turntable','cdj','monitor','headphones',
-  'synthesizer','sampler','interface','cable_accessory','other',
+  'mixer',
+  'controller',
+  'turntable',
+  'cdj',
+  'monitor',
+  'headphones',
+  'synthesizer',
+  'sampler',
+  'interface',
+  'cable_accessory',
+  'other',
 ];
 const CONDITIONS = [
   { value: 'new', label: 'New — never used, in original packaging' },
@@ -43,7 +52,9 @@ export function NewGearListing() {
 
   useEffect(() => {
     (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) return;
       try {
         const res = await fetch('/api/stripe/connect/status', {
@@ -63,15 +74,26 @@ export function NewGearListing() {
 
   const handleFileUpload = async (files: FileList) => {
     setUploading(true);
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { setError('Sign in required'); setUploading(false); return; }
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      setError('Sign in required');
+      setUploading(false);
+      return;
+    }
 
     for (const file of Array.from(files)) {
       if (!file.type.startsWith('image/')) continue;
       const path = `gear-photos/${session.user.id}/${Date.now()}-${file.name}`;
       const { error: uploadErr } = await supabase.storage.from('user-uploads').upload(path, file);
-      if (uploadErr) { setError(uploadErr.message); continue; }
-      const { data: { publicUrl } } = supabase.storage.from('user-uploads').getPublicUrl(path);
+      if (uploadErr) {
+        setError(uploadErr.message);
+        continue;
+      }
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('user-uploads').getPublicUrl(path);
       setPhotos(prev => [...prev, publicUrl]);
     }
     setUploading(false);
@@ -81,7 +103,9 @@ export function NewGearListing() {
     setSubmitting(true);
     setError('');
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error('Sign in required');
 
       const res = await fetch('/api/marketplace/gear', {
@@ -121,7 +145,14 @@ export function NewGearListing() {
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 20px' }}>
-      <h1 style={{ fontSize: 24, fontFamily: 'var(--font-display)', color: 'var(--hive-gold)', marginBottom: 4 }}>
+      <h1
+        style={{
+          fontSize: 24,
+          fontFamily: 'var(--font-display)',
+          color: 'var(--hive-gold)',
+          marginBottom: 4,
+        }}
+      >
         List Your Gear
       </h1>
       <p style={{ color: '#666', fontSize: 14, marginBottom: 28 }}>
@@ -131,16 +162,31 @@ export function NewGearListing() {
       {/* Step indicator */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
         {([1, 2, 3] as Step[]).map(s => (
-          <div key={s} style={{
-            flex: 1, height: 4, borderRadius: 4,
-            background: step >= s ? 'var(--hive-gold)' : '#222',
-            transition: 'background 0.3s',
-          }} />
+          <div
+            key={s}
+            style={{
+              flex: 1,
+              height: 4,
+              borderRadius: 4,
+              background: step >= s ? 'var(--hive-gold)' : '#222',
+              transition: 'background 0.3s',
+            }}
+          />
         ))}
       </div>
 
       {payoutsEnabled === false && (
-        <div style={{ background: '#1a1400', border: '1px solid #f0c04044', color: '#e8d5a0', padding: 14, borderRadius: 8, marginBottom: 16, fontSize: 14 }}>
+        <div
+          style={{
+            background: '#1a1400',
+            border: '1px solid #f0c04044',
+            color: '#e8d5a0',
+            padding: 14,
+            borderRadius: 8,
+            marginBottom: 16,
+            fontSize: 14,
+          }}
+        >
           Connect a payout account to sell gear —{' '}
           <Link to="/earnings" style={{ color: 'var(--hive-gold)', fontWeight: 700 }}>
             Set up payouts
@@ -149,7 +195,17 @@ export function NewGearListing() {
       )}
 
       {error && (
-        <div style={{ background: '#1a0000', border: '1px solid #ef444466', color: '#ef4444', padding: 12, borderRadius: 8, marginBottom: 16, fontSize: 14 }}>
+        <div
+          style={{
+            background: '#1a0000',
+            border: '1px solid #ef444466',
+            color: '#ef4444',
+            padding: 12,
+            borderRadius: 8,
+            marginBottom: 16,
+            fontSize: 14,
+          }}
+        >
           {error}
         </div>
       )}
@@ -159,31 +215,67 @@ export function NewGearListing() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <label style={labelStyle}>
             Category *
-            <select value={form.category} onChange={e => update('category', e.target.value)} style={inputStyle}>
+            <select
+              value={form.category}
+              onChange={e => update('category', e.target.value)}
+              style={inputStyle}
+            >
               <option value="">Select category</option>
-              {CATEGORIES.map(c => <option key={c} value={c}>{c.replace('_', ' ')}</option>)}
+              {CATEGORIES.map(c => (
+                <option key={c} value={c}>
+                  {c.replace('_', ' ')}
+                </option>
+              ))}
             </select>
           </label>
-          <div className="p15-form-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div
+            className="p15-form-2col"
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
+          >
             <label style={labelStyle}>
               Brand
-              <input value={form.brand} onChange={e => update('brand', e.target.value)} placeholder="Pioneer DJ" style={inputStyle} />
+              <input
+                value={form.brand}
+                onChange={e => update('brand', e.target.value)}
+                placeholder="Pioneer DJ"
+                style={inputStyle}
+              />
             </label>
             <label style={labelStyle}>
               Model
-              <input value={form.model} onChange={e => update('model', e.target.value)} placeholder="CDJ-2000NXS2" style={inputStyle} />
+              <input
+                value={form.model}
+                onChange={e => update('model', e.target.value)}
+                placeholder="CDJ-2000NXS2"
+                style={inputStyle}
+              />
             </label>
           </div>
           <label style={labelStyle}>
             Condition *
-            <select value={form.condition} onChange={e => update('condition', e.target.value)} style={inputStyle}>
+            <select
+              value={form.condition}
+              onChange={e => update('condition', e.target.value)}
+              style={inputStyle}
+            >
               <option value="">Select condition</option>
-              {CONDITIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              {CONDITIONS.map(c => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
             </select>
           </label>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
             <button
-              onClick={() => { if (!form.category || !form.condition) { setError('Category and condition are required'); return; } setError(''); setStep(2); }}
+              onClick={() => {
+                if (!form.category || !form.condition) {
+                  setError('Category and condition are required');
+                  return;
+                }
+                setError('');
+                setStep(2);
+              }}
               style={primaryBtnStyle}
             >
               Continue →
@@ -200,7 +292,9 @@ export function NewGearListing() {
             <input
               value={form.title}
               onChange={e => update('title', e.target.value)}
-              placeholder={`${form.brand || form.category} ${form.model || ''}`.trim() || 'Short, clear title'}
+              placeholder={
+                `${form.brand || form.category} ${form.model || ''}`.trim() || 'Short, clear title'
+              }
               style={inputStyle}
             />
           </label>
@@ -219,7 +313,14 @@ export function NewGearListing() {
           <div>
             <p style={{ color: '#aaa', fontSize: 13, marginBottom: 8 }}>Photos * (min 1)</p>
             <div
-              style={{ border: '2px dashed #333', borderRadius: 12, padding: 24, textAlign: 'center', cursor: 'pointer', color: '#555' }}
+              style={{
+                border: '2px dashed #333',
+                borderRadius: 12,
+                padding: 24,
+                textAlign: 'center',
+                cursor: 'pointer',
+                color: '#555',
+              }}
               onClick={() => fileRef.current?.click()}
             >
               {uploading ? 'Uploading...' : 'Click to upload photos'}
@@ -236,10 +337,27 @@ export function NewGearListing() {
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
                 {photos.map((url, i) => (
                   <div key={i} style={{ position: 'relative' }}>
-                    <img src={url} alt="" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8 }} />
+                    <img
+                      src={url}
+                      alt=""
+                      style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8 }}
+                    />
                     <button
                       onClick={() => setPhotos(p => p.filter((_, j) => j !== i))}
-                      style={{ position: 'absolute', top: -4, right: -4, width: 20, height: 20, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 12, cursor: 'pointer', lineHeight: 1 }}
+                      style={{
+                        position: 'absolute',
+                        top: -4,
+                        right: -4,
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: '#ef4444',
+                        border: 'none',
+                        color: '#fff',
+                        fontSize: 12,
+                        cursor: 'pointer',
+                        lineHeight: 1,
+                      }}
                     >
                       ×
                     </button>
@@ -250,9 +368,18 @@ export function NewGearListing() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-            <button onClick={() => setStep(1)} style={secondaryBtnStyle}>← Back</button>
+            <button onClick={() => setStep(1)} style={secondaryBtnStyle}>
+              ← Back
+            </button>
             <button
-              onClick={() => { if (photos.length === 0) { setError('At least one photo required'); return; } setError(''); setStep(3); }}
+              onClick={() => {
+                if (photos.length === 0) {
+                  setError('At least one photo required');
+                  return;
+                }
+                setError('');
+                setStep(3);
+              }}
               style={primaryBtnStyle}
             >
               Continue →
@@ -264,7 +391,10 @@ export function NewGearListing() {
       {/* Step 3: Price & Location */}
       {step === 3 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="p15-form-2col" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+          <div
+            className="p15-form-2col"
+            style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}
+          >
             <label style={labelStyle}>
               Price *
               <input
@@ -278,21 +408,39 @@ export function NewGearListing() {
             </label>
             <label style={labelStyle}>
               Currency
-              <select value={form.currency} onChange={e => update('currency', e.target.value)} style={inputStyle}>
+              <select
+                value={form.currency}
+                onChange={e => update('currency', e.target.value)}
+                style={inputStyle}
+              >
                 <option>EUR</option>
                 <option>GBP</option>
                 <option>USD</option>
               </select>
             </label>
           </div>
-          <div className="p15-form-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div
+            className="p15-form-2col"
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
+          >
             <label style={labelStyle}>
               City
-              <input value={form.location_city} onChange={e => update('location_city', e.target.value)} placeholder="Brussels" style={inputStyle} />
+              <input
+                value={form.location_city}
+                onChange={e => update('location_city', e.target.value)}
+                placeholder="Brussels"
+                style={inputStyle}
+              />
             </label>
             <label style={labelStyle}>
               Country (ISO)
-              <input value={form.location_country} onChange={e => update('location_country', e.target.value)} placeholder="BE" maxLength={2} style={inputStyle} />
+              <input
+                value={form.location_country}
+                onChange={e => update('location_country', e.target.value)}
+                placeholder="BE"
+                maxLength={2}
+                style={inputStyle}
+              />
             </label>
           </div>
 
@@ -303,7 +451,18 @@ export function NewGearListing() {
               { key: 'domestic_shipping', label: 'Domestic shipping' },
               { key: 'international_shipping', label: 'International shipping' },
             ].map(({ key, label }) => (
-              <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#ccc', fontSize: 14, marginBottom: 8, cursor: 'pointer' }}>
+              <label
+                key={key}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  color: '#ccc',
+                  fontSize: 14,
+                  marginBottom: 8,
+                  cursor: 'pointer',
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={form[key as keyof typeof form] as boolean}
@@ -315,7 +474,9 @@ export function NewGearListing() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-            <button onClick={() => setStep(2)} style={secondaryBtnStyle}>← Back</button>
+            <button onClick={() => setStep(2)} style={secondaryBtnStyle}>
+              ← Back
+            </button>
             <button
               onClick={handleSubmit}
               disabled={submitting || !form.price}
@@ -331,17 +492,37 @@ export function NewGearListing() {
 }
 
 const labelStyle: React.CSSProperties = {
-  display: 'flex', flexDirection: 'column', gap: 6, color: '#aaa', fontSize: 13,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 6,
+  color: '#aaa',
+  fontSize: 13,
 };
 const inputStyle: React.CSSProperties = {
-  background: '#111', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 8,
-  padding: '10px 12px', fontSize: 14, outline: 'none',
+  background: '#111',
+  border: '1px solid #2a2a2a',
+  color: '#fff',
+  borderRadius: 8,
+  padding: '10px 12px',
+  fontSize: 14,
+  outline: 'none',
 };
 const primaryBtnStyle: React.CSSProperties = {
-  background: 'var(--hive-gold)', color: '#000', border: 'none', borderRadius: 8,
-  padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer',
+  background: 'var(--hive-gold)',
+  color: '#000',
+  border: 'none',
+  borderRadius: 8,
+  padding: '10px 24px',
+  fontWeight: 700,
+  fontSize: 14,
+  cursor: 'pointer',
 };
 const secondaryBtnStyle: React.CSSProperties = {
-  background: 'transparent', color: '#aaa', border: '1px solid #333', borderRadius: 8,
-  padding: '10px 20px', fontSize: 14, cursor: 'pointer',
+  background: 'transparent',
+  color: '#aaa',
+  border: '1px solid #333',
+  borderRadius: 8,
+  padding: '10px 20px',
+  fontSize: 14,
+  cursor: 'pointer',
 };

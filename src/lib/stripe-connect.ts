@@ -31,8 +31,7 @@ export function makeServiceClient(): SupabaseClient {
 /** Anon Supabase client scoped to a user's JWT (RLS enforced). */
 export function makeUserClient(jwt: string): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
-  const key =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
   return createClient(url, key, {
     global: { headers: { Authorization: `Bearer ${jwt}` } },
     auth: { persistSession: false },

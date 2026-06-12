@@ -120,8 +120,12 @@ function FeatureCard({ feature, themeColor }: { feature: HiveStoryFeature; theme
                   color: colors.text.muted,
                   textDecoration: 'none',
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = themeColor; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = colors.text.muted; }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.color = themeColor;
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.color = colors.text.muted;
+                }}
               >
                 @{profile.username}
               </Link>
@@ -134,8 +138,12 @@ function FeatureCard({ feature, themeColor }: { feature: HiveStoryFeature; theme
                   color: colors.text.muted,
                   textDecoration: 'none',
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = themeColor; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = colors.text.muted; }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.color = themeColor;
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.color = colors.text.muted;
+                }}
               >
                 {mix.title}
                 {mix.genre && ` · ${mix.genre}`}
@@ -190,7 +198,10 @@ export function HiveStoryIssue() {
 
     fetch(`/api/hive-story/${slug}`)
       .then(r => {
-        if (r.status === 404) { if (!cancelled) setNotFound(true); return null; }
+        if (r.status === 404) {
+          if (!cancelled) setNotFound(true);
+          return null;
+        }
         return r.json();
       })
       .then(d => {
@@ -206,7 +217,9 @@ export function HiveStoryIssue() {
         if (!cancelled) setLoading(false);
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [slug]);
 
   const theme = issue?.theme_color ?? colors.accent;
@@ -214,10 +227,27 @@ export function HiveStoryIssue() {
   if (loading) {
     return (
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px' }}>
-        <div style={{ height: 320, borderRadius: radius.xl, background: 'rgba(240,192,64,0.04)', border: `1px solid ${colors.border}`, animation: 'pulse 1.4s ease-in-out infinite' }} />
+        <div
+          style={{
+            height: 320,
+            borderRadius: radius.xl,
+            background: 'rgba(240,192,64,0.04)',
+            border: `1px solid ${colors.border}`,
+            animation: 'pulse 1.4s ease-in-out infinite',
+          }}
+        />
         <div style={{ marginTop: space[8], display: 'grid', gap: space[5] }}>
           {[1, 2, 3].map(i => (
-            <div key={i} style={{ height: 120, borderRadius: radius.lg, background: 'rgba(240,192,64,0.04)', border: `1px solid ${colors.border}`, animation: 'pulse 1.4s ease-in-out infinite' }} />
+            <div
+              key={i}
+              style={{
+                height: 120,
+                borderRadius: radius.lg,
+                background: 'rgba(240,192,64,0.04)',
+                border: `1px solid ${colors.border}`,
+                animation: 'pulse 1.4s ease-in-out infinite',
+              }}
+            />
           ))}
         </div>
       </div>
@@ -226,10 +256,24 @@ export function HiveStoryIssue() {
 
   if (notFound || !issue) {
     return (
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px', textAlign: 'center' }}>
-        <div style={{ marginBottom: space[4], opacity: 0.4, display: "flex", justifyContent: "center" }}><BeeMark size={46} color="rgba(246,196,0,0.6)" /></div>
+      <div
+        style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px', textAlign: 'center' }}
+      >
+        <div
+          style={{
+            marginBottom: space[4],
+            opacity: 0.4,
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <BeeMark size={46} color="rgba(246,196,0,0.6)" />
+        </div>
         <p style={{ color: colors.text.muted }}>This issue couldn't be found.</p>
-        <Link to="/hive-story" style={{ color: colors.accent, textDecoration: 'none', fontSize: fontSize.sm }}>
+        <Link
+          to="/hive-story"
+          style={{ color: colors.accent, textDecoration: 'none', fontSize: fontSize.sm }}
+        >
           ← Back to Hive Story
         </Link>
       </div>
@@ -250,8 +294,12 @@ export function HiveStoryIssue() {
           textDecoration: 'none',
           marginBottom: space[8],
         }}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = theme; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = colors.text.muted; }}
+        onMouseEnter={e => {
+          (e.currentTarget as HTMLElement).style.color = theme;
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLElement).style.color = colors.text.muted;
+        }}
       >
         <span aria-hidden="true">←</span> Hive Story
       </Link>
@@ -329,7 +377,9 @@ export function HiveStoryIssue() {
 
       {/* Features */}
       {features.length === 0 ? (
-        <p style={{ color: colors.text.dim, textAlign: 'center' }}>No features in this issue yet.</p>
+        <p style={{ color: colors.text.dim, textAlign: 'center' }}>
+          No features in this issue yet.
+        </p>
       ) : (
         <section>
           <h2

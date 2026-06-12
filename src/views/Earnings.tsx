@@ -29,7 +29,10 @@ interface PendingTxn {
   transaction_state: string;
 }
 
-function sumByCurrency(rows: { net_to_seller?: number; agreed_price?: number; currency: string }[], key: 'net_to_seller' | 'agreed_price') {
+function sumByCurrency(
+  rows: { net_to_seller?: number; agreed_price?: number; currency: string }[],
+  key: 'net_to_seller' | 'agreed_price'
+) {
   const totals: Record<string, number> = {};
   for (const r of rows) {
     const v = Number(r[key] ?? 0);
@@ -41,7 +44,9 @@ function sumByCurrency(rows: { net_to_seller?: number; agreed_price?: number; cu
 function formatTotals(totals: Record<string, number>): string {
   const entries = Object.entries(totals);
   if (entries.length === 0) return '€0.00';
-  return entries.map(([cur, amt]) => `${cur === 'EUR' ? '€' : cur + ' '}${amt.toFixed(2)}`).join(' · ');
+  return entries
+    .map(([cur, amt]) => `${cur === 'EUR' ? '€' : cur + ' '}${amt.toFixed(2)}`)
+    .join(' · ');
 }
 
 export function Earnings() {
@@ -56,7 +61,9 @@ export function Earnings() {
     setLoading(true);
     setError('');
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) {
         setError('Please sign in to view your earnings.');
         setLoading(false);
@@ -72,7 +79,9 @@ export function Earnings() {
       const [{ data: ledgerRows }, { data: pendingTxns }] = await Promise.all([
         supabase
           .from('platform_fee_ledger')
-          .select('id, source_type, source_id, gross_amount, platform_fee, net_to_seller, currency, status, stripe_transfer_id, created_at')
+          .select(
+            'id, source_type, source_id, gross_amount, platform_fee, net_to_seller, currency, status, stripe_transfer_id, created_at'
+          )
           .eq('seller_profile_id', uid)
           .order('created_at', { ascending: false }),
         supabase
@@ -99,7 +108,9 @@ export function Earnings() {
     setConnecting(true);
     setError('');
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error('Please sign in first');
       const res = await fetch('/api/stripe/connect/onboard', {
         method: 'POST',
@@ -114,13 +125,31 @@ export function Earnings() {
     }
   };
 
-  const paidTotals = formatTotals(sumByCurrency(ledger.filter(l => l.status === 'transferred'), 'net_to_seller'));
-  const heldTotals = formatTotals(sumByCurrency(ledger.filter(l => l.status === 'held'), 'net_to_seller'));
+  const paidTotals = formatTotals(
+    sumByCurrency(
+      ledger.filter(l => l.status === 'transferred'),
+      'net_to_seller'
+    )
+  );
+  const heldTotals = formatTotals(
+    sumByCurrency(
+      ledger.filter(l => l.status === 'held'),
+      'net_to_seller'
+    )
+  );
   const pendingTotals = formatTotals(sumByCurrency(pending, 'agreed_price'));
 
   return (
     <div style={{ padding: '24px 20px', maxWidth: 920, margin: '0 auto' }}>
-      <h1 style={{ fontSize: 28, fontFamily: 'var(--font-display)', color: 'var(--hive-gold)', margin: 0, letterSpacing: '0.05em' }}>
+      <h1
+        style={{
+          fontSize: 28,
+          fontFamily: 'var(--font-display)',
+          color: 'var(--hive-gold)',
+          margin: 0,
+          letterSpacing: '0.05em',
+        }}
+      >
         EARNINGS
       </h1>
       <p style={{ color: '#888', margin: '4px 0 24px', fontSize: 14 }}>
@@ -128,7 +157,15 @@ export function Earnings() {
       </p>
 
       {error && (
-        <div style={{ color: '#ef4444', padding: 16, background: '#1a0000', borderRadius: 8, marginBottom: 16 }}>
+        <div
+          style={{
+            color: '#ef4444',
+            padding: 16,
+            background: '#1a0000',
+            borderRadius: 8,
+            marginBottom: 16,
+          }}
+        >
           {error}
         </div>
       )}
@@ -140,36 +177,68 @@ export function Earnings() {
         ) : status?.payouts_enabled ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ color: '#22c55e', fontSize: 20 }}>✓</span>
-            <span style={{ color: '#ccc' }}>Payouts active — you can receive marketplace earnings.</span>
+            <span style={{ color: '#ccc' }}>
+              Payouts active — you can receive marketplace earnings.
+            </span>
           </div>
         ) : (
           <div>
-            <p style={{ color: '#fff', fontWeight: 600, margin: '0 0 6px' }}>Set up payouts to get paid</p>
+            <p style={{ color: '#fff', fontWeight: 600, margin: '0 0 6px' }}>
+              Set up payouts to get paid
+            </p>
             <p style={{ color: '#888', fontSize: 13, margin: '0 0 14px' }}>
               {status?.onboarded
                 ? 'Your Stripe account needs a few more details before payouts can be enabled.'
                 : 'Connect a Stripe account to sell gear and receive agent-package earnings.'}
             </p>
             <button onClick={handleConnect} disabled={connecting} style={primaryBtn}>
-              {connecting ? 'Opening Stripe…' : status?.onboarded ? 'Finish payout setup' : 'Set up payouts'}
+              {connecting
+                ? 'Opening Stripe…'
+                : status?.onboarded
+                  ? 'Finish payout setup'
+                  : 'Set up payouts'}
             </button>
           </div>
         )}
       </div>
 
       {/* Totals */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginTop: 16 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 16,
+          marginTop: 16,
+        }}
+      >
         <Stat label="Paid out" value={paidTotals} accent="var(--hive-gold)" />
         <Stat label="Pending escrow" value={pendingTotals} accent="#fb923c" />
         <Stat label="Held (set up payouts)" value={heldTotals} accent="#888" />
       </div>
 
       {/* History */}
-      <h2 style={{ fontSize: 16, color: '#ccc', margin: '32px 0 12px', letterSpacing: '0.04em' }}>Payout history</h2>
+      <h2 style={{ fontSize: 16, color: '#ccc', margin: '32px 0 12px', letterSpacing: '0.04em' }}>
+        Payout history
+      </h2>
       {loading ? (
-        <div style={{ height: 160, background: '#111', borderRadius: 12, animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div
+          style={{
+            height: 160,
+            background: '#111',
+            borderRadius: 12,
+            animation: 'pulse 1.5s ease-in-out infinite',
+          }}
+        />
       ) : ledger.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '48px 20px', color: '#555', background: '#0c0c0c', borderRadius: 12 }}>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '48px 20px',
+            color: '#555',
+            background: '#0c0c0c',
+            borderRadius: 12,
+          }}
+        >
           <div style={{ fontSize: 40, marginBottom: 8 }}>🪙</div>
           <p>No payouts yet. Sales and agent purchases will appear here.</p>
         </div>
@@ -193,9 +262,20 @@ export function Earnings() {
                   <td style={td}>{row.source_type === 'gear' ? 'Gear sale' : 'Agent package'}</td>
                   <td style={td}>€{Number(row.gross_amount).toFixed(2)}</td>
                   <td style={td}>€{Number(row.platform_fee).toFixed(2)}</td>
-                  <td style={{ ...td, color: 'var(--hive-gold)', fontWeight: 600 }}>€{Number(row.net_to_seller).toFixed(2)}</td>
+                  <td style={{ ...td, color: 'var(--hive-gold)', fontWeight: 600 }}>
+                    €{Number(row.net_to_seller).toFixed(2)}
+                  </td>
                   <td style={td}>
-                    <span style={{ color: row.status === 'transferred' ? '#22c55e' : row.status === 'held' ? '#fb923c' : '#888' }}>
+                    <span
+                      style={{
+                        color:
+                          row.status === 'transferred'
+                            ? '#22c55e'
+                            : row.status === 'held'
+                              ? '#fb923c'
+                              : '#888',
+                      }}
+                    >
                       {row.status}
                     </span>
                   </td>
@@ -212,7 +292,17 @@ export function Earnings() {
 function Stat({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
     <div style={cardStyle}>
-      <p style={{ color: '#888', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 6px' }}>{label}</p>
+      <p
+        style={{
+          color: '#888',
+          fontSize: 12,
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          margin: '0 0 6px',
+        }}
+      >
+        {label}
+      </p>
       <p style={{ color: accent, fontSize: 24, fontWeight: 700, margin: 0 }}>{value}</p>
     </div>
   );

@@ -34,7 +34,14 @@ export function HelpCenter() {
       <div style={{ position: 'relative', maxWidth: 520, marginBottom: space[11] }}>
         <span
           aria-hidden="true"
-          style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: colors.text.dim, display: 'flex' }}
+          style={{
+            position: 'absolute',
+            left: 14,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: colors.text.dim,
+            display: 'flex',
+          }}
         >
           <Icon name="search" size={17} color="currentColor" />
         </span>
@@ -60,7 +67,14 @@ export function HelpCenter() {
       {/* Search results */}
       {results !== null ? (
         <section>
-          <h2 style={{ fontSize: fontSize.lg, fontWeight: fontWeight.bold, color: colors.text.primary, marginBottom: space[6] }}>
+          <h2
+            style={{
+              fontSize: fontSize.lg,
+              fontWeight: fontWeight.bold,
+              color: colors.text.primary,
+              marginBottom: space[6],
+            }}
+          >
             {results.length} result{results.length !== 1 ? 's' : ''}
           </h2>
           <div style={{ display: 'grid', gap: space[4] }}>
@@ -70,7 +84,9 @@ export function HelpCenter() {
               </Reveal>
             ))}
             {results.length === 0 && (
-              <p style={{ color: colors.text.dim }}>No articles match "{query}". Try a different term.</p>
+              <p style={{ color: colors.text.dim }}>
+                No articles match "{query}". Try a different term.
+              </p>
             )}
           </div>
         </section>
@@ -83,25 +99,58 @@ export function HelpCenter() {
             return (
               <Reveal key={cat.id} index={ci}>
                 <section>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: space[4], marginBottom: space[6] }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: space[4],
+                      marginBottom: space[6],
+                    }}
+                  >
                     <span
                       aria-hidden="true"
                       style={{
-                        width: 40, height: 40, display: 'grid', placeItems: 'center',
+                        width: 40,
+                        height: 40,
+                        display: 'grid',
+                        placeItems: 'center',
                         clipPath: 'polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)',
-                        background: 'rgba(246,196,0,0.12)', color: colors.accent,
+                        background: 'rgba(246,196,0,0.12)',
+                        color: colors.accent,
                       }}
                     >
                       <Icon name={cat.icon} size={19} color="currentColor" />
                     </span>
                     <div>
-                      <h2 style={{ fontSize: fontSize.lg, fontWeight: fontWeight.bold, color: colors.text.primary, margin: 0, fontFamily: 'var(--font-display, system-ui)' }}>
+                      <h2
+                        style={{
+                          fontSize: fontSize.lg,
+                          fontWeight: fontWeight.bold,
+                          color: colors.text.primary,
+                          margin: 0,
+                          fontFamily: 'var(--font-display, system-ui)',
+                        }}
+                      >
                         {cat.label}
                       </h2>
-                      <p style={{ fontSize: fontSize.sm, color: colors.text.muted, margin: '2px 0 0' }}>{cat.blurb}</p>
+                      <p
+                        style={{
+                          fontSize: fontSize.sm,
+                          color: colors.text.muted,
+                          margin: '2px 0 0',
+                        }}
+                      >
+                        {cat.blurb}
+                      </p>
                     </div>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: space[4] }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                      gap: space[4],
+                    }}
+                  >
                     {arts.map(a => (
                       <ArticleRow key={a.slug} slug={a.slug} title={a.title} summary={a.summary} />
                     ))}
@@ -118,10 +167,7 @@ export function HelpCenter() {
 
 function ArticleRow({ slug, title, summary }: { slug: string; title: string; summary: string }) {
   return (
-    <Link
-      to={`/help/${slug}`}
-      style={{ textDecoration: 'none', display: 'block', height: '100%' }}
-    >
+    <Link to={`/help/${slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
       <div
         style={{
           height: '100%',
@@ -134,14 +180,35 @@ function ArticleRow({ slug, title, summary }: { slug: string; title: string; sum
           flexDirection: 'column',
           gap: space[2],
         }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = colors.accent; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = colors.accentMuted; }}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = colors.accent;
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = colors.accentMuted;
+        }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: space[3] }}>
-          <span style={{ fontSize: fontSize.md, fontWeight: fontWeight.bold, color: colors.text.primary }}>{title}</span>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: space[3],
+          }}
+        >
+          <span
+            style={{
+              fontSize: fontSize.md,
+              fontWeight: fontWeight.bold,
+              color: colors.text.primary,
+            }}
+          >
+            {title}
+          </span>
           <Icon name="external" size={14} color={colors.text.dim} />
         </div>
-        <span style={{ fontSize: fontSize.sm, color: colors.text.muted, lineHeight: 1.5 }}>{summary}</span>
+        <span style={{ fontSize: fontSize.sm, color: colors.text.muted, lineHeight: 1.5 }}>
+          {summary}
+        </span>
       </div>
     </Link>
   );

@@ -63,16 +63,30 @@ export function CreatorRecap() {
         minWidth: 92,
       }}
     >
-      <div style={{ fontSize: fontSize['2xl'], fontWeight: fontWeight.bold, color: colors.text.primary }}>
+      <div
+        style={{
+          fontSize: fontSize['2xl'],
+          fontWeight: fontWeight.bold,
+          color: colors.text.primary,
+        }}
+      >
         {value.toLocaleString()}
       </div>
-      <div style={{ fontSize: fontSize.xs, color: colors.text.dim, textTransform: 'uppercase' }}>{label}</div>
+      <div style={{ fontSize: fontSize.xs, color: colors.text.dim, textTransform: 'uppercase' }}>
+        {label}
+      </div>
     </div>
   );
 
   return (
     <section style={{ marginTop: space[8] }}>
-      <h2 style={{ fontSize: fontSize.lg, fontWeight: fontWeight.semibold, color: colors.text.primary }}>
+      <h2
+        style={{
+          fontSize: fontSize.lg,
+          fontWeight: fontWeight.semibold,
+          color: colors.text.primary,
+        }}
+      >
         Your last {recap.days} days
       </h2>
       {!hasActivity ? (
@@ -90,8 +104,9 @@ export function CreatorRecap() {
           </div>
           {recap.top_mix && (
             <p style={{ fontSize: fontSize.sm, color: colors.text.secondary, marginTop: space[4] }}>
-              Top mix: <strong style={{ color: colors.text.primary }}>{recap.top_mix.title}</strong> ·{' '}
-              {recap.top_mix.play_count.toLocaleString()} plays · {recap.top_mix.like_count.toLocaleString()} likes
+              Top mix: <strong style={{ color: colors.text.primary }}>{recap.top_mix.title}</strong>{' '}
+              · {recap.top_mix.play_count.toLocaleString()} plays ·{' '}
+              {recap.top_mix.like_count.toLocaleString()} likes
             </p>
           )}
         </>

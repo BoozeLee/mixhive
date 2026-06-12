@@ -121,8 +121,7 @@ export const gradient = {
   goldText: 'linear-gradient(120deg, #fff 18%, #ffd84a 55%, #f6c400 100%)',
   meshTop: 'radial-gradient(ellipse at 80% 10%, rgba(246,196,0,0.10) 0%, transparent 65%)',
   meshBottom: 'radial-gradient(ellipse at 10% 90%, rgba(37,217,255,0.06) 0%, transparent 70%)',
-  scanline:
-    'repeating-linear-gradient(180deg, transparent 0 3px, rgba(0,0,0,0.18) 3px 4px)',
+  scanline: 'repeating-linear-gradient(180deg, transparent 0 3px, rgba(0,0,0,0.18) 3px 4px)',
 } as const;
 
 // Motion tokens — keep durations/easing consistent with src/lib/motion.ts

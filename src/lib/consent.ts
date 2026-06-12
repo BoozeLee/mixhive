@@ -33,7 +33,10 @@ export function hasConsent(category: ConsentCategory): boolean {
   return !!c[category];
 }
 
-export async function saveConsent(choice: { analytics: boolean; marketing: boolean }): Promise<ConsentState> {
+export async function saveConsent(choice: {
+  analytics: boolean;
+  marketing: boolean;
+}): Promise<ConsentState> {
   const state: ConsentState = {
     necessary: true,
     analytics: choice.analytics,
@@ -58,7 +61,11 @@ export async function saveConsent(choice: { analytics: boolean; marketing: boole
         'Content-Type': 'application/json',
         ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
       },
-      body: JSON.stringify({ analytics: choice.analytics, marketing: choice.marketing, policyVersion: POLICY_VERSION }),
+      body: JSON.stringify({
+        analytics: choice.analytics,
+        marketing: choice.marketing,
+        policyVersion: POLICY_VERSION,
+      }),
     });
   } catch {
     /* offline / not configured — localStorage record still stands */

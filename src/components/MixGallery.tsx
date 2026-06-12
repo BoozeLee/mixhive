@@ -48,7 +48,9 @@ export function MixGallery({
   if (mixes.length === 0) {
     return (
       <div className={`text-center py-12 ${className}`}>
-        <div className="mb-4" style={{display:"inline-flex"}}><Icon name="music" size={56} /></div>
+        <div className="mb-4" style={{ display: 'inline-flex' }}>
+          <Icon name="music" size={56} />
+        </div>
         <h3 className="text-xl font-semibold text-gray-400 mb-2">No mixes yet</h3>
         <p className="text-gray-500 text-sm">
           {currentUserId

@@ -5,14 +5,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
-  draft:       ['recruiting', 'cancelled'],
-  recruiting:  ['in_progress', 'cancelled'],
+  draft: ['recruiting', 'cancelled'],
+  recruiting: ['in_progress', 'cancelled'],
   in_progress: ['complete', 'cancelled'],
 };
 
 // XP multipliers
 const ROLE_XP_BASE = 1.0;
-const EARLY_BONUS  = 0.20;
+const EARLY_BONUS = 0.2;
 const LATE_PENALTY = 0.15;
 
 function makeClient(jwt: string) {
@@ -24,10 +24,7 @@ function makeClient(jwt: string) {
   });
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     const authHeader = req.headers.get('authorization');
@@ -36,7 +33,10 @@ export async function POST(
     }
     const sb = makeClient(authHeader.slice(7));
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     const { to_phase } = await req.json();
@@ -50,7 +50,10 @@ export async function POST(
       .single();
     if (questErr || !quest) return NextResponse.json({ error: 'Quest not found' }, { status: 404 });
     if (quest.creator_profile_id !== user.id) {
-      return NextResponse.json({ error: 'Only the quest creator can advance phase' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Only the quest creator can advance phase' },
+        { status: 403 }
+      );
     }
 
     // Validate transition
@@ -86,10 +89,11 @@ export async function POST(
       const deadline = quest.deadline ? new Date(quest.deadline) : null;
       const completedAt = new Date();
       const isEarly = deadline && completedAt <= deadline;
-      const isLate = quest.timeline_days && quest.created_at
-        ? completedAt >
-          new Date(new Date(quest.created_at).getTime() + (quest.timeline_days + 7) * 86400000)
-        : false;
+      const isLate =
+        quest.timeline_days && quest.created_at
+          ? completedAt >
+            new Date(new Date(quest.created_at).getTime() + (quest.timeline_days + 7) * 86400000)
+          : false;
 
       let multiplier = ROLE_XP_BASE;
       if (isEarly) multiplier += EARLY_BONUS;

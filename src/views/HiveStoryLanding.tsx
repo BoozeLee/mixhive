@@ -19,10 +19,7 @@ function formatMonth(iso: string) {
 
 function IssueCard({ issue, hero }: { issue: HiveStoryIssue; hero?: boolean }) {
   return (
-    <Link
-      to={`/hive-story/${issue.slug}`}
-      style={{ textDecoration: 'none', display: 'block' }}
-    >
+    <Link to={`/hive-story/${issue.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
       <article
         style={{
           borderRadius: hero ? radius.xl : radius.lg,
@@ -65,7 +62,9 @@ function IssueCard({ issue, hero }: { issue: HiveStoryIssue; hero?: boolean }) {
             <BeeMark size={hero ? 52 : 34} color="rgba(246,196,0,0.6)" />
           </div>
         )}
-        <div style={{ padding: hero ? `${space[8]}px ${space[9]}px` : `${space[5]}px ${space[6]}px` }}>
+        <div
+          style={{ padding: hero ? `${space[8]}px ${space[9]}px` : `${space[5]}px ${space[6]}px` }}
+        >
           <div
             style={{
               fontSize: fontSize.xs,
@@ -141,7 +140,9 @@ export function HiveStoryLanding() {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const [latest, ...archive] = issues;
@@ -210,7 +211,16 @@ export function HiveStoryLanding() {
             borderRadius: radius.xl,
           }}
         >
-          <div style={{ marginBottom: space[4], opacity: 0.4, display: "flex", justifyContent: "center" }}><BeeMark size={46} color="rgba(246,196,0,0.6)" /></div>
+          <div
+            style={{
+              marginBottom: space[4],
+              opacity: 0.4,
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <BeeMark size={46} color="rgba(246,196,0,0.6)" />
+          </div>
           <p style={{ margin: 0 }}>The first Hive Story issue is coming soon.</p>
         </div>
       )}

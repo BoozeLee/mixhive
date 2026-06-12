@@ -11,10 +11,7 @@ function makeClient(jwt?: string) {
   });
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     const sb = makeClient();
@@ -32,10 +29,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     const authHeader = req.headers.get('authorization');
@@ -45,14 +39,27 @@ export async function PATCH(
     const jwt = authHeader.slice(7);
     const sb = makeClient(jwt);
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
 
     const body = await req.json();
-    const allowed = ['title','narrative','goals','phase','genre_tags','discipline_tags',
-                     'region','timeline_days','deadline','xp_reward'];
+    const allowed = [
+      'title',
+      'narrative',
+      'goals',
+      'phase',
+      'genre_tags',
+      'discipline_tags',
+      'region',
+      'timeline_days',
+      'deadline',
+      'xp_reward',
+    ];
     const update: Record<string, unknown> = {};
     for (const key of allowed) {
       if (key in body) update[key] = body[key];

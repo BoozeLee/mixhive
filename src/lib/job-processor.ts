@@ -18,7 +18,7 @@ export const DEFAULT_JOB_PROCESSOR_CONFIG: JobProcessorConfig = {
   batchSize: 5,
   processIntervalMs: 5000, // 5 seconds
   maxConcurrentJobs: 3,
-  enableLogging: true
+  enableLogging: true,
 };
 
 /**
@@ -63,7 +63,7 @@ export class JobProcessor {
     }
 
     this.isRunning = false;
-    
+
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
@@ -90,7 +90,9 @@ export class JobProcessor {
       }
 
       const audioJobs = await get_pending_audio_jobs(batchSize);
-      const mythicJobs = await get_pending_mythic_graph_jobs(Math.max(1, Math.floor(batchSize / 2)));
+      const mythicJobs = await get_pending_mythic_graph_jobs(
+        Math.max(1, Math.floor(batchSize / 2))
+      );
 
       const allJobs = [
         ...audioJobs.map((j: any) => ({ ...j, _domain: 'audio' })),
@@ -102,12 +104,13 @@ export class JobProcessor {
         return;
       }
 
-      this.log(`Processing ${allJobs.length} jobs (${audioJobs.length} audio, ${mythicJobs.length} mythic_graph)`);
+      this.log(
+        `Processing ${allJobs.length} jobs (${audioJobs.length} audio, ${mythicJobs.length} mythic_graph)`
+      );
 
       // Process jobs concurrently
       const jobPromises = allJobs.map(job => this.processJob(job));
       await Promise.allSettled(jobPromises);
-
     } catch (error) {
       this.log('Error processing job batch:', error);
     }
@@ -119,7 +122,7 @@ export class JobProcessor {
   private async processJob(job: any): Promise<void> {
     const jobId = job.id;
     const domain = job._domain || 'audio';
-    
+
     // Check if job is already being processed (safety check)
     if (this.activeJobs.has(jobId)) {
       this.log(`Job ${jobId} is already being processed`);
@@ -137,12 +140,11 @@ export class JobProcessor {
         // Default to audio processing (existing behavior)
         await audioProcessingWorker.processJob(jobId);
       }
-      
-      this.log(`Completed ${domain} job ${jobId} successfully`);
 
+      this.log(`Completed ${domain} job ${jobId} successfully`);
     } catch (error) {
       this.log(`${domain} job ${jobId} failed:`, error);
-      
+
       // Handle failure marking based on domain
       if (job.retry_count >= job.max_retries) {
         try {
@@ -151,7 +153,7 @@ export class JobProcessor {
             this.log(`Mythic graph job ${jobId} marked as failed (handled in worker)`);
           } else {
             await mark_audio_job_failed(
-              jobId, 
+              jobId,
               error instanceof Error ? error.message : 'Unknown error',
               false
             );
@@ -161,7 +163,6 @@ export class JobProcessor {
           this.log(`Failed to mark ${domain} job ${jobId} as failed in DB:`, dbError);
         }
       }
-
     } finally {
       // Remove from active jobs
       this.activeJobs.delete(jobId);
@@ -182,7 +183,7 @@ export class JobProcessor {
       isRunning: this.isRunning,
       activeJobs: this.activeJobs.size,
       maxConcurrentJobs: this.config.maxConcurrentJobs,
-      config: this.config
+      config: this.config,
     };
   }
 
@@ -191,21 +192,16 @@ export class JobProcessor {
    */
   async processJobManually(jobId: string): Promise<void> {
     this.log(`Manually processing job ${jobId}`);
-    
+
     try {
       const supabase = createServerClient();
-      const { data: job } = await supabase
-        .from('audio_jobs')
-        .select('*')
-        .eq('id', jobId)
-        .single();
+      const { data: job } = await supabase.from('audio_jobs').select('*').eq('id', jobId).single();
 
       if (!job) {
         throw new Error(`Job ${jobId} not found`);
       }
 
       await this.processJob(job);
-      
     } catch (error) {
       this.log(`Manual processing of job ${jobId} failed:`, error);
       throw error;
@@ -217,14 +213,15 @@ export class JobProcessor {
    */
   async cleanupOldJobs(days: number = 30): Promise<number> {
     this.log(`Cleaning up jobs older than ${days} days`);
-    
+
     try {
       const supabase = createServerClient();
-      
+
       // This would call the cleanup function from database-queries
       // For now, we'll implement a basic cleanup
-      const { data, error } = await supabase
-        .rpc('cleanup_completed_audio_jobs', { p_days_to_keep: days });
+      const { data, error } = await supabase.rpc('cleanup_completed_audio_jobs', {
+        p_days_to_keep: days,
+      });
 
       if (error) {
         throw error;
@@ -232,9 +229,8 @@ export class JobProcessor {
 
       const cleanedCount = data || 0;
       this.log(`Cleaned up ${cleanedCount} old jobs`);
-      
+
       return cleanedCount;
-      
     } catch (error) {
       this.log('Cleanup failed:', error);
       throw error;

@@ -407,7 +407,13 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
             fontWeight: fontWeight.bold,
           }}
         >
-          {isApplied ? '✓' : isRejected ? '✗' : <Icon name={iconKey} size={15} color="currentColor" />}
+          {isApplied ? (
+            '✓'
+          ) : isRejected ? (
+            '✗'
+          ) : (
+            <Icon name={iconKey} size={15} color="currentColor" />
+          )}
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>

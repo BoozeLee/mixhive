@@ -12,7 +12,9 @@ test.describe('Mix detail', () => {
     // Embed route should not crash and should render a minimal player shell
     await expect(page.locator('body')).toBeVisible({ timeout: 8_000 });
     // Main site nav should NOT be present in embed view
-    await expect(page.locator('nav[aria-label="Main navigation"]')).not.toBeVisible({ timeout: 3_000 }).catch(() => {});
+    await expect(page.locator('nav[aria-label="Main navigation"]'))
+      .not.toBeVisible({ timeout: 3_000 })
+      .catch(() => {});
   });
 
   test('buzz detail page renders gracefully', async ({ page }) => {

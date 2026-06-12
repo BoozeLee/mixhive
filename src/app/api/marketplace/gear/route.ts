@@ -57,7 +57,10 @@ export async function POST(req: NextRequest) {
     const jwt = authHeader.slice(7);
     const sb = makeClient(jwt);
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
@@ -76,32 +79,55 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, description, category, brand, model, condition, price, currency,
-            location_city, location_country, photos, shipping_options, preferred_payment } = body;
-
-    if (!title?.trim()) return NextResponse.json({ error: 'Title required' }, { status: 400 });
-    if (!category) return NextResponse.json({ error: 'Category required' }, { status: 400 });
-    if (!condition) return NextResponse.json({ error: 'Condition required' }, { status: 400 });
-    if (price == null || price < 0) return NextResponse.json({ error: 'Price required' }, { status: 400 });
-    if (!photos?.length) return NextResponse.json({ error: 'At least one photo required' }, { status: 400 });
-
-    const { data, error } = await sb.from('equipment_listings').insert({
-      seller_profile_id: user.id,
-      title: title.trim(),
+    const {
+      title,
       description,
       category,
       brand,
       model,
       condition,
       price,
-      currency: currency ?? 'EUR',
+      currency,
       location_city,
       location_country,
       photos,
-      shipping_options: shipping_options ?? { local_pickup: true, domestic_shipping: false, international_shipping: false },
-      preferred_payment: preferred_payment ?? [],
-      status: 'active',
-    }).select().single();
+      shipping_options,
+      preferred_payment,
+    } = body;
+
+    if (!title?.trim()) return NextResponse.json({ error: 'Title required' }, { status: 400 });
+    if (!category) return NextResponse.json({ error: 'Category required' }, { status: 400 });
+    if (!condition) return NextResponse.json({ error: 'Condition required' }, { status: 400 });
+    if (price == null || price < 0)
+      return NextResponse.json({ error: 'Price required' }, { status: 400 });
+    if (!photos?.length)
+      return NextResponse.json({ error: 'At least one photo required' }, { status: 400 });
+
+    const { data, error } = await sb
+      .from('equipment_listings')
+      .insert({
+        seller_profile_id: user.id,
+        title: title.trim(),
+        description,
+        category,
+        brand,
+        model,
+        condition,
+        price,
+        currency: currency ?? 'EUR',
+        location_city,
+        location_country,
+        photos,
+        shipping_options: shipping_options ?? {
+          local_pickup: true,
+          domestic_shipping: false,
+          international_shipping: false,
+        },
+        preferred_payment: preferred_payment ?? [],
+        status: 'active',
+      })
+      .select()
+      .single();
 
     if (error) throw error;
     return NextResponse.json({ listing: data }, { status: 201 });

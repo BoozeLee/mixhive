@@ -46,11 +46,20 @@ beforeEach(() => {
 function makeReq(opts: { auth?: boolean; audio?: boolean; title?: string } = {}) {
   const form = new FormData();
   if (opts.audio !== false) {
-    form.append('audio', new File([new Uint8Array([1, 2, 3, 4])], 'master.wav', { type: 'audio/wav' }));
+    form.append(
+      'audio',
+      new File([new Uint8Array([1, 2, 3, 4])], 'master.wav', { type: 'audio/wav' })
+    );
   }
   form.append(
     'metadata',
-    JSON.stringify({ title: opts.title ?? 'My Track', bpm: 128, genre: 'Techno', durationSecs: 200, tags: ['techno'] })
+    JSON.stringify({
+      title: opts.title ?? 'My Track',
+      bpm: 128,
+      genre: 'Techno',
+      durationSecs: 200,
+      tags: ['techno'],
+    })
   );
   const headers: Record<string, string> = {};
   if (opts.auth !== false) headers['authorization'] = 'Bearer jwt';

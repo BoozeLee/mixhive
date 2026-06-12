@@ -39,14 +39,24 @@ describe('GET /api/search', () => {
         error: null,
       })
     );
-    const response = await request({ q: 'techno', type: 'all', genre: 'Techno', location: 'Brussels' });
+    const response = await request({
+      q: 'techno',
+      type: 'all',
+      genre: 'Techno',
+      location: 'Brussels',
+    });
     const body = await response.json();
 
     expect(response.status).toBe(200);
     expect(rpc).toHaveBeenCalledTimes(3);
     expect(rpc).toHaveBeenCalledWith(
       'search_ranked_scenes',
-      expect.objectContaining({ p_query: 'techno', p_genre: 'Techno', p_location: 'Brussels', p_limit: 4 })
+      expect.objectContaining({
+        p_query: 'techno',
+        p_genre: 'Techno',
+        p_location: 'Brussels',
+        p_limit: 4,
+      })
     );
     expect(body.sections.scenes.total).toBe(6);
     expect(body.sections.scenes.hasMore).toBe(true);

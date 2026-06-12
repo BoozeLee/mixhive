@@ -270,7 +270,13 @@ export function Opportunities() {
                 width: '100%',
               }}
             >
-              {matchBusy ? 'Matching…' : <><Icon name="radar" size={15} color="currentColor" /> Match me to opportunities</>}
+              {matchBusy ? (
+                'Matching…'
+              ) : (
+                <>
+                  <Icon name="radar" size={15} color="currentColor" /> Match me to opportunities
+                </>
+              )}
             </button>
           )}
         </div>

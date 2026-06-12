@@ -351,8 +351,12 @@ function runBrowserSmoke(baseUrl) {
   const isNetworkOnly = isRemote && allTimeouts;
 
   if (isNetworkOnly) {
-    console.log(`  ${chalk.dim('ℹ')}  Browser smoke: network timeouts on remote URL (${failLines.length} routes)`);
-    console.log(`     ${chalk.dim('Run locally against http://localhost:3000 for reliable results')}`);
+    console.log(
+      `  ${chalk.dim('ℹ')}  Browser smoke: network timeouts on remote URL (${failLines.length} routes)`
+    );
+    console.log(
+      `     ${chalk.dim('Run locally against http://localhost:3000 for reliable results')}`
+    );
     return { pass: 0, warn: 0, fail: 0 };
   }
 

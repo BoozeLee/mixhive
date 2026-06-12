@@ -3,7 +3,9 @@
 
 self.addEventListener('push', event => {
   let data = {};
-  try { data = event.data?.json() ?? {}; } catch {}
+  try {
+    data = event.data?.json() ?? {};
+  } catch {}
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {

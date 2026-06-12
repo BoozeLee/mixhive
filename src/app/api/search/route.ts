@@ -21,7 +21,10 @@ function emptySection() {
 export async function GET(req: NextRequest) {
   const parsed = SearchRequestSchema.safeParse(Object.fromEntries(new URL(req.url).searchParams));
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Enter a search query between 2 and 100 characters.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Enter a search query between 2 and 100 characters.' },
+      { status: 400 }
+    );
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;

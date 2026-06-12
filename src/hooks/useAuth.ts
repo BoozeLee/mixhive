@@ -38,14 +38,8 @@ export function useAuth() {
     const newProfile = {
       id: authUser.id,
       username:
-        metadata.preferred_username ||
-        metadata.user_name ||
-        `user_${authUser.id.slice(0, 8)}`,
-      display_name:
-        metadata.full_name ||
-        metadata.name ||
-        authUser.email?.split('@')[0] ||
-        'User',
+        metadata.preferred_username || metadata.user_name || `user_${authUser.id.slice(0, 8)}`,
+      display_name: metadata.full_name || metadata.name || authUser.email?.split('@')[0] || 'User',
       avatar_url: metadata.avatar_url || metadata.picture || null,
     };
     const { data: upserted, error: upsertErr } = await supabase
@@ -145,7 +139,7 @@ export function useAuth() {
     if (!isSupabaseConfigured) return { error: missingConfigError };
     // Use getAuthRedirectTo() so dev/prod redirect URLs are always consistent
     return supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${(process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : ''))}/auth/reset-password`,
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : '')}/auth/reset-password`,
     });
   }
 

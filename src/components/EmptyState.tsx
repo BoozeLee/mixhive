@@ -30,7 +30,15 @@ const actionStyle = {
   cursor: 'pointer',
 } as const;
 
-export function EmptyState({ iconKey = 'music', icon, title, body, actionLabel, actionTo, onAction }: Props) {
+export function EmptyState({
+  iconKey = 'music',
+  icon,
+  title,
+  body,
+  actionLabel,
+  actionTo,
+  onAction,
+}: Props) {
   return (
     <div
       role="status"
@@ -63,11 +71,28 @@ export function EmptyState({ iconKey = 'music', icon, title, body, actionLabel, 
       >
         {icon ? icon : <Icon name={iconKey} size={34} color="currentColor" strokeWidth={1.8} />}
       </div>
-      <GlowText as="h2" variant="plain" style={{ margin: 0, fontSize: fontSize.xl, fontWeight: fontWeight.bold, color: colors.text.primary }}>
+      <GlowText
+        as="h2"
+        variant="plain"
+        style={{
+          margin: 0,
+          fontSize: fontSize.xl,
+          fontWeight: fontWeight.bold,
+          color: colors.text.primary,
+        }}
+      >
         {title}
       </GlowText>
       {body && (
-        <div style={{ marginTop: space[4], maxWidth: 380, lineHeight: 1.5, color: colors.text.muted, fontSize: fontSize.md }}>
+        <div
+          style={{
+            marginTop: space[4],
+            maxWidth: 380,
+            lineHeight: 1.5,
+            color: colors.text.muted,
+            fontSize: fontSize.md,
+          }}
+        >
           {body}
         </div>
       )}

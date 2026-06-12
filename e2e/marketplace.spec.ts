@@ -37,9 +37,9 @@ test.describe('Marketplace', () => {
   test('hive story landing renders editorial heading', async ({ page }) => {
     await page.goto('/hive-story');
     await expect(page.locator('#main-content')).toBeVisible();
-    await expect(
-      page.locator('text=Hive Story, text=Editorial, h1').first()
-    ).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('text=Hive Story, text=Editorial, h1').first()).toBeVisible({
+      timeout: 8_000,
+    });
   });
 
   test('new gear listing page renders step 1', async ({ page }) => {

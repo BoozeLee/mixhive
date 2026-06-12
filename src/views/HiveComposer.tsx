@@ -374,7 +374,9 @@ export function HiveComposer() {
           flexShrink: 0,
         }}
       >
-        <span style={{ display: "inline-flex" }}><Icon name="composer" size={18} /></span>
+        <span style={{ display: 'inline-flex' }}>
+          <Icon name="composer" size={18} />
+        </span>
         <h1
           style={{
             margin: 0,
@@ -456,7 +458,9 @@ export function HiveComposer() {
             flexShrink: 0,
           }}
         >
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Icon name="composer" size={14} /> Draft restored from your last session.</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Icon name="composer" size={14} /> Draft restored from your last session.
+          </span>
           <button
             type="button"
             onClick={() => setShowDraftBanner(false)}

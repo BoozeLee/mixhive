@@ -19,9 +19,21 @@ type Preferences = {
 
 const CATEGORIES: Array<{ key: keyof Preferences; label: string; description: string }> = [
   { key: 'messages_enabled', label: 'Messages', description: 'Direct messages arrive quickly.' },
-  { key: 'social_enabled', label: 'Social activity', description: 'Comments are quick; likes and follows are grouped.' },
-  { key: 'uploads_enabled', label: 'New mixes', description: 'Hourly updates from artists you follow.' },
-  { key: 'account_enabled', label: 'Account and marketplace', description: 'Verification, purchases, sales, and payouts.' },
+  {
+    key: 'social_enabled',
+    label: 'Social activity',
+    description: 'Comments are quick; likes and follows are grouped.',
+  },
+  {
+    key: 'uploads_enabled',
+    label: 'New mixes',
+    description: 'Hourly updates from artists you follow.',
+  },
+  {
+    key: 'account_enabled',
+    label: 'Account and marketplace',
+    description: 'Verification, purchases, sales, and payouts.',
+  },
 ];
 
 async function accessToken() {
@@ -86,7 +98,7 @@ export function NotificationSettings() {
         const ok = await subscribeToPush(registration, vapidKey, token);
         if (!ok) throw new Error('Browser permission was not granted.');
         setSubscribed(true);
-        setPreferences(current => current ? { ...current, push_enabled: true } : current);
+        setPreferences(current => (current ? { ...current, push_enabled: true } : current));
         setMessage('Browser push enabled.');
       }
     } catch (error) {
@@ -108,13 +120,22 @@ export function NotificationSettings() {
   }
 
   if (!preferences) {
-    return <p style={{ color: colors.text.dim, fontSize: fontSize.sm }}>Loading notification settings…</p>;
+    return (
+      <p style={{ color: colors.text.dim, fontSize: fontSize.sm }}>
+        Loading notification settings…
+      </p>
+    );
   }
 
   return (
     <div style={{ display: 'grid', gap: space[5] }}>
       <div>
-        <Button type="button" variant="secondary" onClick={togglePush} disabled={busy || !supported}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={togglePush}
+          disabled={busy || !supported}
+        >
           {busy
             ? 'Updating…'
             : preferences.push_enabled && subscribed

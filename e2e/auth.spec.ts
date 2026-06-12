@@ -56,9 +56,9 @@ test.describe('Auth flows', () => {
     const page = await ctx.newPage();
     await page.goto('/dashboard');
     // Either redirected to /login or the page shows a login prompt
-    await expect(
-      page.locator('input[type="email"], [href="/login"]').first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('input[type="email"], [href="/login"]').first()).toBeVisible({
+      timeout: 10_000,
+    });
     await ctx.close();
   });
 
@@ -66,9 +66,9 @@ test.describe('Auth flows', () => {
     const ctx = await browser.newContext({ storageState: { cookies: [], origins: [] } });
     const page = await ctx.newPage();
     await page.goto('/upload');
-    await expect(
-      page.locator('input[type="email"], [href="/login"]').first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('input[type="email"], [href="/login"]').first()).toBeVisible({
+      timeout: 10_000,
+    });
     await ctx.close();
   });
 
@@ -84,14 +84,20 @@ test.describe('Auth flows', () => {
     test('sign out clears session', async ({ page }) => {
       await page.goto('/feed');
       // Open user menu and sign out
-      const avatar = page.locator('[aria-label*="profile"], [aria-label*="menu"], img[alt*="avatar"]').first();
+      const avatar = page
+        .locator('[aria-label*="profile"], [aria-label*="menu"], img[alt*="avatar"]')
+        .first();
       if (await avatar.isVisible()) {
         await avatar.click();
-        const signOutBtn = page.locator('button:has-text("Sign out"), [role="menuitem"]:has-text("Sign out")');
+        const signOutBtn = page.locator(
+          'button:has-text("Sign out"), [role="menuitem"]:has-text("Sign out")'
+        );
         if (await signOutBtn.isVisible()) {
           await signOutBtn.click();
           await expect(
-            page.locator('a:has-text("Sign in"), button:has-text("Sign in"), a:has-text("Join")').first()
+            page
+              .locator('a:has-text("Sign in"), button:has-text("Sign in"), a:has-text("Join")')
+              .first()
           ).toBeVisible({ timeout: 8_000 });
         }
       }

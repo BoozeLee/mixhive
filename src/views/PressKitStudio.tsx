@@ -166,7 +166,9 @@ export function PressKitStudio() {
             textAlign: 'center',
           }}
         >
-          <div style={{ color: colors.accent, marginBottom: space[4], display: "flex" }}><Icon name="epk" size={34} /></div>
+          <div style={{ color: colors.accent, marginBottom: space[4], display: 'flex' }}>
+            <Icon name="epk" size={34} />
+          </div>
           <h2 style={{ margin: 0, color: colors.text.primary, fontSize: fontSize.xl }}>
             No EPK generated yet
           </h2>

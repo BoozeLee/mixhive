@@ -61,7 +61,9 @@ describe('POST /api/lua-agent/test', () => {
 
   it('404s when the caller does not own the agent', async () => {
     getUser.mockResolvedValue({ data: { user: { id: 'u1' } }, error: null });
-    maybeSingle.mockResolvedValue({ data: { id: 'a1', owner_id: 'someone-else', trigger_type: 'manual' } });
+    maybeSingle.mockResolvedValue({
+      data: { id: 'a1', owner_id: 'someone-else', trigger_type: 'manual' },
+    });
     const res = await POST(req({ agent_id: 'a1' }));
     expect(res.status).toBe(404);
     expect(fetchMock).not.toHaveBeenCalled();
@@ -69,10 +71,18 @@ describe('POST /api/lua-agent/test', () => {
 
   it('proxies to the runner with the shared secret and returns its result', async () => {
     getUser.mockResolvedValue({ data: { user: { id: 'u1' } }, error: null });
-    maybeSingle.mockResolvedValue({ data: { id: 'a1', owner_id: 'u1', trigger_type: 'on_follow' } });
+    maybeSingle.mockResolvedValue({
+      data: { id: 'a1', owner_id: 'u1', trigger_type: 'on_follow' },
+    });
     fetchMock.mockResolvedValue({
       status: 200,
-      json: async () => ({ agent_id: 'a1', status: 'ok', duration_ms: 5, stdout: ['hi'], error: null }),
+      json: async () => ({
+        agent_id: 'a1',
+        status: 'ok',
+        duration_ms: 5,
+        stdout: ['hi'],
+        error: null,
+      }),
     });
 
     const res = await POST(req({ agent_id: 'a1' }));

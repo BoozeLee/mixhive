@@ -1,4 +1,9 @@
-import { compileRecipe, ArtRecipeSchema, STYLE_CORE, type ArtRecipe } from '../lib/cosmicFunkPrompt';
+import {
+  compileRecipe,
+  ArtRecipeSchema,
+  STYLE_CORE,
+  type ArtRecipe,
+} from '../lib/cosmicFunkPrompt';
 
 const base: ArtRecipe = ArtRecipeSchema.parse({
   mode: 'avatar',

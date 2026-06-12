@@ -1800,7 +1800,10 @@ export async function completeMilestone(
         .select('momentum')
         .eq('id', questId)
         .single();
-      const momentum = Math.min(100, ((questRow as { momentum: number } | null)?.momentum ?? 30) + 10);
+      const momentum = Math.min(
+        100,
+        ((questRow as { momentum: number } | null)?.momentum ?? 30) + 10
+      );
 
       await supabase
         .from('quests')
@@ -1824,10 +1827,7 @@ export async function completeMilestone(
  * Without this the quest lifecycle dead-ends (createQuest makes a quest with
  * zero milestones and there was no way to add steps).
  */
-export async function createQuestMilestone(
-  questId: string,
-  title: string
-): Promise<boolean> {
+export async function createQuestMilestone(questId: string, title: string): Promise<boolean> {
   if (!isSupabaseConfigured) return false;
   const trimmed = title.trim();
   if (!trimmed) return false;

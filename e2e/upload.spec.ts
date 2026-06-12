@@ -21,7 +21,9 @@ test.describe('Upload', () => {
 
   test('submit without required fields shows validation errors', async ({ page }) => {
     await page.goto('/upload');
-    const submit = page.locator('button[type="submit"], button:has-text("Upload"), button:has-text("Publish")').first();
+    const submit = page
+      .locator('button[type="submit"], button:has-text("Upload"), button:has-text("Publish")')
+      .first();
     if (await submit.isVisible()) {
       await submit.click();
       // Expect some validation message or required indicator

@@ -33,7 +33,11 @@ describe('toEmbed', () => {
   });
 
   it('neutralizes dangerous schemes (no javascript:/data: in href)', () => {
-    for (const bad of ['javascript:alert(1)', 'data:text/html,<script>1</script>', 'vbscript:msgbox']) {
+    for (const bad of [
+      'javascript:alert(1)',
+      'data:text/html,<script>1</script>',
+      'vbscript:msgbox',
+    ]) {
       const e = toEmbed(bad);
       expect(e.kind).toBe('link');
       if (e.kind === 'link') expect(e.url).toBe('#');

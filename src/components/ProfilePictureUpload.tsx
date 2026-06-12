@@ -178,13 +178,17 @@ export function ProfilePictureUpload({
             }}
           />
         ) : (
-          <div className="text-gray-400" style={{display:"inline-flex"}}><Icon name="headphones" size={20} /></div>
+          <div className="text-gray-400" style={{ display: 'inline-flex' }}>
+            <Icon name="headphones" size={20} />
+          </div>
         )}
 
         {showUploadInterface && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <div className="text-center text-white">
-              <div className="mb-1" style={{display:"inline-flex"}}><Icon name="camera" size={18} /></div>
+              <div className="mb-1" style={{ display: 'inline-flex' }}>
+                <Icon name="camera" size={18} />
+              </div>
               <div className="text-xs">{uploading ? 'Uploading...' : 'Change'}</div>
             </div>
           </div>

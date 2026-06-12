@@ -17,7 +17,15 @@ interface IconProps {
  * consistent size/stroke, inheriting color via currentColor by default.
  * This is the only way functional icons should enter the UI.
  */
-export function Icon({ name, size = 18, strokeWidth = 2, color, className, style, label }: IconProps) {
+export function Icon({
+  name,
+  size = 18,
+  strokeWidth = 2,
+  color,
+  className,
+  style,
+  label,
+}: IconProps) {
   const Glyph = ICONS[name];
   return (
     <Glyph

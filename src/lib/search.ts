@@ -133,11 +133,14 @@ export async function getSearchSuggestions(query: string, limit = 5): Promise<Se
       })),
       ...['House', 'Techno', 'Deep House', 'Tech House', 'Trance']
         .filter(genre => genre.toLowerCase().includes(query.toLowerCase()))
-        .map(genre => ({
-          type: 'genre',
-          title: genre,
-          subtitle: 'Browse mixes',
-        }) as SearchSuggestion),
+        .map(
+          genre =>
+            ({
+              type: 'genre',
+              title: genre,
+              subtitle: 'Browse mixes',
+            }) as SearchSuggestion
+        ),
     ].slice(0, limit);
   } catch (error) {
     console.error('Failed to get search suggestions:', error);

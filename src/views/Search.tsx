@@ -121,7 +121,13 @@ export function SearchPage() {
   return (
     <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px' }}>
       <h1 style={{ fontSize: 22, fontWeight: 800, color: colors.text.primary, margin: '0 0 16px' }}>
-        {query ? <>Results for <span style={{ color: colors.accent }}>"{query}"</span></> : 'Search MixHive'}
+        {query ? (
+          <>
+            Results for <span style={{ color: colors.accent }}>"{query}"</span>
+          </>
+        ) : (
+          'Search MixHive'
+        )}
       </h1>
 
       <div style={{ marginBottom: space[9] }}>
@@ -130,10 +136,20 @@ export function SearchPage() {
 
       {!query && (
         <section style={{ textAlign: 'center', padding: '32px 16px', color: colors.text.muted }}>
-          <p style={{ margin: '0 0 18px', fontSize: 14 }}>Find mixes, artists, scenes, and genres.</p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: space[6], flexWrap: 'wrap' }}>
+          <p style={{ margin: '0 0 18px', fontSize: 14 }}>
+            Find mixes, artists, scenes, and genres.
+          </p>
+          <div
+            style={{ display: 'flex', justifyContent: 'center', gap: space[6], flexWrap: 'wrap' }}
+          >
             {popularQueries.map(value => (
-              <Button key={value} type="button" variant="secondary" size="sm" onClick={() => runSearch(value, { type: 'all' })}>
+              <Button
+                key={value}
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => runSearch(value, { type: 'all' })}
+              >
                 {value}
               </Button>
             ))}
@@ -143,9 +159,22 @@ export function SearchPage() {
 
       {query && (
         <>
-          <div style={{ display: 'flex', alignItems: 'center', gap: space[6], marginBottom: space[9], flexWrap: 'wrap' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: space[6],
+              marginBottom: space[9],
+              flexWrap: 'wrap',
+            }}
+          >
             <SearchHistory onSelect={value => runSearch(value, filters)} />
-            <Button type="button" variant="secondary" size="sm" onClick={() => setShowFilters(value => !value)}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowFilters(value => !value)}
+            >
               Filters{activeFilterCount ? ` (${activeFilterCount})` : ''}
             </Button>
           </div>
@@ -160,7 +189,18 @@ export function SearchPage() {
             />
           )}
 
-          <div role="tablist" aria-label="Search result types" style={{ display: 'flex', gap: 4, marginBottom: space[10], background: colors.surface, borderRadius: radius.lg, padding: 4 }}>
+          <div
+            role="tablist"
+            aria-label="Search result types"
+            style={{
+              display: 'flex',
+              gap: 4,
+              marginBottom: space[10],
+              background: colors.surface,
+              borderRadius: radius.lg,
+              padding: 4,
+            }}
+          >
             {tabs.map(({ value, label }) => (
               <button
                 key={value}
@@ -168,7 +208,17 @@ export function SearchPage() {
                 role="tab"
                 aria-selected={tab === value}
                 onClick={() => switchTab(value)}
-                style={{ flex: 1, minHeight: 42, padding: '8px 6px', borderRadius: radius.md, border: 'none', background: tab === value ? colors.accent : 'transparent', color: tab === value ? colors.bg : colors.text.muted, cursor: 'pointer', fontWeight: tab === value ? 700 : 500 }}
+                style={{
+                  flex: 1,
+                  minHeight: 42,
+                  padding: '8px 6px',
+                  borderRadius: radius.md,
+                  border: 'none',
+                  background: tab === value ? colors.accent : 'transparent',
+                  color: tab === value ? colors.bg : colors.text.muted,
+                  cursor: 'pointer',
+                  fontWeight: tab === value ? 700 : 500,
+                }}
               >
                 {label}
                 {results.sections[value === 'all' ? 'mixes' : value]?.total && value !== 'all'
@@ -181,7 +231,11 @@ export function SearchPage() {
           {loading ? (
             <SkeletonFeed />
           ) : error ? (
-            <ErrorComponent message="Search unavailable" error={error} onRetry={() => void performSearch(query, filters)} />
+            <ErrorComponent
+              message="Search unavailable"
+              error={error}
+              onRetry={() => void performSearch(query, filters)}
+            />
           ) : tab === 'all' ? (
             <GroupedResults results={results} onSeeAll={switchTab} />
           ) : (
@@ -208,58 +262,189 @@ export function SearchPage() {
 }
 
 function totalResults(results: SearchResponse) {
-  return results.sections.mixes.total + results.sections.profiles.total + results.sections.scenes.total;
+  return (
+    results.sections.mixes.total + results.sections.profiles.total + results.sections.scenes.total
+  );
 }
 
-function GroupedResults({ results, onSeeAll }: { results: SearchResponse; onSeeAll: (type: SearchEntityType) => void }) {
-  if (!totalResults(results)) return <EmptyState iconKey="search" title="No results found" body="Try another spelling, genre, or location." />;
+function GroupedResults({
+  results,
+  onSeeAll,
+}: {
+  results: SearchResponse;
+  onSeeAll: (type: SearchEntityType) => void;
+}) {
+  if (!totalResults(results))
+    return (
+      <EmptyState
+        iconKey="search"
+        title="No results found"
+        body="Try another spelling, genre, or location."
+      />
+    );
   return (
     <div style={{ display: 'grid', gap: space[12] }}>
-      <ResultGroup title="Scenes" total={results.sections.scenes.total} onSeeAll={() => onSeeAll('scenes')}>
-        {results.sections.scenes.items.map(scene => <SceneCard key={scene.id} scene={scene} />)}
+      <ResultGroup
+        title="Scenes"
+        total={results.sections.scenes.total}
+        onSeeAll={() => onSeeAll('scenes')}
+      >
+        {results.sections.scenes.items.map(scene => (
+          <SceneCard key={scene.id} scene={scene} />
+        ))}
       </ResultGroup>
-      <ResultGroup title="Artists" total={results.sections.profiles.total} onSeeAll={() => onSeeAll('profiles')}>
-        {results.sections.profiles.items.map(profile => <ProfileCard key={profile.id} profile={profile} />)}
+      <ResultGroup
+        title="Artists"
+        total={results.sections.profiles.total}
+        onSeeAll={() => onSeeAll('profiles')}
+      >
+        {results.sections.profiles.items.map(profile => (
+          <ProfileCard key={profile.id} profile={profile} />
+        ))}
       </ResultGroup>
-      <ResultGroup title="Mixes" total={results.sections.mixes.total} onSeeAll={() => onSeeAll('mixes')}>
-        {results.sections.mixes.items.map(mix => <MixCard key={mix.id} mix={mix} />)}
+      <ResultGroup
+        title="Mixes"
+        total={results.sections.mixes.total}
+        onSeeAll={() => onSeeAll('mixes')}
+      >
+        {results.sections.mixes.items.map(mix => (
+          <MixCard key={mix.id} mix={mix} />
+        ))}
       </ResultGroup>
     </div>
   );
 }
 
-function ResultGroup({ title, total, onSeeAll, children }: { title: string; total: number; onSeeAll: () => void; children: React.ReactNode }) {
+function ResultGroup({
+  title,
+  total,
+  onSeeAll,
+  children,
+}: {
+  title: string;
+  total: number;
+  onSeeAll: () => void;
+  children: React.ReactNode;
+}) {
   if (!total) return null;
   return (
     <section>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: space[6] }}>
-        <h2 style={{ margin: 0, color: colors.text.primary, fontSize: fontSize.lg }}>{title} <span style={{ color: colors.text.dim, fontSize: fontSize.sm }}>({total})</span></h2>
-        <Button type="button" variant="ghost" size="sm" onClick={onSeeAll}>See all</Button>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: space[6],
+        }}
+      >
+        <h2 style={{ margin: 0, color: colors.text.primary, fontSize: fontSize.lg }}>
+          {title} <span style={{ color: colors.text.dim, fontSize: fontSize.sm }}>({total})</span>
+        </h2>
+        <Button type="button" variant="ghost" size="sm" onClick={onSeeAll}>
+          See all
+        </Button>
       </div>
       <div style={{ display: 'grid', gap: space[6] }}>{children}</div>
     </section>
   );
 }
 
-function EntityResults({ type, results }: { type: Exclude<SearchEntityType, 'all'>; results: SearchResponse }) {
+function EntityResults({
+  type,
+  results,
+}: {
+  type: Exclude<SearchEntityType, 'all'>;
+  results: SearchResponse;
+}) {
   const section = results.sections[type];
-  if (!section.items.length) return <EmptyState iconKey="search" title={`No ${type === 'profiles' ? 'artists' : type} found`} body="Try another spelling, genre, or location." />;
-  if (type === 'mixes') return <div style={{ display: 'grid', gap: space[6] }}>{results.sections.mixes.items.map(mix => <MixCard key={mix.id} mix={mix} />)}</div>;
-  if (type === 'profiles') return <div style={{ display: 'grid', gap: space[6] }}>{results.sections.profiles.items.map(profile => <ProfileCard key={profile.id} profile={profile} />)}</div>;
-  return <div style={{ display: 'grid', gap: space[6] }}>{results.sections.scenes.items.map(scene => <SceneCard key={scene.id} scene={scene} />)}</div>;
+  if (!section.items.length)
+    return (
+      <EmptyState
+        iconKey="search"
+        title={`No ${type === 'profiles' ? 'artists' : type} found`}
+        body="Try another spelling, genre, or location."
+      />
+    );
+  if (type === 'mixes')
+    return (
+      <div style={{ display: 'grid', gap: space[6] }}>
+        {results.sections.mixes.items.map(mix => (
+          <MixCard key={mix.id} mix={mix} />
+        ))}
+      </div>
+    );
+  if (type === 'profiles')
+    return (
+      <div style={{ display: 'grid', gap: space[6] }}>
+        {results.sections.profiles.items.map(profile => (
+          <ProfileCard key={profile.id} profile={profile} />
+        ))}
+      </div>
+    );
+  return (
+    <div style={{ display: 'grid', gap: space[6] }}>
+      {results.sections.scenes.items.map(scene => (
+        <SceneCard key={scene.id} scene={scene} />
+      ))}
+    </div>
+  );
 }
 
 function ProfileCard({ profile }: { profile: Profile }) {
   return (
     <Link to={`/u/${profile.username}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <article style={{ display: 'flex', alignItems: 'center', gap: space[8], padding: space[8], background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: radius.lg }}>
-        <div style={{ width: 52, height: 52, borderRadius: '50%', background: profile.avatar_url ? `url(${profile.avatar_url}) center/cover` : colors.surfaceHover, flexShrink: 0, display: 'grid', placeItems: 'center', color: colors.accent, fontWeight: 700 }}>
-          {!profile.avatar_url && (profile.display_name || profile.username).slice(0, 1).toUpperCase()}
+      <article
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: space[8],
+          padding: space[8],
+          background: colors.surface,
+          border: `1px solid ${colors.border}`,
+          borderRadius: radius.lg,
+        }}
+      >
+        <div
+          style={{
+            width: 52,
+            height: 52,
+            borderRadius: '50%',
+            background: profile.avatar_url
+              ? `url(${profile.avatar_url}) center/cover`
+              : colors.surfaceHover,
+            flexShrink: 0,
+            display: 'grid',
+            placeItems: 'center',
+            color: colors.accent,
+            fontWeight: 700,
+          }}
+        >
+          {!profile.avatar_url &&
+            (profile.display_name || profile.username).slice(0, 1).toUpperCase()}
         </div>
         <div style={{ minWidth: 0 }}>
-          <div style={{ color: colors.text.primary, fontWeight: fontWeight.bold }}>{profile.display_name || profile.username}{profile.verified ? ' ✓' : ''}</div>
-          <div style={{ color: colors.text.dim, fontSize: fontSize.sm }}>@{profile.username}{profile.location ? ` · ${profile.location}` : ''}</div>
-          {profile.bio && <p style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: `${space[2]}px 0 0`, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.bio}</p>}
+          <div style={{ color: colors.text.primary, fontWeight: fontWeight.bold }}>
+            {profile.display_name || profile.username}
+            {profile.verified ? ' ✓' : ''}
+          </div>
+          <div style={{ color: colors.text.dim, fontSize: fontSize.sm }}>
+            @{profile.username}
+            {profile.location ? ` · ${profile.location}` : ''}
+          </div>
+          {profile.bio && (
+            <p
+              style={{
+                color: colors.text.muted,
+                fontSize: fontSize.sm,
+                margin: `${space[2]}px 0 0`,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {profile.bio}
+            </p>
+          )}
         </div>
       </article>
     </Link>
@@ -269,10 +454,32 @@ function ProfileCard({ profile }: { profile: Profile }) {
 function SceneCard({ scene }: { scene: SceneSearchResult }) {
   return (
     <Link to={`/scene/${scene.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <article style={{ padding: space[8], minHeight: 96, background: scene.hero_image_url ? `linear-gradient(90deg, ${colors.surface} 15%, transparent), url(${scene.hero_image_url}) center/cover` : colors.surface, border: `1px solid ${colors.border}`, borderRadius: radius.lg }}>
-        <div style={{ color: colors.text.primary, fontWeight: fontWeight.bold, fontSize: fontSize.lg }}>{scene.name}</div>
-        <div style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: space[2] }}>{[scene.city, scene.country, scene.genre].filter(Boolean).join(' · ')}</div>
-        {scene.description && <p style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: `${space[3]}px 0 0` }}>{scene.description}</p>}
+      <article
+        style={{
+          padding: space[8],
+          minHeight: 96,
+          background: scene.hero_image_url
+            ? `linear-gradient(90deg, ${colors.surface} 15%, transparent), url(${scene.hero_image_url}) center/cover`
+            : colors.surface,
+          border: `1px solid ${colors.border}`,
+          borderRadius: radius.lg,
+        }}
+      >
+        <div
+          style={{ color: colors.text.primary, fontWeight: fontWeight.bold, fontSize: fontSize.lg }}
+        >
+          {scene.name}
+        </div>
+        <div style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: space[2] }}>
+          {[scene.city, scene.country, scene.genre].filter(Boolean).join(' · ')}
+        </div>
+        {scene.description && (
+          <p
+            style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: `${space[3]}px 0 0` }}
+          >
+            {scene.description}
+          </p>
+        )}
       </article>
     </Link>
   );

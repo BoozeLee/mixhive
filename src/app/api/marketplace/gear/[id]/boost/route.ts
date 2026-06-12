@@ -34,7 +34,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .eq('id', id)
       .single();
     if (!listing) return notFound('Listing not found');
-    if (listing.seller_profile_id !== user.id) return forbidden('Only the seller can boost this listing');
+    if (listing.seller_profile_id !== user.id)
+      return forbidden('Only the seller can boost this listing');
     if (listing.status !== 'active') return badRequest('Only active listings can be boosted');
 
     const origin = req.headers.get('origin') || 'https://mixhive.vercel.app';
@@ -45,7 +46,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         {
           price_data: {
             currency: 'eur',
-            product_data: { name: `Boost: ${listing.title}`, description: `Featured for ${BOOST_DAYS} days` },
+            product_data: {
+              name: `Boost: ${listing.title}`,
+              description: `Featured for ${BOOST_DAYS} days`,
+            },
             unit_amount: BOOST_PRICE_EUR * 100,
           },
           quantity: 1,

@@ -35,9 +35,19 @@ const DISCIPLINES = [
 ];
 
 const ROLE_ICONS: Record<string, IconKey> = {
-  dj: 'headphones', producer: 'producer', musician: 'music', visual_artist: 'visual',
-  animator: 'edit', photographer: 'camera', videographer: 'video',
-  writer: 'epk', business: 'gear', actor: 'vocalist', designer: 'visual', developer: 'composer', other: 'sparkles',
+  dj: 'headphones',
+  producer: 'producer',
+  musician: 'music',
+  visual_artist: 'visual',
+  animator: 'edit',
+  photographer: 'camera',
+  videographer: 'video',
+  writer: 'epk',
+  business: 'gear',
+  actor: 'vocalist',
+  designer: 'visual',
+  developer: 'composer',
+  other: 'sparkles',
 };
 
 export function CollabQuests() {
@@ -65,13 +75,32 @@ export function CollabQuests() {
     }
   };
 
-  useEffect(() => { fetchQuests(discipline); }, [discipline]);
+  useEffect(() => {
+    fetchQuests(discipline);
+  }, [discipline]);
 
   return (
     <div style={{ padding: '24px 20px', maxWidth: 900, margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          marginBottom: 24,
+          flexWrap: 'wrap',
+          gap: 12,
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: 28, fontFamily: 'var(--font-display)', color: 'var(--hive-gold)', margin: 0, letterSpacing: '0.05em' }}>
+          <h1
+            style={{
+              fontSize: 28,
+              fontFamily: 'var(--font-display)',
+              color: 'var(--hive-gold)',
+              margin: 0,
+              letterSpacing: '0.05em',
+            }}
+          >
             COLLAB QUESTS
           </h1>
           <p style={{ color: '#888', margin: '4px 0 0', fontSize: 14 }}>
@@ -80,7 +109,15 @@ export function CollabQuests() {
         </div>
         <Link
           to="/collab-quests/new"
-          style={{ background: 'var(--hive-gold)', color: '#000', padding: '10px 20px', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}
+          style={{
+            background: 'var(--hive-gold)',
+            color: '#000',
+            padding: '10px 20px',
+            borderRadius: 8,
+            fontWeight: 700,
+            fontSize: 14,
+            textDecoration: 'none',
+          }}
         >
           + Post a Quest
         </Link>
@@ -88,19 +125,51 @@ export function CollabQuests() {
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
-        <select value={discipline} onChange={e => setDiscipline(e.target.value)} style={selectStyle}>
-          {DISCIPLINES.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
+        <select
+          value={discipline}
+          onChange={e => setDiscipline(e.target.value)}
+          style={selectStyle}
+        >
+          {DISCIPLINES.map(d => (
+            <option key={d.value} value={d.value}>
+              {d.label}
+            </option>
+          ))}
         </select>
       </div>
 
-      {!loading && <p style={{ color: '#555', fontSize: 13, marginBottom: 16 }}>{total} open quest{total !== 1 ? 's' : ''}</p>}
+      {!loading && (
+        <p style={{ color: '#555', fontSize: 13, marginBottom: 16 }}>
+          {total} open quest{total !== 1 ? 's' : ''}
+        </p>
+      )}
 
-      {error && <div style={{ color: '#ef4444', padding: 12, background: '#1a0000', borderRadius: 8, marginBottom: 16 }}>{error}</div>}
+      {error && (
+        <div
+          style={{
+            color: '#ef4444',
+            padding: 12,
+            background: '#1a0000',
+            borderRadius: 8,
+            marginBottom: 16,
+          }}
+        >
+          {error}
+        </div>
+      )}
 
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} style={{ height: 160, background: '#111', borderRadius: 12, animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div
+              key={i}
+              style={{
+                height: 160,
+                background: '#111',
+                borderRadius: 12,
+                animation: 'pulse 1.5s ease-in-out infinite',
+              }}
+            />
           ))}
         </div>
       ) : quests.length === 0 ? (
@@ -110,12 +179,16 @@ export function CollabQuests() {
           </div>
           <p style={{ fontSize: 18 }}>No quests recruiting right now</p>
           <p style={{ fontSize: 14 }}>
-            <Link to="/collab-quests/new" style={{ color: 'var(--hive-gold)' }}>Post the first quest</Link>
+            <Link to="/collab-quests/new" style={{ color: 'var(--hive-gold)' }}>
+              Post the first quest
+            </Link>
           </p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {quests.map(quest => <QuestCard key={quest.id} quest={quest} />)}
+          {quests.map(quest => (
+            <QuestCard key={quest.id} quest={quest} />
+          ))}
         </div>
       )}
     </div>
@@ -128,13 +201,14 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
 
   return (
     <Link to={`/collab-quests/${quest.id}`} style={{ textDecoration: 'none' }}>
-      <div style={{
-        background: '#111',
-        border: '1px solid #1e1e1e',
-        borderRadius: 12,
-        padding: 20,
-        transition: 'border-color 0.2s, transform 0.15s',
-      }}
+      <div
+        style={{
+          background: '#111',
+          border: '1px solid #1e1e1e',
+          borderRadius: 12,
+          padding: 20,
+          transition: 'border-color 0.2s, transform 0.15s',
+        }}
         onMouseEnter={e => {
           (e.currentTarget as HTMLElement).style.borderColor = '#f6c40033';
           (e.currentTarget as HTMLElement).style.transform = 'translateX(4px)';
@@ -148,22 +222,64 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
           <div style={{ flex: 1 }}>
             {/* Tags */}
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
-              <span style={{ background: '#f6c40022', color: 'var(--hive-gold)', fontSize: 10, padding: '2px 8px', borderRadius: 4, fontWeight: 700, textTransform: 'uppercase' }}>
+              <span
+                style={{
+                  background: '#f6c40022',
+                  color: 'var(--hive-gold)',
+                  fontSize: 10,
+                  padding: '2px 8px',
+                  borderRadius: 4,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                }}
+              >
                 RECRUITING
               </span>
               {quest.genre_tags.slice(0, 3).map(t => (
-                <span key={t} style={{ background: '#1a1a1a', color: '#666', fontSize: 10, padding: '2px 8px', borderRadius: 4 }}>{t}</span>
+                <span
+                  key={t}
+                  style={{
+                    background: '#1a1a1a',
+                    color: '#666',
+                    fontSize: 10,
+                    padding: '2px 8px',
+                    borderRadius: 4,
+                  }}
+                >
+                  {t}
+                </span>
               ))}
             </div>
 
             {/* Title */}
-            <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: '0 0 6px', lineHeight: 1.3, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h3
+              style={{
+                color: '#fff',
+                fontSize: 18,
+                fontWeight: 700,
+                margin: '0 0 6px',
+                lineHeight: 1.3,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
               <Icon name="quests" size={17} color="var(--hive-gold, #f6c400)" /> {quest.title}
             </h3>
 
             {/* Narrative */}
             {quest.narrative && (
-              <p style={{ color: '#888', fontSize: 13, margin: '0 0 12px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+              <p
+                style={{
+                  color: '#888',
+                  fontSize: 13,
+                  margin: '0 0 12px',
+                  overflow: 'hidden',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                }}
+              >
                 "{quest.narrative}"
               </p>
             )}
@@ -172,22 +288,28 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
             {uniqueRoleTypes.length > 0 && (
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
                 {uniqueRoleTypes.slice(0, 5).map(rt => (
-                  <span key={rt} style={{
-                    background: '#0a0a0a',
-                    border: '1px solid #2a2a2a',
-                    color: '#ccc',
-                    fontSize: 12,
-                    padding: '4px 10px',
-                    borderRadius: 6,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}>
-                    <Icon name={ROLE_ICONS[rt] ?? 'sparkles'} size={13} color="currentColor" /> {rt.replace('_', ' ')}
+                  <span
+                    key={rt}
+                    style={{
+                      background: '#0a0a0a',
+                      border: '1px solid #2a2a2a',
+                      color: '#ccc',
+                      fontSize: 12,
+                      padding: '4px 10px',
+                      borderRadius: 6,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
+                    <Icon name={ROLE_ICONS[rt] ?? 'sparkles'} size={13} color="currentColor" />{' '}
+                    {rt.replace('_', ' ')}
                   </span>
                 ))}
                 {uniqueRoleTypes.length > 5 && (
-                  <span style={{ color: '#555', fontSize: 12, alignSelf: 'center' }}>+{uniqueRoleTypes.length - 5} more</span>
+                  <span style={{ color: '#555', fontSize: 12, alignSelf: 'center' }}>
+                    +{uniqueRoleTypes.length - 5} more
+                  </span>
                 )}
               </div>
             )}
@@ -202,7 +324,9 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
 
           {/* Apply button */}
           <div style={{ flexShrink: 0 }}>
-            <div style={{ color: '#f6c40088', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
+            <div
+              style={{ color: '#f6c40088', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}
+            >
               Apply for a Role →
             </div>
           </div>
@@ -213,6 +337,11 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
 }
 
 const selectStyle: React.CSSProperties = {
-  background: '#111', border: '1px solid #2a2a2a', color: '#ccc', borderRadius: 8,
-  padding: '8px 12px', fontSize: 13, cursor: 'pointer',
+  background: '#111',
+  border: '1px solid #2a2a2a',
+  color: '#ccc',
+  borderRadius: 8,
+  padding: '8px 12px',
+  fontSize: 13,
+  cursor: 'pointer',
 };

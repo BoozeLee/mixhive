@@ -24,7 +24,10 @@ export async function POST(req: NextRequest) {
     }
     const sb = makeClient(authHeader.slice(7));
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     const body = await req.json();
@@ -47,13 +50,18 @@ export async function POST(req: NextRequest) {
     );
 
     if (error) throw error;
-    await service.from('notification_preferences').upsert(
-      { user_id: user.id, push_enabled: true, updated_at: new Date().toISOString() },
-      { onConflict: 'user_id' }
-    );
+    await service
+      .from('notification_preferences')
+      .upsert(
+        { user_id: user.id, push_enabled: true, updated_at: new Date().toISOString() },
+        { onConflict: 'user_id' }
+      );
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : (err as { message?: string }).message ?? 'Unknown error';
+    const msg =
+      err instanceof Error
+        ? err.message
+        : ((err as { message?: string }).message ?? 'Unknown error');
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
@@ -66,7 +74,10 @@ export async function DELETE(req: NextRequest) {
     }
     const sb = makeClient(authHeader.slice(7));
 
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     const body = await req.json();
@@ -95,7 +106,10 @@ export async function DELETE(req: NextRequest) {
     }
     return NextResponse.json({ ok: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : (err as { message?: string }).message ?? 'Unknown error';
+    const msg =
+      err instanceof Error
+        ? err.message
+        : ((err as { message?: string }).message ?? 'Unknown error');
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

@@ -6,7 +6,11 @@ test.describe('Public discovery pages', () => {
     await expect(page.locator('#main-content')).toBeVisible();
     // CTA button or "Enter"/"Join" text
     await expect(
-      page.locator('a:has-text("Enter"), a:has-text("Join"), button:has-text("Enter"), button:has-text("Join")').first()
+      page
+        .locator(
+          'a:has-text("Enter"), a:has-text("Join"), button:has-text("Enter"), button:has-text("Join")'
+        )
+        .first()
     ).toBeVisible({ timeout: 10_000 });
   });
 
@@ -32,7 +36,9 @@ test.describe('Public discovery pages', () => {
     await input.press('Enter');
     await expect(page.locator('#main-content')).toBeVisible();
     // No unhandled error overlay
-    await expect(page.locator('text=Something went wrong')).not.toBeVisible({ timeout: 5_000 }).catch(() => {});
+    await expect(page.locator('text=Something went wrong'))
+      .not.toBeVisible({ timeout: 5_000 })
+      .catch(() => {});
   });
 
   test('search exposes mixes, artists, scenes, and shareable filters', async ({ page }) => {
@@ -59,7 +65,9 @@ test.describe('Public discovery pages', () => {
     for (let i = 0; i < count; i++) {
       await tabs.nth(i).click();
       // After click, at least one hub card should be visible
-      await expect(page.locator('[data-testid^="hub-card-"]').first()).toBeVisible({ timeout: 5_000 });
+      await expect(page.locator('[data-testid^="hub-card-"]').first()).toBeVisible({
+        timeout: 5_000,
+      });
     }
   });
 

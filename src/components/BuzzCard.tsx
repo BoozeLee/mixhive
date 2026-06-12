@@ -432,7 +432,9 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Icon name="headphones" size={13} /> {buzz.attached_mix.title}</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <Icon name="headphones" size={13} /> {buzz.attached_mix.title}
+                  </span>
                 </div>
                 <div style={{ fontSize: fontSize.xs, color: colors.text.muted, marginTop: 2 }}>
                   {buzz.attached_mix.dj?.display_name || buzz.attached_mix.dj?.username || ''}

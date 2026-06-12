@@ -33,17 +33,27 @@ interface Quest {
 }
 
 const ROLE_ICONS: Record<string, IconKey> = {
-  dj: 'headphones', producer: 'producer', musician: 'music', visual_artist: 'visual',
-  animator: 'edit', photographer: 'camera', videographer: 'video',
-  writer: 'epk', business: 'gear', actor: 'vocalist', designer: 'visual', developer: 'composer', other: 'sparkles',
+  dj: 'headphones',
+  producer: 'producer',
+  musician: 'music',
+  visual_artist: 'visual',
+  animator: 'edit',
+  photographer: 'camera',
+  videographer: 'video',
+  writer: 'epk',
+  business: 'gear',
+  actor: 'vocalist',
+  designer: 'visual',
+  developer: 'composer',
+  other: 'sparkles',
 };
 
 const PHASE_LABELS: Record<string, { label: string; color: string }> = {
-  draft:      { label: 'Draft',       color: '#555' },
-  recruiting: { label: 'Recruiting',  color: 'var(--hive-gold)' },
-  in_progress:{ label: 'In Progress', color: '#22c55e' },
-  complete:   { label: 'Complete',    color: '#888' },
-  cancelled:  { label: 'Cancelled',   color: '#ef4444' },
+  draft: { label: 'Draft', color: '#555' },
+  recruiting: { label: 'Recruiting', color: 'var(--hive-gold)' },
+  in_progress: { label: 'In Progress', color: '#22c55e' },
+  complete: { label: 'Complete', color: '#888' },
+  cancelled: { label: 'Cancelled', color: '#ef4444' },
 };
 
 export function CollabQuestDetail() {
@@ -83,16 +93,21 @@ export function CollabQuestDetail() {
     setAdvancing(true);
     setError('');
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error('Sign in required');
       const res = await fetch(`/api/collab-quests/${id}/phase`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({ to_phase: toPhase }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Failed');
-      setQuest(prev => prev ? { ...prev, phase: data.quest.phase } : prev);
+      setQuest(prev => (prev ? { ...prev, phase: data.quest.phase } : prev));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to advance phase');
     } finally {
@@ -101,10 +116,15 @@ export function CollabQuestDetail() {
   };
 
   const handleApply = async (role: Role) => {
-    if (!userId) { setError('Sign in to apply'); return; }
+    if (!userId) {
+      setError('Sign in to apply');
+      return;
+    }
     setApplying(role.id);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error('Sign in required');
       const { error: err } = await supabase.from('collab_quest_applications').insert({
         role_id: role.id,
@@ -122,12 +142,15 @@ export function CollabQuestDetail() {
     }
   };
 
-  if (loading) return <div style={{ padding: 40, color: '#555', textAlign: 'center' }}>Loading quest...</div>;
+  if (loading)
+    return <div style={{ padding: 40, color: '#555', textAlign: 'center' }}>Loading quest...</div>;
   if (error || !quest) {
     return (
       <div style={{ padding: 40, textAlign: 'center' }}>
         <p style={{ color: '#ef4444', marginBottom: 16 }}>{error || 'Quest not found'}</p>
-        <Link to="/collab-quests" style={{ color: 'var(--hive-gold)' }}>← Back to Quests</Link>
+        <Link to="/collab-quests" style={{ color: 'var(--hive-gold)' }}>
+          ← Back to Quests
+        </Link>
       </div>
     );
   }
@@ -138,32 +161,85 @@ export function CollabQuestDetail() {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px 20px' }}>
-      <Link to="/collab-quests" style={{ color: '#666', fontSize: 13, textDecoration: 'none', display: 'inline-block', marginBottom: 20 }}>
+      <Link
+        to="/collab-quests"
+        style={{
+          color: '#666',
+          fontSize: 13,
+          textDecoration: 'none',
+          display: 'inline-block',
+          marginBottom: 20,
+        }}
+      >
         ← Collab Quests
       </Link>
 
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
-          <span style={{ color: phaseInfo.color, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', background: `${phaseInfo.color}22`, padding: '3px 10px', borderRadius: 4 }}>
+          <span
+            style={{
+              color: phaseInfo.color,
+              fontSize: 12,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              background: `${phaseInfo.color}22`,
+              padding: '3px 10px',
+              borderRadius: 4,
+            }}
+          >
             {phaseInfo.label}
           </span>
           {quest.genre_tags.map(t => (
-            <span key={t} style={{ background: '#1a1a1a', color: '#666', fontSize: 11, padding: '3px 8px', borderRadius: 4 }}>{t}</span>
+            <span
+              key={t}
+              style={{
+                background: '#1a1a1a',
+                color: '#666',
+                fontSize: 11,
+                padding: '3px 8px',
+                borderRadius: 4,
+              }}
+            >
+              {t}
+            </span>
           ))}
         </div>
-        <h1 style={{ fontSize: 26, color: '#fff', fontWeight: 700, margin: '0 0 8px', lineHeight: 1.3, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <h1
+          style={{
+            fontSize: 26,
+            color: '#fff',
+            fontWeight: 700,
+            margin: '0 0 8px',
+            lineHeight: 1.3,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
           <Icon name="quests" size={24} color="var(--hive-gold, #f6c400)" /> {quest.title}
         </h1>
         {quest.narrative && (
-          <p style={{ color: '#aaa', fontSize: 15, lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>
+          <p
+            style={{ color: '#aaa', fontSize: 15, lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}
+          >
             "{quest.narrative}"
           </p>
         )}
       </div>
 
       {/* Meta strip */}
-      <div style={{ display: 'flex', gap: 20, color: '#666', fontSize: 13, marginBottom: 24, flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 20,
+          color: '#666',
+          fontSize: 13,
+          marginBottom: 24,
+          flexWrap: 'wrap',
+        }}
+      >
         {quest.region && <span>📍 {quest.region}</span>}
         {quest.timeline_days && <span>⏱ {quest.timeline_days} days</span>}
         <span style={{ color: '#f6c40088' }}>⚡ {quest.xp_reward} XP</span>
@@ -173,9 +249,27 @@ export function CollabQuestDetail() {
       {quest.goals.length > 0 && (
         <section style={{ marginBottom: 28 }}>
           <h2 style={sectionHeadStyle}>Deliverables</h2>
-          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <ul
+            style={{
+              margin: 0,
+              padding: 0,
+              listStyle: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 6,
+            }}
+          >
             {quest.goals.map((g, i) => (
-              <li key={i} style={{ display: 'flex', gap: 10, color: '#ccc', fontSize: 14, alignItems: 'flex-start' }}>
+              <li
+                key={i}
+                style={{
+                  display: 'flex',
+                  gap: 10,
+                  color: '#ccc',
+                  fontSize: 14,
+                  alignItems: 'flex-start',
+                }}
+              >
                 <span style={{ color: 'var(--hive-gold)', flexShrink: 0 }}>→</span>
                 {g}
               </li>
@@ -186,33 +280,79 @@ export function CollabQuestDetail() {
 
       {/* Roles */}
       <section style={{ marginBottom: 28 }}>
-        <h2 style={sectionHeadStyle}>
-          Open Roles ({openRoles.length})
-        </h2>
+        <h2 style={sectionHeadStyle}>Open Roles ({openRoles.length})</h2>
         {openRoles.length === 0 ? (
           <p style={{ color: '#555', fontSize: 14 }}>All roles filled.</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {openRoles.map(role => (
-              <div key={role.id} style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 10, padding: 16 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
+              <div
+                key={role.id}
+                style={{
+                  background: '#111',
+                  border: '1px solid #1e1e1e',
+                  borderRadius: 10,
+                  padding: 16,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    flexWrap: 'wrap',
+                    gap: 10,
+                  }}
+                >
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <span style={{ display: 'inline-flex', color: 'var(--hive-gold, #f6c400)' }}><Icon name={ROLE_ICONS[role.role_type] ?? 'sparkles'} size={18} color="currentColor" /></span>
-                      <h3 style={{ color: '#fff', fontSize: 15, fontWeight: 700, margin: 0 }}>{role.title}</h3>
+                      <span style={{ display: 'inline-flex', color: 'var(--hive-gold, #f6c400)' }}>
+                        <Icon
+                          name={ROLE_ICONS[role.role_type] ?? 'sparkles'}
+                          size={18}
+                          color="currentColor"
+                        />
+                      </span>
+                      <h3 style={{ color: '#fff', fontSize: 15, fontWeight: 700, margin: 0 }}>
+                        {role.title}
+                      </h3>
                       {role.is_paid && (
-                        <span style={{ background: '#22c55e22', color: '#22c55e', fontSize: 11, padding: '2px 6px', borderRadius: 4 }}>PAID</span>
+                        <span
+                          style={{
+                            background: '#22c55e22',
+                            color: '#22c55e',
+                            fontSize: 11,
+                            padding: '2px 6px',
+                            borderRadius: 4,
+                          }}
+                        >
+                          PAID
+                        </span>
                       )}
                     </div>
                     {role.skill_tags.length > 0 && (
                       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                         {role.skill_tags.map(t => (
-                          <span key={t} style={{ background: '#0a0a0a', border: '1px solid #2a2a2a', color: '#888', fontSize: 11, padding: '1px 6px', borderRadius: 4 }}>{t}</span>
+                          <span
+                            key={t}
+                            style={{
+                              background: '#0a0a0a',
+                              border: '1px solid #2a2a2a',
+                              color: '#888',
+                              fontSize: 11,
+                              padding: '1px 6px',
+                              borderRadius: 4,
+                            }}
+                          >
+                            {t}
+                          </span>
                         ))}
                       </div>
                     )}
                     {role.compensation_notes && (
-                      <p style={{ color: '#666', fontSize: 12, margin: '6px 0 0' }}>{role.compensation_notes}</p>
+                      <p style={{ color: '#666', fontSize: 12, margin: '6px 0 0' }}>
+                        {role.compensation_notes}
+                      </p>
                     )}
                   </div>
 
@@ -228,12 +368,17 @@ export function CollabQuestDetail() {
                         padding: '8px 18px',
                         fontWeight: 700,
                         fontSize: 13,
-                        cursor: applying === role.id || applied.has(role.id) ? 'default' : 'pointer',
+                        cursor:
+                          applying === role.id || applied.has(role.id) ? 'default' : 'pointer',
                         opacity: applying === role.id ? 0.7 : 1,
                         flexShrink: 0,
                       }}
                     >
-                      {applying === role.id ? 'Applying...' : applied.has(role.id) ? 'Applied ✓' : 'Apply'}
+                      {applying === role.id
+                        ? 'Applying...'
+                        : applied.has(role.id)
+                          ? 'Applied ✓'
+                          : 'Apply'}
                     </button>
                   )}
                 </div>
@@ -252,14 +397,33 @@ export function CollabQuestDetail() {
             onChange={e => setApplyMessage(e.target.value)}
             placeholder="Tell the creator why you're a great fit..."
             rows={3}
-            style={{ width: '100%', background: '#111', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 8, padding: '10px 12px', fontSize: 14, resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box' }}
+            style={{
+              width: '100%',
+              background: '#111',
+              border: '1px solid #2a2a2a',
+              color: '#fff',
+              borderRadius: 8,
+              padding: '10px 12px',
+              fontSize: 14,
+              resize: 'vertical',
+              fontFamily: 'inherit',
+              boxSizing: 'border-box',
+            }}
           />
         </section>
       )}
 
       {/* Creator control panel */}
       {isCreator && quest.phase !== 'complete' && quest.phase !== 'cancelled' && (
-        <section style={{ marginBottom: 24, padding: 16, background: '#0a0a0a', border: '1px solid #2a2a2a', borderRadius: 10 }}>
+        <section
+          style={{
+            marginBottom: 24,
+            padding: 16,
+            background: '#0a0a0a',
+            border: '1px solid #2a2a2a',
+            borderRadius: 10,
+          }}
+        >
           <h2 style={sectionHeadStyle}>Quest Controls</h2>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {quest.phase === 'draft' && (
@@ -292,7 +456,12 @@ export function CollabQuestDetail() {
             <button
               onClick={() => handleAdvancePhase('cancelled')}
               disabled={advancing}
-              style={{ ...ctrlBtnStyle, background: 'transparent', color: '#ef4444', border: '1px solid #ef444444' }}
+              style={{
+                ...ctrlBtnStyle,
+                background: 'transparent',
+                color: '#ef4444',
+                border: '1px solid #ef444444',
+              }}
             >
               Cancel Quest
             </button>
@@ -311,7 +480,16 @@ export function CollabQuestDetail() {
       )}
 
       {quest.phase === 'complete' && (
-        <div style={{ padding: 16, background: '#0a1a0a', border: '1px solid #22c55e33', borderRadius: 10, marginBottom: 24, textAlign: 'center' }}>
+        <div
+          style={{
+            padding: 16,
+            background: '#0a1a0a',
+            border: '1px solid #22c55e33',
+            borderRadius: 10,
+            marginBottom: 24,
+            textAlign: 'center',
+          }}
+        >
           <p style={{ color: '#22c55e', fontWeight: 700, margin: 0 }}>
             ✓ Quest complete — XP awarded to all collaborators
           </p>
@@ -319,7 +497,16 @@ export function CollabQuestDetail() {
       )}
 
       {error && (
-        <div style={{ color: '#ef4444', padding: 12, background: '#1a0000', borderRadius: 8, fontSize: 14, marginBottom: 16 }}>
+        <div
+          style={{
+            color: '#ef4444',
+            padding: 12,
+            background: '#1a0000',
+            borderRadius: 8,
+            fontSize: 14,
+            marginBottom: 16,
+          }}
+        >
           {error}
         </div>
       )}
@@ -328,11 +515,19 @@ export function CollabQuestDetail() {
 }
 
 const ctrlBtnStyle: React.CSSProperties = {
-  border: 'none', borderRadius: 8, padding: '9px 18px', fontWeight: 700,
-  fontSize: 13, cursor: 'pointer',
+  border: 'none',
+  borderRadius: 8,
+  padding: '9px 18px',
+  fontWeight: 700,
+  fontSize: 13,
+  cursor: 'pointer',
 };
 
 const sectionHeadStyle: React.CSSProperties = {
-  fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em',
-  color: '#666', marginBottom: 14, marginTop: 0,
+  fontSize: 13,
+  textTransform: 'uppercase',
+  letterSpacing: '0.1em',
+  color: '#666',
+  marginBottom: 14,
+  marginTop: 0,
 };

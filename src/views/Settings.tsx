@@ -678,7 +678,9 @@ export function Settings() {
               border: `1px solid ${colors.accentMuted}`,
             }}
           >
-            <span style={{ flexShrink: 0, display: "inline-flex", color: colors.accent }}><Icon name="settings" size={15} /></span>
+            <span style={{ flexShrink: 0, display: 'inline-flex', color: colors.accent }}>
+              <Icon name="settings" size={15} />
+            </span>
             <p
               style={{ margin: 0, fontSize: fontSize.xs, color: colors.text.dim, lineHeight: 1.5 }}
             >
@@ -704,7 +706,9 @@ export function Settings() {
               marginBottom: space[7],
             }}
           >
-            <span style={{ display: "inline-flex" }}><BeeMark size={22} color="var(--hive-gold, #f6c400)" /></span>
+            <span style={{ display: 'inline-flex' }}>
+              <BeeMark size={22} color="var(--hive-gold, #f6c400)" />
+            </span>
             <div>
               <div
                 style={{
@@ -913,7 +917,9 @@ export function Settings() {
               gap: space[7],
             }}
           >
-            <span style={{ display: "inline-flex", flexShrink: 0 }}><BeeMark size={28} color="var(--hive-gold, #f6c400)" /></span>
+            <span style={{ display: 'inline-flex', flexShrink: 0 }}>
+              <BeeMark size={28} color="var(--hive-gold, #f6c400)" />
+            </span>
             <div style={{ flex: 1 }}>
               <div
                 style={{
@@ -1102,12 +1108,23 @@ export function Settings() {
       </div>
 
       <div style={{ marginTop: space[8] }}>
-        <h2 style={{ fontSize: fontSize.lg, fontWeight: 600, color: colors.text.primary, marginBottom: space[4] }}>
+        <h2
+          style={{
+            fontSize: fontSize.lg,
+            fontWeight: 600,
+            color: colors.text.primary,
+            marginBottom: space[4],
+          }}
+        >
           Privacy &amp; Data
         </h2>
         <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginBottom: space[4] }}>
-          Export a copy of your data, or request account deletion (processed within 30 days). See our{' '}
-          <a href="/privacy" style={{ color: colors.accent }}>Privacy Policy</a>.
+          Export a copy of your data, or request account deletion (processed within 30 days). See
+          our{' '}
+          <a href="/privacy" style={{ color: colors.accent }}>
+            Privacy Policy
+          </a>
+          .
         </p>
         <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap' }}>
           <button
@@ -1154,7 +1171,10 @@ export function Settings() {
               if (!session) return;
               await fetch('/api/account/delete', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${session.access_token}`,
+                },
                 body: JSON.stringify({}),
               });
               await supabase.auth.signOut();
@@ -1189,8 +1209,12 @@ export function Settings() {
 
 function getPlatformIcon(platform: string): IconKey {
   const icons: Record<string, IconKey> = {
-    soundcloud: 'music', spotify: 'headphones', youtube: 'video',
-    instagram: 'camera', website: 'link', twitter: 'external',
+    soundcloud: 'music',
+    spotify: 'headphones',
+    youtube: 'video',
+    instagram: 'camera',
+    website: 'link',
+    twitter: 'external',
   };
   return icons[platform] || 'link';
 }

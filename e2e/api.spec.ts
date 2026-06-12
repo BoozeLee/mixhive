@@ -23,7 +23,9 @@ test.describe('API routes', () => {
   });
 
   test('POST /api/marketplace/agents/fake-id/buy without auth returns 401', async ({ request }) => {
-    const res = await request.post('/api/marketplace/agents/00000000-0000-0000-0000-000000000000/buy');
+    const res = await request.post(
+      '/api/marketplace/agents/00000000-0000-0000-0000-000000000000/buy'
+    );
     expect(res.status()).toBe(401);
   });
 

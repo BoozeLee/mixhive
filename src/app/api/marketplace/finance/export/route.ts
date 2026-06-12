@@ -36,7 +36,11 @@ export async function GET(req: NextRequest) {
     } = await sb.auth.getUser();
     if (authErr || !user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
-    const { data: profile } = await sb.from('profiles').select('is_admin').eq('id', user.id).single();
+    const { data: profile } = await sb
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
     if (!profile?.is_admin) return forbidden('Admin access required');
 
     const svc = makeServiceClient();
@@ -49,7 +53,7 @@ export async function GET(req: NextRequest) {
 
     const lines = [COLUMNS.join(',')];
     for (const row of (rows ?? []) as unknown as Record<string, unknown>[]) {
-      lines.push(COLUMNS.map((c) => csvCell(row[c])).join(','));
+      lines.push(COLUMNS.map(c => csvCell(row[c])).join(','));
     }
 
     return new NextResponse(lines.join('\n'), {

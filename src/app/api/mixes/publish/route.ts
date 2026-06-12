@@ -61,7 +61,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'audio content-type required' }, { status: 400 });
     }
 
-    const ext = (audio.name?.split('.').pop() || 'wav').toLowerCase().replace(/[^a-z0-9]/g, '') || 'wav';
+    const ext =
+      (audio.name?.split('.').pop() || 'wav').toLowerCase().replace(/[^a-z0-9]/g, '') || 'wav';
     const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
     const { error: upErr } = await sb.storage
       .from('mix-audio')
@@ -101,11 +102,7 @@ export async function POST(req: NextRequest) {
       is_explicit: false,
     };
 
-    const { data: mix, error: insErr } = await sb
-      .from('mixes')
-      .insert(row)
-      .select('id')
-      .single();
+    const { data: mix, error: insErr } = await sb.from('mixes').insert(row).select('id').single();
     if (insErr) {
       return NextResponse.json({ error: insErr.message }, { status: 500 });
     }

@@ -7,8 +7,13 @@ let mockUser: { id: string } | null = { id: 'u1' };
 
 jest.mock('@supabase/supabase-js', () => ({
   createClient: () => ({
-    auth: { getUser: async () => ({ data: { user: mockUser }, error: mockUser ? null : new Error('no') }) },
-    rpc: async () => ({ data: { days: 30, totals: { plays: 10, likes: 2 }, top_mix: null }, error: null }),
+    auth: {
+      getUser: async () => ({ data: { user: mockUser }, error: mockUser ? null : new Error('no') }),
+    },
+    rpc: async () => ({
+      data: { days: 30, totals: { plays: 10, likes: 2 }, top_mix: null },
+      error: null,
+    }),
   }),
 }));
 

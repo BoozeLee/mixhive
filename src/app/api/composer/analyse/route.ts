@@ -46,7 +46,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'mix_ids required' }, { status: 400 });
   }
   const bpmMap =
-    body.bpm_map && typeof body.bpm_map === 'object' ? (body.bpm_map as Record<string, unknown>) : {};
+    body.bpm_map && typeof body.bpm_map === 'object'
+      ? (body.bpm_map as Record<string, unknown>)
+      : {};
 
   if (!LUA_RUNTIME_SECRET) {
     return NextResponse.json({ error: 'runtime not configured' }, { status: 503 });

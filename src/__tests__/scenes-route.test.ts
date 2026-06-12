@@ -51,7 +51,9 @@ describe('GET /api/scenes/[slug]', () => {
     mockState.sceneRow = { slug: 'techno-brussels', name: 'Techno Brussels' };
     mockState.listings = [{ user_id: 'u1', display_name: 'Killy', xp: 1250, badge: 'platinum' }];
     mockState.partners = [{ id: 'p1', name: 'Raid Records', verified: true }];
-    const res = await getScene({} as never, { params: Promise.resolve({ slug: 'techno-brussels' }) });
+    const res = await getScene({} as never, {
+      params: Promise.resolve({ slug: 'techno-brussels' }),
+    });
     const body = await res.json();
     expect(res.status).toBe(200);
     expect(body.scene.slug).toBe('techno-brussels');

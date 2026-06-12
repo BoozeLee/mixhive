@@ -72,7 +72,15 @@ export function QuestDetail() {
 
   if (loading) {
     return (
-      <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 16px', display: 'grid', gap: space[4] }}>
+      <div
+        style={{
+          maxWidth: 980,
+          margin: '0 auto',
+          padding: '32px 16px',
+          display: 'grid',
+          gap: space[4],
+        }}
+      >
         <SkeletonCard />
         <SkeletonCard />
         <SkeletonCard />
@@ -98,7 +106,8 @@ export function QuestDetail() {
   const milestones = quest.milestones || [];
   const isOwner = profile?.id === quest.owner_id;
   const completedCount = milestones.filter(m => m.status === 'completed').length;
-  const progress = milestones.length > 0 ? Math.round((completedCount / milestones.length) * 100) : 0;
+  const progress =
+    milestones.length > 0 ? Math.round((completedCount / milestones.length) * 100) : 0;
 
   return (
     <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 16px' }}>
@@ -108,14 +117,39 @@ export function QuestDetail() {
           ← Back to My Quests
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: space[4], marginTop: space[4], flexWrap: 'wrap' }}>
-          <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold, lineHeight: 1.1 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: space[4],
+            marginTop: space[4],
+            flexWrap: 'wrap',
+          }}
+        >
+          <h1
+            style={{
+              margin: 0,
+              fontSize: fontSize['3xl'],
+              fontWeight: fontWeight.bold,
+              lineHeight: 1.1,
+            }}
+          >
             {quest.title}
           </h1>
           <div
             style={{
-              background: quest.status === 'completed' ? 'rgba(108,204,108,0.18)' : quest.status === 'active' ? colors.accentMuted : colors.border,
-              color: quest.status === 'completed' ? '#6ccc6c' : quest.status === 'active' ? colors.accent : colors.text.muted,
+              background:
+                quest.status === 'completed'
+                  ? 'rgba(108,204,108,0.18)'
+                  : quest.status === 'active'
+                    ? colors.accentMuted
+                    : colors.border,
+              color:
+                quest.status === 'completed'
+                  ? '#6ccc6c'
+                  : quest.status === 'active'
+                    ? colors.accent
+                    : colors.text.muted,
               padding: '4px 12px',
               borderRadius: 999,
               fontSize: fontSize.sm,
@@ -130,7 +164,9 @@ export function QuestDetail() {
 
         <div style={{ color: colors.text.muted, marginTop: space[2] }}>
           {quest.timeframe_days ? `${quest.timeframe_days} days • ` : ''}
-          {quest.target_scene_tags?.length ? `Target: ${quest.target_scene_tags.join(' • ')}` : 'No target tags'}
+          {quest.target_scene_tags?.length
+            ? `Target: ${quest.target_scene_tags.join(' • ')}`
+            : 'No target tags'}
         </div>
 
         {isOwner && quest.status === 'active' && (
@@ -173,25 +209,46 @@ export function QuestDetail() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>CURRENT MOMENTUM</div>
-            <div style={{ fontSize: 42, fontWeight: fontWeight.bold, lineHeight: 1 }}>{quest.momentum}</div>
+            <div style={{ fontSize: 42, fontWeight: fontWeight.bold, lineHeight: 1 }}>
+              {quest.momentum}
+            </div>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>PROGRESS</div>
-            <div style={{ fontSize: fontSize['2xl'], fontWeight: fontWeight.semibold }}>{progress}%</div>
+            <div style={{ fontSize: fontSize['2xl'], fontWeight: fontWeight.semibold }}>
+              {progress}%
+            </div>
             <div style={{ fontSize: fontSize.sm }}>
               {completedCount} / {milestones.length} milestones
             </div>
           </div>
         </div>
-        <div style={{ height: 6, background: colors.border, borderRadius: 999, marginTop: space[4], overflow: 'hidden' }}>
-          <div style={{ width: `${progress}%`, height: '100%', background: colors.accent, transition: 'width 400ms ease' }} />
+        <div
+          style={{
+            height: 6,
+            background: colors.border,
+            borderRadius: 999,
+            marginTop: space[4],
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              width: `${progress}%`,
+              height: '100%',
+              background: colors.accent,
+              transition: 'width 400ms ease',
+            }}
+          />
         </div>
       </HiveCard>
 
       {/* Description */}
       {quest.description && (
         <HiveCard style={{ marginBottom: space[8] }}>
-          <div style={{ fontSize: fontSize.sm, color: colors.text.muted, marginBottom: space[2] }}>ABOUT THIS QUEST</div>
+          <div style={{ fontSize: fontSize.sm, color: colors.text.muted, marginBottom: space[2] }}>
+            ABOUT THIS QUEST
+          </div>
           <p style={{ margin: 0, lineHeight: 1.5 }}>{quest.description}</p>
         </HiveCard>
       )}
@@ -201,14 +258,20 @@ export function QuestDetail() {
         <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>Milestones</h2>
 
         {actionError && (
-          <div style={{ color: colors.danger, fontSize: fontSize.sm, marginBottom: space[4] }}>{actionError}</div>
+          <div style={{ color: colors.danger, fontSize: fontSize.sm, marginBottom: space[4] }}>
+            {actionError}
+          </div>
         )}
 
         {milestones.length === 0 ? (
           <EmptyState
             icon="🎯"
             title="No milestones yet"
-            body={isOwner ? 'Break this quest into concrete steps below — completing them builds momentum.' : 'The quest owner hasn’t added any steps yet.'}
+            body={
+              isOwner
+                ? 'Break this quest into concrete steps below — completing them builds momentum.'
+                : 'The quest owner hasn’t added any steps yet.'
+            }
           />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
@@ -227,19 +290,30 @@ export function QuestDetail() {
                     borderRadius: radius.lg,
                   }}
                 >
-                  <div style={{ fontSize: 22, width: 32, textAlign: 'center', opacity: done ? 1 : 0.6 }}>
+                  <div
+                    style={{
+                      fontSize: 22,
+                      width: 32,
+                      textAlign: 'center',
+                      opacity: done ? 1 : 0.6,
+                    }}
+                  >
                     {done ? '✓' : index + 1}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: fontWeight.medium }}>{m.title}</div>
                     {m.completed_at && (
-                      <div style={{ fontSize: fontSize.sm, color: colors.text.muted, marginTop: 2 }}>
+                      <div
+                        style={{ fontSize: fontSize.sm, color: colors.text.muted, marginTop: 2 }}
+                      >
                         Completed {new Date(m.completed_at).toLocaleDateString()}
                       </div>
                     )}
                   </div>
                   {done ? (
-                    <span style={{ fontSize: fontSize.sm, color: '#6ccc6c', alignSelf: 'center' }}>Done</span>
+                    <span style={{ fontSize: fontSize.sm, color: '#6ccc6c', alignSelf: 'center' }}>
+                      Done
+                    </span>
                   ) : isOwner ? (
                     <HiveButton
                       size="sm"
@@ -250,7 +324,9 @@ export function QuestDetail() {
                       {completingId === m.id ? 'Saving…' : 'Mark complete'}
                     </HiveButton>
                   ) : (
-                    <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>{m.status.replace('_', ' ')}</span>
+                    <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
+                      {m.status.replace('_', ' ')}
+                    </span>
                   )}
                 </div>
               );
@@ -260,7 +336,10 @@ export function QuestDetail() {
 
         {/* Add milestone — owner only */}
         {isOwner && quest.status !== 'completed' && (
-          <form onSubmit={handleAddMilestone} style={{ display: 'flex', gap: space[3], marginTop: space[5] }}>
+          <form
+            onSubmit={handleAddMilestone}
+            style={{ display: 'flex', gap: space[3], marginTop: space[5] }}
+          >
             <input
               value={newMilestone}
               onChange={e => setNewMilestone(e.target.value)}
@@ -276,7 +355,11 @@ export function QuestDetail() {
                 fontSize: fontSize.base,
               }}
             />
-            <HiveButton type="submit" variant="ghost" disabled={addingMilestone || !newMilestone.trim()}>
+            <HiveButton
+              type="submit"
+              variant="ghost"
+              disabled={addingMilestone || !newMilestone.trim()}
+            >
               {addingMilestone ? 'Adding…' : 'Add'}
             </HiveButton>
           </form>

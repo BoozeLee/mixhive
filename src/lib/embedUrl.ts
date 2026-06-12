@@ -27,19 +27,39 @@ export function toEmbed(rawUrl: string): Embed {
   }
 
   if (host === 'open.spotify.com') {
-    const path = u.pathname.replace(/^\/(track|album|playlist|artist|episode|show)\//, '/embed/$1/');
+    const path = u.pathname.replace(
+      /^\/(track|album|playlist|artist|episode|show)\//,
+      '/embed/$1/'
+    );
     if (path.startsWith('/embed/')) {
-      return { kind: 'iframe', src: `https://open.spotify.com${path}`, height: 152, title: 'Spotify' };
+      return {
+        kind: 'iframe',
+        src: `https://open.spotify.com${path}`,
+        height: 152,
+        title: 'Spotify',
+      };
     }
   }
 
   if (host === 'youtube.com' || host === 'm.youtube.com') {
     const v = u.searchParams.get('v');
-    if (v) return { kind: 'iframe', src: `https://www.youtube.com/embed/${v}`, height: 200, title: 'YouTube' };
+    if (v)
+      return {
+        kind: 'iframe',
+        src: `https://www.youtube.com/embed/${v}`,
+        height: 200,
+        title: 'YouTube',
+      };
   }
   if (host === 'youtu.be') {
     const id = u.pathname.replace(/^\//, '');
-    if (id) return { kind: 'iframe', src: `https://www.youtube.com/embed/${id}`, height: 200, title: 'YouTube' };
+    if (id)
+      return {
+        kind: 'iframe',
+        src: `https://www.youtube.com/embed/${id}`,
+        height: 200,
+        title: 'YouTube',
+      };
   }
 
   if (host === 'mixcloud.com') {

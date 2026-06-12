@@ -44,7 +44,10 @@ export function AuthCallback() {
 
         // Hash-fragment OAuth (#access_token=...) is handled automatically by detectSessionInUrl.
         // For both paths, getSession() now returns the active session immediately.
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
         if (sessionError) {
           console.error('[AuthCallback] session error:', sessionError);
@@ -69,19 +72,22 @@ export function AuthCallback() {
               const metadata = session.user.user_metadata ?? {};
               const { data: created, error: createError } = await supabase
                 .from('profiles')
-                .upsert({
-                  id: session.user.id,
-                  username:
-                    metadata.preferred_username ||
-                    metadata.user_name ||
-                    `user_${session.user.id.slice(0, 8)}`,
-                  display_name:
-                    metadata.full_name ||
-                    metadata.name ||
-                    session.user.email?.split('@')[0] ||
-                    'User',
-                  avatar_url: metadata.avatar_url || metadata.picture || null,
-                }, { onConflict: 'id', ignoreDuplicates: false })
+                .upsert(
+                  {
+                    id: session.user.id,
+                    username:
+                      metadata.preferred_username ||
+                      metadata.user_name ||
+                      `user_${session.user.id.slice(0, 8)}`,
+                    display_name:
+                      metadata.full_name ||
+                      metadata.name ||
+                      session.user.email?.split('@')[0] ||
+                      'User',
+                    avatar_url: metadata.avatar_url || metadata.picture || null,
+                  },
+                  { onConflict: 'id', ignoreDuplicates: false }
+                )
                 .select()
                 .single();
               if (createError) throw createError;
@@ -112,7 +118,9 @@ export function AuthCallback() {
 
     completeAuth();
 
-    return () => { isMounted.current = false; };
+    return () => {
+      isMounted.current = false;
+    };
   }, [navigate]);
 
   if (error) {
@@ -137,7 +145,9 @@ export function AuthCallback() {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+    <div
+      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}
+    >
       <div style={{ textAlign: 'center' }}>
         <div style={{ color: '#f0c040', fontSize: 14, marginBottom: 8 }}>Completing sign in…</div>
         <div style={{ color: '#555', fontSize: 12 }}>Preparing your MixHive profile</div>

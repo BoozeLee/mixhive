@@ -8,10 +8,7 @@ function makeClient() {
   return createClient(url, key, { auth: { persistSession: false } });
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
     const sb = makeClient();
@@ -30,7 +27,8 @@ export async function GET(
 
     const { data: features, error: featuresErr } = await sb
       .from('hive_story_features')
-      .select(`
+      .select(
+        `
         id,
         feature_type,
         headline,
@@ -40,7 +38,8 @@ export async function GET(
         mix_id,
         profile:profiles(id, username, display_name, avatar_url, genres),
         mix:mixes(id, title, cover_url, genre)
-      `)
+      `
+      )
       .eq('issue_id', issue.id)
       .order('order_position', { ascending: true });
 
@@ -48,7 +47,10 @@ export async function GET(
 
     return NextResponse.json({ issue, features: features ?? [] });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : (err as { message?: string }).message ?? 'Unknown error';
+    const msg =
+      err instanceof Error
+        ? err.message
+        : ((err as { message?: string }).message ?? 'Unknown error');
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

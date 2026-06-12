@@ -15,7 +15,13 @@ interface Props {
  *  - neon: solid gold with layered text-shadow glow
  *  - plain: brand gold, no glow
  */
-export function GlowText({ children, as: Tag = 'span', variant = 'gradient', className, style }: Props) {
+export function GlowText({
+  children,
+  as: Tag = 'span',
+  variant = 'gradient',
+  className,
+  style,
+}: Props) {
   const variantStyle: CSSProperties =
     variant === 'gradient'
       ? {

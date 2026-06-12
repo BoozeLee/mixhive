@@ -22,7 +22,10 @@ export async function GET() {
     if (error) throw error;
     return NextResponse.json({ issues: data ?? [] });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : (err as { message?: string }).message ?? 'Unknown error';
+    const msg =
+      err instanceof Error
+        ? err.message
+        : ((err as { message?: string }).message ?? 'Unknown error');
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

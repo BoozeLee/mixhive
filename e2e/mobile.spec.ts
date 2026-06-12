@@ -5,7 +5,6 @@ import { test, expect } from '@playwright/test';
 // by checking the project name via the PLAYWRIGHT_PROJECT env var or
 // by examining the viewport width at runtime.
 
-
 const ROUTES = [
   '/',
   '/feed',
@@ -43,7 +42,9 @@ test.describe('Mobile overflow', () => {
       interactive.forEach(el => {
         const rect = el.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0 && (rect.width < 44 || rect.height < 44)) {
-          tiny.push(`${el.tagName} "${(el as HTMLElement).innerText?.slice(0, 30)}" — ${Math.round(rect.width)}×${Math.round(rect.height)}px`);
+          tiny.push(
+            `${el.tagName} "${(el as HTMLElement).innerText?.slice(0, 30)}" — ${Math.round(rect.width)}×${Math.round(rect.height)}px`
+          );
         }
       });
       return tiny.slice(0, 10);

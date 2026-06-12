@@ -2,7 +2,12 @@
 // held PaymentIntent, transfers the net via Connect, records the ledger row, and
 // marks the transaction released / listing sold.
 import { NextRequest, NextResponse } from 'next/server';
-import { getStripe, makeUserClient, makeServiceClient, releaseGearEscrow } from '@/lib/stripe-connect';
+import {
+  getStripe,
+  makeUserClient,
+  makeServiceClient,
+  releaseGearEscrow,
+} from '@/lib/stripe-connect';
 import { handleApiError, forbidden, notFound } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';

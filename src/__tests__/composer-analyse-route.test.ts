@@ -57,7 +57,11 @@ describe('POST /api/composer/analyse', () => {
       status: 200,
       json: async () => ({
         ok: true,
-        output: { suggestions: [{ suggestion_type: 'set_analysis', payload: { analysis: 'nice arc', mix_count: 3 } }] },
+        output: {
+          suggestions: [
+            { suggestion_type: 'set_analysis', payload: { analysis: 'nice arc', mix_count: 3 } },
+          ],
+        },
       }),
     });
 

@@ -7,7 +7,8 @@ import { EmptyState } from '../components/EmptyState';
 import { SkeletonCard } from '../components/Skeleton';
 import { ErrorComponent } from '../components/ErrorComponent';
 import { NftMintModal } from '../components/NftMintModal';
-import { getQuestDetail, completeMilestone, createQuestMilestone } from '../lib/api';
+import { OutcomeLinkModal } from '../components/OutcomeLinkModal';
+import { getQuestDetail, createQuestMilestone } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import type { QuestWithMilestones } from '../lib/types';
 
@@ -17,7 +18,7 @@ export function QuestDetail() {
   const [questData, setQuestData] = useState<QuestWithMilestones | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const [completingId, setCompletingId] = useState<string | null>(null);
+  const [outcomeMilestoneId, setOutcomeMilestoneId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [showNftModal, setShowNftModal] = useState(false);
   const [newMilestone, setNewMilestone] = useState('');
@@ -45,15 +46,6 @@ export function QuestDetail() {
   useEffect(() => {
     load();
   }, [load]);
-
-  const handleCompleteMilestone = async (milestoneId: string) => {
-    setCompletingId(milestoneId);
-    setActionError(null);
-    const success = await completeMilestone(milestoneId, []);
-    if (success) await refreshQuest();
-    else setActionError('Could not complete that milestone. Please try again.');
-    setCompletingId(null);
-  };
 
   const handleAddMilestone = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,6 +196,17 @@ export function QuestDetail() {
         />
       )}
 
+      {outcomeMilestoneId && (
+        <OutcomeLinkModal
+          milestoneId={outcomeMilestoneId}
+          onClose={() => setOutcomeMilestoneId(null)}
+          onDone={() => {
+            setOutcomeMilestoneId(null);
+            void refreshQuest();
+          }}
+        />
+      )}
+
       {/* Momentum + Progress */}
       <HiveCard tone="glow" style={{ marginBottom: space[8] }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -318,10 +321,9 @@ export function QuestDetail() {
                     <HiveButton
                       size="sm"
                       variant="primary"
-                      onClick={() => handleCompleteMilestone(m.id)}
-                      disabled={completingId === m.id}
+                      onClick={() => setOutcomeMilestoneId(m.id)}
                     >
-                      {completingId === m.id ? 'Saving…' : 'Mark complete'}
+                      Mark complete
                     </HiveButton>
                   ) : (
                     <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>

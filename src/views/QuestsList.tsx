@@ -8,6 +8,7 @@ import { EmptyState } from '../components/EmptyState';
 import { getActiveQuests, getQuestMilestoneCounts } from '../lib/api';
 import { CreateQuestModal } from '../components/CreateQuestModal';
 import { GraphSeedingModal } from '../components/GraphSeedingModal';
+import { ProposalsInbox } from '../components/ProposalsInbox';
 import type { MythicQuest } from '../lib/types';
 
 interface QuestSummary {
@@ -83,6 +84,8 @@ export function QuestsList() {
           Narrative career missions powered by your MythicNode graph
         </p>
       </header>
+
+      <ProposalsInbox />
 
       {/* Active Quests */}
       <section style={{ marginBottom: space[10] }}>

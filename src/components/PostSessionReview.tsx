@@ -85,19 +85,16 @@ export function PostSessionReview({
     try {
       const { supabase } = await import('@/lib/supabase');
 
-      // Real update: mark selected edges as approved with user provenance
-      const { error } = await supabase
-        .from('mythic_edges')
-        .update({
-          metadata: {
-            status: 'approved',
-            approved_at: new Date().toISOString(),
-            approved_by_user: true,
-          },
-        })
-        .in('id', approvedIds);
-
-      if (error) throw error;
+      // mythic_edges has no client write RLS policy — persist each approval via
+      // the security-definer RPC (migration 096), which merges metadata server-side
+      // (preserving rationale/session context) instead of overwriting the jsonb.
+      for (const id of approvedIds) {
+        const { error } = await supabase.rpc('set_proposal_status', {
+          p_edge_id: id,
+          p_status: 'approved',
+        });
+        if (error) throw error;
+      }
 
       const approvedCount = approvedIds.length;
 

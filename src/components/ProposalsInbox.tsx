@@ -101,18 +101,12 @@ export function ProposalsInbox({ onCountChange }: ProposalsInboxProps) {
     setProposals(prev => prev.filter(x => x.id !== edge.id)); // optimistic
     try {
       const { supabase } = await import('@/lib/supabase');
-      // Read-modify-write: preserve existing metadata (rationale, session_title, …)
-      // rather than replacing the whole jsonb.
-      const nextMeta = {
-        ...(edge.metadata ?? {}),
-        status,
-        reviewed_at: new Date().toISOString(),
-        approved_by_user: status === 'approved',
-      };
-      const { error } = await supabase
-        .from('mythic_edges')
-        .update({ metadata: nextMeta })
-        .eq('id', edge.id);
+      // mythic_edges has no client write RLS policy — persist via the
+      // security-definer RPC (migration 096), which merges metadata server-side.
+      const { error } = await supabase.rpc('set_proposal_status', {
+        p_edge_id: edge.id,
+        p_status: status,
+      });
       if (error) throw error;
       toast.success(status === 'approved' ? 'Added to your Mythic graph' : 'Proposal dismissed', {
         duration: 2500,

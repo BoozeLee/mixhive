@@ -1,0 +1,17 @@
+[Unit]
+Description=MixHive background scheduler
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=localhost/mixhive-scheduler:latest
+ContainerName=systemd-mixhive-scheduler
+EnvironmentFile=/home/kilisan/.config/mixhive/worker.env
+Network=host
+
+[Service]
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

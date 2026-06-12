@@ -8,8 +8,8 @@
  * values to Tailwind 4 so utilities like `bg-hive-black`, `text-hive-gold`,
  * `font-display`, `shadow-honey` resolve at build time.
  *
- * Brand fonts ship via next/font/google in src/app/layout.tsx; the
- * --font-display / --font-ui / --font-mono variables come from there.
+ * Brand font variables use local system stacks so builds and page rendering
+ * never depend on a third-party font download.
  */
 
 :root {
@@ -43,7 +43,7 @@
 }
 
 .mixhive-fonts {
-  --font-display: var(--font-anton), Impact, 'Arial Black', 'Trebuchet MS', system-ui, sans-serif;
+  --font-display: Impact, 'Arial Black', 'Trebuchet MS', system-ui, sans-serif;
   --font-ui:
     'Segoe UI', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', ui-monospace, monospace;

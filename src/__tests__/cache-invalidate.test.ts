@@ -71,9 +71,15 @@ describe('POST /api/cache/invalidate', () => {
   });
 
   it('returns 500 on malformed JSON body', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     const res = await post('not-json');
     const body = await res.json();
     expect(res.status).toBe(500);
     expect(body.success).toBe(false);
+    expect(consoleError).toHaveBeenCalledWith(
+      'Cache invalidation error:',
+      expect.objectContaining({ name: 'SyntaxError' })
+    );
+    consoleError.mockRestore();
   });
 });

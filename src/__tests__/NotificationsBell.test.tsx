@@ -12,6 +12,14 @@ jest.mock('../lib/notificationStore', () => ({
   useNotifications: jest.fn(),
 }));
 
+jest.mock('../lib/supabase', () => ({
+  supabase: {
+    auth: {
+      getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
+    },
+  },
+}));
+
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { NotificationsBell } from '../components/NotificationsBell';

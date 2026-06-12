@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
@@ -155,7 +156,7 @@ export function AgentMarketplace() {
         >
           AGENT MARKETPLACE
         </h1>
-        <p style={{ color: '#888', margin: '4px 0 0', fontSize: 14 }}>
+        <p style={{ color: colors.text.muted, margin: '4px 0 0', fontSize: 14 }}>
           Discover Lua agents that automate your creative workflow
         </p>
       </div>
@@ -186,7 +187,7 @@ export function AgentMarketplace() {
             display: 'flex',
             alignItems: 'center',
             gap: 8,
-            color: '#aaa',
+            color: colors.text.dimmed,
             fontSize: 13,
             cursor: 'pointer',
           }}
@@ -199,9 +200,9 @@ export function AgentMarketplace() {
       {error && (
         <div
           style={{
-            color: '#ef4444',
+            color: colors.dangerStrong,
             padding: 12,
-            background: '#1a0000',
+            background: colors.dangerBgDeep,
             borderRadius: 8,
             marginBottom: 16,
             fontSize: 14,
@@ -224,7 +225,7 @@ export function AgentMarketplace() {
               key={i}
               style={{
                 height: 200,
-                background: '#111',
+                background: colors.surface,
                 borderRadius: 12,
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
@@ -232,7 +233,7 @@ export function AgentMarketplace() {
           ))}
         </div>
       ) : packages.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px 20px', color: '#555' }}>
+        <div style={{ textAlign: 'center', padding: '64px 20px', color: colors.text.faintest }}>
           <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
             <Icon name="agents" size={44} color="rgba(246,196,0,0.5)" strokeWidth={1.6} />
           </div>
@@ -267,13 +268,13 @@ export function AgentMarketplace() {
         style={{
           marginTop: 40,
           paddingTop: 24,
-          borderTop: '1px solid #1a1a1a',
+          borderTop: `1px solid ${colors.surfaceRaised}`,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
-        <span style={{ color: '#666', fontSize: 14 }}>Have your own agent idea?</span>
+        <span style={{ color: colors.text.faint, fontSize: 14 }}>Have your own agent idea?</span>
         <Link
           to="/agents"
           style={{ color: 'var(--hive-gold)', fontSize: 14, textDecoration: 'none' }}
@@ -305,8 +306,8 @@ function AgentCard({
   return (
     <div
       style={{
-        background: '#111',
-        border: '1px solid #1e1e1e',
+        background: colors.surface,
+        border: `1px solid ${colors.surfaceRaised}`,
         borderRadius: 12,
         padding: 20,
         display: 'flex',
@@ -315,7 +316,7 @@ function AgentCard({
         transition: 'border-color 0.2s',
       }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = '#f6c40033')}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = '#1e1e1e')}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = colors.surfaceRaised)}
     >
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -324,7 +325,7 @@ function AgentCard({
             fontSize: 11,
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
-            color: '#666',
+            color: colors.text.faint,
           }}
         >
           {pkg.category.replace('_', ' ')}
@@ -348,7 +349,7 @@ function AgentCard({
             <span
               style={{
                 background: '#22c55e22',
-                color: '#22c55e',
+                color: colors.successStrong,
                 fontSize: 10,
                 padding: '2px 6px',
                 borderRadius: 4,
@@ -363,11 +364,15 @@ function AgentCard({
 
       {/* Name + tagline */}
       <div>
-        <h3 style={{ color: '#fff', fontSize: 16, fontWeight: 700, margin: 0, marginBottom: 4 }}>
+        <h3
+          style={{ color: colors.white, fontSize: 16, fontWeight: 700, margin: 0, marginBottom: 4 }}
+        >
           {pkg.name}
         </h3>
         {pkg.tagline && (
-          <p style={{ color: '#888', fontSize: 13, margin: 0, lineHeight: 1.4 }}>{pkg.tagline}</p>
+          <p style={{ color: colors.text.muted, fontSize: 13, margin: 0, lineHeight: 1.4 }}>
+            {pkg.tagline}
+          </p>
         )}
         {creatorBadges.length > 0 && (
           <div style={{ marginTop: 6 }}>
@@ -383,8 +388,8 @@ function AgentCard({
             <span
               key={d}
               style={{
-                background: '#1a1a1a',
-                color: '#888',
+                background: colors.surfaceRaised,
+                color: colors.text.muted,
                 fontSize: 11,
                 padding: '2px 8px',
                 borderRadius: 4,
@@ -412,14 +417,14 @@ function AgentCard({
             <li
               key={i}
               style={{
-                color: '#aaa',
+                color: colors.text.dimmed,
                 fontSize: 12,
                 display: 'flex',
                 gap: 6,
                 alignItems: 'flex-start',
               }}
             >
-              <span style={{ color: '#22c55e', flexShrink: 0 }}>✓</span>
+              <span style={{ color: colors.successStrong, flexShrink: 0 }}>✓</span>
               {cap}
             </li>
           ))}
@@ -434,10 +439,10 @@ function AgentCard({
           justifyContent: 'space-between',
           marginTop: 'auto',
           paddingTop: 8,
-          borderTop: '1px solid #1a1a1a',
+          borderTop: `1px solid ${colors.surfaceRaised}`,
         }}
       >
-        <div style={{ fontSize: 12, color: '#555' }}>
+        <div style={{ fontSize: 12, color: colors.text.faintest }}>
           {pkg.avg_rating > 0 && (
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
               <Icon name="rating" size={11} /> {pkg.avg_rating.toFixed(1)} ·{' '}
@@ -448,7 +453,7 @@ function AgentCard({
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <span
             style={{
-              color: pkg.price === 0 ? '#22c55e' : 'var(--hive-gold)',
+              color: pkg.price === 0 ? colors.successStrong : 'var(--hive-gold)',
               fontSize: 14,
               fontWeight: 700,
             }}
@@ -460,8 +465,8 @@ function AgentCard({
               onClick={onInstall}
               disabled={installing || installed}
               style={{
-                background: installed ? '#1a3a1a' : 'var(--hive-gold)',
-                color: installed ? '#22c55e' : '#000',
+                background: installed ? colors.successBg : 'var(--hive-gold)',
+                color: installed ? colors.successStrong : colors.black,
                 border: 'none',
                 borderRadius: 6,
                 padding: '5px 14px',
@@ -478,8 +483,10 @@ function AgentCard({
               onClick={onBuy}
               disabled={buying || installed}
               style={{
-                background: installed ? '#1a3a1a' : 'linear-gradient(135deg, #f6c400, #ffd84a)',
-                color: installed ? '#22c55e' : '#000',
+                background: installed
+                  ? colors.successBg
+                  : `linear-gradient(135deg, ${colors.accentBright}, ${colors.accentBright})`,
+                color: installed ? colors.successStrong : colors.black,
                 border: 'none',
                 borderRadius: 6,
                 padding: '5px 14px',
@@ -499,9 +506,9 @@ function AgentCard({
 }
 
 const selectStyle: React.CSSProperties = {
-  background: '#111',
-  border: '1px solid #2a2a2a',
-  color: '#ccc',
+  background: colors.surface,
+  border: `1px solid ${colors.borderStrong}`,
+  color: colors.text.secondary,
   borderRadius: 8,
   padding: '8px 12px',
   fontSize: 13,

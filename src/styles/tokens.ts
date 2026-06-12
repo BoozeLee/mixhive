@@ -35,10 +35,20 @@ export const colors = {
 
   // Semantic
   danger: '#f55',
+  dangerStrong: '#ef4444',
   dangerBg: '#2a1010',
+  dangerBgDeep: '#1a0000',
   success: '#6c6',
+  successStrong: '#22c55e',
+  successBg: '#1a3a1a',
   warning: '#fbca04',
   info: '#3b82f6',
+
+  // Brighter gold (WebGL backdrop / highlight) + raised surface + pure b/w
+  accentBright: '#f6c400',
+  surfaceRaised: '#1e1e1e',
+  black: '#000',
+  white: '#fff',
 } as const;
 
 export const space = {

@@ -291,13 +291,15 @@ export function Settings() {
       className="container"
       style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px 96px' }}
     >
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#eee', marginBottom: 24 }}>
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, marginBottom: 24 }}>
         Edit profile
       </h1>
 
       {/* Profile Picture */}
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#ccc', marginBottom: 16 }}>
+        <h2
+          style={{ fontSize: 16, fontWeight: 600, color: colors.text.secondary, marginBottom: 16 }}
+        >
           Profile Picture
         </h2>
         <ProfilePictureUploadSmall
@@ -324,7 +326,14 @@ export function Settings() {
           paddingTop: space[8],
         }}
       >
-        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#ccc', marginBottom: space[3] }}>
+        <h2
+          style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: colors.text.secondary,
+            marginBottom: space[3],
+          }}
+        >
           Notifications
         </h2>
         <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginBottom: space[6] }}>
@@ -336,8 +345,8 @@ export function Settings() {
       {error && (
         <div
           style={{
-            background: '#2a1010',
-            color: '#f55',
+            background: colors.dangerBg,
+            color: colors.danger,
             padding: '10px 14px',
             borderRadius: 8,
             fontSize: 13,
@@ -371,7 +380,9 @@ export function Settings() {
         />
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Genres</legend>
+          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+            Genres
+          </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {GENRE_OPTIONS.map(g => (
               <button
@@ -382,8 +393,8 @@ export function Settings() {
                   padding: '6px 12px',
                   borderRadius: 16,
                   border: 'none',
-                  background: formData.genres.includes(g) ? '#f0c040' : '#1a1a2e',
-                  color: formData.genres.includes(g) ? '#0a0a0a' : '#777',
+                  background: formData.genres.includes(g) ? colors.accent : colors.surfaceHover,
+                  color: formData.genres.includes(g) ? colors.bg : colors.text.dim,
                   fontSize: 12,
                   cursor: 'pointer',
                   fontWeight: formData.genres.includes(g) ? 600 : 400,
@@ -403,7 +414,9 @@ export function Settings() {
         />
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Equipment</legend>
+          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+            Equipment
+          </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {EQUIPMENT_OPTIONS.map(item => (
               <button
@@ -414,8 +427,10 @@ export function Settings() {
                   padding: '6px 12px',
                   borderRadius: 16,
                   border: 'none',
-                  background: formData.dj_equipment.includes(item) ? '#f0c040' : '#1a1a2e',
-                  color: formData.dj_equipment.includes(item) ? '#0a0a0a' : '#777',
+                  background: formData.dj_equipment.includes(item)
+                    ? colors.accent
+                    : colors.surfaceHover,
+                  color: formData.dj_equipment.includes(item) ? colors.bg : colors.text.dim,
                   fontSize: 12,
                   cursor: 'pointer',
                   fontWeight: formData.dj_equipment.includes(item) ? 600 : 400,
@@ -428,7 +443,9 @@ export function Settings() {
         </fieldset>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>DAW / Software</legend>
+          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+            DAW / Software
+          </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {DAW_OPTIONS.map(item => (
               <button
@@ -439,8 +456,8 @@ export function Settings() {
                   padding: '6px 12px',
                   borderRadius: 16,
                   border: 'none',
-                  background: formData.dj_daw.includes(item) ? '#f0c040' : '#1a1a2e',
-                  color: formData.dj_daw.includes(item) ? '#0a0a0a' : '#777',
+                  background: formData.dj_daw.includes(item) ? colors.accent : colors.surfaceHover,
+                  color: formData.dj_daw.includes(item) ? colors.bg : colors.text.dim,
                   fontSize: 12,
                   cursor: 'pointer',
                   fontWeight: formData.dj_daw.includes(item) ? 600 : 400,
@@ -453,7 +470,9 @@ export function Settings() {
         </fieldset>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Social Links</legend>
+          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+            Social Links
+          </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
             {['twitter', 'instagram', 'soundcloud', 'youtube', 'spotify', 'website'].map(
               platform => (
@@ -478,7 +497,7 @@ export function Settings() {
               )
             )}
           </div>
-          <p style={{ color: '#666', fontSize: 11, marginTop: 4 }}>
+          <p style={{ color: colors.text.faint, fontSize: 11, marginTop: 4 }}>
             Add links to your social profiles or website
           </p>
         </fieldset>
@@ -519,7 +538,9 @@ export function Settings() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-            <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Goals</legend>
+            <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+              Goals
+            </legend>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {GOAL_OPTIONS.map(opt => {
                 const active = (goals.goals || []).includes(opt.value);
@@ -539,8 +560,8 @@ export function Settings() {
                       padding: '6px 12px',
                       borderRadius: 16,
                       border: 'none',
-                      background: active ? '#f0c040' : '#1a1a2e',
-                      color: active ? '#0a0a0a' : '#777',
+                      background: active ? colors.accent : colors.surfaceHover,
+                      color: active ? colors.bg : colors.text.dim,
                       fontSize: 12,
                       cursor: 'pointer',
                       fontWeight: active ? 600 : 400,
@@ -561,7 +582,9 @@ export function Settings() {
           />
 
           <div>
-            <label style={{ color: '#888', fontSize: 13, display: 'block', marginBottom: 8 }}>
+            <label
+              style={{ color: colors.text.muted, fontSize: 13, display: 'block', marginBottom: 8 }}
+            >
               Travel radius: {goals.travel_radius_km ?? 50} km
             </label>
             <input
@@ -573,7 +596,7 @@ export function Settings() {
               onChange={e =>
                 setGoals(prev => ({ ...prev, travel_radius_km: Number(e.target.value) }))
               }
-              style={{ width: '100%', accentColor: '#f0c040' }}
+              style={{ width: '100%', accentColor: colors.accent }}
             />
           </div>
 
@@ -582,7 +605,7 @@ export function Settings() {
               type="checkbox"
               checked={goals.booking_open ?? false}
               onChange={e => setGoals(prev => ({ ...prev, booking_open: e.target.checked }))}
-              style={{ accentColor: '#f0c040', width: 16, height: 16 }}
+              style={{ accentColor: colors.accent, width: 16, height: 16 }}
             />
             <span style={{ color: colors.text.primary, fontSize: fontSize.sm }}>
               Open for bookings
@@ -596,8 +619,8 @@ export function Settings() {
             style={{
               padding: '10px 20px',
               borderRadius: 8,
-              background: '#f0c040',
-              color: '#0a0a0a',
+              background: colors.accent,
+              color: colors.bg,
               border: 'none',
               fontWeight: 700,
               fontSize: 13,
@@ -854,7 +877,7 @@ export function Settings() {
                     padding: `${space[4]}px`,
                     borderRadius: radius.md,
                     background: colors.accent,
-                    color: '#0a0a0a',
+                    color: colors.bg,
                     border: 'none',
                     fontWeight: fontWeight.semibold,
                     fontSize: fontSize.sm,
@@ -942,7 +965,7 @@ export function Settings() {
                 flexShrink: 0,
                 padding: `${space[4]}px ${space[7]}px`,
                 background: colors.accent,
-                color: '#0a0a0a',
+                color: colors.bg,
                 borderRadius: radius.pill,
                 fontWeight: fontWeight.bold,
                 fontSize: fontSize.sm,
@@ -965,7 +988,7 @@ export function Settings() {
           paddingTop: space[10],
         }}
       >
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: '#eee', marginBottom: 16 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text.primary, marginBottom: 16 }}>
           Hive Story
         </h2>
         <p style={{ fontSize: 13, color: colors.text.muted, marginBottom: 16 }}>

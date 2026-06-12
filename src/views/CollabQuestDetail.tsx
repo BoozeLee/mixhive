@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
@@ -49,11 +50,11 @@ const ROLE_ICONS: Record<string, IconKey> = {
 };
 
 const PHASE_LABELS: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: '#555' },
+  draft: { label: 'Draft', color: colors.text.faintest },
   recruiting: { label: 'Recruiting', color: 'var(--hive-gold)' },
-  in_progress: { label: 'In Progress', color: '#22c55e' },
-  complete: { label: 'Complete', color: '#888' },
-  cancelled: { label: 'Cancelled', color: '#ef4444' },
+  in_progress: { label: 'In Progress', color: colors.successStrong },
+  complete: { label: 'Complete', color: colors.text.muted },
+  cancelled: { label: 'Cancelled', color: colors.dangerStrong },
 };
 
 export function CollabQuestDetail() {
@@ -143,11 +144,15 @@ export function CollabQuestDetail() {
   };
 
   if (loading)
-    return <div style={{ padding: 40, color: '#555', textAlign: 'center' }}>Loading quest...</div>;
+    return (
+      <div style={{ padding: 40, color: colors.text.faintest, textAlign: 'center' }}>
+        Loading quest...
+      </div>
+    );
   if (error || !quest) {
     return (
       <div style={{ padding: 40, textAlign: 'center' }}>
-        <p style={{ color: '#ef4444', marginBottom: 16 }}>{error || 'Quest not found'}</p>
+        <p style={{ color: colors.dangerStrong, marginBottom: 16 }}>{error || 'Quest not found'}</p>
         <Link to="/collab-quests" style={{ color: 'var(--hive-gold)' }}>
           ← Back to Quests
         </Link>
@@ -156,7 +161,7 @@ export function CollabQuestDetail() {
   }
 
   const openRoles = quest.collab_roles?.filter(r => r.status === 'open') ?? [];
-  const phaseInfo = PHASE_LABELS[quest.phase] ?? { label: quest.phase, color: '#888' };
+  const phaseInfo = PHASE_LABELS[quest.phase] ?? { label: quest.phase, color: colors.text.muted };
   const isCreator = userId === quest.creator_profile_id;
 
   return (
@@ -164,7 +169,7 @@ export function CollabQuestDetail() {
       <Link
         to="/collab-quests"
         style={{
-          color: '#666',
+          color: colors.text.faint,
           fontSize: 13,
           textDecoration: 'none',
           display: 'inline-block',
@@ -195,8 +200,8 @@ export function CollabQuestDetail() {
             <span
               key={t}
               style={{
-                background: '#1a1a1a',
-                color: '#666',
+                background: colors.surfaceRaised,
+                color: colors.text.faint,
                 fontSize: 11,
                 padding: '3px 8px',
                 borderRadius: 4,
@@ -209,7 +214,7 @@ export function CollabQuestDetail() {
         <h1
           style={{
             fontSize: 26,
-            color: '#fff',
+            color: colors.white,
             fontWeight: 700,
             margin: '0 0 8px',
             lineHeight: 1.3,
@@ -222,7 +227,13 @@ export function CollabQuestDetail() {
         </h1>
         {quest.narrative && (
           <p
-            style={{ color: '#aaa', fontSize: 15, lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}
+            style={{
+              color: colors.text.dimmed,
+              fontSize: 15,
+              lineHeight: 1.6,
+              fontStyle: 'italic',
+              margin: 0,
+            }}
           >
             "{quest.narrative}"
           </p>
@@ -234,7 +245,7 @@ export function CollabQuestDetail() {
         style={{
           display: 'flex',
           gap: 20,
-          color: '#666',
+          color: colors.text.faint,
           fontSize: 13,
           marginBottom: 24,
           flexWrap: 'wrap',
@@ -265,7 +276,7 @@ export function CollabQuestDetail() {
                 style={{
                   display: 'flex',
                   gap: 10,
-                  color: '#ccc',
+                  color: colors.text.secondary,
                   fontSize: 14,
                   alignItems: 'flex-start',
                 }}
@@ -282,15 +293,15 @@ export function CollabQuestDetail() {
       <section style={{ marginBottom: 28 }}>
         <h2 style={sectionHeadStyle}>Open Roles ({openRoles.length})</h2>
         {openRoles.length === 0 ? (
-          <p style={{ color: '#555', fontSize: 14 }}>All roles filled.</p>
+          <p style={{ color: colors.text.faintest, fontSize: 14 }}>All roles filled.</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {openRoles.map(role => (
               <div
                 key={role.id}
                 style={{
-                  background: '#111',
-                  border: '1px solid #1e1e1e',
+                  background: colors.surface,
+                  border: `1px solid ${colors.surfaceRaised}`,
                   borderRadius: 10,
                   padding: 16,
                 }}
@@ -313,14 +324,14 @@ export function CollabQuestDetail() {
                           color="currentColor"
                         />
                       </span>
-                      <h3 style={{ color: '#fff', fontSize: 15, fontWeight: 700, margin: 0 }}>
+                      <h3 style={{ color: colors.white, fontSize: 15, fontWeight: 700, margin: 0 }}>
                         {role.title}
                       </h3>
                       {role.is_paid && (
                         <span
                           style={{
                             background: '#22c55e22',
-                            color: '#22c55e',
+                            color: colors.successStrong,
                             fontSize: 11,
                             padding: '2px 6px',
                             borderRadius: 4,
@@ -336,9 +347,9 @@ export function CollabQuestDetail() {
                           <span
                             key={t}
                             style={{
-                              background: '#0a0a0a',
-                              border: '1px solid #2a2a2a',
-                              color: '#888',
+                              background: colors.bg,
+                              border: `1px solid ${colors.borderStrong}`,
+                              color: colors.text.muted,
                               fontSize: 11,
                               padding: '1px 6px',
                               borderRadius: 4,
@@ -350,7 +361,7 @@ export function CollabQuestDetail() {
                       </div>
                     )}
                     {role.compensation_notes && (
-                      <p style={{ color: '#666', fontSize: 12, margin: '6px 0 0' }}>
+                      <p style={{ color: colors.text.faint, fontSize: 12, margin: '6px 0 0' }}>
                         {role.compensation_notes}
                       </p>
                     )}
@@ -361,8 +372,8 @@ export function CollabQuestDetail() {
                       onClick={() => handleApply(role)}
                       disabled={applying === role.id || applied.has(role.id)}
                       style={{
-                        background: applied.has(role.id) ? '#1a3a1a' : 'var(--hive-gold)',
-                        color: applied.has(role.id) ? '#22c55e' : '#000',
+                        background: applied.has(role.id) ? colors.successBg : 'var(--hive-gold)',
+                        color: applied.has(role.id) ? colors.successStrong : colors.black,
                         border: 'none',
                         borderRadius: 8,
                         padding: '8px 18px',
@@ -399,9 +410,9 @@ export function CollabQuestDetail() {
             rows={3}
             style={{
               width: '100%',
-              background: '#111',
-              border: '1px solid #2a2a2a',
-              color: '#fff',
+              background: colors.surface,
+              border: `1px solid ${colors.borderStrong}`,
+              color: colors.white,
               borderRadius: 8,
               padding: '10px 12px',
               fontSize: 14,
@@ -419,8 +430,8 @@ export function CollabQuestDetail() {
           style={{
             marginBottom: 24,
             padding: 16,
-            background: '#0a0a0a',
-            border: '1px solid #2a2a2a',
+            background: colors.bg,
+            border: `1px solid ${colors.borderStrong}`,
             borderRadius: 10,
           }}
         >
@@ -430,7 +441,7 @@ export function CollabQuestDetail() {
               <button
                 onClick={() => handleAdvancePhase('recruiting')}
                 disabled={advancing}
-                style={{ ...ctrlBtnStyle, background: 'var(--hive-gold)', color: '#000' }}
+                style={{ ...ctrlBtnStyle, background: 'var(--hive-gold)', color: colors.black }}
               >
                 {advancing ? '...' : 'Open for Recruiting'}
               </button>
@@ -439,7 +450,7 @@ export function CollabQuestDetail() {
               <button
                 onClick={() => handleAdvancePhase('in_progress')}
                 disabled={advancing}
-                style={{ ...ctrlBtnStyle, background: '#22c55e', color: '#000' }}
+                style={{ ...ctrlBtnStyle, background: colors.successStrong, color: colors.black }}
               >
                 {advancing ? '...' : '▶ Launch Quest'}
               </button>
@@ -448,7 +459,7 @@ export function CollabQuestDetail() {
               <button
                 onClick={() => handleAdvancePhase('complete')}
                 disabled={advancing}
-                style={{ ...ctrlBtnStyle, background: '#22c55e', color: '#000' }}
+                style={{ ...ctrlBtnStyle, background: colors.successStrong, color: colors.black }}
               >
                 {advancing ? '...' : '✓ Mark Complete + Award XP'}
               </button>
@@ -459,7 +470,7 @@ export function CollabQuestDetail() {
               style={{
                 ...ctrlBtnStyle,
                 background: 'transparent',
-                color: '#ef4444',
+                color: colors.dangerStrong,
                 border: '1px solid #ef444444',
               }}
             >
@@ -467,12 +478,12 @@ export function CollabQuestDetail() {
             </button>
           </div>
           {quest.phase === 'recruiting' && (
-            <p style={{ color: '#555', fontSize: 12, marginTop: 8, marginBottom: 0 }}>
+            <p style={{ color: colors.text.faintest, fontSize: 12, marginTop: 8, marginBottom: 0 }}>
               Launch when all needed roles are filled.
             </p>
           )}
           {quest.phase === 'in_progress' && (
-            <p style={{ color: '#555', fontSize: 12, marginTop: 8, marginBottom: 0 }}>
+            <p style={{ color: colors.text.faintest, fontSize: 12, marginTop: 8, marginBottom: 0 }}>
               Marking complete awards XP to all filled role holders.
             </p>
           )}
@@ -483,14 +494,14 @@ export function CollabQuestDetail() {
         <div
           style={{
             padding: 16,
-            background: '#0a1a0a',
+            background: colors.successBg,
             border: '1px solid #22c55e33',
             borderRadius: 10,
             marginBottom: 24,
             textAlign: 'center',
           }}
         >
-          <p style={{ color: '#22c55e', fontWeight: 700, margin: 0 }}>
+          <p style={{ color: colors.successStrong, fontWeight: 700, margin: 0 }}>
             ✓ Quest complete — XP awarded to all collaborators
           </p>
         </div>
@@ -499,9 +510,9 @@ export function CollabQuestDetail() {
       {error && (
         <div
           style={{
-            color: '#ef4444',
+            color: colors.dangerStrong,
             padding: 12,
-            background: '#1a0000',
+            background: colors.dangerBgDeep,
             borderRadius: 8,
             fontSize: 14,
             marginBottom: 16,
@@ -527,7 +538,7 @@ const sectionHeadStyle: React.CSSProperties = {
   fontSize: 13,
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: '#666',
+  color: colors.text.faint,
   marginBottom: 14,
   marginTop: 0,
 };

@@ -6,6 +6,7 @@ import { HiveButton } from './hive/HiveButton';
 import { MythicSessionRoom } from './MythicSessionRoom';
 import { PostSessionReview } from './PostSessionReview';
 import toast from 'react-hot-toast';
+import { ritualRequest } from '../lib/rituals';
 
 interface StartMythicSessionModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
     title: '',
     description: '',
     isPublic: false,
+    agentEnabled: true,
   });
 
   if (!isOpen) return null;
@@ -35,22 +37,15 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('/api/mythic/sessions', {
+      const created = await ritualRequest<{ id: string }>('/api/mythic/sessions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: form.title.trim(),
           description: form.description.trim() || null,
           isPublic: form.isPublic,
+          agentEnabled: form.agentEnabled,
         }),
       });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to create session');
-      }
-
-      const created = await res.json();
 
       setSessionData({
         id: created.id,
@@ -83,7 +78,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
     // Reset state
     setMode('form');
     setSessionData(null);
-    setForm({ title: '', description: '', isPublic: false });
+    setForm({ title: '', description: '', isPublic: false, agentEnabled: true });
   };
 
   return (
@@ -219,6 +214,18 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
                   />
                   <span style={{ fontSize: fontSize.sm }}>
                     Make this session visible in legends (public)
+                  </span>
+                </label>
+              </div>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.agentEnabled}
+                    onChange={e => setForm({ ...form, agentEnabled: e.target.checked })}
+                  />
+                  <span style={{ fontSize: fontSize.sm }}>
+                    Invite the bounded autonomous Session Spirit
                   </span>
                 </label>
               </div>

@@ -227,7 +227,7 @@ export async function reviewModerationSignal(input: {
 /** File a user report on a piece of content. Goes through /api/reports (which
  *  verifies the session, rate-limits, and inserts via the service role). */
 export async function reportContent(input: {
-  sourceTable: 'buzzes' | 'mixes' | 'profiles' | 'equipment_listings';
+  sourceTable: 'buzzes' | 'mixes' | 'profiles' | 'equipment_listings' | 'collab_session_messages';
   sourceId: string;
   reason: string;
 }): Promise<{ ok: boolean; error?: string }> {

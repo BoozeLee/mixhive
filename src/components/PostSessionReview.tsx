@@ -54,27 +54,9 @@ export function PostSessionReview({
             participants: edge.metadata?.participants,
           }));
           setProposedUpdates(formatted);
-        } else {
-          // Fallback to demo data if job hasn't run yet or no edges
-          setProposedUpdates([
-            {
-              id: 'demo-1',
-              type: 'collab_with',
-              title: 'collab_with → Session Participants',
-              description: 'Collaboration edges were generated for this session.',
-            },
-          ]);
-        }
+        } else setProposedUpdates([]);
       } catch (e) {
-        // Fallback on error
-        setProposedUpdates([
-          {
-            id: 'demo-1',
-            type: 'collab_with',
-            title: 'collab_with → Session Participants',
-            description: 'Collaboration edges were generated for this session.',
-          },
-        ]);
+        setProposedUpdates([]);
       } finally {
         setIsLoading(false);
       }

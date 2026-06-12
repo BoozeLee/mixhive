@@ -120,6 +120,12 @@ const SceneRadar = lazy(() => import('./views/SceneRadar').then(m => ({ default:
 const CollabSessionRoom = lazy(() =>
   import('./views/CollabSessionRoom').then(m => ({ default: m.CollabSessionRoom }))
 );
+const LiveRituals = lazy(() =>
+  import('./views/LiveRituals').then(m => ({ default: m.LiveRituals }))
+);
+const RitualReplay = lazy(() =>
+  import('./views/RitualReplay').then(m => ({ default: m.RitualReplay }))
+);
 const HiveComposer = lazy(() =>
   import('./views/HiveComposer').then(m => ({ default: m.HiveComposer }))
 );
@@ -301,6 +307,15 @@ function AnimatedRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/session/:id/replay"
+          element={
+            <ProtectedRoute>
+              <RitualReplay />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/rituals" element={<LiveRituals />} />
         <Route
           path="/composer"
           element={

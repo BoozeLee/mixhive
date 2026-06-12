@@ -23,7 +23,7 @@ type PageMode = 'loading' | 'room' | 'review' | 'ended' | 'error';
 export function CollabSessionRoom() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
 
   const [session, setSession] = useState<SessionMeta | null>(null);
   const [mode, setMode] = useState<PageMode>('loading');
@@ -45,7 +45,7 @@ export function CollabSessionRoom() {
       .from('collab_sessions')
       .select('id, title, status, owner_id')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error || !data) {
       setErrorMsg(error?.message || 'Session not found');
@@ -58,15 +58,6 @@ export function CollabSessionRoom() {
     if (data.status === 'ended') {
       setMode('ended');
     } else {
-      // Auto-join as participant if not the owner
-      if (profile && data.owner_id !== profile.id) {
-        await supabase
-          .from('collab_session_participants')
-          .upsert(
-            { session_id: id, profile_id: profile.id, role: 'participant' },
-            { onConflict: 'session_id,profile_id' }
-          );
-      }
       setMode('room');
     }
   };

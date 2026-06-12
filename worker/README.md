@@ -67,6 +67,21 @@ podman run --rm -v /path/track.mp3:/t.mp3:ro localhost/mixhive-audio-worker --se
 | `JOB_TIMEOUT_MS` | `300000` | per-job ceiling |
 | `WAVEFORM_POINTS` | `200` | peak resolution |
 
+### Creator talkback TURN relay
+
+Mythic Ritual creator talkback is peer-to-peer WebRTC. For creators behind strict NAT,
+start the optional Coturn profile:
+
+```bash
+podman compose -f worker/compose.yaml --profile rituals up -d coturn
+```
+
+Set `TURN_USERNAME`, `TURN_CREDENTIAL`, and the host's public `TURN_EXTERNAL_IP` in
+`~/.config/mixhive/worker.env`. Expose UDP/TCP 3478 and UDP 49160–49200. Configure the
+matching browser values as `NEXT_PUBLIC_TURN_URL`, `NEXT_PUBLIC_TURN_USERNAME`, and
+`NEXT_PUBLIC_TURN_CREDENTIAL`. Rotate the shared credential regularly; public audiences
+never connect to this relay.
+
 ## Not yet here (next sessions)
 - `bpm_key_mood` real analysis (aubio/essentia) — currently waveform+duration only.
 - `tracklist` fingerprinting.

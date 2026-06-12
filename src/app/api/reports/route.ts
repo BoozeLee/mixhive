@@ -6,7 +6,13 @@ import { createClient } from '@supabase/supabase-js';
 // check), then records a moderation_signals row via the service role (the table
 // is service-role-only by RLS). Admins action these from /admin/moderation.
 
-const ALLOWED_SOURCES = ['buzzes', 'mixes', 'profiles', 'equipment_listings'];
+const ALLOWED_SOURCES = [
+  'buzzes',
+  'mixes',
+  'profiles',
+  'equipment_listings',
+  'collab_session_messages',
+];
 const REPORTS_PER_HOUR = 10;
 
 function envUrl() {

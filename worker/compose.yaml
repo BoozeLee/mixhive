@@ -57,3 +57,24 @@ services:
       IV_PUSH: ${IV_PUSH:-300}
     depends_on:
       - audio-worker
+
+  # Creator-stage WebRTC relay. Public audiences never receive talkback audio;
+  # TURN only improves connectivity for the six-person private creator mesh.
+  coturn:
+    image: docker.io/coturn/coturn:latest
+    restart: unless-stopped
+    network_mode: host
+    command:
+      - --no-cli
+      - --fingerprint
+      - --lt-cred-mech
+      - --realm=${TURN_REALM:-mixhive.app}
+      - --user=${TURN_USERNAME}:${TURN_CREDENTIAL}
+      - --external-ip=${TURN_EXTERNAL_IP}
+      - --min-port=49160
+      - --max-port=49200
+    environment:
+      TURN_USERNAME: ${TURN_USERNAME}
+      TURN_CREDENTIAL: ${TURN_CREDENTIAL}
+      TURN_EXTERNAL_IP: ${TURN_EXTERNAL_IP}
+    profiles: ['rituals']

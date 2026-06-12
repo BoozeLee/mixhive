@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { HiveButton } from './hive/HiveButton';
 import { StartMythicSessionModal } from './StartMythicSessionModal';
 
 export function SessionFab() {
   const [isOpen, setIsOpen] = useState(false);
+  if (process.env.NEXT_PUBLIC_MYTHIC_RITUALS_ENABLED === 'false') return null;
 
   return (
     <>
@@ -17,6 +19,18 @@ export function SessionFab() {
           zIndex: 1100,
         }}
       >
+        <Link
+          to="/rituals"
+          style={{
+            display: 'block',
+            textAlign: 'center',
+            color: '#f6c400',
+            fontSize: 12,
+            marginBottom: 6,
+          }}
+        >
+          Live rituals
+        </Link>
         <HiveButton
           variant="primary"
           onClick={() => setIsOpen(true)}
@@ -25,7 +39,7 @@ export function SessionFab() {
             padding: '12px 20px',
           }}
         >
-          + Start Mythic Session
+          + Start Mythic Ritual
         </HiveButton>
       </div>
 

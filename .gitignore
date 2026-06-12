@@ -54,6 +54,7 @@ Desktop.ini
 # Testing & coverage
 coverage/
 .nyc_output/
+e2e-quality-results/
 
 # TypeScript build info
 *.tsbuildinfo

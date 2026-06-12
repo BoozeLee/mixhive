@@ -16,6 +16,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const parsed = MessageSchema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) return NextResponse.json({ error: 'Invalid message' }, { status: 400 });
   const { id } = await params;
+  const { data: canChat } = await ctx.sb.rpc('can_chat_collab_session', { p_session_id: id });
+  if (!canChat) {
+    return NextResponse.json({ error: 'Chat is unavailable for this ritual' }, { status: 403 });
+  }
   const { data: audience } = await ctx.sb
     .from('collab_session_audience')
     .select('status')

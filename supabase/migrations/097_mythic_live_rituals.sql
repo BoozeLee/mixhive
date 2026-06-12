@@ -314,12 +314,11 @@ begin
   update public.collab_sessions set status = 'ended', ended_at = now() where id = p_session_id;
   insert into public.collab_session_events(session_id, actor_id, event_type)
   values (p_session_id, auth.uid(), 'ritual_ended');
-  insert into public.mythic_graph_jobs(job_type, payload, status, owner_id)
+  insert into public.mythic_graph_jobs(job_type, scope, status)
   values (
     'collab_session_post_process',
     jsonb_build_object('session_id', p_session_id),
-    'pending',
-    auth.uid()
+    'pending'
   );
 end;
 $$;

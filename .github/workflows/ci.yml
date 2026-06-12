@@ -141,6 +141,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-test
     if: github.event_name != 'pull_request' || needs.build-and-test.outputs.maintenance_only != 'true'
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -159,12 +161,15 @@ jobs:
         run: npm audit --audit-level moderate
 
       - name: Run Snyk security scan
+        if: env.SNYK_TOKEN != ''
         uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=high
           command: test
+
+      - name: Report skipped Snyk scan
+        if: env.SNYK_TOKEN == ''
+        run: echo "SNYK_TOKEN is not configured; npm audit remains the required security gate."
 
   # Docker build and push (optional)
   docker-build:
@@ -221,6 +226,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     environment: production
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout code
@@ -233,13 +242,16 @@ jobs:
           cache: 'npm'
 
       - name: Install Vercel CLI
+        if: env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != ''
         run: npm install -g vercel
 
       - name: Deploy to Vercel
-        run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        if: env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != ''
+        run: vercel --prod --token "$VERCEL_TOKEN"
+
+      - name: Report Git integration deployment
+        if: env.VERCEL_TOKEN == '' || env.VERCEL_ORG_ID == '' || env.VERCEL_PROJECT_ID == ''
+        run: echo "Vercel CLI secrets are not configured; the Vercel Git integration handles deployment."
 
   # Deploy preview to Vercel
   deploy-preview:
@@ -247,6 +259,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-test
     if: github.event_name == 'pull_request' && needs.build-and-test.outputs.maintenance_only != 'true'
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout code
@@ -259,10 +275,13 @@ jobs:
           cache: 'npm'
 
       - name: Install Vercel CLI
+        if: env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != ''
         run: npm install -g vercel
 
       - name: Deploy Preview to Vercel
-        run: vercel --token ${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        if: env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != ''
+        run: vercel --token "$VERCEL_TOKEN"
+
+      - name: Report Git integration preview
+        if: env.VERCEL_TOKEN == '' || env.VERCEL_ORG_ID == '' || env.VERCEL_PROJECT_ID == ''
+        run: echo "Vercel CLI secrets are not configured; the Vercel Git integration handles previews."

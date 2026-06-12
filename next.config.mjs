@@ -21,6 +21,7 @@ const configuredOptionalValue = value =>
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   outputFileTracingRoot: appDir,
   turbopack: {
     root: appDir,
@@ -169,7 +170,7 @@ const nextConfig = {
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         {
           key: 'Permissions-Policy',
-          value: 'camera=(), microphone=(), geolocation=(), payment=(self), interest-cohort=()',
+          value: 'camera=(), microphone=(self), geolocation=(), payment=(self), interest-cohort=()',
         },
         { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
         { key: 'X-DNS-Prefetch-Control', value: 'on' },

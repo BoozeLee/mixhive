@@ -353,7 +353,9 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
           ))}
           {isCreator && (
             <HiveButton variant="glass" size="sm" onClick={() => void talkback.toggle()}>
-              {talkback.enabled ? `Talkback on · ${talkback.connectedPeers}` : 'Enable talkback'}
+              {talkback.enabled
+                ? `Talkback on · ${talkback.connectedPeers} · ${talkback.relayAvailable ? 'relay ready' : 'direct only'}`
+                : 'Enable talkback'}
             </HiveButton>
           )}
           {isCreator && snapshot.state.agent_enabled && (

@@ -67,14 +67,28 @@ services:
     command:
       - --no-cli
       - --fingerprint
-      - --lt-cred-mech
+      - --use-auth-secret
+      - --static-auth-secret=${TURN_SHARED_SECRET}
       - --realm=${TURN_REALM:-mixhive.app}
-      - --user=${TURN_USERNAME}:${TURN_CREDENTIAL}
       - --external-ip=${TURN_EXTERNAL_IP}
+      - --cert=/etc/letsencrypt/live/turn.mixhive.app/fullchain.pem
+      - --pkey=/etc/letsencrypt/live/turn.mixhive.app/privkey.pem
+      - --no-multicast-peers
+      - --stale-nonce=600
+      - --user-quota=12
+      - --denied-peer-ip=0.0.0.0-0.255.255.255
+      - --denied-peer-ip=10.0.0.0-10.255.255.255
+      - --denied-peer-ip=100.64.0.0-100.127.255.255
+      - --denied-peer-ip=127.0.0.0-127.255.255.255
+      - --denied-peer-ip=169.254.0.0-169.254.255.255
+      - --denied-peer-ip=172.16.0.0-172.31.255.255
+      - --denied-peer-ip=192.168.0.0-192.168.255.255
+      - --denied-peer-ip=198.18.0.0-198.19.255.255
       - --min-port=49160
       - --max-port=49200
     environment:
-      TURN_USERNAME: ${TURN_USERNAME}
-      TURN_CREDENTIAL: ${TURN_CREDENTIAL}
+      TURN_SHARED_SECRET: ${TURN_SHARED_SECRET}
       TURN_EXTERNAL_IP: ${TURN_EXTERNAL_IP}
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     profiles: ['rituals']

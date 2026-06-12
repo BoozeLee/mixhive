@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ritualRequest } from '../lib/rituals';
 import { supabase } from '../lib/supabase';
 
 interface TalkbackState {
   enabled: boolean;
   connectedPeers: number;
   error: string | null;
+  relayAvailable: boolean;
   toggle: () => Promise<void>;
 }
 
@@ -16,6 +18,7 @@ export function useCreatorTalkback(
   const [enabled, setEnabled] = useState(false);
   const [connectedPeers, setConnectedPeers] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [relayAvailable, setRelayAvailable] = useState(false);
   const streamRef = useRef<MediaStream | null>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const peersRef = useRef(new Map<string, RTCPeerConnection>());
@@ -32,6 +35,7 @@ export function useCreatorTalkback(
     channelRef.current = null;
     setConnectedPeers(0);
     setEnabled(false);
+    setRelayAvailable(false);
   }, []);
 
   useEffect(() => closeAll, [closeAll]);
@@ -43,6 +47,17 @@ export function useCreatorTalkback(
       return;
     }
     try {
+      let turnIceServers: RTCIceServer[] = [];
+      try {
+        const turn = await ritualRequest<{ iceServers: RTCIceServer[] }>(
+          `/api/mythic/sessions/${sessionId}/turn-credentials`,
+          { method: 'POST', body: '{}' }
+        );
+        turnIceServers = turn.iceServers;
+        setRelayAvailable(turnIceServers.length > 0);
+      } catch {
+        setRelayAvailable(false);
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       streamRef.current = stream;
       const channel = supabase.channel(`ritual-talkback:${sessionId}`, {
@@ -53,20 +68,8 @@ export function useCreatorTalkback(
       const peerFor = (remoteId: string) => {
         const existing = peersRef.current.get(remoteId);
         if (existing) return existing;
-        const turnUrl = process.env.NEXT_PUBLIC_TURN_URL;
         const peer = new RTCPeerConnection({
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            ...(turnUrl
-              ? [
-                  {
-                    urls: turnUrl,
-                    username: process.env.NEXT_PUBLIC_TURN_USERNAME,
-                    credential: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
-                  },
-                ]
-              : []),
-          ],
+          iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, ...turnIceServers],
         });
         for (const track of stream.getTracks()) peer.addTrack(track, stream);
         peer.onicecandidate = event => {
@@ -139,5 +142,5 @@ export function useCreatorTalkback(
     }
   }, [allowed, closeAll, enabled, profileId, sessionId]);
 
-  return { enabled, connectedPeers, error, toggle };
+  return { enabled, connectedPeers, error, relayAvailable, toggle };
 }

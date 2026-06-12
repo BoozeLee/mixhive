@@ -69,18 +69,22 @@ podman run --rm -v /path/track.mp3:/t.mp3:ro localhost/mixhive-audio-worker --se
 
 ### Creator talkback TURN relay
 
-Mythic Ritual creator talkback is peer-to-peer WebRTC. For creators behind strict NAT,
-start the optional Coturn profile:
+Mythic Ritual creator talkback is peer-to-peer WebRTC with Coturn fallback for creators
+behind strict NAT. Production uses short-lived TURN REST credentials; the HMAC secret is
+never compiled into the browser. See [`../docs/TURN_RELAY_RUNBOOK.md`](../docs/TURN_RELAY_RUNBOOK.md)
+for the provider-neutral VPS, DNS, firewall, TLS, verification, and quarterly-rotation
+procedure.
+
+The compose profile remains available for local/infrastructure testing:
 
 ```bash
 podman compose -f worker/compose.yaml --profile rituals up -d coturn
 ```
 
-Set `TURN_USERNAME`, `TURN_CREDENTIAL`, and the host's public `TURN_EXTERNAL_IP` in
-`~/.config/mixhive/worker.env`. Expose UDP/TCP 3478 and UDP 49160–49200. Configure the
-matching browser values as `NEXT_PUBLIC_TURN_URL`, `NEXT_PUBLIC_TURN_USERNAME`, and
-`NEXT_PUBLIC_TURN_CREDENTIAL`. Rotate the shared credential regularly; public audiences
-never connect to this relay.
+Set `TURN_SHARED_SECRET` and `TURN_EXTERNAL_IP` in the environment. Production Vercel
+uses the same server-only secret with `TURN_CREDENTIALS_ENABLED=true`; never configure
+`NEXT_PUBLIC_TURN_*`. Public audiences never receive credentials or connect to the
+creator relay.
 
 ## Not yet here (next sessions)
 - `bpm_key_mood` real analysis (aubio/essentia) — currently waveform+duration only.

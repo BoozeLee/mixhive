@@ -1,0 +1,24 @@
+# Provider-neutral rootful systemd Quadlet for the public TURN VPS.
+# Install under /etc/containers/systemd/mixhive-coturn.container.
+
+[Unit]
+Description=MixHive Coturn relay
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/etc/mixhive/coturn.env
+ConditionPathExists=/etc/mixhive/turnserver.conf
+
+[Container]
+Image=docker.io/coturn/coturn:latest
+ContainerName=mixhive-coturn
+Network=host
+Volume=/etc/mixhive/turnserver.conf:/etc/coturn/turnserver.conf:ro
+Volume=/etc/letsencrypt:/etc/letsencrypt:ro
+Exec=-c /etc/coturn/turnserver.conf
+
+[Service]
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

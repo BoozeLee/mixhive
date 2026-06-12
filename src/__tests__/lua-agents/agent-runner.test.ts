@@ -5,6 +5,7 @@
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => ({
     from: jest.fn(() => ({
+      insert: jest.fn().mockResolvedValue({ error: null }),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
       limit: jest.fn().mockResolvedValue({ data: [], error: null }),

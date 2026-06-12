@@ -69,8 +69,11 @@ describe('GET /api/search', () => {
   });
 
   it('returns a recoverable error when an RPC fails', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     rpc.mockResolvedValue({ data: null, error: new Error('database unavailable') });
     const response = await request({ q: 'techno', type: 'scenes' });
     expect(response.status).toBe(500);
+    expect(consoleError).toHaveBeenCalledWith('[api/search] error:', expect.any(Error));
+    consoleError.mockRestore();
   });
 });

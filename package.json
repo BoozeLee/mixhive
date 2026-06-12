@@ -20,13 +20,14 @@
     "prebuild": "node scripts/sync-lua-agents.mjs",
     "build": "next build",
     "start": "next start",
+    "preview": "next start",
     "lint": "echo 'Linting skipped for deployment'",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "format": "npx prettier --write .",
     "format:check": "npx prettier --check .",
     "clean": "rm -rf .next out dist",
-    "analyze": "ANALYZE=true npm run build",
+    "analyze": "node scripts/check-bundle-budget.mjs",
     "db:types": "supabase gen types typescript --linked > src/lib/database.types.ts",
     "db:types:check": "supabase gen types typescript --linked | diff - src/lib/database.types.ts",
     "postinstall": "husky install",
@@ -48,11 +49,11 @@
     "e2e:ui": "playwright test --ui",
     "e2e:debug": "playwright test --debug",
     "e2e:headed": "playwright test --headed",
+    "quality:e2e": "playwright test --config playwright.quality.config.ts",
     "e2e:ci": "PLAYWRIGHT_BASE_URL=https://mixhive.vercel.app playwright test --project='Desktop Chrome' --project='Mobile Chrome'"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@next/font": "14.1.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-hover-card": "^1.0.7",
@@ -108,6 +109,7 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.60.0",
     "@sentry/vite-plugin": "^5.3.0",

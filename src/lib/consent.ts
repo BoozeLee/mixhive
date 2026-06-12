@@ -12,6 +12,7 @@ export interface ConsentState {
 
 const KEY = 'mixhive_consent_v1';
 const POLICY_VERSION = 'v1';
+export const CONSENT_CHANGED_EVENT = 'mixhive:consent-changed';
 
 export function getConsent(): ConsentState | null {
   if (typeof window === 'undefined') return null;
@@ -49,6 +50,7 @@ export async function saveConsent(choice: {
   } catch {
     /* ignore quota/availability */
   }
+  window.dispatchEvent(new CustomEvent(CONSENT_CHANGED_EVENT, { detail: state }));
   // Best-effort server record (attach JWT if signed in); never block the UI.
   try {
     const { supabase } = await import('./supabase');

@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, supabase } from './supabase';
+import { isUuid } from './validation';
 
 /** Internal helper: fire-and-forget cache invalidation via server API (fail-open) */
 function invalidateCache(payload: { userId?: string; mixId?: string }): void {
@@ -338,7 +339,7 @@ export async function getMixesByDj(djId: string): Promise<Mix[]> {
 }
 
 export async function getMix(id: string): Promise<Mix | null> {
-  if (!isSupabaseConfigured) return null;
+  if (!isSupabaseConfigured || !isUuid(id)) return null;
   const { data, error } = await supabase
     .from('mixes')
     .select('*, profiles!mixes_dj_id_fkey(*), genres(name)')
@@ -1276,7 +1277,7 @@ export async function deleteBuzz(id: string): Promise<void> {
 }
 
 export async function getBuzz(id: string): Promise<Buzz | null> {
-  if (!isSupabaseConfigured) return null;
+  if (!isSupabaseConfigured || !isUuid(id)) return null;
   const { data } = await supabase
     .from('buzzes')
     .select('*, profiles!buzzes_author_id_fkey(*), mixes!buzzes_attached_mix_id_fkey(*)')
@@ -1440,7 +1441,7 @@ export async function getBuzzReplies(
   limit = 20,
   cursor?: FeedCursor
 ): Promise<BuzzFeedResult> {
-  if (!isSupabaseConfigured) return { data: [], cursor: null };
+  if (!isSupabaseConfigured || !isUuid(buzzId)) return { data: [], cursor: null };
   let q = supabase
     .from('buzzes')
     .select('*, profiles!buzzes_author_id_fkey(*)')

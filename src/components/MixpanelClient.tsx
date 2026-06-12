@@ -1,46 +1,63 @@
 'use client';
 
 import { useEffect } from 'react';
+import { CONSENT_CHANGED_EVENT } from '../lib/consent';
+import {
+  identifyAnalyticsUser,
+  syncAnalyticsConsent,
+  trackProductEvent,
+} from '../lib/productAnalytics';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 export function MixpanelClient() {
   useEffect(() => {
-    const token = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
-    // Skip init when no token is configured so dev/placeholder builds stay quiet.
-    if (!token) return;
-
-    let cleanup: (() => void) | undefined;
-
-    // Dynamic import keeps mixpanel-browser (≈600 kB) out of the initial bundle;
-    // it only loads once, after first paint, when analytics is actually enabled.
-    void import('mixpanel-browser').then(({ default: mixpanel }) => {
-      mixpanel.init(token, {
-        debug: process.env.NODE_ENV === 'development',
-        persistence: 'localStorage',
-        opt_out_tracking_by_default: false,
+    const pageView = () =>
+      void trackProductEvent('Page Viewed', {
+        path: window.location.pathname,
+        route_group: window.location.pathname.split('/')[1] || 'home',
       });
+    const interaction = (event: MouseEvent) => {
+      const element = (event.target as Element | null)?.closest<HTMLElement>(
+        'button, a[href], [data-analytics-event]'
+      );
+      if (!element) return;
+      const href = element instanceof HTMLAnchorElement ? element.pathname : null;
+      void trackProductEvent(element.dataset.analyticsEvent || 'UI Interaction', {
+        element: element.tagName.toLowerCase(),
+        destination_group: href?.split('/')[1] || null,
+      });
+    };
+    const consentChanged = () => void syncAnalyticsConsent().then(pageView);
+    const originalPushState = history.pushState.bind(history);
+    const originalReplaceState = history.replaceState.bind(history);
+    history.pushState = (...args) => {
+      originalPushState(...args);
+      pageView();
+    };
+    history.replaceState = (...args) => {
+      originalReplaceState(...args);
+      pageView();
+    };
 
-      const userId =
-        typeof window !== 'undefined' ? localStorage.getItem('mixpanel_user_id') : null;
-      if (userId) {
-        mixpanel.identify(userId);
-      }
+    void syncAnalyticsConsent().then(pageView);
+    document.addEventListener('click', interaction);
+    window.addEventListener('popstate', pageView);
+    window.addEventListener(CONSENT_CHANGED_EVENT, consentChanged);
 
-      const trackPageView = () => {
-        mixpanel.track('Page View', {
-          page: window.location.pathname,
-          title: document.title,
-          url: window.location.href,
-        });
-      };
+    const authSubscription = isSupabaseConfigured
+      ? supabase.auth.onAuthStateChange((_event, session) => {
+          void identifyAnalyticsUser(session?.user.id ?? null);
+        }).data.subscription
+      : null;
 
-      trackPageView();
-
-      const handleRouteChange = () => trackPageView();
-      window.addEventListener('popstate', handleRouteChange);
-      cleanup = () => window.removeEventListener('popstate', handleRouteChange);
-    });
-
-    return () => cleanup?.();
+    return () => {
+      document.removeEventListener('click', interaction);
+      window.removeEventListener('popstate', pageView);
+      window.removeEventListener(CONSENT_CHANGED_EVENT, consentChanged);
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
+      authSubscription?.unsubscribe();
+    };
   }, []);
 
   return null;

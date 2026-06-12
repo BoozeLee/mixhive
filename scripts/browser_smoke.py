@@ -22,8 +22,8 @@ ROUTES = [
     "/agents/inbox",
     "/epk",
     "/agents/gallery",
-    "/mix/test-id",
-    "/buzz/test-id",
+    "/mix/00000000-0000-4000-8000-000000000001",
+    "/buzz/00000000-0000-4000-8000-000000000001",
     "/u/test-user",
 ]
 VIEWPORTS = [(1440, 900), (768, 900), (390, 844), (320, 740)]

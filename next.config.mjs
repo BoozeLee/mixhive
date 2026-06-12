@@ -11,6 +11,13 @@ const supabaseUrl = hasNextPublicSupabasePair
 const supabaseAnonKey = hasNextPublicSupabasePair
   ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   : process.env.VITE_SUPABASE_ANON_KEY;
+const validSource = value =>
+  typeof value === 'string' && value.length > 0 && !value.includes('undefined') ? value : null;
+const sources = (...values) => values.map(validSource).filter(Boolean).join(' ');
+const configuredOptionalValue = value =>
+  typeof value === 'string' && value.length > 0 && !/(your-|placeholder|changeme)/i.test(value)
+    ? value
+    : undefined;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -118,7 +125,9 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey,
-    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.VITE_SENTRY_DSN,
+    NEXT_PUBLIC_SENTRY_DSN: configuredOptionalValue(
+      process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.VITE_SENTRY_DSN
+    ),
     NEXT_PUBLIC_RELEASE_SHA:
       process.env.NEXT_PUBLIC_RELEASE_SHA ||
       process.env.VITE_RELEASE_SHA ||
@@ -126,18 +135,34 @@ const nextConfig = {
     NEXT_PUBLIC_CDN_BASE_URL: process.env.NEXT_PUBLIC_CDN_BASE_URL,
     NEXT_PUBLIC_VAPID_PUBLIC_KEY:
       process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY,
+    NEXT_PUBLIC_MIXPANEL_TOKEN: configuredOptionalValue(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN),
   },
 
   async headers() {
+    const cdnUrl = process.env.NEXT_PUBLIC_CDN_BASE_URL;
+    const mediaSources = sources(
+      cdnUrl,
+      supabaseUrl,
+      'https://*.supabase.co',
+      'https://*.supabase.in'
+    );
+    const connectSources = sources(
+      cdnUrl,
+      supabaseUrl,
+      'wss://*.supabase.co',
+      'wss://*.supabase.in',
+      'https://api-js.mixpanel.com',
+      'https://api.mixpanel.com',
+      'https://va.vercel-scripts.com',
+      'https://vitals.vercel-insights.com'
+    );
+
     // CDN-specific cache configuration
     const getCdnHeaders = source => {
-      const cdnUrl = process.env.NEXT_PUBLIC_CDN_BASE_URL;
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-
       return [
         {
           key: 'Content-Security-Policy',
-          value: `default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vitals.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${cdnUrl} ${supabaseUrl} https://*.supabase.co https://*.supabase.in; media-src 'self' blob: ${cdnUrl} ${supabaseUrl} https://*.supabase.co https://*.supabase.in; font-src 'self' data:; connect-src 'self' ${cdnUrl} ${supabaseUrl} wss://*.supabase.co wss://*.supabase.in https://va.vercel-scripts.com https://vitals.vercel-insights.com; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; worker-src 'self' blob:`,
+          value: `default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vitals.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${mediaSources}; media-src 'self' blob: ${mediaSources}; font-src 'self' data:; connect-src 'self' ${connectSources}; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; worker-src 'self' blob:`,
         },
         { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
         { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -227,8 +252,7 @@ const nextConfig = {
           { key: 'X-Frame-Options', value: 'ALLOWALL' },
           {
             key: 'Content-Security-Policy',
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${cdnUrl} ${supabaseUrl}; media-src 'self' blob: ${cdnUrl} ${supabaseUrl}; connect-src 'self' ${cdnUrl} ${supabaseUrl}; frame-ancestors *",
+            value: `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${mediaSources}; media-src 'self' blob: ${mediaSources}; connect-src 'self' ${connectSources}; frame-ancestors *`,
           },
           { key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=3600' },
         ],

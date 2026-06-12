@@ -61,3 +61,11 @@ jobs:
           configPath: .github/lighthouse/config.json
           uploadArtifacts: true
           temporaryPublicStorage: true
+
+      - name: Install Playwright Chromium
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run critical accessibility and mobile gates
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
+        run: npm run quality:e2e

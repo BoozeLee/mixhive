@@ -145,9 +145,8 @@ const MessageThreadPage = lazy(() =>
 import { SessionFab } from './components/SessionFab';
 
 function AnimatedRoutes() {
-  const location = useLocation();
   return (
-    <div key={location.pathname} className="page-enter">
+    <div className="page-enter">
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
@@ -374,6 +373,15 @@ function AnimatedRoutes() {
   );
 }
 
+function RouteRecoveringRoutes() {
+  const location = useLocation();
+  return (
+    <ErrorBoundary key={location.pathname}>
+      <AnimatedRoutes />
+    </ErrorBoundary>
+  );
+}
+
 function OnboardingGate({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth();
   const location = useLocation();
@@ -411,13 +419,11 @@ export default function App() {
               <div className="app-body">
                 <DesktopSidebar />
                 <main id="main-content" className="mixhive-main app-main">
-                  <ErrorBoundary>
-                    <Suspense fallback={<RoutePending />}>
-                      <OnboardingGate>
-                        <AnimatedRoutes />
-                      </OnboardingGate>
-                    </Suspense>
-                  </ErrorBoundary>
+                  <Suspense fallback={<RoutePending />}>
+                    <OnboardingGate>
+                      <RouteRecoveringRoutes />
+                    </OnboardingGate>
+                  </Suspense>
                 </main>
               </div>
               <GlobalPlayer />

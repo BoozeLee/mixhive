@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from './hive/HiveButton';
+import { Avatar } from './ui/Avatar';
 import toast from 'react-hot-toast';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -19,26 +20,36 @@ interface ChatMessage {
   timestamp: string;
 }
 
+interface Participant {
+  username: string;
+  avatar_url: string | null;
+}
+
+interface Stem {
+  id: string;
+  name: string;
+  path?: string;
+}
+
+// Stems are audio — reuse the public, owner-scoped audio bucket. Migration 091
+// storage RLS requires the object name's first path segment to equal auth.uid().
+const STEM_BUCKET = 'mix-audio';
+
 export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSessionRoomProps) {
   const { profile } = useAuth();
   const currentUsername = profile?.display_name || profile?.username || 'You';
 
   const [isEnding, setIsEnding] = useState(false);
   const [showEndConfirm, setShowEndConfirm] = useState(false);
-  const [stems, setStems] = useState<Array<{ id: string; name: string }>>([
-    { id: 'stem-1', name: 'kick_techno_128.wav' },
-    { id: 'stem-2', name: 'bass_rumble.wav' },
-  ]);
+  const [stems, setStems] = useState<Stem[]>([]);
+  const [uploadingStems, setUploadingStems] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Realtime state
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([currentUsername]);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      user: 'ArtistX',
-      text: 'Just dropped a new bassline idea',
-      timestamp: new Date().toISOString(),
-    },
+  const [participants, setParticipants] = useState<Participant[]>([
+    { username: currentUsername, avatar_url: profile?.avatar_url ?? null },
   ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -46,6 +57,33 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
   const channelRef = useRef<any>(null);
   const supabaseRef = useRef<any>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Load any stems already attached to the session so re-joiners and the host
+  // converge on the same list.
+  useEffect(() => {
+    if (!sessionId || !isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from('collab_sessions')
+        .select('metadata')
+        .eq('id', sessionId)
+        .single();
+      if (cancelled) return;
+      const stored = (data?.metadata?.stems ?? []) as Array<
+        { name: string; path?: string } | string
+      >;
+      const loaded: Stem[] = stored.map((s, i) =>
+        typeof s === 'string'
+          ? { id: `stem-${i}`, name: s }
+          : { id: `stem-${i}`, name: s.name, path: s.path }
+      );
+      setStems(loaded);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId]);
 
   // Setup Supabase Realtime for presence + chat
   useEffect(() => {
@@ -69,22 +107,31 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
       },
     });
 
-    // Presence: track who is online (real usernames from profile)
+    // Presence: track who is online (real usernames + avatars from profile)
     channel
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState();
-        const remoteUsers = Object.values(state)
+        const present = Object.values(state)
           .flat()
-          .map((p: any) => p.username || 'Anonymous')
-          .filter((u: string) => u !== currentUsername);
-        // Dedup + put local user first for clarity
-        const unique = Array.from(new Set([currentUsername, ...remoteUsers]));
-        setOnlineUsers(unique);
+          .map((p: any) => ({
+            username: p.username || 'Anonymous',
+            avatar_url: p.avatar_url ?? null,
+          })) as Participant[];
+        // Dedup by username, keep the local user first for clarity
+        const byName = new Map<string, Participant>();
+        byName.set(currentUsername, {
+          username: currentUsername,
+          avatar_url: profile?.avatar_url ?? null,
+        });
+        for (const p of present) {
+          if (!byName.has(p.username)) byName.set(p.username, p);
+        }
+        setParticipants(Array.from(byName.values()));
       })
-      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+      .on('presence', { event: 'join' }, ({ newPresences }) => {
         console.log('User joined session:', newPresences);
       })
-      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+      .on('presence', { event: 'leave' }, ({ leftPresences }) => {
         console.log('User left session:', leftPresences);
       })
       // Broadcast: simple chat
@@ -109,9 +156,10 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
         if (status === 'SUBSCRIBED') {
           setIsConnected(true);
 
-          // Track current user presence with real username from profile
+          // Track current user presence with real username + avatar from profile
           await channel.track({
             username: currentUsername,
+            avatar_url: profile?.avatar_url ?? null,
             online_at: new Date().toISOString(),
           });
         }
@@ -129,7 +177,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
       setIsConnected(false);
       setTypingUsers([]);
     };
-  }, [sessionId, currentUsername]);
+  }, [sessionId, currentUsername, profile?.avatar_url]);
 
   const sendMessage = async () => {
     if (!messageInput.trim() || !channelRef.current) return;
@@ -214,44 +262,74 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
     toast('Session not ended', { duration: 1200 });
   };
 
-  const handleAddStem = async () => {
-    // For demo: simulate adding a stem and record it to session metadata
-    // In full version: file input + upload to Storage under `collab-sessions/${sessionId}/`
-    const newStem = {
-      id: `stem-${Date.now()}`,
-      name: `new_stem_${Math.floor(Math.random() * 100)}.wav`,
-    };
-    setStems(prev => [...prev, newStem]);
+  const openFilePicker = () => fileInputRef.current?.click();
 
-    // Record to session metadata so the job processor can see it for inspired_by
-    try {
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured — cannot record stem');
-        return;
+  // Upload real audio stems to owner-scoped storage and record them on the session.
+  const handleStemFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    if (!isSupabaseConfigured) {
+      toast.error('Supabase not configured — cannot upload stems');
+      return;
+    }
+    if (!profile?.id) {
+      toast.error('You must be signed in to upload stems');
+      return;
+    }
+
+    const fileArr = Array.from(files);
+    setUploadingStems(n => n + fileArr.length);
+    const uploaded: Stem[] = [];
+
+    for (const file of fileArr) {
+      try {
+        const ext = file.name.split('.').pop() || 'wav';
+        // Owner-scoped path: migration 091 storage RLS requires the object name's
+        // first path segment to equal auth.uid() (profile.id == auth.uid).
+        const path = `${profile.id}/collab-sessions/${sessionId}/${crypto.randomUUID()}.${ext}`;
+        const { error: uploadErr } = await supabase.storage.from(STEM_BUCKET).upload(path, file);
+        if (uploadErr) throw uploadErr;
+        uploaded.push({ id: path, name: file.name, path });
+      } catch (e) {
+        console.error('Stem upload failed', e);
+        toast.error(`Failed to upload ${file.name}`);
+      } finally {
+        setUploadingStems(n => Math.max(0, n - 1));
       }
+    }
 
+    if (uploaded.length === 0) return;
+
+    setStems(prev => [...prev, ...uploaded]);
+
+    // Persist real stem records to session metadata so the job processor can
+    // generate inspired_by edges, and so re-joiners load the same list.
+    try {
       const { data: currentSession } = await supabase
         .from('collab_sessions')
         .select('metadata')
         .eq('id', sessionId)
         .single();
 
-      const currentStems = currentSession?.metadata?.stems || [];
-      const updatedStems = [...currentStems, newStem.name];
+      const existing = (currentSession?.metadata?.stems ?? []) as Array<{
+        name: string;
+        path?: string;
+      }>;
+      const merged = [...existing, ...uploaded.map(s => ({ name: s.name, path: s.path }))];
 
       await supabase
         .from('collab_sessions')
         .update({
           metadata: {
             ...(currentSession?.metadata || {}),
-            stems: updatedStems,
+            stems: merged,
           },
         })
         .eq('id', sessionId);
 
-      toast.success('Stem added to session (will generate inspired_by on end)');
+      toast.success(`Added ${uploaded.length} stem${uploaded.length > 1 ? 's' : ''}`);
     } catch (e) {
-      console.warn('Could not record stem to metadata', e);
+      console.warn('Could not record stems to metadata', e);
     }
   };
 
@@ -295,18 +373,31 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: space[3] }}>
-          {/* Placeholder participant avatars */}
-          <div style={{ display: 'flex', marginRight: space[2] }}>
-            {[1, 2, 3].map(i => (
+          {/* Live participant avatars (from realtime presence) */}
+          <div style={{ display: 'flex', alignItems: 'center', marginRight: space[2] }}>
+            {participants.slice(0, 5).map((p, i) => (
               <div
-                key={i}
+                key={p.username}
+                title={p.username}
+                style={{
+                  marginLeft: i > 0 ? -8 : 0,
+                  borderRadius: '50%',
+                  border: `2px solid ${colors.surface}`,
+                  display: 'flex',
+                }}
+              >
+                <Avatar src={p.avatar_url} name={p.username} size={28} />
+              </div>
+            ))}
+            {participants.length > 5 && (
+              <div
                 style={{
                   width: 28,
                   height: 28,
                   borderRadius: '50%',
                   background: colors.accentMuted,
                   border: `2px solid ${colors.surface}`,
-                  marginLeft: i > 1 ? -8 : 0,
+                  marginLeft: -8,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -314,9 +405,9 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
                   color: colors.text.primary,
                 }}
               >
-                A{i}
+                +{participants.length - 5}
               </div>
-            ))}
+            )}
           </div>
 
           {showEndConfirm ? (
@@ -383,19 +474,31 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
             }}
           >
             <span>Stems & Assets</span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="audio/*"
+              multiple
+              style={{ display: 'none' }}
+              onChange={e => {
+                handleStemFiles(e.target.files);
+                e.target.value = '';
+              }}
+            />
             <HiveButton
               variant="secondary"
-              onClick={handleAddStem}
+              onClick={openFilePicker}
+              disabled={uploadingStems > 0}
               style={{ fontSize: 12, padding: '4px 10px' }}
             >
-              + Add Stem
+              {uploadingStems > 0 ? `Uploading… (${uploadingStems})` : '+ Add Stem'}
             </HiveButton>
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto', padding: space[3] }}>
-            {stems.length === 0 ? (
+            {stems.length === 0 && uploadingStems === 0 ? (
               <div style={{ color: colors.text.muted, fontSize: fontSize.sm, padding: space[4] }}>
-                No stems yet. Upload or drag files here.
+                No stems yet. Add audio files to share them with the session.
               </div>
             ) : (
               stems.map((stem, index) => (
@@ -412,8 +515,19 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
                     alignItems: 'center',
                   }}
                 >
-                  <span>{stem.name}</span>
-                  <span style={{ color: colors.text.faint, fontSize: 11 }}>Ready</span>
+                  <span
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      marginRight: space[2],
+                    }}
+                  >
+                    {stem.name}
+                  </span>
+                  <span style={{ color: colors.text.faint, fontSize: 11, flexShrink: 0 }}>
+                    Ready
+                  </span>
                 </div>
               ))
             )}
@@ -435,7 +549,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
           >
             <span>Session Chat & Activity</span>
             <span style={{ color: isConnected ? colors.success : colors.text.muted, fontSize: 11 }}>
-              {isConnected ? `${onlineUsers.length} online` : 'Connecting...'}
+              {isConnected ? `${participants.length} online` : 'Connecting...'}
             </span>
           </div>
 
@@ -454,7 +568,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
           >
             {messages.map((msg, index) => (
               <div key={index}>
-                <strong style={{ color: msg.user === 'You' ? colors.accent : '#a5b4fc' }}>
+                <strong style={{ color: msg.user === currentUsername ? colors.accent : '#a5b4fc' }}>
                   {msg.user}:
                 </strong>{' '}
                 {msg.text}

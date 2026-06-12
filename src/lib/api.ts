@@ -344,7 +344,7 @@ export async function getMix(id: string): Promise<Mix | null> {
     .from('mixes')
     .select('*, profiles!mixes_dj_id_fkey(*), genres(name)')
     .eq('id', id)
-    .single();
+    .maybeSingle();
   if (error || !data) return null;
   return {
     ...data,
@@ -1282,7 +1282,7 @@ export async function getBuzz(id: string): Promise<Buzz | null> {
     .from('buzzes')
     .select('*, profiles!buzzes_author_id_fkey(*), mixes!buzzes_attached_mix_id_fkey(*)')
     .eq('id', id)
-    .single();
+    .maybeSingle();
   if (!data) return null;
   const row = data as Record<string, unknown>;
   return {

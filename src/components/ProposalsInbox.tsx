@@ -198,6 +198,21 @@ export function ProposalsInbox({ onCountChange }: ProposalsInboxProps) {
                       {pct}% confidence
                     </span>
                   )}
+                  {metaString(edge.metadata, 'signature') && (
+                    <span
+                      title="Participant set cryptographically signed at session end"
+                      style={{
+                        fontSize: 11,
+                        fontWeight: fontWeight.bold,
+                        color: colors.accent,
+                        background: colors.accentFaint,
+                        padding: '2px 8px',
+                        borderRadius: radius.sm,
+                      }}
+                    >
+                      ✓ Verified
+                    </span>
+                  )}
                 </div>
                 <div
                   style={{

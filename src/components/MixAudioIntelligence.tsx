@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { runStrategicAgent } from '../lib/agents';
 import type { AgentOutput } from '../lib/agents';
@@ -126,7 +127,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         <div>
           <div
             style={{
-              color: '#f0c040',
+              color: colors.accent,
               fontSize: 11,
               fontWeight: 800,
               textTransform: 'uppercase',
@@ -135,7 +136,9 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
           >
             DJ Set Analyzer
           </div>
-          <h2 style={{ margin: '4px 0 0', color: '#eee', fontSize: 17 }}>Audio intelligence</h2>
+          <h2 style={{ margin: '4px 0 0', color: colors.text.primary, fontSize: 17 }}>
+            Audio intelligence
+          </h2>
         </div>
         {isOwner && (
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -144,10 +147,10 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               onClick={analyze}
               disabled={busy}
               style={{
-                border: '1px solid #f0c040',
+                border: `1px solid ${colors.accent}`,
                 borderRadius: 8,
-                background: busy ? '#333' : '#f0c040',
-                color: busy ? '#888' : '#0a0a0a',
+                background: busy ? colors.borderStrong : colors.accent,
+                color: busy ? colors.text.muted : colors.bg,
                 padding: '8px 12px',
                 fontWeight: 800,
                 fontSize: 12,
@@ -163,8 +166,8 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               style={{
                 border: '1px solid rgba(240,192,64,0.5)',
                 borderRadius: 8,
-                background: aiBusy ? '#1a1a1a' : 'transparent',
-                color: aiBusy ? '#555' : '#f0c040',
+                background: aiBusy ? colors.surfaceRaised : 'transparent',
+                color: aiBusy ? colors.text.faintest : colors.accent,
                 padding: '8px 12px',
                 fontWeight: 800,
                 fontSize: 12,
@@ -177,11 +180,11 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         )}
       </div>
 
-      {loading && <p style={{ color: '#777', fontSize: 13 }}>Loading analyzer...</p>}
-      {message && <p style={{ color: '#f0c040', fontSize: 13, lineHeight: 1.5 }}>{message}</p>}
+      {loading && <p style={{ color: colors.text.dim, fontSize: 13 }}>Loading analyzer...</p>}
+      {message && <p style={{ color: colors.accent, fontSize: 13, lineHeight: 1.5 }}>{message}</p>}
 
       {!loading && !feature && !message && (
-        <p style={{ color: '#777', fontSize: 13, lineHeight: 1.5 }}>
+        <p style={{ color: colors.text.dim, fontSize: 13, lineHeight: 1.5 }}>
           No analysis yet. The MVP starts with BPM, key, mood, energy and structure. AudD/Essentia
           tracklisting can plug into this same panel later.
         </p>
@@ -206,7 +209,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               <div
                 key={label}
                 style={{
-                  border: '1px solid #222',
+                  border: `1px solid ${colors.borderSubtle}`,
                   borderRadius: 10,
                   padding: 12,
                   background: 'rgba(0,0,0,0.22)',
@@ -214,7 +217,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               >
                 <div
                   style={{
-                    color: '#666',
+                    color: colors.text.faint,
                     fontSize: 10,
                     textTransform: 'uppercase',
                     fontWeight: 800,
@@ -222,7 +225,14 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                 >
                   {label}
                 </div>
-                <div style={{ color: '#eee', fontSize: 17, fontWeight: 800, marginTop: 4 }}>
+                <div
+                  style={{
+                    color: colors.text.primary,
+                    fontSize: 17,
+                    fontWeight: 800,
+                    marginTop: 4,
+                  }}
+                >
                   {value}
                 </div>
               </div>
@@ -231,7 +241,9 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
 
           {sections.length > 0 && (
             <div style={{ marginTop: 16 }}>
-              <div style={{ color: '#999', fontSize: 12, marginBottom: 8 }}>Structure preview</div>
+              <div style={{ color: colors.text.dimmed, fontSize: 12, marginBottom: 8 }}>
+                Structure preview
+              </div>
               <div style={{ display: 'grid', gap: 6 }}>
                 {sections.map(section => (
                   <div
@@ -241,18 +253,18 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                       gridTemplateColumns: '78px 1fr 54px',
                       gap: 10,
                       alignItems: 'center',
-                      color: '#888',
+                      color: colors.text.muted,
                       fontSize: 12,
                     }}
                   >
-                    <span style={{ color: '#ccc', textTransform: 'capitalize' }}>
+                    <span style={{ color: colors.text.secondary, textTransform: 'capitalize' }}>
                       {section.label}
                     </span>
                     <div
                       style={{
                         height: 6,
                         borderRadius: 999,
-                        background: '#171717',
+                        background: colors.surfaceRaised,
                         overflow: 'hidden',
                       }}
                     >
@@ -260,7 +272,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                         style={{
                           width: `${Math.round(section.energy * 100)}%`,
                           height: '100%',
-                          background: '#f0c040',
+                          background: colors.accent,
                         }}
                       />
                     </div>
@@ -273,17 +285,17 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
 
           {tracks.length > 0 && (
             <div style={{ marginTop: 16 }}>
-              <div style={{ color: '#999', fontSize: 12, marginBottom: 8 }}>
+              <div style={{ color: colors.text.dimmed, fontSize: 12, marginBottom: 8 }}>
                 Recognized tracklist
               </div>
               {tracks.map(track => (
                 <div
                   key={track.id}
                   style={{
-                    color: '#888',
+                    color: colors.text.muted,
                     fontSize: 12,
                     padding: '6px 0',
-                    borderTop: '1px solid #181818',
+                    borderTop: `1px solid ${colors.surfaceRaised}`,
                   }}
                 >
                   {formatTime(track.start_sec)} · {track.artist || 'Unknown'} -{' '}
@@ -293,20 +305,27 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
             </div>
           )}
 
-          <p style={{ margin: '14px 0 0', color: '#555', fontSize: 11, lineHeight: 1.5 }}>
+          <p
+            style={{
+              margin: '14px 0 0',
+              color: colors.text.faintest,
+              fontSize: 11,
+              lineHeight: 1.5,
+            }}
+          >
             Source: {feature.source}. This is a confidence-scored preview, not copyright or
             licensing advice.
           </p>
         </>
       )}
 
-      {aiError && <p style={{ marginTop: 12, color: '#e05', fontSize: 13 }}>{aiError}</p>}
+      {aiError && <p style={{ marginTop: 12, color: colors.danger, fontSize: 13 }}>{aiError}</p>}
 
       {aiAnalysis && aiAnalysis.suggestions.length > 0 && (
         <div style={{ marginTop: 16 }}>
           <div
             style={{
-              color: '#f0c040',
+              color: colors.accent,
               fontSize: 11,
               fontWeight: 800,
               textTransform: 'uppercase',
@@ -321,7 +340,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               <div
                 key={i}
                 style={{
-                  border: '1px solid #222',
+                  border: `1px solid ${colors.borderSubtle}`,
                   borderRadius: 10,
                   padding: '12px 14px',
                   background: 'rgba(240,192,64,0.04)',
@@ -337,7 +356,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                 >
                   <span
                     style={{
-                      color: '#f0c040',
+                      color: colors.accent,
                       fontSize: 11,
                       fontWeight: 700,
                       textTransform: 'uppercase',
@@ -345,20 +364,22 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                   >
                     {s.type.replace(/_/g, ' ')}
                   </span>
-                  <span style={{ color: '#555', fontSize: 11 }}>
+                  <span style={{ color: colors.text.faintest, fontSize: 11 }}>
                     {Math.round(s.confidence * 100)}% confidence
                   </span>
                 </div>
-                <p style={{ margin: 0, color: '#bbb', fontSize: 13, lineHeight: 1.5 }}>
+                <p
+                  style={{ margin: 0, color: colors.text.secondary, fontSize: 13, lineHeight: 1.5 }}
+                >
                   {s.rationale}
                 </p>
               </div>
             ))}
           </div>
           {aiAnalysis.suggestions.length > 3 && (
-            <p style={{ marginTop: 8, color: '#555', fontSize: 12 }}>
+            <p style={{ marginTop: 8, color: colors.text.faintest, fontSize: 12 }}>
               +{aiAnalysis.suggestions.length - 3} more in{' '}
-              <a href="/agents/inbox" style={{ color: '#f0c040' }}>
+              <a href="/agents/inbox" style={{ color: colors.accent }}>
                 agents inbox
               </a>
             </p>
@@ -367,7 +388,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
       )}
 
       {aiAnalysis && aiAnalysis.suggestions.length === 0 && aiAnalysis.status === 'ok' && (
-        <p style={{ marginTop: 12, color: '#555', fontSize: 13 }}>
+        <p style={{ marginTop: 12, color: colors.text.faintest, fontSize: 13 }}>
           AI analysis complete — no specific suggestions at this time.
         </p>
       )}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { Link } from 'react-router-dom';
 import { getProfileBadgesFor } from '../lib/api';
 import type { VerificationBadge } from '../lib/types';
@@ -45,11 +46,11 @@ const CONDITIONS: Record<string, string> = {
 };
 
 const CONDITION_COLORS: Record<string, string> = {
-  new: '#22c55e',
-  like_new: '#86efac',
-  used_good: '#f6c400',
-  used_fair: '#fb923c',
-  for_parts: '#ef4444',
+  new: colors.successStrong,
+  like_new: colors.successStrong,
+  used_good: colors.accentBright,
+  used_fair: colors.warning,
+  for_parts: colors.dangerStrong,
 };
 
 export function GearMarketplace() {
@@ -123,7 +124,7 @@ export function GearMarketplace() {
           >
             GEAR MARKET
           </h1>
-          <p style={{ color: '#888', margin: '4px 0 0', fontSize: 14 }}>
+          <p style={{ color: colors.text.muted, margin: '4px 0 0', fontSize: 14 }}>
             Second-hand DJ &amp; studio equipment from the community
           </p>
         </div>
@@ -131,7 +132,7 @@ export function GearMarketplace() {
           to="/marketplace/gear/new"
           style={{
             background: 'var(--hive-gold)',
-            color: '#000',
+            color: colors.black,
             padding: '10px 20px',
             borderRadius: 8,
             fontWeight: 700,
@@ -176,8 +177,8 @@ export function GearMarketplace() {
             }}
             style={{
               background: 'transparent',
-              border: '1px solid #444',
-              color: '#aaa',
+              border: `1px solid ${colors.borderStrong}`,
+              color: colors.text.dimmed,
               borderRadius: 8,
               padding: '8px 14px',
               cursor: 'pointer',
@@ -191,7 +192,7 @@ export function GearMarketplace() {
 
       {/* Count */}
       {!loading && (
-        <p style={{ color: '#666', fontSize: 13, marginBottom: 16 }}>
+        <p style={{ color: colors.text.faint, fontSize: 13, marginBottom: 16 }}>
           {total} listing{total !== 1 ? 's' : ''}
         </p>
       )}
@@ -200,9 +201,9 @@ export function GearMarketplace() {
       {error && (
         <div
           style={{
-            color: '#ef4444',
+            color: colors.dangerStrong,
             padding: 16,
-            background: '#1a0000',
+            background: colors.dangerBgDeep,
             borderRadius: 8,
             marginBottom: 16,
           }}
@@ -225,7 +226,7 @@ export function GearMarketplace() {
               key={i}
               style={{
                 height: 280,
-                background: '#111',
+                background: colors.surface,
                 borderRadius: 12,
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
@@ -233,7 +234,7 @@ export function GearMarketplace() {
           ))}
         </div>
       ) : listings.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px 20px', color: '#555' }}>
+        <div style={{ textAlign: 'center', padding: '64px 20px', color: colors.text.faintest }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>🎛</div>
           <p style={{ fontSize: 18 }}>No listings found</p>
           <p style={{ fontSize: 14 }}>
@@ -274,7 +275,7 @@ export function GearMarketplace() {
 }
 
 function GearCard({ listing, badges }: { listing: Listing; badges: VerificationBadge[] }) {
-  const condColor = CONDITION_COLORS[listing.condition] ?? '#888';
+  const condColor = CONDITION_COLORS[listing.condition] ?? colors.text.muted;
   const photo = listing.photos[0];
 
   return (
@@ -284,10 +285,10 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
     >
       <div
         style={{
-          background: '#111',
+          background: colors.surface,
           borderRadius: 12,
           overflow: 'hidden',
-          border: '1px solid #1e1e1e',
+          border: `1px solid ${colors.surfaceRaised}`,
           transition: 'border-color 0.2s, transform 0.2s',
         }}
         onMouseEnter={e => {
@@ -295,7 +296,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
           (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
         }}
         onMouseLeave={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = '#1e1e1e';
+          (e.currentTarget as HTMLElement).style.borderColor = colors.surfaceRaised;
           (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
         }}
       >
@@ -303,7 +304,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
         <div
           style={{
             aspectRatio: '4/3',
-            background: '#0a0a0a',
+            background: colors.bg,
             overflow: 'hidden',
             position: 'relative',
           }}
@@ -322,7 +323,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '100%',
-                color: '#333',
+                color: colors.borderStrong,
                 fontSize: 40,
               }}
             >
@@ -334,7 +335,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
               position: 'absolute',
               top: 8,
               right: 8,
-              background: '#000a',
+              background: colors.black,
               color: condColor,
               border: `1px solid ${condColor}44`,
               borderRadius: 6,
@@ -351,7 +352,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
         <div style={{ padding: '12px 14px' }}>
           <p
             style={{
-              color: '#888',
+              color: colors.text.muted,
               fontSize: 11,
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
@@ -362,7 +363,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
           </p>
           <h3
             style={{
-              color: '#fff',
+              color: colors.white,
               fontSize: 15,
               fontWeight: 600,
               margin: '0 0 8px',
@@ -379,7 +380,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
             <span style={{ color: 'var(--hive-gold)', fontSize: 18, fontWeight: 700 }}>
               €{listing.price.toLocaleString()}
             </span>
-            <span style={{ color: '#555', fontSize: 12 }}>
+            <span style={{ color: colors.text.faintest, fontSize: 12 }}>
               {listing.location_city}
               {listing.location_country ? `, ${listing.location_country}` : ''}
             </span>
@@ -396,9 +397,9 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
 }
 
 const selectStyle: React.CSSProperties = {
-  background: '#111',
-  border: '1px solid #2a2a2a',
-  color: '#ccc',
+  background: colors.surface,
+  border: `1px solid ${colors.borderStrong}`,
+  color: colors.text.secondary,
   borderRadius: 8,
   padding: '8px 12px',
   fontSize: 13,
@@ -407,8 +408,8 @@ const selectStyle: React.CSSProperties = {
 
 const loadMoreBtnStyle: React.CSSProperties = {
   background: 'transparent',
-  border: '1px solid #333',
-  color: '#ccc',
+  border: `1px solid ${colors.borderStrong}`,
+  color: colors.text.secondary,
   padding: '12px 32px',
   borderRadius: 8,
   cursor: 'pointer',

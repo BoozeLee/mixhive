@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { colors } from '../styles/tokens';
 import { usePlayer } from '../lib/playerStore';
 import { PlayerQueue } from './PlayerQueue';
 
@@ -67,8 +68,8 @@ export function GlobalPlayer() {
           bottom: 'var(--mixhive-player-bottom, 0px)',
           left: 0,
           right: 0,
-          background: '#0f0f0f',
-          borderTop: '1px solid #1a1a2e',
+          background: colors.surfaceMuted,
+          borderTop: `1px solid ${colors.surfaceHover}`,
           padding: '6px 12px',
           display: 'flex',
           alignItems: 'center',
@@ -84,12 +85,12 @@ export function GlobalPlayer() {
             flexShrink: 0,
             background: currentTrack.artworkUrl
               ? `url(${currentTrack.artworkUrl}) center/cover`
-              : 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+              : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.accentFaint})`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12,
-            color: '#f0c04044',
+            color: colors.accentMuted,
           }}
         >
           {!currentTrack.artworkUrl && '♪'}
@@ -99,7 +100,7 @@ export function GlobalPlayer() {
             style={{
               fontSize: 12,
               fontWeight: 600,
-              color: '#eee',
+              color: colors.text.primary,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -115,8 +116,8 @@ export function GlobalPlayer() {
             height: 28,
             borderRadius: '50%',
             border: 'none',
-            background: '#f0c040',
-            color: '#0a0a0a',
+            background: colors.accent,
+            color: colors.bg,
             fontSize: 12,
             cursor: 'pointer',
             display: 'flex',
@@ -132,7 +133,7 @@ export function GlobalPlayer() {
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#555',
+            color: colors.text.faintest,
             fontSize: 14,
             cursor: 'pointer',
             padding: 2,
@@ -155,8 +156,8 @@ export function GlobalPlayer() {
           bottom: 'var(--mixhive-player-bottom, 0px)',
           left: 0,
           right: 0,
-          background: '#0f0f0f',
-          borderTop: '1px solid #1a1a2e',
+          background: colors.surfaceMuted,
+          borderTop: `1px solid ${colors.surfaceHover}`,
           padding: '8px 16px',
           display: 'flex',
           alignItems: 'center',
@@ -173,12 +174,12 @@ export function GlobalPlayer() {
             flexShrink: 0,
             background: currentTrack.artworkUrl
               ? `url(${currentTrack.artworkUrl}) center/cover`
-              : 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+              : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.accentFaint})`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 16,
-            color: '#f0c04044',
+            color: colors.accentMuted,
           }}
         >
           {!currentTrack.artworkUrl && '♪'}
@@ -190,7 +191,7 @@ export function GlobalPlayer() {
             style={{
               fontSize: 13,
               fontWeight: 600,
-              color: '#eee',
+              color: colors.text.primary,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -198,7 +199,7 @@ export function GlobalPlayer() {
           >
             {currentTrack.title}
           </div>
-          <div style={{ fontSize: 11, color: '#888' }}>{currentTrack.djName}</div>
+          <div style={{ fontSize: 11, color: colors.text.muted }}>{currentTrack.djName}</div>
         </div>
 
         {/* Prev / Play-Pause / Next */}
@@ -208,7 +209,7 @@ export function GlobalPlayer() {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#888',
+              color: colors.text.muted,
               fontSize: 14,
               cursor: 'pointer',
               padding: '4px 6px',
@@ -225,8 +226,8 @@ export function GlobalPlayer() {
               height: 34,
               borderRadius: '50%',
               border: 'none',
-              background: '#f0c040',
-              color: '#0a0a0a',
+              background: colors.accent,
+              color: colors.bg,
               fontSize: 14,
               cursor: 'pointer',
               display: 'flex',
@@ -242,7 +243,7 @@ export function GlobalPlayer() {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#888',
+              color: colors.text.muted,
               fontSize: 14,
               cursor: 'pointer',
               padding: '4px 6px',
@@ -268,7 +269,7 @@ export function GlobalPlayer() {
             onKeyDown={handleSeekKey}
             style={{
               height: 3,
-              background: '#222',
+              background: colors.borderSubtle,
               borderRadius: 2,
               cursor: 'pointer',
               position: 'relative',
@@ -285,7 +286,7 @@ export function GlobalPlayer() {
               style={{
                 height: '100%',
                 width: duration ? `${(currentTime / duration) * 100}%` : '0%',
-                background: '#f0c040',
+                background: colors.accent,
                 borderRadius: 2,
                 transition: 'width 0.1s linear',
               }}
@@ -296,7 +297,7 @@ export function GlobalPlayer() {
               display: 'flex',
               justifyContent: 'space-between',
               fontSize: 10,
-              color: '#555',
+              color: colors.text.faintest,
               marginTop: 2,
             }}
           >
@@ -312,7 +313,7 @@ export function GlobalPlayer() {
             style={{
               background: 'transparent',
               border: 'none',
-              color: muted ? '#f55' : '#888',
+              color: muted ? colors.danger : colors.text.muted,
               fontSize: 14,
               cursor: 'pointer',
               padding: 2,
@@ -328,7 +329,7 @@ export function GlobalPlayer() {
             step={0.05}
             value={muted ? 0 : volume}
             onChange={e => setVolume(parseFloat(e.target.value))}
-            style={{ width: 60, height: 3, accentColor: '#f0c040' }}
+            style={{ width: 60, height: 3, accentColor: colors.accent }}
             title="Volume"
           />
         </div>
@@ -340,7 +341,7 @@ export function GlobalPlayer() {
             style={{
               background: 'transparent',
               border: 'none',
-              color: showQueue ? '#f0c040' : '#888',
+              color: showQueue ? colors.accent : colors.text.muted,
               fontSize: 13,
               cursor: 'pointer',
               padding: 4,
@@ -357,7 +358,7 @@ export function GlobalPlayer() {
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#555',
+            color: colors.text.faintest,
             fontSize: 12,
             cursor: 'pointer',
             padding: 2,
@@ -373,7 +374,7 @@ export function GlobalPlayer() {
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#555',
+            color: colors.text.faintest,
             cursor: 'pointer',
             fontSize: 16,
             padding: 2,

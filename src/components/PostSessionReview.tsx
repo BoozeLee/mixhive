@@ -11,6 +11,7 @@ interface ProposedUpdate {
   title: string;
   description: string;
   participants?: string[];
+  verified?: boolean;
 }
 
 interface PostSessionReviewProps {
@@ -52,6 +53,7 @@ export function PostSessionReview({
             title: `${edge.edge_type} with other participant(s)`,
             description: `Collaboration edge created automatically when the session "${sessionTitle}" ended.`,
             participants: edge.metadata?.participants,
+            verified: Boolean(edge.metadata?.signature),
           }));
           setProposedUpdates(formatted);
         } else setProposedUpdates([]);
@@ -161,8 +163,32 @@ export function PostSessionReview({
                   }}
                 >
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: fontWeight.medium, marginBottom: 4 }}>
+                    <div
+                      style={{
+                        fontWeight: fontWeight.medium,
+                        marginBottom: 4,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        flexWrap: 'wrap',
+                      }}
+                    >
                       {update.title}
+                      {update.verified && (
+                        <span
+                          title="Participant set cryptographically signed at session end"
+                          style={{
+                            fontSize: 11,
+                            fontWeight: fontWeight.bold,
+                            color: colors.accent,
+                            background: colors.accentFaint,
+                            padding: '2px 8px',
+                            borderRadius: radius.sm,
+                          }}
+                        >
+                          ✓ Verified co-production
+                        </span>
+                      )}
                     </div>
                     <div
                       style={{

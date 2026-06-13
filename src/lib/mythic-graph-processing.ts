@@ -5,6 +5,7 @@ import {
   mark_mythic_graph_job_complete,
   mark_mythic_graph_job_failed,
 } from './database-queries';
+import { computeCollabEdgeSignature } from './collabSignature';
 
 // ============================================================================
 // Mythic Graph Processing Worker
@@ -333,6 +334,15 @@ export class MythicGraphProcessingWorker {
     const profileIds = participants.map(p => p.profile_id);
     const created: any[] = [];
 
+    // Sign the (DB-authoritative) participant set so each collab_with edge carries a
+    // server-minted attestation. mythic_edges has no client write policy, so a present
+    // signature proves the edge came from this trusted job. Same payload for every pair.
+    const endedAt = new Date().toISOString();
+    const signingSecret = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const collabSig = signingSecret
+      ? computeCollabEdgeSignature(profileIds, session_id, endedAt, signingSecret)
+      : null;
+
     // 2.5 Inspired_by from stems (if any were added during session)
     const stems = (session as any).metadata?.stems || [];
     if (stems.length > 0) {
@@ -447,6 +457,7 @@ export class MythicGraphProcessingWorker {
               generated_by: 'collab_session_post_process',
               created_at: new Date().toISOString(),
               status: 'proposed', // <-- Key field for review flow
+              ...(collabSig ?? {}), // signature + signed_at + participant_count (when secret set)
             },
           },
           { onConflict: 'from_node_id,to_node_id,edge_type' }

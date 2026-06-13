@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import {
   getPlaylistsByUser,
   createPlaylist,
@@ -80,9 +81,9 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
         aria-modal="true"
         aria-labelledby="add-to-playlist-title"
         style={{
-          background: '#111',
+          background: colors.surface,
           borderRadius: 12,
-          border: '1px solid #222',
+          border: `1px solid ${colors.borderSubtle}`,
           padding: 24,
           width: '90%',
           maxWidth: 400,
@@ -101,7 +102,7 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
         >
           <h3
             id="add-to-playlist-title"
-            style={{ fontSize: 16, fontWeight: 600, color: '#eee', margin: 0 }}
+            style={{ fontSize: 16, fontWeight: 600, color: colors.text.primary, margin: 0 }}
           >
             Add to Playlist
           </h3>
@@ -111,7 +112,7 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#666',
+              color: colors.text.faint,
               fontSize: 20,
               cursor: 'pointer',
               padding: 4,
@@ -131,9 +132,9 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
             placeholder="New playlist name..."
             style={{
               flex: 1,
-              background: '#0a0a0a',
-              border: '1px solid #222',
-              color: '#eee',
+              background: colors.bg,
+              border: `1px solid ${colors.borderSubtle}`,
+              color: colors.text.primary,
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: 13,
@@ -143,8 +144,8 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
             onClick={handleCreate}
             disabled={creating || !newTitle.trim()}
             style={{
-              background: '#f0c040',
-              color: '#0a0a0a',
+              background: colors.accent,
+              color: colors.bg,
               border: 'none',
               borderRadius: 6,
               padding: '8px 14px',
@@ -159,11 +160,11 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 20, color: '#666', fontSize: 13 }}>
+          <div style={{ textAlign: 'center', padding: 20, color: colors.text.faint, fontSize: 13 }}>
             Loading...
           </div>
         ) : playlists.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 20, color: '#666', fontSize: 13 }}>
+          <div style={{ textAlign: 'center', padding: 20, color: colors.text.faint, fontSize: 13 }}>
             No playlists yet. Create one above.
           </div>
         ) : (
@@ -179,10 +180,10 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
                     alignItems: 'center',
                     gap: 12,
                     padding: '10px 12px',
-                    background: inPlaylist ? '#1a1a2e' : 'transparent',
-                    border: `1px solid ${inPlaylist ? '#f0c04044' : '#222'}`,
+                    background: inPlaylist ? colors.surfaceHover : 'transparent',
+                    border: `1px solid ${inPlaylist ? colors.accentMuted : colors.borderSubtle}`,
                     borderRadius: 8,
-                    color: '#ccc',
+                    color: colors.text.secondary,
                     cursor: 'pointer',
                     fontSize: 13,
                     textAlign: 'left',
@@ -194,12 +195,12 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
                       width: 18,
                       height: 18,
                       borderRadius: 4,
-                      background: inPlaylist ? '#f0c040' : 'transparent',
-                      border: `2px solid ${inPlaylist ? '#f0c040' : '#444'}`,
+                      background: inPlaylist ? colors.accent : 'transparent',
+                      border: `2px solid ${inPlaylist ? colors.accent : colors.borderStrong}`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#0a0a0a',
+                      color: colors.bg,
                       fontSize: 12,
                       fontWeight: 700,
                       flexShrink: 0,
@@ -208,7 +209,7 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
                     {inPlaylist && '✓'}
                   </span>
                   <span style={{ flex: 1 }}>{p.title}</span>
-                  <span style={{ color: '#555', fontSize: 11 }}>{p.mix_count}</span>
+                  <span style={{ color: colors.text.faintest, fontSize: 11 }}>{p.mix_count}</span>
                 </button>
               );
             })}

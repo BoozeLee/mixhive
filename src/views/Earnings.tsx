@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { supabase } from '../lib/supabase';
 
 interface ConnectStatus {
@@ -152,16 +153,16 @@ export function Earnings() {
       >
         EARNINGS
       </h1>
-      <p style={{ color: '#888', margin: '4px 0 24px', fontSize: 14 }}>
+      <p style={{ color: colors.text.muted, margin: '4px 0 24px', fontSize: 14 }}>
         Your marketplace payouts — gear sales and agent packages.
       </p>
 
       {error && (
         <div
           style={{
-            color: '#ef4444',
+            color: colors.dangerStrong,
             padding: 16,
-            background: '#1a0000',
+            background: colors.dangerBgDeep,
             borderRadius: 8,
             marginBottom: 16,
           }}
@@ -173,20 +174,20 @@ export function Earnings() {
       {/* Payout account status */}
       <div style={cardStyle}>
         {loading && !status ? (
-          <p style={{ color: '#666' }}>Loading payout status…</p>
+          <p style={{ color: colors.text.faint }}>Loading payout status…</p>
         ) : status?.payouts_enabled ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ color: '#22c55e', fontSize: 20 }}>✓</span>
-            <span style={{ color: '#ccc' }}>
+            <span style={{ color: colors.successStrong, fontSize: 20 }}>✓</span>
+            <span style={{ color: colors.text.secondary }}>
               Payouts active — you can receive marketplace earnings.
             </span>
           </div>
         ) : (
           <div>
-            <p style={{ color: '#fff', fontWeight: 600, margin: '0 0 6px' }}>
+            <p style={{ color: colors.white, fontWeight: 600, margin: '0 0 6px' }}>
               Set up payouts to get paid
             </p>
-            <p style={{ color: '#888', fontSize: 13, margin: '0 0 14px' }}>
+            <p style={{ color: colors.text.muted, fontSize: 13, margin: '0 0 14px' }}>
               {status?.onboarded
                 ? 'Your Stripe account needs a few more details before payouts can be enabled.'
                 : 'Connect a Stripe account to sell gear and receive agent-package earnings.'}
@@ -212,19 +213,26 @@ export function Earnings() {
         }}
       >
         <Stat label="Paid out" value={paidTotals} accent="var(--hive-gold)" />
-        <Stat label="Pending escrow" value={pendingTotals} accent="#fb923c" />
-        <Stat label="Held (set up payouts)" value={heldTotals} accent="#888" />
+        <Stat label="Pending escrow" value={pendingTotals} accent={colors.warning} />
+        <Stat label="Held (set up payouts)" value={heldTotals} accent={colors.text.muted} />
       </div>
 
       {/* History */}
-      <h2 style={{ fontSize: 16, color: '#ccc', margin: '32px 0 12px', letterSpacing: '0.04em' }}>
+      <h2
+        style={{
+          fontSize: 16,
+          color: colors.text.secondary,
+          margin: '32px 0 12px',
+          letterSpacing: '0.04em',
+        }}
+      >
         Payout history
       </h2>
       {loading ? (
         <div
           style={{
             height: 160,
-            background: '#111',
+            background: colors.surface,
             borderRadius: 12,
             animation: 'pulse 1.5s ease-in-out infinite',
           }}
@@ -234,8 +242,8 @@ export function Earnings() {
           style={{
             textAlign: 'center',
             padding: '48px 20px',
-            color: '#555',
-            background: '#0c0c0c',
+            color: colors.text.faintest,
+            background: colors.surfaceMuted,
             borderRadius: 12,
           }}
         >
@@ -243,10 +251,16 @@ export function Earnings() {
           <p>No payouts yet. Sales and agent purchases will appear here.</p>
         </div>
       ) : (
-        <div style={{ overflowX: 'auto', border: '1px solid #1e1e1e', borderRadius: 12 }}>
+        <div
+          style={{
+            overflowX: 'auto',
+            border: `1px solid ${colors.surfaceRaised}`,
+            borderRadius: 12,
+          }}
+        >
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
-              <tr style={{ color: '#888', textAlign: 'left' }}>
+              <tr style={{ color: colors.text.muted, textAlign: 'left' }}>
                 <th style={th}>Date</th>
                 <th style={th}>Source</th>
                 <th style={th}>Gross</th>
@@ -257,7 +271,13 @@ export function Earnings() {
             </thead>
             <tbody>
               {ledger.map(row => (
-                <tr key={row.id} style={{ borderTop: '1px solid #161616', color: '#ccc' }}>
+                <tr
+                  key={row.id}
+                  style={{
+                    borderTop: `1px solid ${colors.surfaceRaised}`,
+                    color: colors.text.secondary,
+                  }}
+                >
                   <td style={td}>{new Date(row.created_at).toLocaleDateString()}</td>
                   <td style={td}>{row.source_type === 'gear' ? 'Gear sale' : 'Agent package'}</td>
                   <td style={td}>€{Number(row.gross_amount).toFixed(2)}</td>
@@ -270,10 +290,10 @@ export function Earnings() {
                       style={{
                         color:
                           row.status === 'transferred'
-                            ? '#22c55e'
+                            ? colors.successStrong
                             : row.status === 'held'
-                              ? '#fb923c'
-                              : '#888',
+                              ? colors.warning
+                              : colors.text.muted,
                       }}
                     >
                       {row.status}
@@ -294,7 +314,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent: 
     <div style={cardStyle}>
       <p
         style={{
-          color: '#888',
+          color: colors.text.muted,
           fontSize: 12,
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
@@ -309,15 +329,15 @@ function Stat({ label, value, accent }: { label: string; value: string; accent: 
 }
 
 const cardStyle: React.CSSProperties = {
-  background: '#0c0c0c',
-  border: '1px solid #1e1e1e',
+  background: colors.surfaceMuted,
+  border: `1px solid ${colors.surfaceRaised}`,
   borderRadius: 12,
   padding: 18,
 };
 
 const primaryBtn: React.CSSProperties = {
   background: 'var(--hive-gold)',
-  color: '#000',
+  color: colors.black,
   border: 'none',
   padding: '10px 20px',
   borderRadius: 8,

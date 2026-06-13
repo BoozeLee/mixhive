@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getMix, updateMix, deleteMix } from '../lib/api';
@@ -135,23 +136,29 @@ export function EditMix() {
 
   if (loading || !mix) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px 20px', color: '#666' }}>Loading...</div>
+      <div style={{ textAlign: 'center', padding: '40px 20px', color: colors.text.faint }}>
+        Loading...
+      </div>
     );
   }
 
   if (error) {
-    return <div style={{ textAlign: 'center', padding: '40px 20px', color: '#f55' }}>{error}</div>;
+    return (
+      <div style={{ textAlign: 'center', padding: '40px 20px', color: colors.danger }}>{error}</div>
+    );
   }
 
   return (
     <div style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#eee', marginBottom: 24 }}>Edit Mix</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, marginBottom: 24 }}>
+        Edit Mix
+      </h1>
 
       {uploadError && (
         <div
           style={{
-            background: '#2a1010',
-            color: '#f55',
+            background: colors.dangerBg,
+            color: colors.danger,
             padding: '10px 14px',
             borderRadius: 8,
             fontSize: 13,
@@ -201,7 +208,7 @@ export function EditMix() {
             alignItems: 'center',
             gap: 8,
             cursor: 'pointer',
-            color: '#ccc',
+            color: colors.text.secondary,
             fontSize: 13,
           }}
         >
@@ -215,7 +222,7 @@ export function EditMix() {
         </label>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>
+          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
             Platform Links (optional)
           </legend>
           <div style={{ marginTop: 8 }}>
@@ -252,7 +259,9 @@ export function EditMix() {
         </fieldset>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Tracklist</legend>
+          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+            Tracklist
+          </legend>
           <div style={{ marginTop: 8 }}>
             {tracklist.map((track, index) => (
               <div
@@ -305,8 +314,8 @@ export function EditMix() {
                     setTracklist(list);
                   }}
                   style={{
-                    background: '#2a1010',
-                    color: '#f55',
+                    background: colors.dangerBg,
+                    color: colors.danger,
                     border: 'none',
                     borderRadius: 4,
                     padding: '4px 8px',
@@ -323,9 +332,9 @@ export function EditMix() {
                 type="button"
                 onClick={() => setTracklist([...tracklist, { artist: '', title: '' }])}
                 style={{
-                  background: '#1a1a2e',
-                  color: '#f0c040',
-                  border: '1px solid #f0c040',
+                  background: colors.surfaceHover,
+                  color: colors.accent,
+                  border: `1px solid ${colors.accent}`,
                   borderRadius: 4,
                   padding: '6px 12px',
                   fontSize: 13,
@@ -345,7 +354,7 @@ export function EditMix() {
             onChange={e => setAudioFile(e.target.files?.[0] || null)}
           />
           {audioFile && (
-            <div style={{ marginTop: 8, fontSize: 12, color: '#888' }}>
+            <div style={{ marginTop: 8, fontSize: 12, color: colors.text.muted }}>
               {audioFile.name} ({Math.round(audioFile.size / 1024)} KB)
             </div>
           )}
@@ -358,7 +367,7 @@ export function EditMix() {
             onChange={e => setArtworkFile(e.target.files?.[0] || null)}
           />
           {artworkFile && (
-            <div style={{ marginTop: 8, fontSize: 12, color: '#888' }}>
+            <div style={{ marginTop: 8, fontSize: 12, color: colors.text.muted }}>
               {artworkFile.name} ({Math.round(artworkFile.size / 1024)} KB)
             </div>
           )}
@@ -371,8 +380,8 @@ export function EditMix() {
             disabled={uploading}
             style={{
               flex: 1,
-              background: '#2a1010',
-              color: '#f55',
+              background: colors.dangerBg,
+              color: colors.danger,
               border: 'none',
               borderRadius: 8,
               padding: '12px 16px',
@@ -389,8 +398,8 @@ export function EditMix() {
             disabled={uploading}
             style={{
               flex: 1,
-              background: '#f0c040',
-              color: '#0a0a0a',
+              background: colors.accent,
+              color: colors.bg,
               border: 'none',
               borderRadius: 8,
               padding: '12px 16px',

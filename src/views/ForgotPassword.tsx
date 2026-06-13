@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { LoginSchema } from '../lib/schemas';
+import { colors } from '../styles/tokens';
 
 export function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -47,13 +48,18 @@ export function ForgotPassword() {
         }}
       >
         <div style={{ width: '100%', maxWidth: 380, textAlign: 'center' }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#eee', marginBottom: 16 }}>
+          <h1
+            style={{ fontSize: 24, fontWeight: 700, color: colors.text.primary, marginBottom: 16 }}
+          >
             Check your email
           </h1>
-          <p style={{ color: '#888', fontSize: 14, marginBottom: 24, lineHeight: 1.5 }}>
+          <p style={{ color: colors.text.muted, fontSize: 14, marginBottom: 24, lineHeight: 1.5 }}>
             If an account with <strong>{email}</strong> exists, we sent a password reset link.
           </p>
-          <Link to="/login" style={{ color: '#f0c040', fontSize: 14, textDecoration: 'underline' }}>
+          <Link
+            to="/login"
+            style={{ color: colors.accent, fontSize: 14, textDecoration: 'underline' }}
+          >
             Back to sign in
           </Link>
         </div>
@@ -77,7 +83,7 @@ export function ForgotPassword() {
           style={{
             fontSize: 24,
             fontWeight: 700,
-            color: '#eee',
+            color: colors.text.primary,
             marginBottom: 8,
             textAlign: 'center',
           }}
@@ -87,7 +93,7 @@ export function ForgotPassword() {
         <p
           style={{
             textAlign: 'center',
-            color: '#888',
+            color: colors.text.muted,
             fontSize: 13,
             marginBottom: 24,
             lineHeight: 1.5,
@@ -99,8 +105,8 @@ export function ForgotPassword() {
         {error && (
           <div
             style={{
-              background: '#2a1010',
-              color: '#f55',
+              background: colors.dangerBg,
+              color: colors.danger,
               padding: '10px 14px',
               borderRadius: 8,
               fontSize: 13,
@@ -124,8 +130,10 @@ export function ForgotPassword() {
           </Button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: 24, color: '#555', fontSize: 13 }}>
-          <Link to="/login" style={{ color: '#f0c040', textDecoration: 'underline' }}>
+        <p
+          style={{ textAlign: 'center', marginTop: 24, color: colors.text.faintest, fontSize: 13 }}
+        >
+          <Link to="/login" style={{ color: colors.accent, textDecoration: 'underline' }}>
             Back to sign in
           </Link>
         </p>

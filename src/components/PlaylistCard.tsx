@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Playlist } from '../lib/types';
+import { colors, withAlpha } from '../styles/tokens';
 
 interface Props {
   playlist: Playlist;
@@ -15,14 +16,14 @@ export function PlaylistCard({ playlist }: Props) {
           display: 'flex',
           gap: 14,
           padding: 14,
-          background: '#111',
+          background: colors.surface,
           borderRadius: 10,
-          border: '1px solid #1a1a2e',
+          border: `1px solid ${colors.border}`,
           transition: 'border-color 0.2s',
           cursor: 'pointer',
         }}
-        onMouseEnter={e => (e.currentTarget.style.borderColor = '#f0c04044')}
-        onMouseLeave={e => (e.currentTarget.style.borderColor = '#1a1a2e')}
+        onMouseEnter={e => (e.currentTarget.style.borderColor = colors.accentMuted)}
+        onMouseLeave={e => (e.currentTarget.style.borderColor = colors.border)}
       >
         <div
           style={{
@@ -31,13 +32,13 @@ export function PlaylistCard({ playlist }: Props) {
             borderRadius: 8,
             background: playlist.artwork_url
               ? `url(${playlist.artwork_url}) center/cover`
-              : 'linear-gradient(135deg, #1a1a2e, #2a1a2e)',
+              : `linear-gradient(135deg, ${colors.border}, ${colors.surfaceTint})`,
             flexShrink: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 24,
-            color: '#f0c04044',
+            color: colors.accentMuted,
           }}
         >
           {!playlist.artwork_url && '♫'}
@@ -47,7 +48,7 @@ export function PlaylistCard({ playlist }: Props) {
             style={{
               fontSize: 15,
               fontWeight: 600,
-              color: '#eee',
+              color: colors.text.primary,
               marginBottom: 4,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -60,7 +61,7 @@ export function PlaylistCard({ playlist }: Props) {
             <div
               style={{
                 fontSize: 12,
-                color: '#666',
+                color: colors.text.faint,
                 marginBottom: 6,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -70,11 +71,13 @@ export function PlaylistCard({ playlist }: Props) {
               {playlist.description}
             </div>
           )}
-          <div style={{ display: 'flex', gap: 12, fontSize: 13, color: '#888' }}>
+          <div style={{ display: 'flex', gap: 12, fontSize: 13, color: colors.text.muted }}>
             <span>
               {playlist.mix_count} {playlist.mix_count === 1 ? 'mix' : 'mixes'}
             </span>
-            {!playlist.is_public && <span style={{ color: '#f0c04066' }}>Private</span>}
+            {!playlist.is_public && (
+              <span style={{ color: withAlpha(colors.accent, 0.4) }}>Private</span>
+            )}
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { useNotifications } from '../lib/notificationStore';
 import { isPushSupported, registerSW, subscribeToPush } from '../lib/pushSubscription';
 import { supabase } from '../lib/supabase';
 import { Icon } from './ui/Icon';
+import { colors } from '../styles/tokens';
 
 const PUSH_DENIED_KEY = 'mixhive_push_denied';
 
@@ -70,7 +71,7 @@ export function NotificationsBell() {
         aria-label="Notifications"
         style={{
           position: 'relative',
-          color: '#a9a390',
+          color: colors.text.dimmed,
           textDecoration: 'none',
           lineHeight: 0,
           display: 'inline-flex',
@@ -83,8 +84,8 @@ export function NotificationsBell() {
               position: 'absolute',
               top: -6,
               right: -8,
-              background: '#f0c040',
-              color: '#0a0a0a',
+              background: colors.accent,
+              color: colors.bg,
               fontSize: 10,
               fontWeight: 700,
               width: 16,
@@ -111,7 +112,7 @@ export function NotificationsBell() {
             background: 'rgba(240,192,64,0.12)',
             border: '1px solid rgba(240,192,64,0.3)',
             borderRadius: 6,
-            color: '#f0c040',
+            color: colors.accent,
             fontSize: 10,
             fontWeight: 700,
             padding: '2px 7px',
@@ -125,11 +126,11 @@ export function NotificationsBell() {
       )}
 
       {pushState === 'requesting' && (
-        <span style={{ marginLeft: 6, fontSize: 10, color: '#666' }}>…</span>
+        <span style={{ marginLeft: 6, fontSize: 10, color: colors.text.faint }}>…</span>
       )}
 
       {pushState === 'granted' && (
-        <span style={{ marginLeft: 6, fontSize: 10, color: '#22c55e' }}>✓</span>
+        <span style={{ marginLeft: 6, fontSize: 10, color: colors.successStrong }}>✓</span>
       )}
     </div>
   );

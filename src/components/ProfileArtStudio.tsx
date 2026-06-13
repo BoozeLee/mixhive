@@ -13,20 +13,11 @@ import {
   PALETTE,
   type ArtRecipe,
 } from '../lib/cosmicFunkPrompt';
-import { colors, space, radius, fontSize, fontWeight } from '../styles/tokens';
+import { colors, space, radius, fontSize, fontWeight, artPalette } from '../styles/tokens';
 import { Input } from './ui/Input';
 import { HiveButton } from './hive/HiveButton';
 
-const SWATCH: Record<string, string> = {
-  'electric purple': '#8b2fd6',
-  'acid green': '#7CFC00',
-  'hot pink': '#ff3d9a',
-  'cosmic blue': '#2b6bff',
-  'bright orange': '#ff7a18',
-  'yellow gold': '#f0c040',
-  magenta: '#d6249f',
-  'blacklight teal': '#1fd3c3',
-};
+const SWATCH: Record<string, string> = { ...artPalette, 'yellow gold': colors.accent };
 
 function Chip({
   label,

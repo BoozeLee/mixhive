@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { LoginSchema, formatZodError } from '../lib/schemas';
 import { getPostAuthDestination } from '../lib/authRouting';
+import { colors } from '../styles/tokens';
 
 export function Login() {
   const [formData, setFormData] = useState({
@@ -70,7 +71,7 @@ export function Login() {
           style={{
             fontSize: 24,
             fontWeight: 700,
-            color: '#eee',
+            color: colors.text.primary,
             marginBottom: 24,
             textAlign: 'center',
           }}
@@ -81,8 +82,8 @@ export function Login() {
         {generalError && (
           <div
             style={{
-              background: '#2a1010',
-              color: '#f55',
+              background: colors.dangerBg,
+              color: colors.danger,
               padding: '10px 14px',
               borderRadius: 8,
               fontSize: 13,
@@ -113,7 +114,7 @@ export function Login() {
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -8 }}>
             <Link
               to="/auth/forgot-password"
-              style={{ color: '#888', fontSize: 12, textDecoration: 'underline' }}
+              style={{ color: colors.text.muted, fontSize: 12, textDecoration: 'underline' }}
             >
               Forgot password?
             </Link>
@@ -129,13 +130,13 @@ export function Login() {
             alignItems: 'center',
             gap: 12,
             margin: '24px 0',
-            color: '#555',
+            color: colors.text.faintest,
             fontSize: 13,
           }}
         >
-          <div style={{ flex: 1, height: 1, background: '#222' }} />
+          <div style={{ flex: 1, height: 1, background: colors.borderSubtle }} />
           or
-          <div style={{ flex: 1, height: 1, background: '#222' }} />
+          <div style={{ flex: 1, height: 1, background: colors.borderSubtle }} />
         </div>
 
         <Button
@@ -152,9 +153,11 @@ export function Login() {
           <span style={{ fontSize: 18 }}>G</span> Sign in with Google
         </Button>
 
-        <p style={{ textAlign: 'center', marginTop: 24, color: '#555', fontSize: 13 }}>
+        <p
+          style={{ textAlign: 'center', marginTop: 24, color: colors.text.faintest, fontSize: 13 }}
+        >
           No account?{' '}
-          <Link to="/register" style={{ color: '#f0c040', textDecoration: 'underline' }}>
+          <Link to="/register" style={{ color: colors.accent, textDecoration: 'underline' }}>
             Join Mix Hive
           </Link>
         </p>

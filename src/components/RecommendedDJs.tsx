@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getRecommendedDJs, follow } from '../lib/api';
 import type { RecommendedDJ } from '../lib/types';
+import { colors } from '../styles/tokens';
 
 interface Props {
   userId: string;
@@ -24,7 +25,7 @@ export function RecommendedDJs({ userId }: Props) {
 
   return (
     <div style={{ marginBottom: 20 }}>
-      <h3 style={{ fontSize: 14, fontWeight: 600, color: '#ccc', marginBottom: 10 }}>
+      <h3 style={{ fontSize: 14, fontWeight: 600, color: colors.text.secondary, marginBottom: 10 }}>
         Recommended DJs
       </h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -36,9 +37,9 @@ export function RecommendedDJs({ userId }: Props) {
               alignItems: 'center',
               gap: 10,
               padding: '10px 12px',
-              background: '#111',
+              background: colors.surface,
               borderRadius: 8,
-              border: '1px solid #1a1a2e',
+              border: `1px solid ${colors.border}`,
             }}
           >
             <Link
@@ -50,7 +51,7 @@ export function RecommendedDJs({ userId }: Props) {
                 flexShrink: 0,
                 background: dj.avatar_url
                   ? `url(${dj.avatar_url}) center/cover`
-                  : 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+                  : `linear-gradient(135deg, ${colors.border}, ${colors.accentFaint})`,
                 display: 'block',
               }}
             />
@@ -58,7 +59,7 @@ export function RecommendedDJs({ userId }: Props) {
               <Link
                 to={`/u/${dj.username}`}
                 style={{
-                  color: '#eee',
+                  color: colors.text.primary,
                   fontSize: 14,
                   fontWeight: 600,
                   textDecoration: 'none',
@@ -74,7 +75,7 @@ export function RecommendedDJs({ userId }: Props) {
                 <div
                   style={{
                     fontSize: 11,
-                    color: '#666',
+                    color: colors.text.faint,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -91,8 +92,8 @@ export function RecommendedDJs({ userId }: Props) {
                 padding: '4px 12px',
                 borderRadius: 6,
                 border: 'none',
-                background: followed[dj.id] ? '#333' : '#f0c040',
-                color: followed[dj.id] ? '#666' : '#0a0a0a',
+                background: followed[dj.id] ? colors.borderStrong : colors.accent,
+                color: followed[dj.id] ? colors.text.faint : colors.bg,
                 fontWeight: 600,
                 fontSize: 12,
                 cursor: followed[dj.id] ? 'default' : 'pointer',

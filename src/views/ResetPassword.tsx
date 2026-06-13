@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { colors } from '../styles/tokens';
 
 export function ResetPassword() {
   const [password, setPassword] = useState('');
@@ -58,10 +59,12 @@ export function ResetPassword() {
         }}
       >
         <div style={{ width: '100%', maxWidth: 380, textAlign: 'center' }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#eee', marginBottom: 16 }}>
+          <h1
+            style={{ fontSize: 24, fontWeight: 700, color: colors.text.primary, marginBottom: 16 }}
+          >
             Password updated
           </h1>
-          <p style={{ color: '#888', fontSize: 14, marginBottom: 24 }}>
+          <p style={{ color: colors.text.muted, fontSize: 14, marginBottom: 24 }}>
             Your password has been reset successfully.
           </p>
           <Button variant="primary" onClick={() => navigate('/login')}>
@@ -89,18 +92,20 @@ export function ResetPassword() {
         }}
       >
         <div style={{ width: '100%', maxWidth: 380, textAlign: 'center' }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#eee', marginBottom: 12 }}>
+          <h1
+            style={{ fontSize: 24, fontWeight: 700, color: colors.text.primary, marginBottom: 12 }}
+          >
             Link expired
           </h1>
-          <p style={{ color: '#888', fontSize: 14, marginBottom: 24, lineHeight: 1.5 }}>
+          <p style={{ color: colors.text.muted, fontSize: 14, marginBottom: 24, lineHeight: 1.5 }}>
             This reset link has expired or has already been used.
           </p>
           <Link
             to="/auth/forgot-password"
             style={{
               display: 'inline-block',
-              background: '#f0c040',
-              color: '#000',
+              background: colors.accent,
+              color: colors.black,
               padding: '10px 24px',
               borderRadius: 8,
               fontWeight: 700,
@@ -131,7 +136,7 @@ export function ResetPassword() {
           style={{
             fontSize: 24,
             fontWeight: 700,
-            color: '#eee',
+            color: colors.text.primary,
             marginBottom: 8,
             textAlign: 'center',
           }}
@@ -141,7 +146,7 @@ export function ResetPassword() {
         <p
           style={{
             textAlign: 'center',
-            color: '#888',
+            color: colors.text.muted,
             fontSize: 13,
             marginBottom: 24,
             lineHeight: 1.5,
@@ -153,8 +158,8 @@ export function ResetPassword() {
         {error && (
           <div
             style={{
-              background: '#2a1010',
-              color: '#f55',
+              background: colors.dangerBg,
+              color: colors.danger,
               padding: '10px 14px',
               borderRadius: 8,
               fontSize: 13,

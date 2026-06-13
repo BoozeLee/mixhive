@@ -186,7 +186,7 @@ export function SceneRadar() {
             border: '1px solid rgba(239,68,68,0.25)',
             borderRadius: radius.md,
             padding: space[4],
-            color: '#f87171',
+            color: colors.danger,
             fontSize: fontSize.sm,
             marginBottom: space[4],
           }}
@@ -214,10 +214,10 @@ export function SceneRadar() {
                 borderRadius: '50%',
                 background:
                   activeOutput.status === 'ok'
-                    ? '#22c55e'
+                    ? colors.successStrong
                     : activeOutput.status === 'error'
-                      ? '#ef4444'
-                      : '#f59e0b',
+                      ? colors.dangerStrong
+                      : colors.warning,
               }}
             />
             <span
@@ -346,7 +346,7 @@ export function SceneRadar() {
                           display: 'inline-block',
                           marginTop: space[2],
                           fontSize: 11,
-                          color: '#f59e0b',
+                          color: colors.warning,
                         }}
                       >
                         ⚡ Requires your approval
@@ -409,10 +409,10 @@ export function SceneRadar() {
                                 : 'rgba(107,114,128,0.15)',
                           color:
                             t.priority === 'high'
-                              ? '#f87171'
+                              ? colors.danger
                               : t.priority === 'medium'
-                                ? '#fbbf24'
-                                : '#9ca3af',
+                                ? colors.warning
+                                : colors.text.dimmed,
                         }}
                       >
                         {t.priority}
@@ -459,10 +459,10 @@ export function SceneRadar() {
                 style={{
                   marginTop: space[2],
                   padding: space[3],
-                  background: '#111',
+                  background: colors.surface,
                   borderRadius: radius.sm,
                   fontSize: 11,
-                  color: '#6b7280',
+                  color: colors.text.faint,
                   overflow: 'auto',
                   maxHeight: 200,
                 }}

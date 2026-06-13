@@ -21,7 +21,7 @@ export function HelpCenter() {
   }, [query]);
 
   return (
-    <div id="main-content" style={{ maxWidth: 980, margin: '0 auto', padding: '32px 16px 96px' }}>
+    <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 16px 96px' }}>
       <header style={{ marginBottom: space[10] }}>
         <SectionHeading
           eyebrow="Help Center"

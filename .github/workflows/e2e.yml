@@ -11,6 +11,14 @@ jobs:
     name: Playwright E2E
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    concurrency:
+      group: e2e-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.E2E_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+      E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+      E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v4
@@ -26,12 +34,11 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run E2E tests against production
-        run: npm run e2e:ci
-        env:
-          PLAYWRIGHT_BASE_URL: https://mixhive.vercel.app
-          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
-          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+      - name: Build checked-out application
+        run: npm run build
+
+      - name: Run E2E tests against checked-out application
+        run: npx playwright test --project='Desktop Chrome' --project='Mobile Chrome'
 
       - name: Upload Playwright report on failure
         uses: actions/upload-artifact@v4

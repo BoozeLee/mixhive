@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Public discovery pages', () => {
   test('landing page hero and CTA visible', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#main-content')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
     // CTA button or "Enter"/"Join" text
     await expect(
       page
@@ -16,7 +16,7 @@ test.describe('Public discovery pages', () => {
 
   test('discover page renders without crash', async ({ page }) => {
     await page.goto('/discover');
-    await expect(page.locator('#main-content')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
     // Either mix cards or a heading
     await expect(
       page.locator('h1, h2, [class*="mix"], [class*="card"], [data-testid*="mix"]').first()
@@ -25,16 +25,18 @@ test.describe('Public discovery pages', () => {
 
   test('search page renders input', async ({ page }) => {
     await page.goto('/search');
-    await expect(page.locator('#main-content')).toBeVisible();
-    await expect(page.locator('#main-content input[placeholder*="Search"]').first()).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
+    await expect(
+      page.getByRole('main').locator('input[placeholder*="Search"]').first()
+    ).toBeVisible();
   });
 
   test('search query does not crash the page', async ({ page }) => {
     await page.goto('/search');
-    const input = page.locator('#main-content input[placeholder*="Search"]').first();
+    const input = page.getByRole('main').locator('input[placeholder*="Search"]').first();
     await input.fill('techno');
     await input.press('Enter');
-    await expect(page.locator('#main-content')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
     // No unhandled error overlay
     await expect(page.locator('text=Something went wrong'))
       .not.toBeVisible({ timeout: 5_000 })
@@ -53,7 +55,7 @@ test.describe('Public discovery pages', () => {
 
   test('hub page renders with 7 tabs', async ({ page }) => {
     await page.goto('/hub');
-    await expect(page.locator('#main-content')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
     const tabs = page.locator('[role="tab"]');
     await expect(tabs).toHaveCount(7);
   });

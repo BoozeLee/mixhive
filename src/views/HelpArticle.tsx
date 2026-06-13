@@ -189,14 +189,14 @@ export function HelpArticle() {
 
   if (!article) {
     return (
-      <div id="main-content" style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
         <NotFoundState what="help article" backTo="/help" backLabel="Back to Help Center" />
       </div>
     );
   }
 
   return (
-    <div id="main-content" style={{ maxWidth: 760, margin: '0 auto', padding: '32px 16px 96px' }}>
+    <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 16px 96px' }}>
       <Link
         to="/help"
         style={{

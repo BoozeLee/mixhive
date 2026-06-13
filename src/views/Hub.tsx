@@ -477,7 +477,6 @@ export function Hub() {
 
   return (
     <div
-      id="main-content"
       style={{
         position: 'relative',
         minHeight: '100vh',

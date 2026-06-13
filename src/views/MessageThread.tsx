@@ -153,7 +153,6 @@ export function MessageThreadPage() {
 
   return (
     <div
-      id="main-content"
       style={{
         maxWidth: 640,
         margin: '0 auto',

@@ -1,9 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { requireE2EAuth } from './helpers/auth';
 
 test.describe('Upload', () => {
+  test.beforeEach(() => requireE2EAuth());
+
   test('upload page renders form', async ({ page }) => {
     await page.goto('/upload');
-    await expect(page.locator('#main-content')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
     // File input, title, genre
     await expect(
       page.locator('input[type="file"], input[accept*="audio"], label:has-text("audio")').first()

@@ -122,7 +122,8 @@ export function Register() {
 
   if (confirmationEmail) {
     return (
-      <main
+      <section
+        aria-label="Registration confirmation"
         style={{
           minHeight: 'calc(100vh - 60px)',
           display: 'grid',
@@ -143,7 +144,7 @@ export function Register() {
             Back to sign in
           </Link>
         </div>
-      </main>
+      </section>
     );
   }
 
@@ -211,7 +212,8 @@ export function Register() {
       </aside>
 
       {/* Right — form */}
-      <main
+      <section
+        aria-label="Create your account"
         className="auth-right"
         style={{
           flex: '1 1 54%',
@@ -374,7 +376,7 @@ export function Register() {
             </Link>
           </p>
         </div>
-      </main>
+      </section>
     </div>
   );
 }

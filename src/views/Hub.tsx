@@ -13,7 +13,7 @@ const TABS = [
     id: 'discover',
     label: 'Discover',
     watermark: 'DISCOVER',
-    accent: '#f0c040',
+    accent: colors.accent,
     dim: withAlpha(colors.accent, 0.09),
   },
   {
@@ -34,7 +34,7 @@ const TABS = [
     id: 'marketplace',
     label: 'Marketplace',
     watermark: 'MARKET',
-    accent: '#f0c040',
+    accent: colors.accent,
     dim: withAlpha(colors.accent, 0.09),
   },
   { id: 'agents', label: 'Agents & AI', watermark: 'AGENTS', accent: '#d4a830', dim: '#d4a83016' },
@@ -42,7 +42,7 @@ const TABS = [
     id: 'profile',
     label: 'Profile',
     watermark: 'PROFILE',
-    accent: '#f0c040',
+    accent: colors.accent,
     dim: withAlpha(colors.accent, 0.09),
   },
   {
@@ -383,7 +383,7 @@ function HubCard({
                 background: locked
                   ? 'rgba(255,255,255,0.04)'
                   : `linear-gradient(135deg, ${accent}1a 0%, ${accent}0d 100%)`,
-                color: locked ? '#3a3830' : accent,
+                color: locked ? colors.borderStrong : accent,
                 flexShrink: 0,
                 filter: locked ? 'none' : `drop-shadow(0 0 6px ${accent}44)`,
               }}
@@ -424,7 +424,7 @@ function HubCard({
               style={{
                 fontSize: fontSize.base,
                 fontWeight: fontWeight.bold,
-                color: locked ? '#3a3830' : colors.text.primary,
+                color: locked ? colors.borderStrong : colors.text.primary,
                 marginBottom: 3,
                 fontFamily: 'var(--font-display, monospace)',
                 letterSpacing: '0.01em',
@@ -435,7 +435,7 @@ function HubCard({
             <div
               style={{
                 fontSize: fontSize.xs,
-                color: locked ? '#2e2c28' : colors.text.muted,
+                color: locked ? colors.borderStrong : colors.text.muted,
                 lineHeight: 1.45,
               }}
             >

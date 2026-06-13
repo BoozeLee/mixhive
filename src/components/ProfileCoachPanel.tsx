@@ -290,8 +290,8 @@ export function ProfileCoachPanel({ compact = false }: ProfileCoachPanelProps) {
             borderRadius: radius.md,
             background: generating
               ? colors.border
-              : `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
-            color: generating ? colors.text.faint : '#050505',
+              : `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent} 58%, ${colors.accentDeep})`,
+            color: generating ? colors.text.faint : colors.black,
             fontWeight: fontWeight.bold,
             fontSize: fontSize.base,
             textTransform: 'uppercase',

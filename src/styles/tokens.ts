@@ -84,6 +84,14 @@ export const artPalette = {
   'blacklight teal': '#1fd3c3',
 } as const;
 
+// Achievement medal-tier colors (content data for scene/leaderboard badges).
+export const tierColors = {
+  platinum: '#d8d8e8',
+  gold: '#e8c14a',
+  silver: '#b8b8c0',
+  bronze: '#b07a4a',
+} as const;
+
 export const space = {
   0: 0,
   1: 2,

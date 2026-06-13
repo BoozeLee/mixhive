@@ -261,8 +261,8 @@ export function Opportunities() {
                 marginTop: space[4],
                 border: `1px solid ${colors.accent}`,
                 borderRadius: radius.lg,
-                background: matchBusy ? '#1a1a1a' : colors.accent,
-                color: matchBusy ? '#555' : '#0a0a0a',
+                background: matchBusy ? colors.surfaceRaised : colors.accent,
+                color: matchBusy ? colors.text.faintest : colors.bg,
                 padding: `${space[2]}px ${space[4]}px`,
                 fontWeight: fontWeight.bold,
                 fontSize: fontSize.xs,
@@ -290,7 +290,7 @@ export function Opportunities() {
             borderRadius: radius.lg,
             background: 'rgba(220,0,80,0.08)',
             border: '1px solid rgba(220,0,80,0.2)',
-            color: '#e05',
+            color: colors.danger,
             fontSize: fontSize.sm,
           }}
         >
@@ -325,7 +325,7 @@ export function Opportunities() {
               <div
                 key={i}
                 style={{
-                  border: `1px solid #222`,
+                  border: `1px solid ${colors.borderSubtle}`,
                   borderRadius: radius.lg,
                   padding: `${space[3]}px ${space[4]}px`,
                   background: 'rgba(0,0,0,0.2)',
@@ -655,7 +655,7 @@ function buttonStyle(variant: 'primary' | 'secondary' | 'ghost'): React.CSSPrope
   return {
     border: `1px solid ${primary ? colors.accent : colors.border}`,
     background: primary
-      ? `linear-gradient(135deg, #ffde4d, ${colors.accent})`
+      ? `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent})`
       : secondary
         ? colors.accentFaint
         : 'transparent',

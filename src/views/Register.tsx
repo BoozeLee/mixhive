@@ -272,7 +272,7 @@ export function Register() {
               padding: `${space[6]}px ${space[8]}px`,
               borderRadius: radius.lg,
               background: colors.text.primary,
-              color: '#1a1a1a',
+              color: colors.surfaceRaised,
               border: 'none',
               fontSize: fontSize.md,
               fontWeight: fontWeight.semibold,

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { hasBlocked, blockUser, unblockUser } from '../lib/api';
+import { colors } from '../styles/tokens';
 
 interface Props {
   targetUserId: string;
@@ -34,8 +35,8 @@ export function BlockButton({ targetUserId, currentUserId }: Props) {
       onClick={toggle}
       style={{
         background: 'transparent',
-        border: `1px solid ${blocked ? '#f0c040' : '#331111'}`,
-        color: blocked ? '#f0c040' : '#f55',
+        border: `1px solid ${blocked ? colors.accent : colors.dangerBg}`,
+        color: blocked ? colors.accent : colors.danger,
         padding: '4px 12px',
         borderRadius: 6,
         cursor: 'pointer',

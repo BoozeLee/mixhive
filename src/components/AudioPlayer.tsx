@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { colors } from '../styles/tokens';
 
 interface Props {
   src: string;
@@ -124,8 +125,8 @@ export function AudioPlayer({ src, onPlay }: Props) {
     <div
       ref={containerRef}
       style={{
-        background: '#0f0f0f',
-        border: '1px solid #1a1a2e',
+        background: colors.surfaceMuted,
+        border: `1px solid ${colors.border}`,
         borderRadius: 10,
         padding: '10px 16px',
         display: 'flex',
@@ -144,8 +145,8 @@ export function AudioPlayer({ src, onPlay }: Props) {
           height: 36,
           borderRadius: '50%',
           border: 'none',
-          background: '#f0c040',
-          color: '#0a0a0a',
+          background: colors.accent,
+          color: colors.bg,
           fontSize: 16,
           cursor: 'pointer',
           display: 'flex',
@@ -170,7 +171,7 @@ export function AudioPlayer({ src, onPlay }: Props) {
             width: '100%',
             height: 8,
             margin: 0,
-            accentColor: '#f0c040',
+            accentColor: colors.accent,
             cursor: 'pointer',
           }}
         />
@@ -179,7 +180,7 @@ export function AudioPlayer({ src, onPlay }: Props) {
             display: 'flex',
             justifyContent: 'space-between',
             fontSize: 11,
-            color: '#666',
+            color: colors.text.faint,
             marginTop: 4,
           }}
         >
@@ -198,7 +199,7 @@ export function AudioPlayer({ src, onPlay }: Props) {
           style={{
             background: 'transparent',
             border: 'none',
-            color: muted ? '#f55' : '#666',
+            color: muted ? colors.danger : colors.text.faint,
             cursor: 'pointer',
             fontSize: 16,
             padding: 4,
@@ -216,8 +217,8 @@ export function AudioPlayer({ src, onPlay }: Props) {
               left: '50%',
               transform: 'translateX(-50%)',
               marginBottom: 8,
-              background: '#1a1a2e',
-              border: '1px solid #333',
+              background: colors.border,
+              border: `1px solid ${colors.borderStrong}`,
               borderRadius: 8,
               padding: '8px 4px',
               display: 'flex',
@@ -236,7 +237,7 @@ export function AudioPlayer({ src, onPlay }: Props) {
               style={{
                 width: 80,
                 height: 4,
-                accentColor: '#f0c040',
+                accentColor: colors.accent,
                 writingMode: 'vertical-lr',
                 direction: 'rtl',
               }}

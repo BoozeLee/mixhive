@@ -1,4 +1,5 @@
 import { usePlayer } from '../lib/playerStore';
+import { colors } from '../styles/tokens';
 
 export function PlayerQueue() {
   const { queue, queueIndex, removeFromQueue, clearQueue } = usePlayer();
@@ -8,8 +9,8 @@ export function PlayerQueue() {
   return (
     <div
       style={{
-        background: '#111',
-        borderTop: '1px solid #1a1a2e',
+        background: colors.surface,
+        borderTop: `1px solid ${colors.border}`,
         maxHeight: 240,
         overflowY: 'auto',
       }}
@@ -20,10 +21,10 @@ export function PlayerQueue() {
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '8px 16px',
-          borderBottom: '1px solid #1a1a2e',
+          borderBottom: `1px solid ${colors.border}`,
         }}
       >
-        <span style={{ fontSize: 12, color: '#888', fontWeight: 600 }}>
+        <span style={{ fontSize: 12, color: colors.text.muted, fontWeight: 600 }}>
           UP NEXT ({queue.length})
         </span>
         <button
@@ -31,7 +32,7 @@ export function PlayerQueue() {
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#555',
+            color: colors.text.faintest,
             fontSize: 11,
             cursor: 'pointer',
           }}
@@ -49,8 +50,8 @@ export function PlayerQueue() {
               alignItems: 'center',
               gap: 10,
               padding: '8px 16px',
-              background: isCurrent ? '#1a1a2e' : 'transparent',
-              borderBottom: '1px solid #0a0a0a',
+              background: isCurrent ? colors.border : 'transparent',
+              borderBottom: `1px solid ${colors.bg}`,
             }}
           >
             <div
@@ -59,12 +60,12 @@ export function PlayerQueue() {
                 height: 32,
                 borderRadius: 4,
                 flexShrink: 0,
-                background: 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+                background: `linear-gradient(135deg, ${colors.border}, ${colors.accentFaint})`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 12,
-                color: '#f0c04044',
+                color: colors.accentMuted,
                 overflow: 'hidden',
               }}
             >
@@ -87,7 +88,7 @@ export function PlayerQueue() {
                 style={{
                   fontSize: 12,
                   fontWeight: 600,
-                  color: isCurrent ? '#f0c040' : '#ccc',
+                  color: isCurrent ? colors.accent : colors.text.secondary,
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
@@ -96,14 +97,14 @@ export function PlayerQueue() {
                 {isCurrent && '▶ '}
                 {track.title}
               </div>
-              <div style={{ fontSize: 11, color: '#666' }}>{track.djName}</div>
+              <div style={{ fontSize: 11, color: colors.text.faint }}>{track.djName}</div>
             </div>
             <button
               onClick={() => removeFromQueue(i)}
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: '#555',
+                color: colors.text.faintest,
                 fontSize: 14,
                 cursor: 'pointer',
                 padding: 2,

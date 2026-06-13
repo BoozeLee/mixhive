@@ -531,8 +531,8 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                 style={{
                   padding: `${space[3]}px ${space[7]}px`,
                   borderRadius: radius.md,
-                  background: `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
-                  color: '#050505',
+                  background: `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent} 58%, ${colors.accentDeep})`,
+                  color: colors.black,
                   fontWeight: fontWeight.bold,
                   fontSize: fontSize.base,
                   textTransform: 'uppercase',
@@ -570,8 +570,8 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                   style={{
                     padding: `${space[3]}px ${space[7]}px`,
                     borderRadius: radius.md,
-                    background: `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
-                    color: '#050505',
+                    background: `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent} 58%, ${colors.accentDeep})`,
+                    color: colors.black,
                     fontWeight: fontWeight.bold,
                     fontSize: fontSize.base,
                     textDecoration: 'none',
@@ -588,8 +588,8 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                   style={{
                     padding: `${space[3]}px ${space[7]}px`,
                     borderRadius: radius.md,
-                    background: `linear-gradient(135deg, #ffde4d, ${colors.accent} 58%, #b96a00)`,
-                    color: '#050505',
+                    background: `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent} 58%, ${colors.accentDeep})`,
+                    color: colors.black,
                     fontWeight: fontWeight.bold,
                     fontSize: fontSize.base,
                     textTransform: 'uppercase',

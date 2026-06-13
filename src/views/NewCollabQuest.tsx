@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { colors, withAlpha } from '../styles/tokens';
 
 const ROLE_TYPES = [
   'dj',
@@ -135,16 +136,16 @@ export function NewCollabQuest() {
       >
         Post a Quest
       </h1>
-      <p style={{ color: '#666', fontSize: 14, marginBottom: 28 }}>
+      <p style={{ color: colors.text.faint, fontSize: 14, marginBottom: 28 }}>
         Define your creative project and the collaborators you need
       </p>
 
       {error && (
         <div
           style={{
-            background: '#1a0000',
-            border: '1px solid #ef444466',
-            color: '#ef4444',
+            background: colors.dangerBgDeep,
+            border: `1px solid ${withAlpha(colors.dangerStrong, 0.4)}`,
+            color: colors.dangerStrong,
             padding: 12,
             borderRadius: 8,
             marginBottom: 16,
@@ -180,7 +181,7 @@ export function NewCollabQuest() {
               />
             </label>
             <div>
-              <p style={{ color: '#aaa', fontSize: 13, marginBottom: 8 }}>
+              <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
                 Goals * (what will be delivered)
               </p>
               {form.goals.map((g, i) => (
@@ -270,21 +271,21 @@ export function NewCollabQuest() {
               <div
                 key={i}
                 style={{
-                  background: '#0d0d0d',
-                  border: '1px solid #1e1e1e',
+                  background: colors.surfaceMuted,
+                  border: `1px solid ${colors.surfaceRaised}`,
                   borderRadius: 10,
                   padding: 16,
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <span style={{ color: '#888', fontSize: 13 }}>Role {i + 1}</span>
+                  <span style={{ color: colors.text.muted, fontSize: 13 }}>Role {i + 1}</span>
                   {roles.length > 1 && (
                     <button
                       onClick={() => removeRole(i)}
                       style={{
                         background: 'none',
                         border: 'none',
-                        color: '#ef4444',
+                        color: colors.dangerStrong,
                         fontSize: 13,
                         cursor: 'pointer',
                       }}
@@ -349,7 +350,7 @@ export function NewCollabQuest() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
-                    color: '#aaa',
+                    color: colors.text.dimmed,
                     fontSize: 13,
                     marginTop: 10,
                     cursor: 'pointer',
@@ -399,7 +400,7 @@ const sectionHeadStyle: React.CSSProperties = {
   fontSize: 13,
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: '#666',
+  color: colors.text.faint,
   marginBottom: 14,
   marginTop: 0,
 };
@@ -407,13 +408,13 @@ const labelStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   gap: 6,
-  color: '#aaa',
+  color: colors.text.dimmed,
   fontSize: 13,
 };
 const inputStyle: React.CSSProperties = {
-  background: '#111',
-  border: '1px solid #2a2a2a',
-  color: '#fff',
+  background: colors.surface,
+  border: `1px solid ${colors.borderStrong}`,
+  color: colors.white,
   borderRadius: 8,
   padding: '10px 12px',
   fontSize: 14,
@@ -421,7 +422,7 @@ const inputStyle: React.CSSProperties = {
 };
 const primaryBtnStyle: React.CSSProperties = {
   background: 'var(--hive-gold)',
-  color: '#000',
+  color: colors.black,
   border: 'none',
   borderRadius: 8,
   fontWeight: 700,
@@ -430,8 +431,8 @@ const primaryBtnStyle: React.CSSProperties = {
 };
 const ghostBtnStyle: React.CSSProperties = {
   background: 'transparent',
-  color: '#666',
-  border: '1px dashed #333',
+  color: colors.text.faint,
+  border: `1px dashed ${colors.borderStrong}`,
   borderRadius: 8,
   padding: '8px 16px',
   fontSize: 13,

@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getMix } from '../lib/api';
 import type { Mix } from '../lib/types';
+import { colors } from '../styles/tokens';
 
 export function EmbedMix() {
   const { id } = useParams<{ id: string }>();
@@ -20,8 +21,8 @@ export function EmbedMix() {
       <div
         role="alert"
         style={{
-          background: '#0a0a0a',
-          color: '#888',
+          background: colors.bg,
+          color: colors.text.muted,
           padding: 20,
           textAlign: 'center',
           fontFamily: 'sans-serif',
@@ -32,7 +33,7 @@ export function EmbedMix() {
           justifyContent: 'center',
         }}
       >
-        <span style={{ color: '#f0c040', fontSize: 18, marginBottom: 4 }} aria-hidden="true">
+        <span style={{ color: colors.accent, fontSize: 18, marginBottom: 4 }} aria-hidden="true">
           ♪
         </span>
         This mix is unavailable
@@ -44,8 +45,8 @@ export function EmbedMix() {
     return (
       <div
         style={{
-          background: '#0a0a0a',
-          color: '#444',
+          background: colors.bg,
+          color: colors.borderStrong,
           padding: 20,
           textAlign: 'center',
           fontFamily: 'sans-serif',
@@ -61,8 +62,8 @@ export function EmbedMix() {
   return (
     <div
       style={{
-        background: '#0a0a0a',
-        color: '#eee',
+        background: colors.bg,
+        color: colors.text.primary,
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         display: 'flex',
         alignItems: 'center',
@@ -79,13 +80,13 @@ export function EmbedMix() {
           borderRadius: 8,
           background: mix.artwork_url
             ? `url(${mix.artwork_url}) center/cover`
-            : 'linear-gradient(135deg, #1a1a2e, #f0c04022)',
+            : `linear-gradient(135deg, ${colors.border}, ${colors.accentFaint})`,
           flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: 18,
-          color: '#f0c04044',
+          color: colors.accentMuted,
         }}
       >
         {!mix.artwork_url && '♪'}
@@ -103,7 +104,7 @@ export function EmbedMix() {
         >
           {mix.title}
         </div>
-        <div style={{ fontSize: 12, color: '#888' }}>
+        <div style={{ fontSize: 12, color: colors.text.muted }}>
           {mix.dj?.display_name || mix.dj?.username}
         </div>
       </div>

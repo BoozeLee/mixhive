@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import * as Sentry from '@sentry/nextjs';
+import { colors } from '../styles/tokens';
 
 interface Props {
   children: ReactNode;
@@ -56,25 +57,27 @@ export class ErrorBoundary extends Component<Props, State> {
           style={{
             maxWidth: 480,
             textAlign: 'center',
-            background: '#111',
-            border: '1px solid #2a1010',
+            background: colors.surface,
+            border: `1px solid ${colors.dangerBg}`,
             borderRadius: 10,
             padding: '32px 24px',
-            color: '#eee',
+            color: colors.text.primary,
           }}
         >
           <div
             aria-hidden="true"
             style={{
               fontSize: 36,
-              color: '#f55',
+              color: colors.danger,
               marginBottom: 8,
             }}
           >
             !
           </div>
           <h1 style={{ margin: '0 0 8px', fontSize: 20 }}>Something went wrong</h1>
-          <p style={{ color: '#999', fontSize: 14, lineHeight: 1.5, margin: '0 0 20px' }}>
+          <p
+            style={{ color: colors.text.dimmed, fontSize: 14, lineHeight: 1.5, margin: '0 0 20px' }}
+          >
             We hit an unexpected error rendering this part of the page. You can try again, or head
             back to the feed.
           </p>
@@ -85,12 +88,12 @@ export class ErrorBoundary extends Component<Props, State> {
                 style={{
                   textAlign: 'left',
                   fontSize: 12,
-                  color: '#ff9999',
-                  background: '#1a0a0a',
+                  color: colors.danger,
+                  background: colors.dangerBgDeep,
                   padding: 12,
                   borderRadius: 6,
                   margin: '0 0 16px',
-                  border: '1px solid #3a1010',
+                  border: `1px solid ${colors.dangerBg}`,
                   wordBreak: 'break-word',
                 }}
               >
@@ -99,15 +102,15 @@ export class ErrorBoundary extends Component<Props, State> {
 
               {error.stack && (
                 <details style={{ marginBottom: 16 }}>
-                  <summary style={{ cursor: 'pointer', color: '#888', fontSize: 12 }}>
+                  <summary style={{ cursor: 'pointer', color: colors.text.muted, fontSize: 12 }}>
                     Show stack trace (click to expand)
                   </summary>
                   <pre
                     style={{
                       textAlign: 'left',
                       fontSize: 10,
-                      color: '#888',
-                      background: '#0a0a0a',
+                      color: colors.text.muted,
+                      background: colors.bg,
                       padding: 8,
                       borderRadius: 4,
                       overflow: 'auto',
@@ -138,8 +141,8 @@ export class ErrorBoundary extends Component<Props, State> {
                   padding: '6px 12px',
                   borderRadius: 4,
                   background: 'transparent',
-                  color: '#ccc',
-                  border: '1px solid #444',
+                  color: colors.text.secondary,
+                  border: `1px solid ${colors.borderStrong}`,
                   fontSize: 12,
                   cursor: 'pointer',
                   marginBottom: 16,
@@ -155,8 +158,8 @@ export class ErrorBoundary extends Component<Props, State> {
               style={{
                 padding: '8px 18px',
                 borderRadius: 6,
-                background: '#f0c040',
-                color: '#0a0a0a',
+                background: colors.accent,
+                color: colors.bg,
                 border: 'none',
                 fontWeight: 600,
                 fontSize: 14,
@@ -171,8 +174,8 @@ export class ErrorBoundary extends Component<Props, State> {
                 padding: '8px 18px',
                 borderRadius: 6,
                 background: 'transparent',
-                color: '#ccc',
-                border: '1px solid #333',
+                color: colors.text.secondary,
+                border: `1px solid ${colors.borderStrong}`,
                 textDecoration: 'none',
                 fontWeight: 600,
                 fontSize: 14,

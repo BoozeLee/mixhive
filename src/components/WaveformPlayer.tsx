@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { colors } from '../styles/tokens';
 
 interface Props {
   src: string;
@@ -84,7 +85,7 @@ export function WaveformPlayer({ src, waveformUrl, onPlay }: Props) {
         const y = (h - barH) / 2;
         const isPlayed = i / samples.length <= progress;
 
-        ctx.fillStyle = isPlayed ? '#f0c040' : '#333';
+        ctx.fillStyle = isPlayed ? colors.accent : colors.borderStrong;
         ctx.fillRect(x, y, barWidth, barH);
       }
 
@@ -143,8 +144,8 @@ export function WaveformPlayer({ src, waveformUrl, onPlay }: Props) {
   return (
     <div
       style={{
-        background: '#0f0f0f',
-        border: '1px solid #1a1a2e',
+        background: colors.surfaceMuted,
+        border: `1px solid ${colors.border}`,
         borderRadius: 10,
         padding: '12px 16px',
       }}
@@ -160,8 +161,8 @@ export function WaveformPlayer({ src, waveformUrl, onPlay }: Props) {
             height: 36,
             borderRadius: '50%',
             border: 'none',
-            background: '#f0c040',
-            color: '#0a0a0a',
+            background: colors.accent,
+            color: colors.bg,
             fontSize: 16,
             cursor: 'pointer',
             display: 'flex',
@@ -190,7 +191,7 @@ export function WaveformPlayer({ src, waveformUrl, onPlay }: Props) {
               display: 'flex',
               justifyContent: 'space-between',
               fontSize: 11,
-              color: '#666',
+              color: colors.text.faint,
               marginTop: 4,
             }}
           >
@@ -209,7 +210,7 @@ export function WaveformPlayer({ src, waveformUrl, onPlay }: Props) {
             style={{
               background: 'transparent',
               border: 'none',
-              color: muted ? '#f55' : '#666',
+              color: muted ? colors.danger : colors.text.faint,
               cursor: 'pointer',
               fontSize: 16,
               padding: 4,
@@ -227,8 +228,8 @@ export function WaveformPlayer({ src, waveformUrl, onPlay }: Props) {
                 left: '50%',
                 transform: 'translateX(-50%)',
                 marginBottom: 8,
-                background: '#1a1a2e',
-                border: '1px solid #333',
+                background: colors.border,
+                border: `1px solid ${colors.borderStrong}`,
                 borderRadius: 8,
                 padding: '8px 4px',
                 zIndex: 10,
@@ -241,7 +242,7 @@ export function WaveformPlayer({ src, waveformUrl, onPlay }: Props) {
                 step={0.05}
                 value={muted ? 0 : volume}
                 onChange={handleVolumeChange}
-                style={{ width: 80, height: 4, accentColor: '#f0c040' }}
+                style={{ width: 80, height: 4, accentColor: colors.accent }}
                 title="Volume"
               />
             </div>

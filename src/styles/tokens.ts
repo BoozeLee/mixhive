@@ -46,7 +46,10 @@ export const colors = {
 
   // Brighter gold (WebGL backdrop / highlight) + raised surface + pure b/w
   accentBright: '#f6c400',
+  accentBrightest: '#ffde4d', // honey-gradient start
+  accentDeep: '#b96a00', // honey/ember-gradient end
   surfaceRaised: '#1e1e1e',
+  surfaceTint: '#2a1a2e', // purple-tinted surface (gradient pair with `border`)
   black: '#000',
   white: '#fff',
 } as const;
@@ -68,6 +71,18 @@ export function withAlpha(hex: string, a: number): string {
   const n = parseInt(f, 16);
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
 }
+
+// Profile art-studio drawing palette — user-facing brush colors (a content
+// data set, not theme tokens). Kept here so no raw hex lives in components.
+export const artPalette = {
+  'electric purple': '#8b2fd6',
+  'acid green': '#7CFC00',
+  'hot pink': '#ff3d9a',
+  'cosmic blue': '#2b6bff',
+  'bright orange': '#ff7a18',
+  magenta: '#d6249f',
+  'blacklight teal': '#1fd3c3',
+} as const;
 
 export const space = {
   0: 0,

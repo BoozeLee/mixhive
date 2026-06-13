@@ -1,0 +1,48 @@
+---
+- name: Install Arch Linux using Hetzner installimage
+  hosts: rescue
+  gather_facts: true
+
+  vars:
+    target_disk: >-
+      {{
+        ansible_facts.devices.keys()
+        | select('match', '^(nvme|sd|vd)')
+        | map('regex_replace', '^(.*)$', '/dev/\1')
+        | first
+      }}
+
+  tasks:
+    - name: Detect the newest Arch installimage archive
+      ansible.builtin.shell: find /root/images -maxdepth 1 -type f -iname 'Archlinux-*.tar.gz' | sort | tail -1
+      register: arch_image_result
+      changed_when: false
+
+    - name: Validate Rescue installer inputs
+      ansible.builtin.assert:
+        that:
+          - target_disk is defined
+          - target_disk | length > 5
+          - arch_image_result.stdout | length > 0
+        fail_msg: Hetzner Rescue did not expose a target disk or Arch installimage archive.
+
+    - name: Store selected Arch image
+      ansible.builtin.set_fact:
+        arch_image: '{{ arch_image_result.stdout }}'
+
+    - name: Render unattended installimage configuration
+      ansible.builtin.template:
+        src: installimage.conf.j2
+        dest: /tmp/mixhive-installimage.conf
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Install Arch Linux
+      ansible.builtin.command:
+        argv:
+          - installimage
+          - -a
+          - -c
+          - /tmp/mixhive-installimage.conf
+      changed_when: true

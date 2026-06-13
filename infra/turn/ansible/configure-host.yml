@@ -1,0 +1,152 @@
+---
+- name: Harden the Arch TURN host
+  hosts: turn
+  gather_facts: false
+
+  pre_tasks:
+    - name: Install Python and host dependencies
+      ansible.builtin.raw: >-
+        pacman -Syu --needed --noconfirm
+        python sudo nftables podman git certbot coturn openssl
+      register: pacman_result
+      changed_when: "'there is nothing to do' not in pacman_result.stdout"
+
+    - name: Gather Arch facts
+      ansible.builtin.setup:
+
+    - name: Require Arch Linux
+      ansible.builtin.assert:
+        that: ansible_facts.distribution == "Archlinux"
+        fail_msg: This playbook supports Arch Linux only.
+
+  tasks:
+    - name: Create administrator account
+      ansible.builtin.user:
+        name: '{{ turn_admin_user }}'
+        groups: wheel
+        append: true
+        create_home: true
+        shell: /bin/bash
+
+    - name: Create administrator SSH directory
+      ansible.builtin.file:
+        path: '/home/{{ turn_admin_user }}/.ssh'
+        state: directory
+        owner: '{{ turn_admin_user }}'
+        group: '{{ turn_admin_user }}'
+        mode: '0700'
+
+    - name: Install administrator SSH key
+      ansible.builtin.copy:
+        content: "{{ turn_admin_public_key }}\n"
+        dest: '/home/{{ turn_admin_user }}/.ssh/authorized_keys'
+        owner: '{{ turn_admin_user }}'
+        group: '{{ turn_admin_user }}'
+        mode: '0600'
+
+    - name: Permit wheel passwordless sudo
+      ansible.builtin.copy:
+        content: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL\n"
+        dest: /etc/sudoers.d/10-wheel
+        owner: root
+        group: root
+        mode: '0440'
+        validate: /usr/sbin/visudo -cf %s
+
+    - name: Enforce key-only SSH
+      ansible.builtin.copy:
+        content: |
+          PasswordAuthentication no
+          KbdInteractiveAuthentication no
+          PermitRootLogin no
+        dest: /etc/ssh/sshd_config.d/10-mixhive.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart SSH
+
+    - name: Install nftables policy
+      ansible.builtin.template:
+        src: nftables.conf.j2
+        dest: /etc/nftables.conf
+        owner: root
+        group: root
+        mode: '0600'
+      notify: Restart nftables
+
+    - name: Create required infrastructure directories
+      ansible.builtin.file:
+        path: '{{ item.path }}'
+        state: directory
+        owner: root
+        group: root
+        mode: '{{ item.mode }}'
+      loop:
+        - path: /etc/mixhive
+          mode: '0700'
+        - path: /etc/containers/systemd
+          mode: '0755'
+
+    - name: Check TURN environment
+      ansible.builtin.stat:
+        path: /etc/mixhive/coturn.env
+      register: turn_env
+
+    - name: Generate TURN REST shared secret once
+      ansible.builtin.shell: |
+        set -euo pipefail
+        umask 077
+        printf 'TURN_SHARED_SECRET=%s\nTURN_EXTERNAL_IP=%s\nTURN_REALM=%s\n' \
+          "$(openssl rand -base64 48 | tr -d '\n')" \
+          "{{ ansible_host }}" \
+          "{{ turn_realm }}" > /etc/mixhive/coturn.env
+      args:
+        executable: /bin/bash
+      when: not turn_env.stat.exists
+      no_log: true
+
+    - name: Install Coturn helper scripts
+      ansible.builtin.copy:
+        src: '{{ turn_repo_root }}/worker/coturn/{{ item.src }}'
+        dest: '/usr/local/sbin/{{ item.dest }}'
+        owner: root
+        group: root
+        mode: '0755'
+      loop:
+        - src: render-config.sh
+          dest: mixhive-render-turn-config
+        - src: verify-turn.sh
+          dest: mixhive-verify-turn
+        - src: rotate-secret.sh
+          dest: mixhive-rotate-turn-secret
+
+    - name: Install Coturn Quadlet
+      ansible.builtin.copy:
+        src: '{{ turn_repo_root }}/worker/coturn/mixhive-coturn.container'
+        dest: /etc/containers/systemd/mixhive-coturn.container
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Enable base host services
+      ansible.builtin.systemd_service:
+        name: '{{ item }}'
+        enabled: true
+        state: started
+        daemon_reload: true
+      loop:
+        - nftables.service
+        - sshd.service
+
+  handlers:
+    - name: Restart SSH
+      ansible.builtin.systemd_service:
+        name: sshd.service
+        state: restarted
+        enabled: true
+
+    - name: Restart nftables
+      ansible.builtin.systemd_service:
+        name: nftables.service
+        state: restarted
+        enabled: true

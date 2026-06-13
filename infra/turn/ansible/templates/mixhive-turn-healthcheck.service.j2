@@ -1,0 +1,9 @@
+[Unit]
+Description=Verify MixHive TURN transports
+After=network-online.target mixhive-coturn.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/mixhive/coturn.env
+ExecStart=/usr/local/sbin/mixhive-verify-turn

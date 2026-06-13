@@ -64,6 +64,15 @@ e2e-quality-results/
 .parcel-cache/
 .turbo/
 
+# Terraform state and generated infrastructure inventory
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example
+infra/turn/ansible/inventory.generated.yml
+
 # Local dev HTTPS proxies (contain inline private keys — never commit)
 https-server.*
 simple-https*.mjs

@@ -1,0 +1,7 @@
+DRIVE1 {{ target_disk }}
+SWRAID 0
+BOOTLOADER grub
+HOSTNAME {{ turn_hostname }}
+PART /boot ext4 1024M
+PART / ext4 all
+IMAGE {{ arch_image }}

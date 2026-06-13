@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { ReportButton } from '../components/ReportButton';
@@ -94,12 +95,18 @@ export function GearListingDetail() {
   };
 
   if (loading) {
-    return <div style={{ padding: 40, color: '#555', textAlign: 'center' }}>Loading...</div>;
+    return (
+      <div style={{ padding: 40, color: colors.text.faintest, textAlign: 'center' }}>
+        Loading...
+      </div>
+    );
   }
   if (error || !listing) {
     return (
       <div style={{ padding: 40, textAlign: 'center' }}>
-        <p style={{ color: '#ef4444', marginBottom: 16 }}>{error || 'Listing not found'}</p>
+        <p style={{ color: colors.dangerStrong, marginBottom: 16 }}>
+          {error || 'Listing not found'}
+        </p>
         <Link to="/marketplace/gear" style={{ color: 'var(--hive-gold)' }}>
           ← Back to Gear Market
         </Link>
@@ -112,7 +119,7 @@ export function GearListingDetail() {
       <Link
         to="/marketplace/gear"
         style={{
-          color: '#666',
+          color: colors.text.faint,
           fontSize: 13,
           textDecoration: 'none',
           display: 'inline-flex',
@@ -139,7 +146,7 @@ export function GearListingDetail() {
           <div
             style={{
               aspectRatio: '4/3',
-              background: '#0a0a0a',
+              background: colors.bg,
               borderRadius: 12,
               overflow: 'hidden',
               marginBottom: 12,
@@ -158,7 +165,7 @@ export function GearListingDetail() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   height: '100%',
-                  color: '#333',
+                  color: colors.borderStrong,
                   fontSize: 64,
                 }}
               >
@@ -183,7 +190,7 @@ export function GearListingDetail() {
                     overflow: 'hidden',
                     padding: 0,
                     cursor: 'pointer',
-                    background: '#111',
+                    background: colors.surface,
                   }}
                 >
                   <img
@@ -201,7 +208,7 @@ export function GearListingDetail() {
             <div>
               <h3
                 style={{
-                  color: '#888',
+                  color: colors.text.muted,
                   fontSize: 13,
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
@@ -210,7 +217,14 @@ export function GearListingDetail() {
               >
                 Description
               </h3>
-              <p style={{ color: '#ccc', fontSize: 15, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+              <p
+                style={{
+                  color: colors.text.secondary,
+                  fontSize: 15,
+                  lineHeight: 1.6,
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
                 {listing.description}
               </p>
             </div>
@@ -219,11 +233,16 @@ export function GearListingDetail() {
 
         {/* Right: Sidebar */}
         <div
-          style={{ background: '#111', borderRadius: 12, padding: 24, border: '1px solid #1e1e1e' }}
+          style={{
+            background: colors.surface,
+            borderRadius: 12,
+            padding: 24,
+            border: `1px solid ${colors.surfaceRaised}`,
+          }}
         >
           <p
             style={{
-              color: '#666',
+              color: colors.text.faint,
               fontSize: 12,
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
@@ -234,7 +253,7 @@ export function GearListingDetail() {
           </p>
           <h1
             style={{
-              color: '#fff',
+              color: colors.white,
               fontSize: 20,
               fontWeight: 700,
               margin: '0 0 4px',
@@ -244,7 +263,7 @@ export function GearListingDetail() {
             {listing.title}
           </h1>
           {(listing.brand || listing.model) && (
-            <p style={{ color: '#888', fontSize: 14, margin: '0 0 16px' }}>
+            <p style={{ color: colors.text.muted, fontSize: 14, margin: '0 0 16px' }}>
               {[listing.brand, listing.model].filter(Boolean).join(' ')}
             </p>
           )}
@@ -258,9 +277,9 @@ export function GearListingDetail() {
           <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
             <span
               style={{
-                background: '#0a0a0a',
-                border: '1px solid #2a2a2a',
-                color: '#ccc',
+                background: colors.bg,
+                border: `1px solid ${colors.borderStrong}`,
+                color: colors.text.secondary,
                 borderRadius: 6,
                 padding: '3px 10px',
                 fontSize: 12,
@@ -270,9 +289,9 @@ export function GearListingDetail() {
             </span>
             <span
               style={{
-                background: '#0a0a0a',
-                border: '1px solid #2a2a2a',
-                color: '#666',
+                background: colors.bg,
+                border: `1px solid ${colors.borderStrong}`,
+                color: colors.text.faint,
                 borderRadius: 6,
                 padding: '3px 10px',
                 fontSize: 12,
@@ -287,7 +306,7 @@ export function GearListingDetail() {
           <div style={{ marginBottom: 20 }}>
             <p
               style={{
-                color: '#666',
+                color: colors.text.faint,
                 fontSize: 12,
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
@@ -298,13 +317,15 @@ export function GearListingDetail() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {listing.shipping_options.local_pickup && (
-                <span style={{ color: '#aaa', fontSize: 13 }}>✓ Local pickup</span>
+                <span style={{ color: colors.text.dimmed, fontSize: 13 }}>✓ Local pickup</span>
               )}
               {listing.shipping_options.domestic_shipping && (
-                <span style={{ color: '#aaa', fontSize: 13 }}>✓ Domestic shipping</span>
+                <span style={{ color: colors.text.dimmed, fontSize: 13 }}>✓ Domestic shipping</span>
               )}
               {listing.shipping_options.international_shipping && (
-                <span style={{ color: '#aaa', fontSize: 13 }}>✓ International shipping</span>
+                <span style={{ color: colors.text.dimmed, fontSize: 13 }}>
+                  ✓ International shipping
+                </span>
               )}
             </div>
           </div>
@@ -316,8 +337,8 @@ export function GearListingDetail() {
                 disabled={buying}
                 style={{
                   width: '100%',
-                  background: buying ? '#a08800' : 'var(--hive-gold)',
-                  color: '#000',
+                  background: buying ? colors.accent : 'var(--hive-gold)',
+                  color: colors.black,
                   border: 'none',
                   borderRadius: 10,
                   padding: '14px 0',
@@ -334,20 +355,27 @@ export function GearListingDetail() {
               </button>
               {buyError && (
                 <p
-                  style={{ color: '#ef4444', fontSize: 12, margin: '0 0 8px', textAlign: 'center' }}
+                  style={{
+                    color: colors.dangerStrong,
+                    fontSize: 12,
+                    margin: '0 0 8px',
+                    textAlign: 'center',
+                  }}
                 >
                   {buyError}
                 </p>
               )}
-              <p style={{ color: '#444', fontSize: 11, textAlign: 'center', margin: 0 }}>
+              <p
+                style={{ color: colors.borderStrong, fontSize: 11, textAlign: 'center', margin: 0 }}
+              >
                 Secured escrow — funds held until you confirm receipt
               </p>
             </>
           ) : listing.status !== 'active' ? (
             <div
               style={{
-                background: '#1a1a1a',
-                color: '#666',
+                background: colors.surfaceRaised,
+                color: colors.text.faint,
                 textAlign: 'center',
                 padding: 12,
                 borderRadius: 8,
@@ -359,8 +387,8 @@ export function GearListingDetail() {
           ) : (
             <div
               style={{
-                background: '#1a1a1a',
-                color: '#555',
+                background: colors.surfaceRaised,
+                color: colors.text.faintest,
                 textAlign: 'center',
                 padding: 12,
                 borderRadius: 8,
@@ -371,7 +399,14 @@ export function GearListingDetail() {
             </div>
           )}
 
-          <p style={{ color: '#444', fontSize: 12, textAlign: 'center', margin: '8px 0 0' }}>
+          <p
+            style={{
+              color: colors.borderStrong,
+              fontSize: 12,
+              textAlign: 'center',
+              margin: '8px 0 0',
+            }}
+          >
             {listing.views_count} views · Listed {new Date(listing.created_at).toLocaleDateString()}
           </p>
           {userId && userId !== listing.seller_profile_id && (

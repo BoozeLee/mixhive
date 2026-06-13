@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/ui/Icon';
 import type { IconKey } from '../lib/icons';
@@ -103,7 +104,7 @@ export function CollabQuests() {
           >
             COLLAB QUESTS
           </h1>
-          <p style={{ color: '#888', margin: '4px 0 0', fontSize: 14 }}>
+          <p style={{ color: colors.text.muted, margin: '4px 0 0', fontSize: 14 }}>
             Team up for creative projects. Build something real together.
           </p>
         </div>
@@ -111,7 +112,7 @@ export function CollabQuests() {
           to="/collab-quests/new"
           style={{
             background: 'var(--hive-gold)',
-            color: '#000',
+            color: colors.black,
             padding: '10px 20px',
             borderRadius: 8,
             fontWeight: 700,
@@ -139,7 +140,7 @@ export function CollabQuests() {
       </div>
 
       {!loading && (
-        <p style={{ color: '#555', fontSize: 13, marginBottom: 16 }}>
+        <p style={{ color: colors.text.faintest, fontSize: 13, marginBottom: 16 }}>
           {total} open quest{total !== 1 ? 's' : ''}
         </p>
       )}
@@ -147,9 +148,9 @@ export function CollabQuests() {
       {error && (
         <div
           style={{
-            color: '#ef4444',
+            color: colors.dangerStrong,
             padding: 12,
-            background: '#1a0000',
+            background: colors.dangerBgDeep,
             borderRadius: 8,
             marginBottom: 16,
           }}
@@ -165,7 +166,7 @@ export function CollabQuests() {
               key={i}
               style={{
                 height: 160,
-                background: '#111',
+                background: colors.surface,
                 borderRadius: 12,
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
@@ -173,7 +174,7 @@ export function CollabQuests() {
           ))}
         </div>
       ) : quests.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px 20px', color: '#555' }}>
+        <div style={{ textAlign: 'center', padding: '64px 20px', color: colors.text.faintest }}>
           <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
             <Icon name="quests" size={44} color="rgba(246,196,0,0.5)" strokeWidth={1.6} />
           </div>
@@ -203,8 +204,8 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
     <Link to={`/collab-quests/${quest.id}`} style={{ textDecoration: 'none' }}>
       <div
         style={{
-          background: '#111',
-          border: '1px solid #1e1e1e',
+          background: colors.surface,
+          border: `1px solid ${colors.surfaceRaised}`,
           borderRadius: 12,
           padding: 20,
           transition: 'border-color 0.2s, transform 0.15s',
@@ -214,7 +215,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
           (e.currentTarget as HTMLElement).style.transform = 'translateX(4px)';
         }}
         onMouseLeave={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = '#1e1e1e';
+          (e.currentTarget as HTMLElement).style.borderColor = colors.surfaceRaised;
           (e.currentTarget as HTMLElement).style.transform = 'translateX(0)';
         }}
       >
@@ -239,8 +240,8 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
                 <span
                   key={t}
                   style={{
-                    background: '#1a1a1a',
-                    color: '#666',
+                    background: colors.surfaceRaised,
+                    color: colors.text.faint,
                     fontSize: 10,
                     padding: '2px 8px',
                     borderRadius: 4,
@@ -254,7 +255,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
             {/* Title */}
             <h3
               style={{
-                color: '#fff',
+                color: colors.white,
                 fontSize: 18,
                 fontWeight: 700,
                 margin: '0 0 6px',
@@ -271,7 +272,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
             {quest.narrative && (
               <p
                 style={{
-                  color: '#888',
+                  color: colors.text.muted,
                   fontSize: 13,
                   margin: '0 0 12px',
                   overflow: 'hidden',
@@ -291,9 +292,9 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
                   <span
                     key={rt}
                     style={{
-                      background: '#0a0a0a',
-                      border: '1px solid #2a2a2a',
-                      color: '#ccc',
+                      background: colors.bg,
+                      border: `1px solid ${colors.borderStrong}`,
+                      color: colors.text.secondary,
                       fontSize: 12,
                       padding: '4px 10px',
                       borderRadius: 6,
@@ -307,7 +308,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
                   </span>
                 ))}
                 {uniqueRoleTypes.length > 5 && (
-                  <span style={{ color: '#555', fontSize: 12, alignSelf: 'center' }}>
+                  <span style={{ color: colors.text.faintest, fontSize: 12, alignSelf: 'center' }}>
                     +{uniqueRoleTypes.length - 5} more
                   </span>
                 )}
@@ -315,7 +316,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
             )}
 
             {/* Meta */}
-            <div style={{ display: 'flex', gap: 16, color: '#555', fontSize: 12 }}>
+            <div style={{ display: 'flex', gap: 16, color: colors.text.faintest, fontSize: 12 }}>
               {quest.region && <span>📍 {quest.region}</span>}
               {quest.timeline_days && <span>⏱ {quest.timeline_days} days</span>}
               <span style={{ color: '#f6c40088' }}>⚡ {quest.xp_reward} XP</span>
@@ -337,9 +338,9 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
 }
 
 const selectStyle: React.CSSProperties = {
-  background: '#111',
-  border: '1px solid #2a2a2a',
-  color: '#ccc',
+  background: colors.surface,
+  border: `1px solid ${colors.borderStrong}`,
+  color: colors.text.secondary,
   borderRadius: 8,
   padding: '8px 12px',
   fontSize: 13,

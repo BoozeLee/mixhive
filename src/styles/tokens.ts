@@ -26,17 +26,29 @@ export const colors = {
   text: {
     primary: '#eee',
     secondary: '#ccc',
+    dimmed: '#999',
     muted: '#888',
     dim: '#777', // 4.6:1 on #111 — passes AA normal text
     faint: '#666', // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
+    faintest: '#555', // decorative/disabled only — below AA for text
   },
 
   // Semantic
   danger: '#f55',
+  dangerStrong: '#ef4444',
   dangerBg: '#2a1010',
+  dangerBgDeep: '#1a0000',
   success: '#6c6',
+  successStrong: '#22c55e',
+  successBg: '#1a3a1a',
   warning: '#fbca04',
   info: '#3b82f6',
+
+  // Brighter gold (WebGL backdrop / highlight) + raised surface + pure b/w
+  accentBright: '#f6c400',
+  surfaceRaised: '#1e1e1e',
+  black: '#000',
+  white: '#fff',
 } as const;
 
 export const space = {

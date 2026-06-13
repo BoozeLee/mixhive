@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { colors } from '../styles/tokens';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
@@ -155,7 +156,7 @@ export function NewGearListing() {
       >
         List Your Gear
       </h1>
-      <p style={{ color: '#666', fontSize: 14, marginBottom: 28 }}>
+      <p style={{ color: colors.text.faint, fontSize: 14, marginBottom: 28 }}>
         Sell to the community — DJ gear, studio equipment, and more
       </p>
 
@@ -168,7 +169,7 @@ export function NewGearListing() {
               flex: 1,
               height: 4,
               borderRadius: 4,
-              background: step >= s ? 'var(--hive-gold)' : '#222',
+              background: step >= s ? 'var(--hive-gold)' : colors.borderSubtle,
               transition: 'background 0.3s',
             }}
           />
@@ -178,9 +179,9 @@ export function NewGearListing() {
       {payoutsEnabled === false && (
         <div
           style={{
-            background: '#1a1400',
-            border: '1px solid #f0c04044',
-            color: '#e8d5a0',
+            background: colors.surfaceMuted,
+            border: `1px solid ${colors.accentMuted}`,
+            color: colors.text.secondary,
             padding: 14,
             borderRadius: 8,
             marginBottom: 16,
@@ -197,9 +198,9 @@ export function NewGearListing() {
       {error && (
         <div
           style={{
-            background: '#1a0000',
+            background: colors.dangerBgDeep,
             border: '1px solid #ef444466',
-            color: '#ef4444',
+            color: colors.dangerStrong,
             padding: 12,
             borderRadius: 8,
             marginBottom: 16,
@@ -311,15 +312,17 @@ export function NewGearListing() {
 
           {/* Photo upload */}
           <div>
-            <p style={{ color: '#aaa', fontSize: 13, marginBottom: 8 }}>Photos * (min 1)</p>
+            <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
+              Photos * (min 1)
+            </p>
             <div
               style={{
-                border: '2px dashed #333',
+                border: `2px dashed ${colors.borderStrong}`,
                 borderRadius: 12,
                 padding: 24,
                 textAlign: 'center',
                 cursor: 'pointer',
-                color: '#555',
+                color: colors.text.faintest,
               }}
               onClick={() => fileRef.current?.click()}
             >
@@ -351,9 +354,9 @@ export function NewGearListing() {
                         width: 20,
                         height: 20,
                         borderRadius: '50%',
-                        background: '#ef4444',
+                        background: colors.dangerStrong,
                         border: 'none',
-                        color: '#fff',
+                        color: colors.white,
                         fontSize: 12,
                         cursor: 'pointer',
                         lineHeight: 1,
@@ -445,7 +448,9 @@ export function NewGearListing() {
           </div>
 
           <div>
-            <p style={{ color: '#aaa', fontSize: 13, marginBottom: 8 }}>Shipping options</p>
+            <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
+              Shipping options
+            </p>
             {[
               { key: 'local_pickup', label: 'Local pickup' },
               { key: 'domestic_shipping', label: 'Domestic shipping' },
@@ -457,7 +462,7 @@ export function NewGearListing() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 10,
-                  color: '#ccc',
+                  color: colors.text.secondary,
                   fontSize: 14,
                   marginBottom: 8,
                   cursor: 'pointer',
@@ -495,13 +500,13 @@ const labelStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   gap: 6,
-  color: '#aaa',
+  color: colors.text.dimmed,
   fontSize: 13,
 };
 const inputStyle: React.CSSProperties = {
-  background: '#111',
-  border: '1px solid #2a2a2a',
-  color: '#fff',
+  background: colors.surface,
+  border: `1px solid ${colors.borderStrong}`,
+  color: colors.white,
   borderRadius: 8,
   padding: '10px 12px',
   fontSize: 14,
@@ -509,7 +514,7 @@ const inputStyle: React.CSSProperties = {
 };
 const primaryBtnStyle: React.CSSProperties = {
   background: 'var(--hive-gold)',
-  color: '#000',
+  color: colors.black,
   border: 'none',
   borderRadius: 8,
   padding: '10px 24px',
@@ -519,8 +524,8 @@ const primaryBtnStyle: React.CSSProperties = {
 };
 const secondaryBtnStyle: React.CSSProperties = {
   background: 'transparent',
-  color: '#aaa',
-  border: '1px solid #333',
+  color: colors.text.dimmed,
+  border: `1px solid ${colors.borderStrong}`,
   borderRadius: 8,
   padding: '10px 20px',
   fontSize: 14,

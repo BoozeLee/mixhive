@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { colors } from '../styles/tokens';
 import { useNavigate } from 'react-router-dom';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { createMix, updateMix } from '../lib/api';
@@ -271,17 +272,25 @@ export function Upload() {
             margin: '0 0 4px',
             fontSize: 11,
             fontWeight: 700,
-            color: '#f0c040',
+            color: colors.accent,
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
           }}
         >
           Nectar Upload
         </p>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 900, color: '#eee', lineHeight: 1.1 }}>
+        <h1
+          style={{
+            margin: 0,
+            fontSize: 26,
+            fontWeight: 900,
+            color: colors.text.primary,
+            lineHeight: 1.1,
+          }}
+        >
           Drop your mix
         </h1>
-        <p style={{ margin: '8px 0 0', fontSize: 13, color: '#888' }}>
+        <p style={{ margin: '8px 0 0', fontSize: 13, color: colors.text.muted }}>
           Share your sound with the hive. MP3, WAV, AIFF, or FLAC.
         </p>
       </div>
@@ -290,15 +299,22 @@ export function Upload() {
       {uploading && (
         <div style={{ marginBottom: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <span style={{ fontSize: 12, color: '#f0c040', fontWeight: 600 }}>Uploading…</span>
-            <span style={{ fontSize: 12, color: '#888' }}>{uploadProgress}%</span>
+            <span style={{ fontSize: 12, color: colors.accent, fontWeight: 600 }}>Uploading…</span>
+            <span style={{ fontSize: 12, color: colors.text.muted }}>{uploadProgress}%</span>
           </div>
-          <div style={{ height: 4, borderRadius: 999, background: '#1a1a2e', overflow: 'hidden' }}>
+          <div
+            style={{
+              height: 4,
+              borderRadius: 999,
+              background: colors.surfaceHover,
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
                 height: '100%',
                 width: `${uploadProgress}%`,
-                background: 'linear-gradient(90deg, #f0c040, #ffd84a)',
+                background: `linear-gradient(90deg, ${colors.accent}, ${colors.accentBright})`,
                 borderRadius: 999,
                 transition: 'width 300ms ease',
               }}
@@ -310,8 +326,8 @@ export function Upload() {
       {generalError && (
         <div
           style={{
-            background: '#2a1010',
-            color: '#f55',
+            background: colors.dangerBg,
+            color: colors.danger,
             padding: '10px 14px',
             borderRadius: 8,
             fontSize: 13,
@@ -331,7 +347,7 @@ export function Upload() {
               display: 'block',
               fontSize: 12,
               fontWeight: 600,
-              color: '#999',
+              color: colors.text.dimmed,
               marginBottom: 8,
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
@@ -378,11 +394,11 @@ export function Upload() {
               minHeight: 120,
               borderRadius: 10,
               border: dragOver
-                ? '2px solid #f0c040'
+                ? `2px solid ${colors.accent}`
                 : audioFile
                   ? '2px solid #f0c04055'
-                  : '1.5px dashed #1a1a2e',
-              background: dragOver ? '#f0c04014' : audioFile ? '#f0c04008' : '#111',
+                  : `1.5px dashed ${colors.surfaceHover}`,
+              background: dragOver ? '#f0c04014' : audioFile ? '#f0c04008' : colors.surface,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -397,13 +413,13 @@ export function Upload() {
           >
             {audioFile ? (
               <>
-                <span aria-hidden="true" style={{ fontSize: 28, color: '#f0c040' }}>
+                <span aria-hidden="true" style={{ fontSize: 28, color: colors.accent }}>
                   ✓
                 </span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: '#eee' }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: colors.text.primary }}>
                   {audioFile.name}
                 </span>
-                <span style={{ fontSize: 12, color: '#888' }}>
+                <span style={{ fontSize: 12, color: colors.text.muted }}>
                   {(audioFile.size / 1024 / 1024).toFixed(1)} MB
                   {duration &&
                     !detectingDuration &&
@@ -419,7 +435,7 @@ export function Upload() {
                   }}
                   style={{
                     fontSize: 11,
-                    color: '#f55',
+                    color: colors.danger,
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
@@ -433,16 +449,20 @@ export function Upload() {
               <>
                 <span
                   aria-hidden="true"
-                  style={{ display: 'flex', color: dragOver ? '#f0c040' : '#444' }}
+                  style={{ display: 'flex', color: dragOver ? colors.accent : colors.borderStrong }}
                 >
                   <Icon name="upload" size={30} color="currentColor" />
                 </span>
                 <span
-                  style={{ fontSize: 14, fontWeight: 600, color: dragOver ? '#f0c040' : '#777' }}
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: dragOver ? colors.accent : colors.text.dim,
+                  }}
                 >
                   {dragOver ? 'Drop it!' : 'Drop your mix here'}
                 </span>
-                <span style={{ fontSize: 12, color: '#555' }}>
+                <span style={{ fontSize: 12, color: colors.text.faintest }}>
                   or click to browse — MP3, WAV, AIFF, FLAC
                 </span>
               </>
@@ -503,7 +523,7 @@ export function Upload() {
             alignItems: 'center',
             gap: 10,
             cursor: 'pointer',
-            color: '#ccc',
+            color: colors.text.secondary,
             fontSize: 14,
             minHeight: 44,
             padding: '8px 0',
@@ -525,7 +545,7 @@ export function Upload() {
         </label>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>
+          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
             Platform Links (optional)
           </legend>
           <div style={{ marginTop: 8 }}>
@@ -564,7 +584,9 @@ export function Upload() {
                   error={platformErrors[key]}
                 />
                 {platformErrors[key] && (
-                  <small style={{ color: '#f55', fontSize: 11, display: 'block', marginTop: 2 }}>
+                  <small
+                    style={{ color: colors.danger, fontSize: 11, display: 'block', marginTop: 2 }}
+                  >
                     {platformErrors[key]}
                   </small>
                 )}
@@ -574,7 +596,9 @@ export function Upload() {
         </fieldset>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Tracklist</legend>
+          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+            Tracklist
+          </legend>
           <div style={{ marginTop: 8 }}>
             {tracklist.map((track, index) => (
               <div
@@ -629,8 +653,8 @@ export function Upload() {
                     setTracklist(list);
                   }}
                   style={{
-                    background: '#2a1010',
-                    color: '#f55',
+                    background: colors.dangerBg,
+                    color: colors.danger,
                     border: 'none',
                     borderRadius: 6,
                     minHeight: 40,
@@ -648,9 +672,9 @@ export function Upload() {
                 type="button"
                 onClick={() => setTracklist([...tracklist, { artist: '', title: '' }])}
                 style={{
-                  background: '#1a1a2e',
-                  color: '#f0c040',
-                  border: '1px solid #f0c040',
+                  background: colors.surfaceHover,
+                  color: colors.accent,
+                  border: `1px solid ${colors.accent}`,
                   borderRadius: 6,
                   minHeight: 40,
                   padding: '8px 14px',
@@ -680,9 +704,9 @@ export function Upload() {
               marginTop: 12,
               padding: 12,
               borderRadius: 8,
-              border: '1px solid #f0c04044',
-              background: 'linear-gradient(135deg, #f0c04022, rgba(59,130,246,0.14))',
-              color: '#f0c040',
+              border: `1px solid ${colors.accentMuted}`,
+              background: `linear-gradient(135deg, ${colors.accentFaint}, rgba(59,130,246,0.14))`,
+              color: colors.accent,
               fontSize: 13,
               fontWeight: 700,
               textAlign: 'center',

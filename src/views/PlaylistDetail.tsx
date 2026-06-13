@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { colors } from '../styles/tokens';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import {
@@ -136,9 +137,9 @@ export function PlaylistDetail() {
               autoFocus
               style={{
                 flex: 1,
-                background: '#0a0a0a',
-                border: '1px solid #f0c040',
-                color: '#eee',
+                background: colors.bg,
+                border: `1px solid ${colors.accent}`,
+                color: colors.text.primary,
                 padding: '8px 12px',
                 borderRadius: 6,
                 fontSize: 22,
@@ -148,8 +149,8 @@ export function PlaylistDetail() {
             <button
               onClick={saveTitle}
               style={{
-                background: '#f0c040',
-                color: '#0a0a0a',
+                background: colors.accent,
+                color: colors.bg,
                 border: 'none',
                 borderRadius: 6,
                 padding: '8px 14px',
@@ -167,8 +168,8 @@ export function PlaylistDetail() {
               }}
               style={{
                 background: 'transparent',
-                border: '1px solid #333',
-                color: '#888',
+                border: `1px solid ${colors.borderStrong}`,
+                color: colors.text.muted,
                 borderRadius: 6,
                 padding: '8px 14px',
                 cursor: 'pointer',
@@ -189,7 +190,7 @@ export function PlaylistDetail() {
               padding: 0,
               fontSize: 22,
               fontWeight: 700,
-              color: '#eee',
+              color: colors.text.primary,
               margin: '0 0 4px',
               cursor: 'text',
               textAlign: 'left',
@@ -203,7 +204,7 @@ export function PlaylistDetail() {
             style={{
               fontSize: 22,
               fontWeight: 700,
-              color: '#eee',
+              color: colors.text.primary,
               margin: '0 0 4px',
             }}
           >
@@ -221,9 +222,9 @@ export function PlaylistDetail() {
               autoFocus
               style={{
                 width: '100%',
-                background: '#0a0a0a',
-                border: '1px solid #f0c040',
-                color: '#eee',
+                background: colors.bg,
+                border: `1px solid ${colors.accent}`,
+                color: colors.text.primary,
                 padding: '8px 12px',
                 borderRadius: 6,
                 fontSize: 13,
@@ -234,8 +235,8 @@ export function PlaylistDetail() {
               <button
                 onClick={saveDescription}
                 style={{
-                  background: '#f0c040',
-                  color: '#0a0a0a',
+                  background: colors.accent,
+                  color: colors.bg,
                   border: 'none',
                   borderRadius: 6,
                   padding: '6px 12px',
@@ -253,8 +254,8 @@ export function PlaylistDetail() {
                 }}
                 style={{
                   background: 'transparent',
-                  border: '1px solid #333',
-                  color: '#888',
+                  border: `1px solid ${colors.borderStrong}`,
+                  color: colors.text.muted,
                   borderRadius: 6,
                   padding: '6px 12px',
                   cursor: 'pointer',
@@ -274,7 +275,7 @@ export function PlaylistDetail() {
               background: 'transparent',
               border: 'none',
               padding: 0,
-              color: playlist.description ? '#777' : '#555',
+              color: playlist.description ? colors.text.dim : colors.text.faintest,
               fontSize: 14,
               marginTop: 8,
               cursor: 'text',
@@ -288,7 +289,7 @@ export function PlaylistDetail() {
         ) : (
           <p
             style={{
-              color: playlist.description ? '#777' : '#555',
+              color: playlist.description ? colors.text.dim : colors.text.faintest,
               fontSize: 14,
               marginTop: 8,
               fontStyle: playlist.description ? 'normal' : 'italic',
@@ -304,13 +305,13 @@ export function PlaylistDetail() {
             gap: 12,
             marginTop: 8,
             fontSize: 13,
-            color: '#888',
+            color: colors.text.muted,
             alignItems: 'center',
           }}
         >
           <Link
             to={`/u/${playlist.owner_username}`}
-            style={{ color: '#999', textDecoration: 'none' }}
+            style={{ color: colors.text.dimmed, textDecoration: 'none' }}
           >
             {playlist.owner_display_name || playlist.owner_username}
           </Link>
@@ -327,8 +328,8 @@ export function PlaylistDetail() {
               disabled={deleting}
               style={{
                 background: 'transparent',
-                border: '1px solid #331111',
-                color: '#f55',
+                border: `1px solid ${colors.dangerBg}`,
+                color: colors.danger,
                 padding: '6px 14px',
                 borderRadius: 6,
                 cursor: deleting ? 'not-allowed' : 'pointer',
@@ -343,7 +344,7 @@ export function PlaylistDetail() {
       </div>
 
       {playlist.mixes.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: 40, color: '#666', fontSize: 14 }}>
+        <div style={{ textAlign: 'center', padding: 40, color: colors.text.faint, fontSize: 14 }}>
           No mixes in this playlist yet
         </div>
       ) : (
@@ -358,9 +359,9 @@ export function PlaylistDetail() {
                     position: 'absolute',
                     top: 8,
                     right: 8,
-                    background: '#2a1010',
+                    background: colors.dangerBg,
                     border: 'none',
-                    color: '#f55',
+                    color: colors.danger,
                     borderRadius: 4,
                     padding: '2px 8px',
                     fontSize: 12,

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
@@ -199,7 +199,7 @@ export function NewGearListing() {
         <div
           style={{
             background: colors.dangerBgDeep,
-            border: '1px solid #ef444466',
+            border: `1px solid ${withAlpha(colors.dangerStrong, 0.4)}`,
             color: colors.dangerStrong,
             padding: 12,
             borderRadius: 8,

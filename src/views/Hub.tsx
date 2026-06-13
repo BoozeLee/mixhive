@@ -4,13 +4,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { Icon } from '../components/ui/Icon';
 import type { IconKey } from '../lib/icons';
-import { colors, space, radius, fontSize, fontWeight } from '../styles/tokens';
+import { colors, space, radius, fontSize, fontWeight, withAlpha } from '../styles/tokens';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
 const TABS = [
-  { id: 'discover', label: 'Discover', watermark: 'DISCOVER', accent: '#f0c040', dim: '#f0c04018' },
-  { id: 'create', label: 'Create', watermark: 'CREATE', accent: '#ffd84a', dim: '#ffd84a16' },
+  {
+    id: 'discover',
+    label: 'Discover',
+    watermark: 'DISCOVER',
+    accent: '#f0c040',
+    dim: withAlpha(colors.accent, 0.09),
+  },
+  {
+    id: 'create',
+    label: 'Create',
+    watermark: 'CREATE',
+    accent: '#ffd84a',
+    dim: withAlpha(colors.accentBright, 0.086),
+  },
   {
     id: 'community',
     label: 'Community',
@@ -23,16 +35,22 @@ const TABS = [
     label: 'Marketplace',
     watermark: 'MARKET',
     accent: '#f0c040',
-    dim: '#f0c04018',
+    dim: withAlpha(colors.accent, 0.09),
   },
   { id: 'agents', label: 'Agents & AI', watermark: 'AGENTS', accent: '#d4a830', dim: '#d4a83016' },
-  { id: 'profile', label: 'Profile', watermark: 'PROFILE', accent: '#f0c040', dim: '#f0c04018' },
+  {
+    id: 'profile',
+    label: 'Profile',
+    watermark: 'PROFILE',
+    accent: '#f0c040',
+    dim: withAlpha(colors.accent, 0.09),
+  },
   {
     id: 'editorial',
     label: 'Editorial',
     watermark: 'STORIES',
     accent: '#ffd84a',
-    dim: '#ffd84a16',
+    dim: withAlpha(colors.accentBright, 0.086),
   },
 ] as const;
 

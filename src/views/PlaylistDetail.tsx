@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import {
@@ -318,7 +318,9 @@ export function PlaylistDetail() {
           <span>
             {playlist.mix_count} {playlist.mix_count === 1 ? 'mix' : 'mixes'}
           </span>
-          {!playlist.is_public && <span style={{ color: '#f0c04066' }}>Private</span>}
+          {!playlist.is_public && (
+            <span style={{ color: withAlpha(colors.accent, 0.4) }}>Private</span>
+          )}
         </div>
 
         {isOwner && (

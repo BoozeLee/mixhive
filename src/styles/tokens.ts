@@ -51,6 +51,24 @@ export const colors = {
   white: '#fff',
 } as const;
 
+/**
+ * Opacity overlay on a token color → `rgba(...)`. Replaces ad-hoc 8-digit hex
+ * alphas (e.g. `#f0c04022`) so overlays reference a base token + explicit alpha.
+ * `withAlpha(colors.accent, 0.13)` === `'rgba(240, 192, 64, 0.13)'`.
+ */
+export function withAlpha(hex: string, a: number): string {
+  const h = hex.replace('#', '');
+  const f =
+    h.length === 3
+      ? h
+          .split('')
+          .map(c => c + c)
+          .join('')
+      : h;
+  const n = parseInt(f, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
+
 export const space = {
   0: 0,
   1: 2,

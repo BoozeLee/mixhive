@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { Link } from 'react-router-dom';
 import { getProfileBadgesFor } from '../lib/api';
 import type { VerificationBadge } from '../lib/types';
@@ -292,7 +292,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
           transition: 'border-color 0.2s, transform 0.2s',
         }}
         onMouseEnter={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = '#f6c40044';
+          (e.currentTarget as HTMLElement).style.borderColor = withAlpha(colors.accentBright, 0.27);
           (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
         }}
         onMouseLeave={e => {

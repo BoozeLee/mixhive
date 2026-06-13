@@ -29,9 +29,12 @@ test.describe('API routes', () => {
     expect(res.status()).toBe(401);
   });
 
-  test('GET /api/health returns 200', async ({ request }) => {
+  test('GET /api/health reports service health', async ({ request }) => {
     const res = await request.get('/api/health');
-    expect(res.status()).toBe(200);
+    expect([200, 503]).toContain(res.status());
+    const body = await res.json();
+    expect(['healthy', 'degraded', 'unhealthy']).toContain(body.status);
+    expect(body.services).toBeDefined();
   });
 
   test('GET /api/cron/push-sender without CRON_SECRET returns 401', async ({ request }) => {

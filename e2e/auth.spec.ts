@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
-
-const hasCredentials = !!(process.env.E2E_TEST_EMAIL && process.env.E2E_TEST_PASSWORD);
+import { hasE2ECredentials } from './helpers/auth';
 
 test.describe('Auth flows', () => {
   test('landing page loads with main-content', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#main-content')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
   });
 
   // Scope to the auth form so the navbar search input/button can't cause
@@ -35,7 +34,7 @@ test.describe('Auth flows', () => {
     const form = page.locator('form');
     await expect(form.locator('input[type="email"]')).toBeVisible();
     await expect(form.locator('input[type="password"]')).toBeVisible();
-    await expect(page.locator('#main-content')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
   });
 
   test('forgot password page renders', async ({ page }) => {
@@ -73,12 +72,12 @@ test.describe('Auth flows', () => {
   });
 
   test.describe('authenticated flows', () => {
-    test.skip(!hasCredentials, 'E2E credentials not configured');
+    test.skip(!hasE2ECredentials, 'E2E credentials not configured');
 
     test('login and redirect to /feed', async ({ page }) => {
       // Already authenticated via storageState — just verify we land on feed
       await page.goto('/feed');
-      await expect(page.locator('#main-content')).toBeVisible();
+      await expect(page.getByRole('main')).toBeVisible();
     });
 
     test('sign out clears session', async ({ page }) => {

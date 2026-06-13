@@ -22,7 +22,7 @@ export function MessagesPage() {
 
   if (!user) {
     return (
-      <div id="main-content" style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
+      <div style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
         <p style={{ marginBottom: space[6] }}>Sign in to see your messages</p>
         <Link to="/login" style={{ color: colors.accent }}>
           Sign in
@@ -32,7 +32,7 @@ export function MessagesPage() {
   }
 
   return (
-    <div id="main-content" style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
+    <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
       <SectionHeading eyebrow="Chat" title="Messages" />
 
       {conversations.length === 0 ? (

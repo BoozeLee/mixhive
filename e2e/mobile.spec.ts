@@ -23,7 +23,7 @@ test.describe('Mobile overflow', () => {
   for (const route of ROUTES) {
     test(`${route} — no horizontal overflow`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator('#main-content, body').first()).toBeVisible({ timeout: 12_000 });
+      await expect(page.getByRole('main')).toBeVisible({ timeout: 12_000 });
 
       const overflow = await page.evaluate(() => {
         return document.documentElement.scrollWidth > document.documentElement.clientWidth + 2;
@@ -34,7 +34,7 @@ test.describe('Mobile overflow', () => {
 
   test('all tap targets ≥44px wide on home', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#main-content, body').first()).toBeVisible({ timeout: 12_000 });
+    await expect(page.getByRole('main')).toBeVisible({ timeout: 12_000 });
 
     const tinyTargets = await page.evaluate(() => {
       const interactive = document.querySelectorAll('button, a[href]');

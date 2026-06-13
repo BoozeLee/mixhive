@@ -65,7 +65,7 @@ export function PublicPressKit() {
 
   const content = kit.content;
   return (
-    <main
+    <article
       style={{
         maxWidth: 980,
         margin: '0 auto',
@@ -192,7 +192,7 @@ export function PublicPressKit() {
           </footer>
         </div>
       </section>
-    </main>
+    </article>
   );
 }
 

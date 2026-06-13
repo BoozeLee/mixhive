@@ -4,7 +4,7 @@ test.describe('Mix detail', () => {
   test('mix detail page with unknown id renders gracefully', async ({ page }) => {
     await page.goto('/mix/00000000-0000-0000-0000-000000000000');
     // Should render something — either a mix or a not-found/empty state, never a white crash
-    await expect(page.locator('#main-content, body').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('main')).toBeVisible({ timeout: 10_000 });
   });
 
   test('embed page renders player without full navbar', async ({ page }) => {
@@ -19,6 +19,6 @@ test.describe('Mix detail', () => {
 
   test('buzz detail page renders gracefully', async ({ page }) => {
     await page.goto('/buzz/00000000-0000-0000-0000-000000000000');
-    await expect(page.locator('#main-content, body').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('main')).toBeVisible({ timeout: 10_000 });
   });
 });

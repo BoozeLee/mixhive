@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { requireE2EAuth } from './helpers/auth';
 
 test.describe('Feed', () => {
   test('feed page loads with main-content', async ({ page }) => {
     await page.goto('/feed');
-    await expect(page.locator('#main-content')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
   });
 
   test('tab switcher is visible', async ({ page }) => {
@@ -23,6 +24,7 @@ test.describe('Feed', () => {
   });
 
   test('buzz composer textarea is present', async ({ page }) => {
+    requireE2EAuth();
     await page.goto('/feed');
     await expect(
       page
@@ -40,7 +42,7 @@ test.describe('Feed', () => {
       .first();
     if (await trending.isVisible()) {
       await trending.click();
-      await expect(page.locator('#main-content')).toBeVisible();
+      await expect(page.getByRole('main')).toBeVisible();
     }
   });
 
@@ -51,7 +53,7 @@ test.describe('Feed', () => {
       .first();
     if (await latest.isVisible()) {
       await latest.click();
-      await expect(page.locator('#main-content')).toBeVisible();
+      await expect(page.getByRole('main')).toBeVisible();
     }
   });
 });

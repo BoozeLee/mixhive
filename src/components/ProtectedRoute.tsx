@@ -16,7 +16,8 @@ export function ProtectedRoute({
   if (loading)
     return (
       <div
-        id="main-content"
+        role="status"
+        aria-label="Loading protected page"
         style={{
           display: 'flex',
           justifyContent: 'center',

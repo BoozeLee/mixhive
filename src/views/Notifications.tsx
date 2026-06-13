@@ -44,7 +44,7 @@ export function NotificationsPage() {
 
   if (loading) {
     return (
-      <div id="main-content" style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
+      <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
         <SectionHeading eyebrow="Activity" title="Notifications" />
         <p style={{ color: colors.text.dim, marginTop: space[8] }}>Loading notifications…</p>
       </div>
@@ -53,7 +53,7 @@ export function NotificationsPage() {
 
   if (!user) {
     return (
-      <div id="main-content" style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
+      <div style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
         <p style={{ marginBottom: space[6] }}>Sign in to see your notifications</p>
         <Link to="/login" style={{ color: colors.accent }}>
           Sign in
@@ -63,7 +63,7 @@ export function NotificationsPage() {
   }
 
   return (
-    <div id="main-content" style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
+    <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
       <div
         style={{
           display: 'flex',

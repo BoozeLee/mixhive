@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { requireE2EAuth } from './helpers/auth';
 
 test.describe('Notifications & Push', () => {
   test('notifications page loads (authenticated)', async ({ page }) => {
     await page.goto('/notifications');
-    await expect(page.locator('#main-content')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('main')).toBeVisible({ timeout: 10_000 });
   });
 
   test('notifications shows list or empty state', async ({ page }) => {
@@ -14,6 +15,7 @@ test.describe('Notifications & Push', () => {
   });
 
   test('notification bell visible in navbar when authenticated', async ({ page }) => {
+    requireE2EAuth();
     await page.goto('/feed');
     // Bell emoji or notification icon in navbar
     await expect(
@@ -22,6 +24,7 @@ test.describe('Notifications & Push', () => {
   });
 
   test('push enable nudge present when Notification API default', async ({ page }) => {
+    requireE2EAuth();
     await page.goto('/feed');
     // The bell nudge only appears if Notification.permission === 'default'
     // In test env (headless) this should be 'default', so the "Enable push" button may appear

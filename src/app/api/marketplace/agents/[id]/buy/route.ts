@@ -19,16 +19,17 @@ const PLATFORM_FEE_PCT = 30;
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+  }
+
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   if (!stripeKey) {
     return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
   }
 
   try {
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
     const sb = makeClient(authHeader.slice(7));
 
     const {

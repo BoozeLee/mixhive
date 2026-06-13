@@ -55,6 +55,9 @@ Desktop.ini
 coverage/
 .nyc_output/
 e2e-quality-results/
+e2e-results/
+playwright-report/
+e2e/.auth/
 
 # TypeScript build info
 *.tsbuildinfo

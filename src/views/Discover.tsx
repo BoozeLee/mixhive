@@ -33,7 +33,7 @@ export function Discover() {
   const genres = getPopularSearches().slice(0, 10);
 
   return (
-    <div id="main-content" style={{ maxWidth: 760, margin: '0 auto', padding: '32px 16px 96px' }}>
+    <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 16px 96px' }}>
       <header style={{ marginBottom: space[11] }}>
         <SectionHeading
           eyebrow="Music Discovery"

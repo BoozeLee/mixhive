@@ -9,7 +9,7 @@ ConditionPathExists=/etc/mixhive/coturn.env
 ConditionPathExists=/etc/mixhive/turnserver.conf
 
 [Container]
-Image=docker.io/coturn/coturn:latest
+Image=docker.io/coturn/coturn@sha256:b561559de404e9e6fb5363dba409b5aaaa8df2fe04ada5b21010e8175351a654
 ContainerName=mixhive-coturn
 Network=host
 Volume=/etc/mixhive/turnserver.conf:/etc/coturn/turnserver.conf:ro

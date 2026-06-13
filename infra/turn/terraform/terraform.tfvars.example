@@ -1,0 +1,5 @@
+server_name         = "mixhive-turn-01"
+server_type         = "cx23"
+location            = "nbg1"
+bootstrap_image     = "ubuntu-24.04"
+ssh_public_key_path = "~/.ssh/id_ed25519.pub"

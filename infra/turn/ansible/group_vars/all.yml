@@ -1,0 +1,7 @@
+---
+turn_hostname: turn.mixhive.app
+turn_realm: mixhive.app
+turn_admin_user: turnadmin
+turn_admin_public_key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_ed25519.pub') }}"
+turn_repo_root: '{{ playbook_dir }}/../../..'
+turn_certbot_email: admin@mixhive.app

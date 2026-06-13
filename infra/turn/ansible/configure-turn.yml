@@ -1,0 +1,104 @@
+---
+- name: Configure MixHive Coturn relay
+  hosts: turn
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Require Arch Linux
+      ansible.builtin.assert:
+        that: ansible_facts.distribution == "Archlinux"
+        fail_msg: This playbook supports Arch Linux only.
+
+  tasks:
+    - name: Wait for manual DNS checkpoint
+      ansible.builtin.command: getent ahostsv4 "{{ turn_hostname }}"
+      register: turn_dns
+      changed_when: false
+      failed_when: ansible_host not in turn_dns.stdout
+
+    - name: Obtain TLS certificate
+      ansible.builtin.command:
+        argv:
+          - certbot
+          - certonly
+          - --standalone
+          - --non-interactive
+          - --agree-tos
+          - --email
+          - '{{ turn_certbot_email }}'
+          - -d
+          - '{{ turn_hostname }}'
+      args:
+        creates: '/etc/letsencrypt/live/{{ turn_hostname }}/fullchain.pem'
+
+    - name: Install certificate renewal hook
+      ansible.builtin.copy:
+        content: |
+          #!/bin/sh
+          systemctl restart mixhive-coturn.service
+        dest: /etc/letsencrypt/renewal-hooks/deploy/restart-mixhive-coturn
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Render Coturn configuration
+      ansible.builtin.command: /usr/local/sbin/mixhive-render-turn-config
+      changed_when: true
+      notify: Restart Coturn
+
+    - name: Install hourly health-check units
+      ansible.builtin.template:
+        src: '{{ item.src }}'
+        dest: '/etc/systemd/system/{{ item.dest }}'
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - src: mixhive-turn-healthcheck.service.j2
+          dest: mixhive-turn-healthcheck.service
+        - src: mixhive-turn-healthcheck.timer.j2
+          dest: mixhive-turn-healthcheck.timer
+        - src: mixhive-certbot-renew.service.j2
+          dest: mixhive-certbot-renew.service
+        - src: mixhive-certbot-renew.timer.j2
+          dest: mixhive-certbot-renew.timer
+      notify: Reload systemd
+
+    - name: Enable relay and health checks
+      ansible.builtin.systemd_service:
+        name: '{{ item }}'
+        enabled: true
+        state: started
+        daemon_reload: true
+      loop:
+        - nftables.service
+        - mixhive-coturn.service
+        - mixhive-turn-healthcheck.timer
+        - mixhive-certbot-renew.timer
+
+    - name: Apply pending service handlers before verification
+      ansible.builtin.meta: flush_handlers
+
+    - name: Verify TURN transports
+      ansible.builtin.shell: |
+        set -a
+        source /etc/mixhive/coturn.env
+        set +a
+        /usr/local/sbin/mixhive-verify-turn
+      args:
+        executable: /bin/bash
+      changed_when: false
+      no_log: true
+
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Restart Coturn
+      ansible.builtin.systemd_service:
+        name: mixhive-coturn.service
+        state: restarted
+        enabled: true
+        daemon_reload: true

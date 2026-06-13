@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { useNavigate } from 'react-router-dom';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { createMix, updateMix } from '../lib/api';
@@ -332,7 +332,7 @@ export function Upload() {
             borderRadius: 8,
             fontSize: 13,
             marginBottom: 16,
-            border: '1px solid #f5525244',
+            border: `1px solid ${withAlpha(colors.danger, 0.27)}`,
           }}
         >
           {generalError}
@@ -396,9 +396,13 @@ export function Upload() {
               border: dragOver
                 ? `2px solid ${colors.accent}`
                 : audioFile
-                  ? '2px solid #f0c04055'
+                  ? `2px solid ${withAlpha(colors.accent, 0.33)}`
                   : `1.5px dashed ${colors.surfaceHover}`,
-              background: dragOver ? '#f0c04014' : audioFile ? '#f0c04008' : colors.surface,
+              background: dragOver
+                ? withAlpha(colors.accent, 0.08)
+                : audioFile
+                  ? withAlpha(colors.accent, 0.03)
+                  : colors.surface,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',

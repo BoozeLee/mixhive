@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { usePlayer } from '../lib/playerStore';
 import { PlayerQueue } from './PlayerQueue';
 
@@ -276,7 +276,7 @@ export function GlobalPlayer() {
               outline: 'none',
             }}
             onFocus={e => {
-              e.currentTarget.style.boxShadow = `0 0 0 2px #f0c04055`;
+              e.currentTarget.style.boxShadow = `0 0 0 2px ${withAlpha(colors.accent, 0.33)}`;
             }}
             onBlur={e => {
               e.currentTarget.style.boxShadow = 'none';

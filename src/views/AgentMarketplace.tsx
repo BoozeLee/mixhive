@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
@@ -315,7 +315,7 @@ function AgentCard({
         gap: 12,
         transition: 'border-color 0.2s',
       }}
-      onMouseEnter={e => (e.currentTarget.style.borderColor = '#f6c40033')}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = withAlpha(colors.accentBright, 0.2))}
       onMouseLeave={e => (e.currentTarget.style.borderColor = colors.surfaceRaised)}
     >
       {/* Header */}
@@ -334,7 +334,7 @@ function AgentCard({
           {pkg.official && (
             <span
               style={{
-                background: '#f6c40022',
+                background: withAlpha(colors.accentBright, 0.13),
                 color: 'var(--hive-gold)',
                 fontSize: 10,
                 padding: '2px 6px',
@@ -348,7 +348,7 @@ function AgentCard({
           {pkg.verified && !pkg.official && (
             <span
               style={{
-                background: '#22c55e22',
+                background: withAlpha(colors.successStrong, 0.13),
                 color: colors.successStrong,
                 fontSize: 10,
                 padding: '2px 6px',

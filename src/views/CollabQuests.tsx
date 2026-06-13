@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/ui/Icon';
 import type { IconKey } from '../lib/icons';
@@ -211,7 +211,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
           transition: 'border-color 0.2s, transform 0.15s',
         }}
         onMouseEnter={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = '#f6c40033';
+          (e.currentTarget as HTMLElement).style.borderColor = withAlpha(colors.accentBright, 0.2);
           (e.currentTarget as HTMLElement).style.transform = 'translateX(4px)';
         }}
         onMouseLeave={e => {
@@ -225,7 +225,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
               <span
                 style={{
-                  background: '#f6c40022',
+                  background: withAlpha(colors.accentBright, 0.13),
                   color: 'var(--hive-gold)',
                   fontSize: 10,
                   padding: '2px 8px',
@@ -319,14 +319,21 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
             <div style={{ display: 'flex', gap: 16, color: colors.text.faintest, fontSize: 12 }}>
               {quest.region && <span>📍 {quest.region}</span>}
               {quest.timeline_days && <span>⏱ {quest.timeline_days} days</span>}
-              <span style={{ color: '#f6c40088' }}>⚡ {quest.xp_reward} XP</span>
+              <span style={{ color: withAlpha(colors.accentBright, 0.53) }}>
+                ⚡ {quest.xp_reward} XP
+              </span>
             </div>
           </div>
 
           {/* Apply button */}
           <div style={{ flexShrink: 0 }}>
             <div
-              style={{ color: '#f6c40088', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}
+              style={{
+                color: withAlpha(colors.accentBright, 0.53),
+                fontSize: 13,
+                fontWeight: 600,
+                whiteSpace: 'nowrap',
+              }}
             >
               Apply for a Role →
             </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
@@ -253,7 +253,7 @@ export function CollabQuestDetail() {
       >
         {quest.region && <span>📍 {quest.region}</span>}
         {quest.timeline_days && <span>⏱ {quest.timeline_days} days</span>}
-        <span style={{ color: '#f6c40088' }}>⚡ {quest.xp_reward} XP</span>
+        <span style={{ color: withAlpha(colors.accentBright, 0.53) }}>⚡ {quest.xp_reward} XP</span>
       </div>
 
       {/* Goals */}
@@ -330,7 +330,7 @@ export function CollabQuestDetail() {
                       {role.is_paid && (
                         <span
                           style={{
-                            background: '#22c55e22',
+                            background: withAlpha(colors.successStrong, 0.13),
                             color: colors.successStrong,
                             fontSize: 11,
                             padding: '2px 6px',
@@ -471,7 +471,7 @@ export function CollabQuestDetail() {
                 ...ctrlBtnStyle,
                 background: 'transparent',
                 color: colors.dangerStrong,
-                border: '1px solid #ef444444',
+                border: `1px solid ${withAlpha(colors.dangerStrong, 0.27)}`,
               }}
             >
               Cancel Quest
@@ -495,7 +495,7 @@ export function CollabQuestDetail() {
           style={{
             padding: 16,
             background: colors.successBg,
-            border: '1px solid #22c55e33',
+            border: `1px solid ${withAlpha(colors.successStrong, 0.2)}`,
             borderRadius: 10,
             marginBottom: 24,
             textAlign: 'center',

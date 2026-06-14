@@ -109,7 +109,7 @@ export function Navbar() {
             gap: 9,
           }}
         >
-          <BeeMark size={28} color="var(--hive-gold, ${colors.accentBright})" glow />
+          <BeeMark size={28} color={`var(--hive-gold, ${colors.accentBright})`} glow />
           <MixhiveWordmark height={17} color="var(--hive-text, #f5f3e7)" />
         </Link>
         {user && (

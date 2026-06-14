@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { ICONS, type IconKey } from '../../lib/icons';
+import { colors } from '../../styles/tokens';
 
 interface IconProps {
   name: IconKey;
@@ -63,7 +64,9 @@ export function HexIcon({
   label,
   style,
 }: HexIconProps) {
-  const accent = active ? 'var(--hive-gold-hot, #ffd84a)' : 'var(--hive-gold, #f6c400)';
+  const accent = active
+    ? `var(--hive-gold-hot, ${colors.accentBrightest})`
+    : `var(--hive-gold, ${colors.accentBright})`;
   return (
     <span
       role={label ? 'img' : 'presentation'}

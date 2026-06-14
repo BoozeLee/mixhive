@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { colors } from '../../styles/tokens';
 
 export type HiveTier = 'queen' | 'worker' | 'scout' | 'drone' | 'verified';
 
@@ -11,32 +12,32 @@ interface Props {
 const tierConfig: Record<HiveTier, { label: string; bg: string; fg: string; glyph: string }> = {
   queen: {
     label: 'QUEEN',
-    bg: 'linear-gradient(135deg,#ffd84a,#ff8c1a)',
-    fg: '#030303',
+    bg: `linear-gradient(135deg,${colors.accentBrightest},${colors.accentAmber})`,
+    fg: colors.black,
     glyph: '♛',
   },
   worker: {
     label: 'WORKER',
     bg: 'rgba(246,196,0,0.12)',
-    fg: 'var(--hive-gold, #f6c400)',
+    fg: `var(--hive-gold, ${colors.accentBright})`,
     glyph: '◆',
   },
   scout: {
     label: 'SCOUT',
     bg: 'rgba(37,217,255,0.12)',
-    fg: 'var(--hive-blue, #25d9ff)',
+    fg: `var(--hive-blue, ${colors.accentCyan})`,
     glyph: '◬',
   },
   drone: {
     label: 'DRONE',
     bg: 'rgba(169,163,144,0.16)',
-    fg: 'var(--hive-muted, #a9a390)',
+    fg: `var(--hive-muted, ${colors.text.dimmed})`,
     glyph: '○',
   },
   verified: {
     label: 'VERIFIED',
     bg: 'rgba(126,237,139,0.14)',
-    fg: 'var(--hive-success, #7eed8b)',
+    fg: `var(--hive-success, ${colors.successBright})`,
     glyph: '✓',
   },
 };

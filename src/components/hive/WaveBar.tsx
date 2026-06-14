@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { colors } from '../../styles/tokens';
 
 interface Props {
   /** Pre-computed bar heights, each 0..1. If absent, a soft sine fallback is used. */
@@ -61,7 +62,9 @@ export function WaveBar({
               flex: 1,
               height: `${Math.max(8, Math.min(100, h * 100))}%`,
               borderRadius: 1,
-              background: played ? 'var(--hive-gold-hot, #ffd84a)' : 'var(--hive-gold, #f6c400)',
+              background: played
+                ? `var(--hive-gold-hot, ${colors.accentBrightest})`
+                : `var(--hive-gold, ${colors.accentBright})`,
               opacity: played ? 1 : 0.78,
               boxShadow: played ? '0 0 6px rgba(246,196,0,0.5)' : 'none',
               transition: 'background 80ms linear',
@@ -78,7 +81,7 @@ export function WaveBar({
             bottom: 0,
             left: `${playheadX * 100}%`,
             width: 2,
-            background: 'var(--hive-gold-hot, #ffd84a)',
+            background: `var(--hive-gold-hot, ${colors.accentBrightest})`,
             boxShadow: '0 0 8px var(--hive-glow, rgba(246,196,0,0.55))',
             pointerEvents: 'none',
           }}

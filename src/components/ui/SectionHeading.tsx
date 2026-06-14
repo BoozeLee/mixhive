@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { GlowText } from './GlowText';
+import { colors } from '../../styles/tokens';
 
 interface Props {
   eyebrow?: string;
@@ -39,7 +40,7 @@ export function SectionHeading({
             fontWeight: 800,
             letterSpacing: '0.16em',
             textTransform: 'uppercase',
-            color: 'var(--hive-gold, #f6c400)',
+            color: `var(--hive-gold, ${colors.accentBright})`,
             fontFamily: 'var(--font-mono, monospace)',
             marginBottom: 14,
           }}
@@ -65,7 +66,7 @@ export function SectionHeading({
       {subtitle && (
         <p
           style={{
-            color: 'var(--hive-text-soft, #d4cdb0)',
+            color: `var(--hive-text-soft, ${colors.text.secondary})`,
             fontSize: 'clamp(15px, 1.6vw, 18px)',
             lineHeight: 1.6,
             margin: '18px 0 0',

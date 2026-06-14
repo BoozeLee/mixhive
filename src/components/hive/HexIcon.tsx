@@ -1,4 +1,5 @@
 import { ImageWithFallback, type IconName } from '../../lib/assetUrl';
+import { colors } from '../../styles/tokens';
 
 interface Props {
   name: IconName;
@@ -90,13 +91,13 @@ const FALLBACK_GLYPHS: Record<IconName, JSX.Element> = {
       <rect x="26" y="14" width="12" height="22" rx="6" />
       <path d="M22 30 a10 10 0 0 0 20 0" fill="none" stroke="currentColor" strokeWidth="2" />
       <line x1="32" y1="40" x2="32" y2="48" stroke="currentColor" strokeWidth="2" />
-      <circle cx="42" cy="18" r="2.5" fill="#ff5252" />
+      <circle cx="42" cy="18" r="2.5" fill={colors.danger} />
     </g>
   ),
   'honeydrop-nft': (
     <g>
       <path d="M32 12 l14 18 a14 14 0 1 1 -28 0 z" />
-      <circle cx="32" cy="30" r="3" fill="var(--hive-black, #030303)" />
+      <circle cx="32" cy="30" r="3" fill={`var(--hive-black, ${colors.black})`} />
     </g>
   ),
 };
@@ -107,7 +108,9 @@ const FALLBACK_GLYPHS: Record<IconName, JSX.Element> = {
  * complete even before any asset generation has happened.
  */
 export function HexIcon({ name, size = 48, active = false, label }: Props) {
-  const colour = active ? 'var(--hive-gold-hot, #ffd84a)' : 'var(--hive-gold, #f6c400)';
+  const colour = active
+    ? `var(--hive-gold-hot, ${colors.accentBrightest})`
+    : `var(--hive-gold, ${colors.accentBright})`;
 
   return (
     <span
@@ -137,7 +140,7 @@ export function HexIcon({ name, size = 48, active = false, label }: Props) {
       >
         <polygon
           points="32,2 60,18 60,46 32,62 4,46 4,18"
-          fill="var(--hive-ink, #080806)"
+          fill={`var(--hive-ink, ${colors.bg})`}
           stroke="currentColor"
           strokeWidth="1.2"
         />

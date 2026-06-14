@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BeeMark } from '../brand/BeeMark';
+import { colors } from '../../styles/tokens';
 
 type Tone = 'info' | 'success' | 'danger';
 
@@ -16,20 +17,20 @@ interface Props {
 const toneStyle: Record<Tone, { bg: string; border: string; fg: string; glyph: string }> = {
   info: {
     bg: 'rgba(7,7,5,0.92)',
-    border: 'var(--hive-gold, #f6c400)',
-    fg: 'var(--hive-gold-hot, #ffd84a)',
+    border: `var(--hive-gold, ${colors.accentBright})`,
+    fg: `var(--hive-gold-hot, ${colors.accentBrightest})`,
     glyph: '',
   },
   success: {
     bg: 'rgba(7,30,12,0.92)',
-    border: 'var(--hive-success, #7eed8b)',
-    fg: 'var(--hive-success, #7eed8b)',
+    border: `var(--hive-success, ${colors.successBright})`,
+    fg: `var(--hive-success, ${colors.successBright})`,
     glyph: '✓',
   },
   danger: {
     bg: 'rgba(40,8,8,0.92)',
-    border: 'var(--hive-danger, #ff5252)',
-    fg: 'var(--hive-danger, #ff5252)',
+    border: `var(--hive-danger, ${colors.danger})`,
+    fg: `var(--hive-danger, ${colors.danger})`,
     glyph: '!',
   },
 };
@@ -68,7 +69,7 @@ export function BuzzToast({ open, message, tone = 'info', duration = 4000, onClo
             border: `1px solid ${cfg.border}`,
             borderRadius: 14,
             padding: '12px 14px',
-            color: 'var(--hive-text, #f5f3e7)',
+            color: `var(--hive-text, ${colors.hiveText})`,
             backdropFilter: 'blur(10px)',
             boxShadow: '0 14px 36px rgba(0,0,0,0.55), 0 0 24px rgba(246,196,0,0.18)',
             display: 'flex',
@@ -92,7 +93,7 @@ export function BuzzToast({ open, message, tone = 'info', duration = 4000, onClo
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: 'var(--hive-muted, #a9a390)',
+                color: `var(--hive-muted, ${colors.text.dimmed})`,
                 cursor: 'pointer',
                 padding: 4,
                 fontSize: 14,

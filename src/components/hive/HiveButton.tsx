@@ -1,5 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { colors } from '../../styles/tokens';
 
 type Variant = 'primary' | 'ghost' | 'glass' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
@@ -22,26 +23,25 @@ const sizeStyle: Record<Size, React.CSSProperties> = {
 
 const variantStyle: Record<Variant, React.CSSProperties> = {
   primary: {
-    background:
-      'linear-gradient(135deg, var(--hive-gold-hot, #ffd84a) 0%, var(--hive-gold, #f6c400) 55%, var(--hive-amber, #ff8c1a) 100%)',
-    color: 'var(--hive-black, #030303)',
+    background: `linear-gradient(135deg, var(--hive-gold-hot, ${colors.accentBrightest}) 0%, var(--hive-gold, ${colors.accentBright}) 55%, var(--hive-amber, ${colors.accentAmber}) 100%)`,
+    color: `var(--hive-black, ${colors.black})`,
     border: '1px solid transparent',
     boxShadow: '0 0 0 1px rgba(255,216,74,0.4) inset, 0 8px 24px rgba(246,196,0,0.25)',
   },
   ghost: {
     background: 'transparent',
-    color: 'var(--hive-gold, #f6c400)',
+    color: `var(--hive-gold, ${colors.accentBright})`,
     border: '1px solid var(--hive-line, rgba(246,196,0,0.28))',
   },
   glass: {
     background: 'var(--hive-panel, rgba(7,7,5,0.78))',
-    color: 'var(--hive-text, #f5f3e7)',
+    color: `var(--hive-text, ${colors.hiveText})`,
     border: '1px solid var(--hive-line, rgba(246,196,0,0.28))',
     backdropFilter: 'blur(8px)',
   },
   danger: {
     background: 'rgba(255,82,82,0.12)',
-    color: 'var(--hive-danger, #ff5252)',
+    color: `var(--hive-danger, ${colors.danger})`,
     border: '1px solid rgba(255,82,82,0.5)',
   },
 };
@@ -140,7 +140,7 @@ export const HiveButton = forwardRef<HTMLButtonElement, Props>(function HiveButt
               cx={cx}
               cy="2"
               r={2}
-              fill="var(--hive-gold, #f6c400)"
+              fill={`var(--hive-gold, ${colors.accentBright})`}
               style={{ animationDelay: `${i * 70}ms` }}
             />
           ))}

@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { colors } from '../../styles/tokens';
 
 interface Props {
   height?: number;
@@ -51,7 +52,7 @@ export function HoneyDripDivider({ height = 64, className }: Props) {
           <motion.path
             key={cx}
             d={`M ${cx} 0 Q ${cx - 1.5} 4, ${cx} 8 Q ${cx + 1.5} 12, ${cx} 16`}
-            stroke="var(--hive-gold, #f6c400)"
+            stroke={`var(--hive-gold, ${colors.accentBright})`}
             strokeWidth="0.6"
             fill="none"
             style={{
@@ -69,7 +70,7 @@ export function HoneyDripDivider({ height = 64, className }: Props) {
           y1={0}
           x2={50}
           y2={len}
-          stroke="var(--hive-gold-hot, #ffd84a)"
+          stroke={`var(--hive-gold-hot, ${colors.accentBrightest})`}
           strokeWidth="0.4"
           style={{ opacity: 0.65 }}
         />

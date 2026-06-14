@@ -1,5 +1,6 @@
 import React from 'react';
 import { Toaster as HotToaster } from 'react-hot-toast';
+import { colors } from '../../styles/tokens';
 
 interface ToasterProps {
   position?:
@@ -17,7 +18,11 @@ export function Toaster({ position = 'top-right' }: ToasterProps) {
       position={position}
       toastOptions={{
         className: 'toast-enter',
-        style: { background: '#0d0d0d', border: '1px solid #f0c040', color: '#fff' },
+        style: {
+          background: colors.surfaceMuted,
+          border: `1px solid ${colors.accent}`,
+          color: colors.white,
+        },
       }}
     />
   );

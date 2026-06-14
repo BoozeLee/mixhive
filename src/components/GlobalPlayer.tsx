@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { colors, withAlpha } from '../styles/tokens';
 import { usePlayer } from '../lib/playerStore';
 import { PlayerQueue } from './PlayerQueue';
+import { IconButton } from './ui/IconButton';
 
 export function GlobalPlayer() {
   const {
@@ -109,39 +110,22 @@ export function GlobalPlayer() {
             {currentTrack.title}
           </div>
         </div>
-        <button
+        <IconButton
+          label={playing ? 'Pause' : 'Play'}
           onClick={togglePlay}
+          size={28}
           style={{
-            width: 28,
-            height: 28,
-            borderRadius: '50%',
-            border: 'none',
             background: colors.accent,
             color: colors.bg,
-            fontSize: 12,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            borderRadius: '50%',
             flexShrink: 0,
           }}
         >
           {playing ? '⏸' : '▶'}
-        </button>
-        <button
-          onClick={toggleMini}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: colors.text.faintest,
-            fontSize: 14,
-            cursor: 'pointer',
-            padding: 2,
-          }}
-          title="Expand"
-        >
+        </IconButton>
+        <IconButton label="Expand" onClick={toggleMini} size={24}>
           ▲
-        </button>
+        </IconButton>
       </div>
     );
   }
@@ -204,55 +188,25 @@ export function GlobalPlayer() {
 
         {/* Prev / Play-Pause / Next */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-          <button
-            onClick={playPrevious}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: colors.text.muted,
-              fontSize: 14,
-              cursor: 'pointer',
-              padding: '4px 6px',
-              lineHeight: 1,
-            }}
-            title="Previous"
-          >
+          <IconButton label="Previous" onClick={playPrevious} size={28}>
             ⏮
-          </button>
-          <button
+          </IconButton>
+          <IconButton
+            label={playing ? 'Pause' : 'Play'}
             onClick={togglePlay}
+            size={34}
             style={{
-              width: 34,
-              height: 34,
-              borderRadius: '50%',
-              border: 'none',
               background: colors.accent,
               color: colors.bg,
-              fontSize: 14,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              borderRadius: '50%',
               flexShrink: 0,
             }}
           >
             {playing ? '⏸' : '▶'}
-          </button>
-          <button
-            onClick={playNext}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: colors.text.muted,
-              fontSize: 14,
-              cursor: 'pointer',
-              padding: '4px 6px',
-              lineHeight: 1,
-            }}
-            title="Next"
-          >
+          </IconButton>
+          <IconButton label="Next" onClick={playNext} size={28}>
             ⏭
-          </button>
+          </IconButton>
         </div>
 
         {/* Progress bar */}
@@ -308,20 +262,14 @@ export function GlobalPlayer() {
 
         {/* Volume */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-          <button
+          <IconButton
+            label={muted ? 'Unmute' : 'Mute'}
             onClick={toggleMute}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: muted ? colors.danger : colors.text.muted,
-              fontSize: 14,
-              cursor: 'pointer',
-              padding: 2,
-            }}
-            title={muted ? 'Unmute' : 'Mute'}
+            size={28}
+            style={muted ? { color: colors.danger } : undefined}
           >
             {muted || volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊'}
-          </button>
+          </IconButton>
           <input
             type="range"
             min={0}
@@ -336,54 +284,25 @@ export function GlobalPlayer() {
 
         {/* Queue toggle */}
         {hasQueue && (
-          <button
+          <IconButton
+            label="Queue"
+            active={showQueue}
             onClick={() => setShowQueue(s => !s)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: showQueue ? colors.accent : colors.text.muted,
-              fontSize: 13,
-              cursor: 'pointer',
-              padding: 4,
-            }}
-            title="Queue"
+            size={28}
           >
             ☰
-          </button>
+          </IconButton>
         )}
 
         {/* Mini mode */}
-        <button
-          onClick={toggleMini}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: colors.text.faintest,
-            fontSize: 12,
-            cursor: 'pointer',
-            padding: 2,
-          }}
-          title="Minimize"
-        >
+        <IconButton label="Minimize" onClick={toggleMini} size={24}>
           ▼
-        </button>
+        </IconButton>
 
         {/* Close */}
-        <button
-          onClick={stop}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: colors.text.faintest,
-            cursor: 'pointer',
-            fontSize: 16,
-            padding: 2,
-            lineHeight: 1,
-          }}
-          title="Close"
-        >
+        <IconButton label="Close" onClick={stop} size={24}>
           ✕
-        </button>
+        </IconButton>
       </div>
     </>
   );

@@ -66,6 +66,12 @@ jobs:
         if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         run: npm run lint
 
+      # Design-system ratchet (P1): raw hex colors must not exceed the budget.
+      # Lower the --max in package.json (lint:hex) as src/app/* migrates onto tokens.
+      - name: Check raw-hex budget (no-raw-hex ratchet)
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
+        run: npm run lint:hex
+
       - name: Check formatting with Prettier (changed files on PRs)
         if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         shell: bash

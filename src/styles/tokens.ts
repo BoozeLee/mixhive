@@ -48,8 +48,12 @@ export const colors = {
   accentBright: '#f6c400',
   accentBrightest: '#ffde4d', // honey-gradient start
   accentDeep: '#b96a00', // honey/ember-gradient end
+  accentAmber: '#ff8c1a', // honey/ember-gradient mid-amber
+  accentCyan: '#25d9ff', // cool secondary accent (mesh backdrop)
   surfaceRaised: '#1e1e1e',
   surfaceTint: '#2a1a2e', // purple-tinted surface (gradient pair with `border`)
+  hiveText: '#f5f3e7', // brand cream text (--hive-text)
+  successBright: '#7eed8b', // bright mint indicator (online/active)
   black: '#000',
   white: '#fff',
 } as const;

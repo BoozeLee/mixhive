@@ -95,3 +95,39 @@ The repo ships two Claude Code skills under `.claude/skills/`:
 
 The `/lint-fix` slash command (`.claude/commands/lint-fix.md`) drives
 the warn → error promotion loop on the jsx-a11y migration.
+
+## Design-system primitives — button/input convergence (P1)
+
+Views must consume the shared primitive layer instead of hand-rolling
+`<button style>` / `<input style>`. Roles are intentionally split — pick by
+intent, don't merge them:
+
+| Need | Use | Source |
+| --- | --- | --- |
+| Brand / hero CTA (honey gradient, pill, motion) | `HiveButton` | `src/components/hive/HiveButton.tsx` |
+| Utility / form button (`primary`/`secondary`/`ghost`/`danger`) | `Button` | `src/components/ui/Button.tsx` |
+| Icon-only button (**must** pass `aria-label`) | `IconButton` | `src/components/ui/IconButton.tsx` |
+| Text / url / number field | `Input` | `src/components/ui/Input.tsx` |
+| Multi-line field | `Textarea` | `src/components/ui/Textarea.tsx` |
+| Dropdown | `Select` | `src/components/ui/Select.tsx` |
+| File picker | `FileInput` | `src/components/ui/FileInput.tsx` |
+
+`Input`/`Textarea` already render label + help + error with a11y wiring
+(`useId`, `aria-describedby`) — pass `label` / `help` / `error` props rather
+than wrapping in a bespoke field component or manual `<label>` + error `<p>`.
+
+**When migrating a view (checklist):**
+1. Replace raw `<input>`/`<textarea>`/`<select>` with the primitive; fold any
+   label/hint markup into the `label`/`help` props and error state into `error`.
+2. Replace raw `<button>` with `Button` (or `HiveButton` for a brand CTA);
+   keep icon-only ones as `IconButton` with an `aria-label`.
+3. Preserve all handlers/validation — this is a presentational swap only.
+4. **Shape note:** `ui/Button` is `radius.md`; some legacy local buttons are
+   `radius.pill`. Converging those is a deliberate visual change — batch it and
+   call it out in the PR (or add a `pill` variant to `ui/Button` first).
+
+Reference conversion: `src/views/ProfileSetup.tsx` Step-1 identity fields +
+Bio (`FormField` + `<input style={inputStyle}>` → `Input`/`Textarea`).
+Remaining ProfileSetup fields/buttons + the other form-heavy views
+(`NewGearListing`, `NewCollabQuest`, `Settings`, `BuzzComposer`, …) follow this
+pattern in later slices.

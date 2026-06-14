@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Icon } from '../components/ui/Icon';
+import { Input } from '../components/ui/Input';
+import { Textarea } from '../components/ui/Textarea';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -526,8 +528,10 @@ export function ProfileSetup() {
               title="Set up your identity"
               subtitle="Username and display name are required."
             >
-              <FormField label="Username *" hint="3–30 chars, letters/numbers/underscores">
-                <input
+              <div style={{ marginBottom: space[7] }}>
+                <Input
+                  label="Username *"
+                  help={usernameChecking ? 'Checking…' : '3–30 chars, letters/numbers/underscores'}
                   type="text"
                   value={form.username}
                   onChange={e => {
@@ -536,52 +540,27 @@ export function ProfileSetup() {
                   }}
                   onBlur={() => checkUsername(form.username)}
                   placeholder="djyourusername"
-                  style={inputStyle}
-                  aria-describedby="username-error"
+                  error={usernameError || undefined}
                 />
-                {usernameChecking && (
-                  <p
-                    style={{
-                      margin: `${space[2]}px 0 0`,
-                      fontSize: fontSize.xs,
-                      color: colors.text.dim,
-                    }}
-                  >
-                    Checking…
-                  </p>
-                )}
-                {usernameError && (
-                  <p
-                    id="username-error"
-                    role="alert"
-                    style={{
-                      margin: `${space[2]}px 0 0`,
-                      fontSize: fontSize.xs,
-                      color: colors.danger,
-                    }}
-                  >
-                    {usernameError}
-                  </p>
-                )}
-              </FormField>
-              <FormField label="Display name *">
-                <input
+              </div>
+              <div style={{ marginBottom: space[7] }}>
+                <Input
+                  label="Display name *"
                   type="text"
                   value={form.displayName}
                   onChange={e => setField('displayName', e.target.value)}
                   placeholder="DJ Venom"
-                  style={inputStyle}
                 />
-              </FormField>
-              <FormField label="Location">
-                <input
+              </div>
+              <div style={{ marginBottom: space[7] }}>
+                <Input
+                  label="Location"
                   type="text"
                   value={form.location}
                   onChange={e => setField('location', e.target.value)}
                   placeholder="Brussels, Belgium"
-                  style={inputStyle}
                 />
-              </FormField>
+              </div>
               <StepNav onNext={() => setStep(2)} canNext={canProceedStep1} />
             </StepShell>
           )}
@@ -999,15 +978,14 @@ export function ProfileSetup() {
                 }}
               >
                 <div style={{ flex: 1 }}>
-                  <FormField label="Bio *">
-                    <textarea
-                      value={form.bio}
-                      onChange={e => setField('bio', e.target.value)}
-                      rows={4}
-                      placeholder="Write your bio or use AI to generate one…"
-                      style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
-                    />
-                  </FormField>
+                  <Textarea
+                    label="Bio *"
+                    value={form.bio}
+                    onChange={e => setField('bio', e.target.value)}
+                    rows={4}
+                    placeholder="Write your bio or use AI to generate one…"
+                    style={{ resize: 'vertical' }}
+                  />
                 </div>
               </div>
 

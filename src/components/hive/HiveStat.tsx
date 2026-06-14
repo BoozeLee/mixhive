@@ -1,3 +1,4 @@
+import { colors } from '../../styles/tokens';
 interface Props {
   label: string;
   value: string | number;
@@ -26,8 +27,8 @@ export function HiveStat({ label, value, delta, sparkline, icon }: Props) {
     delta == null
       ? undefined
       : delta >= 0
-        ? 'var(--hive-success, #7eed8b)'
-        : 'var(--hive-danger, #ff5252)';
+        ? `var(--hive-success, ${colors.successBright})`
+        : `var(--hive-danger, ${colors.danger})`;
 
   return (
     <div style={{ padding: '6px 12px 10px', display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -35,7 +36,7 @@ export function HiveStat({ label, value, delta, sparkline, icon }: Props) {
         <div
           aria-hidden="true"
           style={{
-            color: 'var(--hive-gold, #f6c400)',
+            color: `var(--hive-gold, ${colors.accentBright})`,
             fontSize: 22,
             lineHeight: 1,
             filter: 'drop-shadow(0 0 6px rgba(246,196,0,0.4))',
@@ -49,7 +50,7 @@ export function HiveStat({ label, value, delta, sparkline, icon }: Props) {
           fontFamily: 'var(--font-mono, "JetBrains Mono"), ui-monospace, monospace',
           fontSize: 28,
           fontWeight: 700,
-          color: 'var(--hive-text, #f5f3e7)',
+          color: `var(--hive-text, ${colors.hiveText})`,
           letterSpacing: '0.02em',
           lineHeight: 1,
         }}
@@ -59,7 +60,7 @@ export function HiveStat({ label, value, delta, sparkline, icon }: Props) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span
           style={{
-            color: 'var(--hive-muted, #a9a390)',
+            color: `var(--hive-muted, ${colors.text.dimmed})`,
             fontSize: 11,
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
@@ -97,7 +98,7 @@ function Sparkline({ values }: { values: number[] }) {
       <path
         d={path}
         fill="none"
-        stroke="var(--hive-gold, #f6c400)"
+        stroke={`var(--hive-gold, ${colors.accentBright})`}
         strokeWidth="1.5"
         strokeLinejoin="round"
         strokeLinecap="round"

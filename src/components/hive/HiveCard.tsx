@@ -1,5 +1,6 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { colors } from '../../styles/tokens';
 
 type Tone = 'panel' | 'glow' | 'flat';
 
@@ -18,7 +19,7 @@ const toneStyle: Record<Tone, React.CSSProperties> = {
   },
   glow: {
     background: 'linear-gradient(180deg, rgba(246,196,0,0.06) 0%, rgba(7,7,5,0.92) 100%)',
-    border: '1px solid var(--hive-gold, #f6c400)',
+    border: `1px solid var(--hive-gold, ${colors.accentBright})`,
     boxShadow: 'var(--shadow-honey, 0 0 24px rgba(246,196,0,0.35))',
   },
   flat: {
@@ -40,7 +41,7 @@ export const HiveCard = forwardRef<HTMLDivElement, Props>(function HiveCard(
     position: 'relative',
     borderRadius: 18,
     padding: 20,
-    color: 'var(--hive-text, #f5f3e7)',
+    color: `var(--hive-text, ${colors.hiveText})`,
     transition: 'border-color 240ms ease, box-shadow 240ms ease, transform 240ms ease',
     ...toneStyle[tone],
     ...style,
@@ -61,7 +62,7 @@ export const HiveCard = forwardRef<HTMLDivElement, Props>(function HiveCard(
       transition={{ type: 'spring', stiffness: 320, damping: 24 }}
       style={baseStyle}
       onMouseEnter={e => {
-        e.currentTarget.style.borderColor = 'var(--hive-gold, #f6c400)';
+        e.currentTarget.style.borderColor = `var(--hive-gold, ${colors.accentBright})`;
         e.currentTarget.style.boxShadow =
           'var(--shadow-honey-strong, 0 0 36px rgba(246,196,0,0.35), 0 0 8px var(--hive-gold))';
       }}

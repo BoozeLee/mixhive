@@ -6,6 +6,7 @@ import type { Opportunity, OpportunityMatch, OpportunitySaveStatus } from '../li
 import { getOpportunitySaves, upsertOpportunitySave } from '../lib/api';
 import { colors, fontSize, fontWeight, radius, space, transition } from '../styles/tokens';
 import { Icon } from '../components/ui/Icon';
+import { Button } from '../components/ui/Button';
 
 type Tab = 'for-you' | 'saved' | 'applied' | 'dismissed';
 type OpportunityAction = OpportunitySaveStatus;
@@ -253,31 +254,20 @@ export function Opportunities() {
             manual + Supabase-backed opportunities
           </div>
           {user && (
-            <button
+            <Button
               type="button"
+              size="sm"
+              fullWidth
               onClick={runOpportunityMatch}
               disabled={matchBusy}
-              style={{
-                marginTop: space[4],
-                border: `1px solid ${colors.accent}`,
-                borderRadius: radius.lg,
-                background: matchBusy ? colors.surfaceRaised : colors.accent,
-                color: matchBusy ? colors.text.faintest : colors.bg,
-                padding: `${space[2]}px ${space[4]}px`,
-                fontWeight: fontWeight.bold,
-                fontSize: fontSize.xs,
-                cursor: matchBusy ? 'default' : 'pointer',
-                width: '100%',
-              }}
+              loading={matchBusy}
+              leftIcon={
+                !matchBusy ? <Icon name="radar" size={15} color="currentColor" /> : undefined
+              }
+              style={{ marginTop: space[4] }}
             >
-              {matchBusy ? (
-                'Matching…'
-              ) : (
-                <>
-                  <Icon name="radar" size={15} color="currentColor" /> Match me to opportunities
-                </>
-              )}
-            </button>
+              {matchBusy ? 'Matching…' : 'Match me to opportunities'}
+            </Button>
           )}
         </div>
       </header>
@@ -384,6 +374,7 @@ export function Opportunities() {
           <button
             key={key}
             type="button"
+            aria-pressed={tab === key}
             onClick={() => setTab(key)}
             style={{
               flexShrink: 0,
@@ -538,27 +529,23 @@ export function Opportunities() {
               </div>
 
               <div style={{ display: 'flex', gap: space[3], flexWrap: 'wrap' }}>
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={() => setAction(opp.id, 'saved')}
-                  style={buttonStyle('secondary')}
                 >
                   Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openDraft(match)}
-                  style={buttonStyle('primary')}
-                >
+                </Button>
+                <Button type="button" onClick={() => openDraft(match)}>
                   Draft application
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => setAction(opp.id, 'dismissed')}
-                  style={buttonStyle('ghost')}
                 >
                   Dismiss
-                </button>
+                </Button>
               </div>
             </article>
           );
@@ -628,42 +615,22 @@ export function Opportunities() {
                 flexWrap: 'wrap',
               }}
             >
-              <button type="button" onClick={() => setSelected(null)} style={buttonStyle('ghost')}>
+              <Button type="button" variant="ghost" onClick={() => setSelected(null)}>
                 Close
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => {
                   setAction(selected.opportunity.id, 'applied', draft);
                   setSelected(null);
                 }}
-                style={buttonStyle('primary')}
               >
                 Mark draft ready
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-}
-
-function buttonStyle(variant: 'primary' | 'secondary' | 'ghost'): React.CSSProperties {
-  const primary = variant === 'primary';
-  const secondary = variant === 'secondary';
-  return {
-    border: `1px solid ${primary ? colors.accent : colors.border}`,
-    background: primary
-      ? `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent})`
-      : secondary
-        ? colors.accentFaint
-        : 'transparent',
-    color: primary ? colors.bg : secondary ? colors.accent : colors.text.muted,
-    borderRadius: radius.md,
-    padding: `${space[3]}px ${space[5]}px`,
-    fontWeight: fontWeight.bold,
-    cursor: 'pointer',
-    minHeight: 40,
-  };
 }

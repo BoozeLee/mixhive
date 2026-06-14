@@ -3,6 +3,7 @@ import { colors, withAlpha } from '../styles/tokens';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
+import { Button } from '../components/ui/Button';
 import type { IconKey } from '../lib/icons';
 
 interface Role {
@@ -368,29 +369,20 @@ export function CollabQuestDetail() {
                   </div>
 
                   {!isCreator && quest.phase === 'recruiting' && (
-                    <button
+                    <Button
+                      variant={applied.has(role.id) ? 'success' : 'primary'}
+                      size="sm"
                       onClick={() => handleApply(role)}
                       disabled={applying === role.id || applied.has(role.id)}
-                      style={{
-                        background: applied.has(role.id) ? colors.successBg : 'var(--hive-gold)',
-                        color: applied.has(role.id) ? colors.successStrong : colors.black,
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 18px',
-                        fontWeight: 700,
-                        fontSize: 13,
-                        cursor:
-                          applying === role.id || applied.has(role.id) ? 'default' : 'pointer',
-                        opacity: applying === role.id ? 0.7 : 1,
-                        flexShrink: 0,
-                      }}
+                      loading={applying === role.id}
+                      style={{ flexShrink: 0 }}
                     >
                       {applying === role.id
                         ? 'Applying...'
                         : applied.has(role.id)
                           ? 'Applied ✓'
                           : 'Apply'}
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -438,44 +430,41 @@ export function CollabQuestDetail() {
           <h2 style={sectionHeadStyle}>Quest Controls</h2>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {quest.phase === 'draft' && (
-              <button
+              <Button
                 onClick={() => handleAdvancePhase('recruiting')}
                 disabled={advancing}
-                style={{ ...ctrlBtnStyle, background: 'var(--hive-gold)', color: colors.black }}
+                loading={advancing}
               >
-                {advancing ? '...' : 'Open for Recruiting'}
-              </button>
+                Open for Recruiting
+              </Button>
             )}
             {quest.phase === 'recruiting' && (
-              <button
+              <Button
+                variant="success"
                 onClick={() => handleAdvancePhase('in_progress')}
                 disabled={advancing}
-                style={{ ...ctrlBtnStyle, background: colors.successStrong, color: colors.black }}
+                loading={advancing}
               >
-                {advancing ? '...' : '▶ Launch Quest'}
-              </button>
+                ▶ Launch Quest
+              </Button>
             )}
             {quest.phase === 'in_progress' && (
-              <button
+              <Button
+                variant="success"
                 onClick={() => handleAdvancePhase('complete')}
                 disabled={advancing}
-                style={{ ...ctrlBtnStyle, background: colors.successStrong, color: colors.black }}
+                loading={advancing}
               >
-                {advancing ? '...' : '✓ Mark Complete + Award XP'}
-              </button>
+                ✓ Mark Complete + Award XP
+              </Button>
             )}
-            <button
+            <Button
+              variant="danger"
               onClick={() => handleAdvancePhase('cancelled')}
               disabled={advancing}
-              style={{
-                ...ctrlBtnStyle,
-                background: 'transparent',
-                color: colors.dangerStrong,
-                border: `1px solid ${withAlpha(colors.dangerStrong, 0.27)}`,
-              }}
             >
               Cancel Quest
-            </button>
+            </Button>
           </div>
           {quest.phase === 'recruiting' && (
             <p style={{ color: colors.text.faintest, fontSize: 12, marginTop: 8, marginBottom: 0 }}>
@@ -524,15 +513,6 @@ export function CollabQuestDetail() {
     </div>
   );
 }
-
-const ctrlBtnStyle: React.CSSProperties = {
-  border: 'none',
-  borderRadius: 8,
-  padding: '9px 18px',
-  fontWeight: 700,
-  fontSize: 13,
-  cursor: 'pointer',
-};
 
 const sectionHeadStyle: React.CSSProperties = {
   fontSize: 13,

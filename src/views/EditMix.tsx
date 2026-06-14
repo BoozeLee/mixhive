@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { getMix, updateMix, deleteMix } from '../lib/api';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { AUDIO_BUCKET, ARTWORK_BUCKET } from '../lib/api';
-import { Input, Textarea, Select, FileInput } from '../components/ui';
+import { Input, Textarea, Select, FileInput, Button, IconButton } from '../components/ui';
 import type { Mix, TrackItem } from '../lib/types';
 
 export function EditMix() {
@@ -306,43 +306,29 @@ export function EditMix() {
                   placeholder="Start (sec)"
                   style={{ width: 80 }}
                 />
-                <button
-                  type="button"
+                <IconButton
+                  label="Remove track"
+                  size={28}
                   onClick={() => {
                     const list = [...tracklist];
                     list.splice(index, 1);
                     setTracklist(list);
                   }}
-                  style={{
-                    background: colors.dangerBg,
-                    color: colors.danger,
-                    border: 'none',
-                    borderRadius: 4,
-                    padding: '4px 8px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                  }}
+                  style={{ background: colors.dangerBg, color: colors.danger }}
                 >
                   −
-                </button>
+                </IconButton>
               </div>
             ))}
             <div style={{ marginTop: 12, textAlign: 'right' }}>
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="sm"
                 onClick={() => setTracklist([...tracklist, { artist: '', title: '' }])}
-                style={{
-                  background: colors.surfaceHover,
-                  color: colors.accent,
-                  border: `1px solid ${colors.accent}`,
-                  borderRadius: 4,
-                  padding: '6px 12px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                }}
               >
                 + Add Track
-              </button>
+              </Button>
             </div>
           </div>
         </fieldset>
@@ -374,43 +360,27 @@ export function EditMix() {
         </div>
 
         <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
-          <button
+          <Button
             type="button"
+            variant="danger"
+            fullWidth
             onClick={handleDelete}
             disabled={uploading}
-            style={{
-              flex: 1,
-              background: colors.dangerBg,
-              color: colors.danger,
-              border: 'none',
-              borderRadius: 8,
-              padding: '12px 16px',
-              fontSize: 14,
-              cursor: uploading ? 'not-allowed' : 'pointer',
-              opacity: uploading ? 0.6 : 1,
-            }}
+            loading={uploading}
+            style={{ flex: 1 }}
           >
             {uploading ? 'Deleting...' : 'Delete Mix'}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            fullWidth
             onClick={handleSave}
             disabled={uploading}
-            style={{
-              flex: 1,
-              background: colors.accent,
-              color: colors.bg,
-              border: 'none',
-              borderRadius: 8,
-              padding: '12px 16px',
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: uploading ? 'not-allowed' : 'pointer',
-              opacity: uploading ? 0.6 : 1,
-            }}
+            loading={uploading}
+            style={{ flex: 1 }}
           >
             {uploading ? 'Saving...' : 'Save Changes'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

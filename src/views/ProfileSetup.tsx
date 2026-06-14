@@ -489,7 +489,7 @@ export function ProfileSetup() {
                     justifyContent: 'center',
                     fontSize: fontSize.sm,
                     fontWeight: fontWeight.bold,
-                    color: done ? '#0a0a0a' : active ? colors.accent : colors.text.faint,
+                    color: done ? colors.bg : active ? colors.accent : colors.text.faint,
                     transition: 'all 220ms',
                   }}
                 >
@@ -613,7 +613,7 @@ export function ProfileSetup() {
                       borderRadius: radius.md,
                       border: 'none',
                       background: avatarMode === m ? colors.accent : 'transparent',
-                      color: avatarMode === m ? '#0a0a0a' : colors.text.muted,
+                      color: avatarMode === m ? colors.bg : colors.text.muted,
                       fontWeight: avatarMode === m ? fontWeight.bold : fontWeight.normal,
                       fontSize: fontSize.base,
                       cursor: 'pointer',
@@ -905,7 +905,7 @@ export function ProfileSetup() {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 fontSize: 12,
-                                color: '#0a0a0a',
+                                color: colors.bg,
                                 fontWeight: fontWeight.bold,
                               }}
                             >
@@ -1578,7 +1578,7 @@ const inputStyle: React.CSSProperties = {
 const primaryBtnStyle: React.CSSProperties = {
   padding: `${space[4]}px ${space[9]}px`,
   background: colors.accent,
-  color: '#0a0a0a',
+  color: colors.bg,
   border: 'none',
   borderRadius: radius.pill,
   fontWeight: fontWeight.bold,

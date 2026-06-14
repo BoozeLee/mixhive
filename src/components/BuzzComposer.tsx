@@ -293,7 +293,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
                     right: 6,
                     background: 'rgba(0,0,0,0.7)',
                     border: 'none',
-                    color: '#fff',
+                    color: colors.white,
                     borderRadius: '50%',
                     width: 24,
                     height: 24,
@@ -389,7 +389,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
                 style={{
                   padding: `${space[3]}px ${space[8]}px`,
                   background: canSubmit ? colors.accent : colors.surfaceMuted,
-                  color: canSubmit ? '#0a0a0a' : colors.text.faint,
+                  color: canSubmit ? colors.bg : colors.text.faint,
                   border: 'none',
                   borderRadius: radius.pill,
                   fontWeight: fontWeight.bold,
@@ -528,7 +528,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               disabled={!codeSnippet.trim()}
               style={{
                 background: codeSnippet.trim() ? colors.accent : colors.surfaceMuted,
-                color: codeSnippet.trim() ? '#0a0a0a' : colors.text.faint,
+                color: codeSnippet.trim() ? colors.bg : colors.text.faint,
                 border: 'none',
                 borderRadius: radius.md,
                 padding: `${space[4]}px ${space[8]}px`,
@@ -600,7 +600,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               disabled={!attachedMixId}
               style={{
                 background: attachedMixId ? colors.accent : colors.surfaceMuted,
-                color: attachedMixId ? '#0a0a0a' : colors.text.faint,
+                color: attachedMixId ? colors.bg : colors.text.faint,
                 border: 'none',
                 borderRadius: radius.md,
                 padding: `${space[4]}px ${space[8]}px`,

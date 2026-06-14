@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getPostAuthDestination } from '../lib/authRouting';
 import type { Profile } from '../lib/types';
+import { colors } from '../styles/tokens';
 
 export function AuthCallback() {
   const navigate = useNavigate();
@@ -136,8 +137,10 @@ export function AuthCallback() {
           textAlign: 'center',
         }}
       >
-        <p style={{ color: '#f55', fontSize: 14, marginBottom: 16, lineHeight: 1.5 }}>{error}</p>
-        <a href="/login" style={{ color: '#f0c040', fontSize: 14, textDecoration: 'none' }}>
+        <p style={{ color: colors.danger, fontSize: 14, marginBottom: 16, lineHeight: 1.5 }}>
+          {error}
+        </p>
+        <a href="/login" style={{ color: colors.accent, fontSize: 14, textDecoration: 'none' }}>
           Back to sign in
         </a>
       </div>
@@ -149,8 +152,12 @@ export function AuthCallback() {
       style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}
     >
       <div style={{ textAlign: 'center' }}>
-        <div style={{ color: '#f0c040', fontSize: 14, marginBottom: 8 }}>Completing sign in…</div>
-        <div style={{ color: '#555', fontSize: 12 }}>Preparing your MixHive profile</div>
+        <div style={{ color: colors.accent, fontSize: 14, marginBottom: 8 }}>
+          Completing sign in…
+        </div>
+        <div style={{ color: colors.text.faintest, fontSize: 12 }}>
+          Preparing your MixHive profile
+        </div>
       </div>
     </div>
   );

@@ -109,7 +109,7 @@ export function Navbar() {
             gap: 9,
           }}
         >
-          <BeeMark size={28} color="var(--hive-gold, #f6c400)" glow />
+          <BeeMark size={28} color={`var(--hive-gold, ${colors.accentBright})`} glow />
           <MixhiveWordmark height={17} color="var(--hive-text, #f5f3e7)" />
         </Link>
         {user && (
@@ -218,7 +218,7 @@ export function Navbar() {
                     position: 'absolute',
                     right: 0,
                     top: 'calc(100% + 10px)',
-                    background: '#0e0e0b',
+                    background: colors.bg,
                     border: `1px solid rgba(240,192,64,0.22)`,
                     borderRadius: 10,
                     minWidth: 172,
@@ -291,7 +291,7 @@ export function Navbar() {
                   <div style={{ borderTop: '1px solid rgba(240,192,64,0.10)', marginTop: 2 }} />
 
                   <button
-                    style={{ ...menuItemStyle, color: '#e05555' }}
+                    style={{ ...menuItemStyle, color: colors.danger }}
                     onClick={() => {
                       setMenuOpen(false);
                       signOut();

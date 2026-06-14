@@ -2,6 +2,8 @@
 // the page's typical layout (centered column under the navbar) so the
 // page doesn't jump when the chunk arrives.
 
+import { colors } from '../styles/tokens';
+
 export function RoutePending() {
   return (
     <div
@@ -24,7 +26,7 @@ export function RoutePending() {
           style={{
             height: 84,
             borderRadius: 10,
-            background: 'linear-gradient(90deg, #111 0%, #1a1a2e 50%, #111 100%)',
+            background: `linear-gradient(90deg, ${colors.surface} 0%, ${colors.border} 50%, ${colors.surface} 100%)`,
             backgroundSize: '200% 100%',
             animation: 'mixhive-shimmer 1.4s ease-in-out infinite',
             opacity: 1 - i * 0.15,

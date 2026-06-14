@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { colors, fontSize, radius } from '../styles/tokens';
+import { colors, fontSize, radius, tierColors } from '../styles/tokens';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 interface Scene {
@@ -33,12 +33,7 @@ interface Partner {
   verified: boolean;
 }
 
-const BADGE_COLOR: Record<string, string> = {
-  platinum: '#d8d8e8',
-  gold: '#e8c14a',
-  silver: '#b8b8c0',
-  bronze: '#b07a4a',
-};
+const BADGE_COLOR: Record<string, string> = tierColors;
 
 export function SceneDetail() {
   const { slug } = useParams<{ slug: string }>();

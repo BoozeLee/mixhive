@@ -2,6 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { colors, withAlpha } from '../styles/tokens';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Textarea } from '../components/ui/Textarea';
+import { Select } from '../components/ui/Select';
 
 const CATEGORIES = [
   'mixer',
@@ -214,61 +218,39 @@ export function NewGearListing() {
       {/* Step 1: Category & Item */}
       {step === 1 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <label style={labelStyle}>
-            Category *
-            <select
-              value={form.category}
-              onChange={e => update('category', e.target.value)}
-              style={inputStyle}
-            >
-              <option value="">Select category</option>
-              {CATEGORIES.map(c => (
-                <option key={c} value={c}>
-                  {c.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Select
+            label="Category *"
+            placeholder="Select category"
+            value={form.category}
+            onChange={e => update('category', e.target.value)}
+            options={CATEGORIES.map(c => ({ value: c, label: c.replace('_', ' ') }))}
+          />
           <div
             className="p15-form-2col"
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
           >
-            <label style={labelStyle}>
-              Brand
-              <input
-                value={form.brand}
-                onChange={e => update('brand', e.target.value)}
-                placeholder="Pioneer DJ"
-                style={inputStyle}
-              />
-            </label>
-            <label style={labelStyle}>
-              Model
-              <input
-                value={form.model}
-                onChange={e => update('model', e.target.value)}
-                placeholder="CDJ-2000NXS2"
-                style={inputStyle}
-              />
-            </label>
+            <Input
+              label="Brand"
+              value={form.brand}
+              onChange={e => update('brand', e.target.value)}
+              placeholder="Pioneer DJ"
+            />
+            <Input
+              label="Model"
+              value={form.model}
+              onChange={e => update('model', e.target.value)}
+              placeholder="CDJ-2000NXS2"
+            />
           </div>
-          <label style={labelStyle}>
-            Condition *
-            <select
-              value={form.condition}
-              onChange={e => update('condition', e.target.value)}
-              style={inputStyle}
-            >
-              <option value="">Select condition</option>
-              {CONDITIONS.map(c => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Select
+            label="Condition *"
+            placeholder="Select condition"
+            value={form.condition}
+            onChange={e => update('condition', e.target.value)}
+            options={CONDITIONS}
+          />
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-            <button
+            <Button
               onClick={() => {
                 if (!form.category || !form.condition) {
                   setError('Category and condition are required');
@@ -277,10 +259,9 @@ export function NewGearListing() {
                 setError('');
                 setStep(2);
               }}
-              style={primaryBtnStyle}
             >
               Continue →
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -288,27 +269,22 @@ export function NewGearListing() {
       {/* Step 2: Description & Photos */}
       {step === 2 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <label style={labelStyle}>
-            Listing title
-            <input
-              value={form.title}
-              onChange={e => update('title', e.target.value)}
-              placeholder={
-                `${form.brand || form.category} ${form.model || ''}`.trim() || 'Short, clear title'
-              }
-              style={inputStyle}
-            />
-          </label>
-          <label style={labelStyle}>
-            Description
-            <textarea
-              value={form.description}
-              onChange={e => update('description', e.target.value)}
-              placeholder="Describe the item condition, included accessories, reason for selling..."
-              rows={5}
-              style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
-            />
-          </label>
+          <Input
+            label="Listing title"
+            value={form.title}
+            onChange={e => update('title', e.target.value)}
+            placeholder={
+              `${form.brand || form.category} ${form.model || ''}`.trim() || 'Short, clear title'
+            }
+          />
+          <Textarea
+            label="Description"
+            value={form.description}
+            onChange={e => update('description', e.target.value)}
+            placeholder="Describe the item condition, included accessories, reason for selling..."
+            rows={5}
+            style={{ resize: 'vertical' }}
+          />
 
           {/* Photo upload */}
           <div>
@@ -346,6 +322,8 @@ export function NewGearListing() {
                       style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8 }}
                     />
                     <button
+                      type="button"
+                      aria-label="Remove photo"
                       onClick={() => setPhotos(p => p.filter((_, j) => j !== i))}
                       style={{
                         position: 'absolute',
@@ -371,10 +349,10 @@ export function NewGearListing() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-            <button onClick={() => setStep(1)} style={secondaryBtnStyle}>
+            <Button variant="secondary" onClick={() => setStep(1)}>
               ← Back
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 if (photos.length === 0) {
                   setError('At least one photo required');
@@ -383,10 +361,9 @@ export function NewGearListing() {
                 setError('');
                 setStep(3);
               }}
-              style={primaryBtnStyle}
             >
               Continue →
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -398,53 +375,41 @@ export function NewGearListing() {
             className="p15-form-2col"
             style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}
           >
-            <label style={labelStyle}>
-              Price *
-              <input
-                type="number"
-                value={form.price}
-                onChange={e => update('price', e.target.value)}
-                placeholder="0"
-                min="0"
-                style={inputStyle}
-              />
-            </label>
-            <label style={labelStyle}>
-              Currency
-              <select
-                value={form.currency}
-                onChange={e => update('currency', e.target.value)}
-                style={inputStyle}
-              >
-                <option>EUR</option>
-                <option>GBP</option>
-                <option>USD</option>
-              </select>
-            </label>
+            <Input
+              label="Price *"
+              type="number"
+              value={form.price}
+              onChange={e => update('price', e.target.value)}
+              placeholder="0"
+              min="0"
+            />
+            <Select
+              label="Currency"
+              value={form.currency}
+              onChange={e => update('currency', e.target.value)}
+            >
+              <option>EUR</option>
+              <option>GBP</option>
+              <option>USD</option>
+            </Select>
           </div>
           <div
             className="p15-form-2col"
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
           >
-            <label style={labelStyle}>
-              City
-              <input
-                value={form.location_city}
-                onChange={e => update('location_city', e.target.value)}
-                placeholder="Brussels"
-                style={inputStyle}
-              />
-            </label>
-            <label style={labelStyle}>
-              Country (ISO)
-              <input
-                value={form.location_country}
-                onChange={e => update('location_country', e.target.value)}
-                placeholder="BE"
-                maxLength={2}
-                style={inputStyle}
-              />
-            </label>
+            <Input
+              label="City"
+              value={form.location_city}
+              onChange={e => update('location_city', e.target.value)}
+              placeholder="Brussels"
+            />
+            <Input
+              label="Country (ISO)"
+              value={form.location_country}
+              onChange={e => update('location_country', e.target.value)}
+              placeholder="BE"
+              maxLength={2}
+            />
           </div>
 
           <div>
@@ -479,55 +444,19 @@ export function NewGearListing() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-            <button onClick={() => setStep(2)} style={secondaryBtnStyle}>
+            <Button variant="secondary" onClick={() => setStep(2)}>
               ← Back
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleSubmit}
               disabled={submitting || !form.price}
-              style={{ ...primaryBtnStyle, opacity: submitting || !form.price ? 0.5 : 1 }}
+              loading={submitting}
             >
               {submitting ? 'Publishing...' : 'Publish Listing'}
-            </button>
+            </Button>
           </div>
         </div>
       )}
     </div>
   );
 }
-
-const labelStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-  color: colors.text.dimmed,
-  fontSize: 13,
-};
-const inputStyle: React.CSSProperties = {
-  background: colors.surface,
-  border: `1px solid ${colors.borderStrong}`,
-  color: colors.white,
-  borderRadius: 8,
-  padding: '10px 12px',
-  fontSize: 14,
-  outline: 'none',
-};
-const primaryBtnStyle: React.CSSProperties = {
-  background: 'var(--hive-gold)',
-  color: colors.black,
-  border: 'none',
-  borderRadius: 8,
-  padding: '10px 24px',
-  fontWeight: 700,
-  fontSize: 14,
-  cursor: 'pointer',
-};
-const secondaryBtnStyle: React.CSSProperties = {
-  background: 'transparent',
-  color: colors.text.dimmed,
-  border: `1px solid ${colors.borderStrong}`,
-  borderRadius: 8,
-  padding: '10px 20px',
-  fontSize: 14,
-  cursor: 'pointer',
-};

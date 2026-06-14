@@ -793,15 +793,12 @@ export function ProfileSetup() {
                     ))}
                   </div>
 
-                  <FormField label="Describe your vibe (optional)">
-                    <input
-                      type="text"
-                      value={avatarPrompt}
-                      onChange={e => setAvatarPrompt(e.target.value)}
-                      placeholder="e.g. underground rave, dark industrial…"
-                      style={inputStyle}
-                    />
-                  </FormField>
+                  <Input
+                    label="Describe your vibe (optional)"
+                    value={avatarPrompt}
+                    onChange={e => setAvatarPrompt(e.target.value)}
+                    placeholder="e.g. underground rave, dark industrial…"
+                  />
 
                   <button
                     onClick={generateAvatars}
@@ -949,25 +946,20 @@ export function ProfileSetup() {
                 </div>
               </FormField>
 
-              <FormField label="Your style / vibe" hint="Used by AI for bio + avatar generation">
-                <input
-                  type="text"
-                  value={form.djStyle}
-                  onChange={e => setField('djStyle', e.target.value)}
-                  placeholder="e.g. dark hypnotic techno, warehouse energy"
-                  style={inputStyle}
-                />
-              </FormField>
+              <Input
+                label="Your style / vibe"
+                help="Used by AI for bio + avatar generation"
+                value={form.djStyle}
+                onChange={e => setField('djStyle', e.target.value)}
+                placeholder="e.g. dark hypnotic techno, warehouse energy"
+              />
 
-              <FormField label="Influences">
-                <input
-                  type="text"
-                  value={form.influences}
-                  onChange={e => setField('influences', e.target.value)}
-                  placeholder="e.g. Ben Klock, Aphex Twin, Nina Kraviz"
-                  style={inputStyle}
-                />
-              </FormField>
+              <Input
+                label="Influences"
+                value={form.influences}
+                onChange={e => setField('influences', e.target.value)}
+                placeholder="e.g. Ben Klock, Aphex Twin, Nina Kraviz"
+              />
 
               <div
                 style={{
@@ -1109,51 +1101,39 @@ export function ProfileSetup() {
                 >
                   Social links
                 </p>
-                <FormField label="Website">
-                  <input
+                <div style={{ display: 'flex', flexDirection: 'column', gap: space[5] }}>
+                  <Input
+                    label="Website"
                     type="url"
                     value={form.website}
                     onChange={e => setField('website', e.target.value)}
                     placeholder="https://yoursite.com"
-                    style={inputStyle}
                   />
-                </FormField>
-                <FormField label="GitHub">
-                  <input
-                    type="text"
+                  <Input
+                    label="GitHub"
                     value={form.github}
                     onChange={e => setField('github', e.target.value)}
                     placeholder="github.com/yourusername"
-                    style={inputStyle}
                   />
-                </FormField>
-                <FormField label="SoundCloud">
-                  <input
-                    type="text"
+                  <Input
+                    label="SoundCloud"
                     value={form.soundcloud}
                     onChange={e => setField('soundcloud', e.target.value)}
                     placeholder="soundcloud.com/yourusername"
-                    style={inputStyle}
                   />
-                </FormField>
-                <FormField label="Spotify">
-                  <input
-                    type="text"
+                  <Input
+                    label="Spotify"
                     value={form.spotify}
                     onChange={e => setField('spotify', e.target.value)}
                     placeholder="open.spotify.com/artist/…"
-                    style={inputStyle}
                   />
-                </FormField>
-                <FormField label="Instagram">
-                  <input
-                    type="text"
+                  <Input
+                    label="Instagram"
                     value={form.instagram}
                     onChange={e => setField('instagram', e.target.value)}
                     placeholder="@yourusername"
-                    style={inputStyle}
                   />
-                </FormField>
+                </div>
               </div>
 
               <StepNav
@@ -1539,19 +1519,6 @@ function StepNav({
 }
 
 // ── Shared button styles ───────────────────────────────────────────────────────
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: `${space[5]}px ${space[6]}px`,
-  background: colors.bg,
-  border: `1px solid ${colors.border}`,
-  borderRadius: radius.md,
-  color: colors.text.primary,
-  fontSize: fontSize.base,
-  boxSizing: 'border-box',
-  outline: 'none',
-  fontFamily: 'inherit',
-};
 
 const primaryBtnStyle: React.CSSProperties = {
   padding: `${space[4]}px ${space[9]}px`,

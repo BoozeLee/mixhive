@@ -4,6 +4,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { createBuzz } from '../lib/api';
 import { Modal } from './ui/Modal';
+import { Button } from './ui/Button';
+import { Input } from './ui/Input';
+import { Textarea } from './ui/Textarea';
+import { Select } from './ui/Select';
 import { BuzzToast } from './hive/BuzzToast';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 import type { Buzz } from '../lib/types';
@@ -383,32 +387,15 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               </span>
 
               {/* Submit */}
-              <button
+              <Button
                 onClick={handleSubmit}
                 disabled={!canSubmit}
-                style={{
-                  padding: `${space[3]}px ${space[8]}px`,
-                  background: canSubmit ? colors.accent : colors.surfaceMuted,
-                  color: canSubmit ? colors.bg : colors.text.faint,
-                  border: 'none',
-                  borderRadius: radius.pill,
-                  fontWeight: fontWeight.bold,
-                  fontSize: fontSize.base,
-                  cursor: canSubmit ? 'pointer' : 'default',
-                  transition: 'background 150ms, color 150ms',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: space[2],
-                }}
+                loading={submitting}
+                leftIcon={<Icon name="buzz" size={14} />}
+                style={{ borderRadius: radius.pill }}
               >
-                {submitting ? (
-                  '…'
-                ) : (
-                  <>
-                    <Icon name="buzz" size={14} /> Buzz
-                  </>
-                )}
-              </button>
+                Buzz
+              </Button>
             </div>
           </div>
         </div>
@@ -445,100 +432,27 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
         width={560}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
-          <label style={{ display: 'block' }}>
-            <span
-              style={{
-                display: 'block',
-                fontSize: fontSize.sm,
-                color: colors.text.muted,
-                marginBottom: space[3],
-              }}
-            >
-              Language
-            </span>
-            <select
-              value={codeLang}
-              onChange={e => setCodeLang(e.target.value)}
-              style={{
-                width: '100%',
-                padding: `${space[4]}px ${space[6]}px`,
-                background: colors.bg,
-                border: `1px solid ${colors.border}`,
-                borderRadius: radius.md,
-                color: colors.text.primary,
-                fontSize: fontSize.base,
-              }}
-            >
-              {LANGUAGES.map(l => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label style={{ display: 'block' }}>
-            <span
-              style={{
-                display: 'block',
-                fontSize: fontSize.sm,
-                color: colors.text.muted,
-                marginBottom: space[3],
-              }}
-            >
-              Code
-            </span>
-            <textarea
-              value={codeSnippet}
-              onChange={e => setCodeSnippet(e.target.value)}
-              rows={10}
-              placeholder="Paste your code here…"
-              style={{
-                width: '100%',
-                background: colors.bg,
-                border: `1px solid ${colors.border}`,
-                borderRadius: radius.md,
-                color: colors.text.primary,
-                fontFamily: 'monospace',
-                fontSize: fontSize.sm,
-                padding: space[6],
-                resize: 'vertical',
-                boxSizing: 'border-box',
-              }}
-            />
-          </label>
+          <Select
+            label="Language"
+            value={codeLang}
+            onChange={e => setCodeLang(e.target.value)}
+            options={LANGUAGES.map(l => ({ value: l, label: l }))}
+          />
+          <Textarea
+            label="Code"
+            value={codeSnippet}
+            onChange={e => setCodeSnippet(e.target.value)}
+            rows={10}
+            placeholder="Paste your code here…"
+            style={{ fontFamily: 'monospace', resize: 'vertical' }}
+          />
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[6] }}>
-            <button
-              onClick={() => setActiveAttach(null)}
-              style={{
-                background: 'none',
-                border: `1px solid ${colors.border}`,
-                color: colors.text.muted,
-                borderRadius: radius.md,
-                padding: `${space[4]}px ${space[8]}px`,
-                cursor: 'pointer',
-                fontSize: fontSize.base,
-              }}
-            >
+            <Button variant="secondary" onClick={() => setActiveAttach(null)}>
               Cancel
-            </button>
-            <button
-              onClick={() => {
-                setActiveAttach(null);
-              }}
-              disabled={!codeSnippet.trim()}
-              style={{
-                background: codeSnippet.trim() ? colors.accent : colors.surfaceMuted,
-                color: codeSnippet.trim() ? colors.bg : colors.text.faint,
-                border: 'none',
-                borderRadius: radius.md,
-                padding: `${space[4]}px ${space[8]}px`,
-                fontWeight: fontWeight.semibold,
-                cursor: codeSnippet.trim() ? 'pointer' : 'default',
-                fontSize: fontSize.base,
-              }}
-            >
+            </Button>
+            <Button onClick={() => setActiveAttach(null)} disabled={!codeSnippet.trim()}>
               Attach
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
@@ -554,7 +468,9 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
           <p style={{ margin: 0, color: colors.text.muted, fontSize: fontSize.base }}>
             Paste a MixHive mix URL or mix ID.
           </p>
-          <input
+          <Input
+            hideLabel
+            label="Mix URL or ID"
             type="url"
             value={attachedMixUrl}
             onChange={e => {
@@ -562,16 +478,6 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               setAttachedMixId(parseMixId(e.target.value));
             }}
             placeholder="https://mixhive.app/mix/…"
-            style={{
-              width: '100%',
-              padding: `${space[5]}px ${space[6]}px`,
-              background: colors.bg,
-              border: `1px solid ${colors.border}`,
-              borderRadius: radius.md,
-              color: colors.text.primary,
-              fontSize: fontSize.base,
-              boxSizing: 'border-box',
-            }}
           />
           {attachedMixId && (
             <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.success }}>
@@ -579,38 +485,12 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
             </p>
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[6] }}>
-            <button
-              onClick={() => setActiveAttach(null)}
-              style={{
-                background: 'none',
-                border: `1px solid ${colors.border}`,
-                color: colors.text.muted,
-                borderRadius: radius.md,
-                padding: `${space[4]}px ${space[8]}px`,
-                cursor: 'pointer',
-                fontSize: fontSize.base,
-              }}
-            >
+            <Button variant="secondary" onClick={() => setActiveAttach(null)}>
               Cancel
-            </button>
-            <button
-              onClick={() => {
-                setActiveAttach(null);
-              }}
-              disabled={!attachedMixId}
-              style={{
-                background: attachedMixId ? colors.accent : colors.surfaceMuted,
-                color: attachedMixId ? colors.bg : colors.text.faint,
-                border: 'none',
-                borderRadius: radius.md,
-                padding: `${space[4]}px ${space[8]}px`,
-                fontWeight: fontWeight.semibold,
-                cursor: attachedMixId ? 'pointer' : 'default',
-                fontSize: fontSize.base,
-              }}
-            >
+            </Button>
+            <Button onClick={() => setActiveAttach(null)} disabled={!attachedMixId}>
               Attach
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>

@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { colors, withAlpha } from '../styles/tokens';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Textarea } from '../components/ui/Textarea';
+import { Select } from '../components/ui/Select';
 
 const ROLE_TYPES = [
   'dj',
@@ -161,38 +165,36 @@ export function NewCollabQuest() {
         <section>
           <h2 style={sectionHeadStyle}>Quest Details</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <label style={labelStyle}>
-              Quest title *
-              <input
-                value={form.title}
-                onChange={e => updateForm('title', e.target.value)}
-                placeholder='e.g. "Build visual identity for my techno alias"'
-                style={inputStyle}
-              />
-            </label>
-            <label style={labelStyle}>
-              Narrative (RPG-style context)
-              <textarea
-                value={form.narrative}
-                onChange={e => updateForm('narrative', e.target.value)}
-                placeholder="Describe the project in your own words..."
-                rows={3}
-                style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
-              />
-            </label>
+            <Input
+              label="Quest title *"
+              value={form.title}
+              onChange={e => updateForm('title', e.target.value)}
+              placeholder='e.g. "Build visual identity for my techno alias"'
+            />
+            <Textarea
+              label="Narrative (RPG-style context)"
+              value={form.narrative}
+              onChange={e => updateForm('narrative', e.target.value)}
+              placeholder="Describe the project in your own words..."
+              rows={3}
+              style={{ resize: 'vertical' }}
+            />
             <div>
               <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
                 Goals * (what will be delivered)
               </p>
-              {form.goals.map((g, i) => (
-                <input
-                  key={i}
-                  value={g}
-                  onChange={e => updateGoal(i, e.target.value)}
-                  placeholder={`Goal ${i + 1}${i === 0 ? ' (required)' : ' (optional)'}`}
-                  style={{ ...inputStyle, display: 'block', marginBottom: 8 }}
-                />
-              ))}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
+                {form.goals.map((g, i) => (
+                  <Input
+                    key={i}
+                    hideLabel
+                    label={`Goal ${i + 1}`}
+                    value={g}
+                    onChange={e => updateGoal(i, e.target.value)}
+                    placeholder={`Goal ${i + 1}${i === 0 ? ' (required)' : ' (optional)'}`}
+                  />
+                ))}
+              </div>
               <button
                 type="button"
                 onClick={() => setForm(f => ({ ...f, goals: [...f.goals, ''] }))}
@@ -211,55 +213,40 @@ export function NewCollabQuest() {
             className="p15-form-2col"
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
           >
-            <label style={labelStyle}>
-              Genre tags (comma-separated)
-              <input
-                value={form.genre_tags}
-                onChange={e => updateForm('genre_tags', e.target.value)}
-                placeholder="techno, ambient, house"
-                style={inputStyle}
-              />
-            </label>
-            <label style={labelStyle}>
-              Discipline tags
-              <input
-                value={form.discipline_tags}
-                onChange={e => updateForm('discipline_tags', e.target.value)}
-                placeholder="visual_artist, dj"
-                style={inputStyle}
-              />
-            </label>
-            <label style={labelStyle}>
-              Region (optional)
-              <input
-                value={form.region}
-                onChange={e => updateForm('region', e.target.value)}
-                placeholder="Brussels, Remote, Europe"
-                style={inputStyle}
-              />
-            </label>
-            <label style={labelStyle}>
-              Timeline (days)
-              <input
-                type="number"
-                value={form.timeline_days}
-                onChange={e => updateForm('timeline_days', e.target.value)}
-                placeholder="30"
-                min="1"
-                style={inputStyle}
-              />
-            </label>
-            <label style={labelStyle}>
-              XP reward
-              <input
-                type="number"
-                value={form.xp_reward}
-                onChange={e => updateForm('xp_reward', e.target.value)}
-                min="0"
-                max="2000"
-                style={inputStyle}
-              />
-            </label>
+            <Input
+              label="Genre tags (comma-separated)"
+              value={form.genre_tags}
+              onChange={e => updateForm('genre_tags', e.target.value)}
+              placeholder="techno, ambient, house"
+            />
+            <Input
+              label="Discipline tags"
+              value={form.discipline_tags}
+              onChange={e => updateForm('discipline_tags', e.target.value)}
+              placeholder="visual_artist, dj"
+            />
+            <Input
+              label="Region (optional)"
+              value={form.region}
+              onChange={e => updateForm('region', e.target.value)}
+              placeholder="Brussels, Remote, Europe"
+            />
+            <Input
+              label="Timeline (days)"
+              type="number"
+              value={form.timeline_days}
+              onChange={e => updateForm('timeline_days', e.target.value)}
+              placeholder="30"
+              min="1"
+            />
+            <Input
+              label="XP reward"
+              type="number"
+              value={form.xp_reward}
+              onChange={e => updateForm('xp_reward', e.target.value)}
+              min="0"
+              max="2000"
+            />
           </div>
         </section>
 
@@ -298,52 +285,35 @@ export function NewCollabQuest() {
                   className="p15-form-2col"
                   style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}
                 >
-                  <label style={labelStyle}>
-                    Type *
-                    <select
-                      value={role.role_type}
-                      onChange={e => updateRole(i, 'role_type', e.target.value)}
-                      style={inputStyle}
-                    >
-                      <option value="">Select...</option>
-                      {ROLE_TYPES.map(rt => (
-                        <option key={rt} value={rt}>
-                          {rt.replace('_', ' ')}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label style={labelStyle}>
-                    Label *
-                    <input
-                      value={role.title}
-                      onChange={e => updateRole(i, 'title', e.target.value)}
-                      placeholder="Lead Animator"
-                      style={inputStyle}
-                    />
-                  </label>
-                  <label style={labelStyle}>
-                    Skills (comma-sep)
-                    <input
-                      value={role.skill_tags}
-                      onChange={e => updateRole(i, 'skill_tags', e.target.value)}
-                      placeholder="after_effects, 3d"
-                      style={inputStyle}
-                    />
-                  </label>
-                  <label style={labelStyle}>
-                    Experience level
-                    <select
-                      value={role.experience_level}
-                      onChange={e => updateRole(i, 'experience_level', e.target.value)}
-                      style={inputStyle}
-                    >
-                      <option value="any">Any level</option>
-                      <option value="beginner">Beginner</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="pro">Pro</option>
-                    </select>
-                  </label>
+                  <Select
+                    label="Type *"
+                    placeholder="Select..."
+                    value={role.role_type}
+                    onChange={e => updateRole(i, 'role_type', e.target.value)}
+                    options={ROLE_TYPES.map(rt => ({ value: rt, label: rt.replace('_', ' ') }))}
+                  />
+                  <Input
+                    label="Label *"
+                    value={role.title}
+                    onChange={e => updateRole(i, 'title', e.target.value)}
+                    placeholder="Lead Animator"
+                  />
+                  <Input
+                    label="Skills (comma-sep)"
+                    value={role.skill_tags}
+                    onChange={e => updateRole(i, 'skill_tags', e.target.value)}
+                    placeholder="after_effects, 3d"
+                  />
+                  <Select
+                    label="Experience level"
+                    value={role.experience_level}
+                    onChange={e => updateRole(i, 'experience_level', e.target.value)}
+                  >
+                    <option value="any">Any level</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="pro">Pro</option>
+                  </Select>
                 </div>
                 <label
                   style={{
@@ -364,12 +334,15 @@ export function NewCollabQuest() {
                   Paid role
                 </label>
                 {role.is_paid && (
-                  <input
-                    value={role.compensation_notes}
-                    onChange={e => updateRole(i, 'compensation_notes', e.target.value)}
-                    placeholder="e.g. rev share + credit"
-                    style={{ ...inputStyle, marginTop: 8, display: 'block' }}
-                  />
+                  <div style={{ marginTop: 8 }}>
+                    <Input
+                      hideLabel
+                      label="Compensation notes"
+                      value={role.compensation_notes}
+                      onChange={e => updateRole(i, 'compensation_notes', e.target.value)}
+                      placeholder="e.g. rev share + credit"
+                    />
+                  </div>
                 )}
               </div>
             ))}
@@ -379,18 +352,15 @@ export function NewCollabQuest() {
           </div>
         </section>
 
-        <button
+        <Button
           onClick={handleSubmit}
           disabled={submitting}
-          style={{
-            ...primaryBtnStyle,
-            opacity: submitting ? 0.6 : 1,
-            alignSelf: 'flex-end',
-            padding: '12px 32px',
-          }}
+          loading={submitting}
+          size="lg"
+          style={{ alignSelf: 'flex-end' }}
         >
           {submitting ? 'Posting...' : 'Post Quest'}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -403,31 +373,6 @@ const sectionHeadStyle: React.CSSProperties = {
   color: colors.text.faint,
   marginBottom: 14,
   marginTop: 0,
-};
-const labelStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-  color: colors.text.dimmed,
-  fontSize: 13,
-};
-const inputStyle: React.CSSProperties = {
-  background: colors.surface,
-  border: `1px solid ${colors.borderStrong}`,
-  color: colors.white,
-  borderRadius: 8,
-  padding: '10px 12px',
-  fontSize: 14,
-  outline: 'none',
-};
-const primaryBtnStyle: React.CSSProperties = {
-  background: 'var(--hive-gold)',
-  color: colors.black,
-  border: 'none',
-  borderRadius: 8,
-  fontWeight: 700,
-  fontSize: 14,
-  cursor: 'pointer',
 };
 const ghostBtnStyle: React.CSSProperties = {
   background: 'transparent',

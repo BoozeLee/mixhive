@@ -10,6 +10,7 @@ import { CreateQuestModal } from '../components/CreateQuestModal';
 import { GraphSeedingModal } from '../components/GraphSeedingModal';
 import { ProposalsInbox } from '../components/ProposalsInbox';
 import type { MythicQuest } from '../lib/types';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 interface QuestSummary {
   id: string;
@@ -58,8 +59,8 @@ export function QuestsList() {
 
   if (loading) {
     return (
-      <div style={{ padding: 40, textAlign: 'center', color: colors.text.muted }}>
-        Loading quests…
+      <div style={{ padding: 40, textAlign: 'center' }}>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

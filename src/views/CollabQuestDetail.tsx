@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
 import { Button } from '../components/ui/Button';
 import type { IconKey } from '../lib/icons';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 interface Role {
   id: string;
@@ -146,8 +147,8 @@ export function CollabQuestDetail() {
 
   if (loading)
     return (
-      <div style={{ padding: 40, color: colors.text.faintest, textAlign: 'center' }}>
-        Loading quest...
+      <div style={{ padding: 40, textAlign: 'center' }}>
+        <LoadingSpinner size="lg" />
       </div>
     );
   if (error || !quest) {

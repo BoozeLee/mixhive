@@ -141,80 +141,9 @@ export function NetworkError({ onRetry }: { onRetry?: () => void }) {
 }
 
 // Empty State Component
-interface EmptyStateProps {
-  title: string;
-  description?: string;
-  action?: React.ReactNode;
-  icon?: React.ReactNode;
-}
-
-export function EmptyState({ title, description, action, icon }: EmptyStateProps) {
-  return (
-    <div
-      style={{
-        textAlign: 'center',
-        padding: space[8],
-        color: colors.text.muted,
-      }}
-    >
-      {icon && <div style={{ marginBottom: space[4], fontSize: 48 }}>{icon}</div>}
-      <h3
-        style={{
-          fontSize: 18,
-          fontWeight: 600,
-          color: colors.text.primary,
-          marginBottom: space[2],
-        }}
-      >
-        {title}
-      </h3>
-      {description && (
-        <p
-          style={{
-            fontSize: 14,
-            lineHeight: 1.5,
-            marginBottom: space[4],
-            color: colors.text.secondary,
-          }}
-        >
-          {description}
-        </p>
-      )}
-      {action}
-    </div>
-  );
-}
-
-// 404 Component
-export function NotFound({ onHome }: { onHome?: () => void }) {
-  return (
-    <ErrorComponent
-      error="404 - Not Found"
-      message="The page you're looking for doesn't exist."
-      action={
-        onHome && (
-          <button
-            onClick={onHome}
-            style={{
-              padding: `${space[2]} ${space[4]}`,
-              background: colors.surface,
-              color: colors.text.primary,
-              border: `1px solid ${colors.border}`,
-              borderRadius: radius.pill,
-              fontWeight: 600,
-              fontSize: 14,
-              cursor: 'pointer',
-              textDecoration: 'none',
-            }}
-          >
-            Go Home
-          </button>
-        )
-      }
-      fullPage={true}
-    />
-  );
-}
+// NOTE: empty-state + 404 live in EmptyState.tsx (canonical: `EmptyState` +
+// `NotFoundState`). The duplicate `EmptyState`/`NotFound` that used to live here
+// were unused and were removed (P4 de-dup). This file keeps the error kit only.
 
 // Permission Error Component
 export function PermissionError({ onLogin }: { onLogin?: () => void }) {

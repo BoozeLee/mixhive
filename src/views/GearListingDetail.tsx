@@ -3,6 +3,7 @@ import { colors } from '../styles/tokens';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { ReportButton } from '../components/ReportButton';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 interface Listing {
   id: string;
@@ -96,8 +97,8 @@ export function GearListingDetail() {
 
   if (loading) {
     return (
-      <div style={{ padding: 40, color: colors.text.faintest, textAlign: 'center' }}>
-        Loading...
+      <div style={{ padding: 40, textAlign: 'center' }}>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

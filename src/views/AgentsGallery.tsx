@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { createFromStarter, forkAgent, listPublicAgents, type PublicLuaAgent } from '../lib/agents';
 import { STARTER_AGENTS, type StarterAgent } from '../lib/starter_agents';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function AgentsGallery() {
   const { user } = useAuth();
@@ -132,7 +133,9 @@ export function AgentsGallery() {
         </header>
 
         {loading ? (
-          <div style={{ color: colors.text.muted }}>Loading…</div>
+          <div style={{ padding: 24, textAlign: 'center' }}>
+            <LoadingSpinner size="lg" />
+          </div>
         ) : agents.length === 0 ? (
           <EmptyState
             icon="🌍"

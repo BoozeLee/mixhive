@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Icon } from '../components/ui/Icon';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
+import { Button } from '../components/ui/Button';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -800,22 +801,19 @@ export function ProfileSetup() {
                     placeholder="e.g. underground rave, dark industrial…"
                   />
 
-                  <button
+                  <Button
+                    fullWidth
                     onClick={generateAvatars}
                     disabled={generatingAvatar || genCount >= 3}
-                    style={{
-                      ...primaryBtnStyle,
-                      width: '100%',
-                      marginBottom: space[7],
-                      opacity: generatingAvatar || genCount >= 3 ? 0.5 : 1,
-                    }}
+                    loading={generatingAvatar}
+                    style={{ marginBottom: space[7] }}
                   >
                     {generatingAvatar
                       ? 'Generating…'
                       : genCount >= 3
                         ? 'Max regenerations reached'
                         : 'Generate 4 avatars'}
-                  </button>
+                  </Button>
                   {genCount > 0 && genCount < 3 && (
                     <p
                       style={{
@@ -928,6 +926,8 @@ export function ProfileSetup() {
                   {GENRES.map(g => (
                     <button
                       key={g}
+                      type="button"
+                      aria-pressed={form.genres.includes(g)}
                       onClick={() => toggleArray('genres', g)}
                       style={{
                         padding: `${space[2]}px ${space[5]}px`,
@@ -1013,18 +1013,16 @@ export function ProfileSetup() {
                   </div>
                 </div>
               )}
-              <button
+              <Button
+                variant="secondary"
+                fullWidth
                 onClick={generateBio}
                 disabled={generatingBio || aiKeyReady === 'none'}
-                style={{
-                  ...secondaryBtnStyle,
-                  width: '100%',
-                  marginBottom: space[7],
-                  opacity: generatingBio || aiKeyReady === 'none' ? 0.5 : 1,
-                }}
+                loading={generatingBio}
+                style={{ marginBottom: space[7] }}
               >
                 {generatingBio ? 'Writing bio…' : 'Write my bio with AI'}
-              </button>
+              </Button>
 
               <StepNav
                 onBack={() => setStep(2)}
@@ -1242,21 +1240,18 @@ export function ProfileSetup() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[5] }}>
-                <button
+                <Button
+                  size="lg"
+                  fullWidth
                   onClick={handleFinish}
                   disabled={!canFinish || saving}
-                  style={{
-                    ...primaryBtnStyle,
-                    padding: `${space[7]}px`,
-                    fontSize: fontSize.lg,
-                    opacity: !canFinish || saving ? 0.5 : 1,
-                  }}
+                  loading={saving}
                 >
                   {saving ? 'Saving…' : 'Enter the Hive'}
-                </button>
-                <button onClick={() => setStep(4)} style={{ ...secondaryBtnStyle }}>
+                </Button>
+                <Button variant="secondary" fullWidth onClick={() => setStep(4)}>
                   ← Go back
-                </button>
+                </Button>
               </div>
 
               {/* Profile Coach nudge */}
@@ -1369,7 +1364,8 @@ export function ProfileSetup() {
                   })()}
 
                 {!coachResult && !coachNoKey && (
-                  <button
+                  <Button
+                    variant="secondary"
                     disabled={coachLoading || aiKeyReady !== 'ready'}
                     onClick={async () => {
                       setCoachLoading(true);
@@ -1390,18 +1386,14 @@ export function ProfileSetup() {
                         setCoachLoading(false);
                       }
                     }}
-                    style={{
-                      ...secondaryBtnStyle,
-                      opacity: coachLoading || aiKeyReady !== 'ready' ? 0.5 : 1,
-                      alignSelf: 'flex-start',
-                    }}
+                    style={{ alignSelf: 'flex-start' }}
                   >
                     {coachLoading
                       ? '⟳ Analysing…'
                       : aiKeyReady === 'none'
                         ? 'Add AI key to analyse'
                         : 'Analyse my profile'}
-                  </button>
+                  </Button>
                 )}
               </div>
             </StepShell>
@@ -1501,45 +1493,15 @@ function StepNav({
       }}
     >
       {onBack ? (
-        <button onClick={onBack} style={secondaryBtnStyle}>
+        <Button variant="secondary" onClick={onBack}>
           ← Back
-        </button>
+        </Button>
       ) : (
         <div />
       )}
-      <button
-        onClick={onNext}
-        disabled={!canNext}
-        style={{ ...primaryBtnStyle, opacity: canNext ? 1 : 0.5, minWidth: 100 }}
-      >
+      <Button onClick={onNext} disabled={!canNext} style={{ minWidth: 100 }}>
         {nextLabel} →
-      </button>
+      </Button>
     </div>
   );
 }
-
-// ── Shared button styles ───────────────────────────────────────────────────────
-
-const primaryBtnStyle: React.CSSProperties = {
-  padding: `${space[4]}px ${space[9]}px`,
-  background: colors.accent,
-  color: colors.bg,
-  border: 'none',
-  borderRadius: radius.pill,
-  fontWeight: fontWeight.bold,
-  fontSize: fontSize.base,
-  cursor: 'pointer',
-  textAlign: 'center',
-};
-
-const secondaryBtnStyle: React.CSSProperties = {
-  padding: `${space[4]}px ${space[9]}px`,
-  background: 'transparent',
-  color: colors.text.muted,
-  border: `1px solid ${colors.border}`,
-  borderRadius: radius.pill,
-  fontWeight: fontWeight.normal,
-  fontSize: fontSize.base,
-  cursor: 'pointer',
-  textAlign: 'center',
-};

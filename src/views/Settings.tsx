@@ -5,6 +5,7 @@ import { BeeMark } from '../components/brand/BeeMark';
 import type { IconKey } from '../lib/icons';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
+import { IconButton } from '../components/ui/IconButton';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
 import { ProfilePictureUploadSmall } from '../components/ProfilePictureUploadSmall';
@@ -388,6 +389,7 @@ export function Settings() {
               <button
                 key={g}
                 type="button"
+                aria-pressed={formData.genres.includes(g)}
                 onClick={() => toggleGenre(g)}
                 style={{
                   padding: '6px 12px',
@@ -422,6 +424,7 @@ export function Settings() {
               <button
                 key={item}
                 type="button"
+                aria-pressed={formData.dj_equipment.includes(item)}
                 onClick={() => toggleMulti('dj_equipment', item)}
                 style={{
                   padding: '6px 12px',
@@ -451,6 +454,7 @@ export function Settings() {
               <button
                 key={item}
                 type="button"
+                aria-pressed={formData.dj_daw.includes(item)}
                 onClick={() => toggleMulti('dj_daw', item)}
                 style={{
                   padding: '6px 12px',
@@ -548,6 +552,7 @@ export function Settings() {
                   <button
                     key={opt.value}
                     type="button"
+                    aria-pressed={active}
                     onClick={() =>
                       setGoals(prev => ({
                         ...prev,
@@ -612,25 +617,15 @@ export function Settings() {
             </span>
           </label>
 
-          <button
+          <Button
             type="button"
             onClick={handleSaveGoals}
             disabled={goalsSaving}
-            style={{
-              padding: '10px 20px',
-              borderRadius: 8,
-              background: colors.accent,
-              color: colors.bg,
-              border: 'none',
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: 'pointer',
-              opacity: goalsSaving ? 0.6 : 1,
-              alignSelf: 'flex-start',
-            }}
+            loading={goalsSaving}
+            style={{ alignSelf: 'flex-start' }}
           >
             {goalsSaving ? 'Saving…' : 'Save goals'}
-          </button>
+          </Button>
           {goalsMsg && (
             <p
               style={{
@@ -813,21 +808,14 @@ export function Settings() {
                 >
                   sk-••••••••••••••••••••••
                 </div>
-                <button
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={handleRemoveAiKey}
                   disabled={aiKeySaving}
-                  style={{
-                    padding: `${space[4]}px ${space[7]}px`,
-                    borderRadius: radius.md,
-                    border: `1px solid ${colors.danger}`,
-                    background: 'transparent',
-                    color: colors.danger,
-                    fontSize: fontSize.sm,
-                    cursor: 'pointer',
-                  }}
                 >
                   Remove
-                </button>
+                </Button>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
@@ -851,42 +839,28 @@ export function Settings() {
                       fontFamily: 'monospace',
                     }}
                   />
-                  <button
-                    type="button"
+                  <IconButton
+                    label={showAiKey ? 'Hide key' : 'Show key'}
+                    size={28}
                     onClick={() => setShowAiKey(v => !v)}
                     style={{
                       position: 'absolute',
                       right: space[4],
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: colors.text.dim,
-                      fontSize: fontSize.sm,
                     }}
-                    aria-label={showAiKey ? 'Hide key' : 'Show key'}
                   >
                     {showAiKey ? '🙈' : '👁'}
-                  </button>
+                  </IconButton>
                 </div>
-                <button
+                <Button
+                  fullWidth
                   onClick={handleSaveAiKey}
                   disabled={aiKeySaving || !aiKeyInput.trim()}
-                  style={{
-                    padding: `${space[4]}px`,
-                    borderRadius: radius.md,
-                    background: colors.accent,
-                    color: colors.bg,
-                    border: 'none',
-                    fontWeight: fontWeight.semibold,
-                    fontSize: fontSize.sm,
-                    cursor: 'pointer',
-                    opacity: aiKeySaving || !aiKeyInput.trim() ? 0.5 : 1,
-                  }}
+                  loading={aiKeySaving}
                 >
                   {aiKeySaving ? 'Saving…' : 'Save key'}
-                </button>
+                </Button>
                 <p
                   style={{
                     margin: 0,
@@ -1072,40 +1046,24 @@ export function Settings() {
                 {walletAddress.slice(0, 6)}…{walletAddress.slice(-4)}
               </code>
             </div>
-            <button
+            <Button
+              variant="danger"
+              size="sm"
               onClick={handleDisconnectWallet}
               disabled={walletDisconnecting}
-              style={{
-                padding: `${space[3]}px ${space[6]}px`,
-                borderRadius: radius.md,
-                border: `1px solid ${colors.danger}`,
-                background: 'transparent',
-                color: colors.danger,
-                fontSize: fontSize.sm,
-                cursor: 'pointer',
-                opacity: walletDisconnecting ? 0.6 : 1,
-              }}
+              loading={walletDisconnecting}
             >
               {walletDisconnecting ? 'Disconnecting…' : 'Disconnect'}
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
+          <Button
+            variant="secondary"
             onClick={() => setWalletModalOpen(true)}
-            style={{
-              padding: `${space[4]}px ${space[7]}px`,
-              borderRadius: radius.md,
-              background: colors.accentFaint,
-              border: `1px solid ${colors.accentMuted}`,
-              color: colors.accent,
-              fontWeight: fontWeight.semibold,
-              fontSize: fontSize.sm,
-              cursor: 'pointer',
-              marginBottom: space[6],
-            }}
+            style={{ marginBottom: space[6] }}
           >
             Connect Wallet
-          </button>
+          </Button>
         )}
 
         {walletAddress && (
@@ -1150,7 +1108,7 @@ export function Settings() {
           .
         </p>
         <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap' }}>
-          <button
+          <Button
             onClick={async () => {
               const {
                 data: { session },
@@ -1168,19 +1126,14 @@ export function Settings() {
               a.click();
               URL.revokeObjectURL(url);
             }}
-            style={{
-              padding: `${space[3]}px ${space[6]}px`,
-              borderRadius: radius.md,
-              border: `1px solid ${colors.border}`,
-              background: 'transparent',
-              color: colors.text.primary,
-              fontSize: fontSize.sm,
-              cursor: 'pointer',
-            }}
+            variant="secondary"
+            size="sm"
           >
             Download my data
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="danger"
+            size="sm"
             onClick={async () => {
               if (
                 !window.confirm(
@@ -1203,18 +1156,9 @@ export function Settings() {
               await supabase.auth.signOut();
               window.location.href = '/';
             }}
-            style={{
-              padding: `${space[3]}px ${space[6]}px`,
-              borderRadius: radius.md,
-              border: `1px solid ${colors.danger}`,
-              background: 'transparent',
-              color: colors.danger,
-              fontSize: fontSize.sm,
-              cursor: 'pointer',
-            }}
           >
             Delete my account
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -1,5 +1,7 @@
 import { usePlayer } from '../lib/playerStore';
 import { colors } from '../styles/tokens';
+import { Button } from './ui/Button';
+import { IconButton } from './ui/IconButton';
 
 export function PlayerQueue() {
   const { queue, queueIndex, removeFromQueue, clearQueue } = usePlayer();
@@ -27,18 +29,9 @@ export function PlayerQueue() {
         <span style={{ fontSize: 12, color: colors.text.muted, fontWeight: 600 }}>
           UP NEXT ({queue.length})
         </span>
-        <button
-          onClick={clearQueue}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: colors.text.faintest,
-            fontSize: 11,
-            cursor: 'pointer',
-          }}
-        >
+        <Button variant="ghost" size="sm" onClick={clearQueue}>
           Clear all
-        </button>
+        </Button>
       </div>
       {queue.map((track, i) => {
         const isCurrent = i === queueIndex;
@@ -99,20 +92,9 @@ export function PlayerQueue() {
               </div>
               <div style={{ fontSize: 11, color: colors.text.faint }}>{track.djName}</div>
             </div>
-            <button
-              onClick={() => removeFromQueue(i)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: colors.text.faintest,
-                fontSize: 14,
-                cursor: 'pointer',
-                padding: 2,
-              }}
-              title="Remove"
-            >
+            <IconButton label="Remove from queue" onClick={() => removeFromQueue(i)} size={24}>
               ✕
-            </button>
+            </IconButton>
           </div>
         );
       })}

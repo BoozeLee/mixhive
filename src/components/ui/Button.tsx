@@ -1,7 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react';
 import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
 type Size = 'sm' | 'md' | 'lg';
 
 interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -44,6 +44,12 @@ const variants: Record<Variant, CSSProperties> = {
     color: colors.danger,
     border: `1px solid ${colors.danger}`,
     fontWeight: fontWeight.semibold,
+  },
+  success: {
+    background: colors.successStrong,
+    color: colors.black,
+    border: 'none',
+    fontWeight: fontWeight.bold,
   },
 };
 

@@ -35,6 +35,20 @@ export default defineConfig([
       // types; keep lint focused on behavioral issues.
       'react-refresh/only-export-components': 'off',
 
+      // no-raw-hex (P1 design-system): prefer tokens from src/styles/tokens.ts.
+      // The hard regression gate is scripts/check-raw-hex.mjs (--max budget in
+      // CI via `npm run lint:hex`). Kept at 'warn' here because `npm run lint`
+      // is currently stubbed and the repo still carries pre-existing hex
+      // (mostly src/app/*). Promote to 'error' once lint is un-stubbed and the
+      // budget reaches 0. tokens.ts (the palette source) is exempted below.
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'Literal[value=/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
+          message: 'Use a design token from src/styles/tokens.ts instead of a raw hex color.',
+        },
+      ],
+
       // jsx-a11y — every rule the codebase currently satisfies is at 'error'.
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/anchor-has-content': 'error',
@@ -73,5 +87,10 @@ export default defineConfig([
       'jsx-a11y/scope': 'error',
       'jsx-a11y/tabindex-no-positive': 'error',
     },
+  },
+  {
+    // The design-token palette is the one legitimate home for raw hex.
+    files: ['src/styles/tokens.ts'],
+    rules: { 'no-restricted-syntax': 'off' },
   },
 ]);

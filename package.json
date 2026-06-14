@@ -23,6 +23,7 @@
     "preview": "next start",
     "lint": "echo 'Linting skipped for deployment'",
     "lint:fix": "next lint --fix",
+    "lint:hex": "node scripts/check-raw-hex.mjs --max 152",
     "type-check": "tsc --noEmit",
     "format": "npx prettier --write .",
     "format:check": "npx prettier --check .",

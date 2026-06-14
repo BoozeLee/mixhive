@@ -9,6 +9,7 @@ import {
   removeMixFromPlaylist,
 } from '../lib/api';
 import { MixCard } from '../components/MixCard';
+import { Button } from '../components/ui';
 import { SkeletonFeed } from '../components/Skeleton';
 import { NotFoundState } from '../components/EmptyState';
 import type { PlaylistWithMixes, FeedMix } from '../lib/types';
@@ -146,38 +147,19 @@ export function PlaylistDetail() {
                 fontWeight: 700,
               }}
             />
-            <button
-              onClick={saveTitle}
-              style={{
-                background: colors.accent,
-                color: colors.bg,
-                border: 'none',
-                borderRadius: 6,
-                padding: '8px 14px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                fontSize: 13,
-              }}
-            >
+            <Button size="sm" onClick={saveTitle}>
               Save
-            </button>
-            <button
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
               onClick={() => {
                 setEditingTitle(false);
                 setTitleDraft(playlist.title);
               }}
-              style={{
-                background: 'transparent',
-                border: `1px solid ${colors.borderStrong}`,
-                color: colors.text.muted,
-                borderRadius: 6,
-                padding: '8px 14px',
-                cursor: 'pointer',
-                fontSize: 13,
-              }}
             >
               Cancel
-            </button>
+            </Button>
           </div>
         ) : isOwner ? (
           <button
@@ -232,38 +214,19 @@ export function PlaylistDetail() {
               }}
             />
             <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-              <button
-                onClick={saveDescription}
-                style={{
-                  background: colors.accent,
-                  color: colors.bg,
-                  border: 'none',
-                  borderRadius: 6,
-                  padding: '6px 12px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  fontSize: 12,
-                }}
-              >
+              <Button size="sm" onClick={saveDescription}>
                 Save
-              </button>
-              <button
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
                 onClick={() => {
                   setEditingDesc(false);
                   setDescDraft(playlist.description || '');
                 }}
-                style={{
-                  background: 'transparent',
-                  border: `1px solid ${colors.borderStrong}`,
-                  color: colors.text.muted,
-                  borderRadius: 6,
-                  padding: '6px 12px',
-                  cursor: 'pointer',
-                  fontSize: 12,
-                }}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         ) : isOwner ? (
@@ -325,22 +288,15 @@ export function PlaylistDetail() {
 
         {isOwner && (
           <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            <button
+            <Button
+              variant="danger"
+              size="sm"
               onClick={handleDeletePlaylist}
               disabled={deleting}
-              style={{
-                background: 'transparent',
-                border: `1px solid ${colors.dangerBg}`,
-                color: colors.danger,
-                padding: '6px 14px',
-                borderRadius: 6,
-                cursor: deleting ? 'not-allowed' : 'pointer',
-                fontSize: 12,
-                opacity: deleting ? 0.5 : 1,
-              }}
+              loading={deleting}
             >
               {deleting ? 'Deleting...' : 'Delete Playlist'}
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -355,24 +311,14 @@ export function PlaylistDetail() {
             <div key={mix.id} style={{ position: 'relative' }}>
               <MixCard mix={mix} />
               {isOwner && (
-                <button
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => handleRemoveMix(mix.id)}
-                  style={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                    background: colors.dangerBg,
-                    border: 'none',
-                    color: colors.danger,
-                    borderRadius: 4,
-                    padding: '2px 8px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    zIndex: 2,
-                  }}
+                  style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }}
                 >
                   Remove
-                </button>
+                </Button>
               )}
             </div>
           ))}

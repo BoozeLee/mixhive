@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { usePlayer } from '../lib/playerStore';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
+import { Button } from '../components/ui/Button';
 import { colors } from '../styles/tokens';
 import {
   getMix,
@@ -223,6 +224,8 @@ export function MixDetail() {
       <div style={{ display: 'flex', gap: 16, marginTop: 16, alignItems: 'center' }}>
         <button
           onClick={toggleLike}
+          aria-pressed={liked}
+          aria-label="Like"
           style={{
             background: 'transparent',
             border: 'none',
@@ -256,41 +259,26 @@ export function MixDetail() {
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-        <button
+        <Button
+          variant={shareCopied ? 'success' : 'secondary'}
+          size="sm"
           onClick={() => {
             navigator.clipboard.writeText(window.location.href);
             setShareCopied(true);
             setTimeout(() => setShareCopied(false), 2000);
           }}
-          style={{
-            background: 'transparent',
-            border: `1px solid ${colors.borderStrong}`,
-            color: shareCopied ? colors.success : colors.text.muted,
-            padding: '6px 14px',
-            borderRadius: 6,
-            cursor: 'pointer',
-            fontSize: 12,
-          }}
         >
           {shareCopied ? '✓ Copied' : '🔗 Share'}
-        </button>
-        <button
-          onClick={() => setShowEmbed(!showEmbed)}
-          style={{
-            background: 'transparent',
-            border: `1px solid ${colors.borderStrong}`,
-            color: colors.text.muted,
-            padding: '6px 14px',
-            borderRadius: 6,
-            cursor: 'pointer',
-            fontSize: 12,
-          }}
-        >
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => setShowEmbed(!showEmbed)}>
           {'</>'} Embed
-        </button>
+        </Button>
         {user && (
-          <button
+          <Button
+            variant={reposted ? 'success' : 'secondary'}
+            size="sm"
             disabled={repostBusy}
+            loading={repostBusy}
             onClick={async () => {
               if (!mix || repostBusy) return;
               setRepostBusy(true);
@@ -308,23 +296,14 @@ export function MixDetail() {
                 setRepostBusy(false);
               }
             }}
-            style={{
-              background: 'transparent',
-              border: `1px solid ${colors.borderStrong}`,
-              color: reposted ? colors.success : colors.text.muted,
-              padding: '6px 14px',
-              borderRadius: 6,
-              cursor: repostBusy ? 'wait' : 'pointer',
-              fontSize: 12,
-              opacity: repostBusy ? 0.6 : 1,
-            }}
           >
             {reposted ? '✓ Reposted' : '↻ Repost'}
-          </button>
+          </Button>
         )}
         {user && (
           <>
-            <button
+            <Button
+              size="sm"
               onClick={() => {
                 play(
                   {
@@ -338,20 +317,12 @@ export function MixDetail() {
                   { clearQueue: true }
                 );
               }}
-              style={{
-                background: colors.accent,
-                color: colors.bg,
-                border: 'none',
-                padding: '6px 14px',
-                borderRadius: 6,
-                cursor: 'pointer',
-                fontSize: 12,
-                fontWeight: 600,
-              }}
             >
               ▶ Play
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => {
                 addToQueue({
                   id: mix.id,
@@ -362,32 +333,12 @@ export function MixDetail() {
                   audioUrl: mix.audio_url,
                 });
               }}
-              style={{
-                background: 'transparent',
-                border: `1px solid ${colors.borderStrong}`,
-                color: colors.text.muted,
-                padding: '6px 14px',
-                borderRadius: 6,
-                cursor: 'pointer',
-                fontSize: 12,
-              }}
             >
               + Queue
-            </button>
-            <button
-              onClick={() => setShowAddToPlaylist(true)}
-              style={{
-                background: 'transparent',
-                border: `1px solid ${colors.borderStrong}`,
-                color: colors.text.muted,
-                padding: '6px 14px',
-                borderRadius: 6,
-                cursor: 'pointer',
-                fontSize: 12,
-              }}
-            >
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setShowAddToPlaylist(true)}>
               + Playlist
-            </button>
+            </Button>
           </>
         )}
         {showAddToPlaylist && user && (
@@ -415,20 +366,14 @@ export function MixDetail() {
           </Link>
         )}
         {WEB3_ENABLED && user && mix.dj_id === user.id && (
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setShowMintModal(true)}
-            style={{
-              background: 'transparent',
-              border: '1px solid rgba(240,192,64,0.35)',
-              color: colors.accent,
-              padding: '6px 14px',
-              borderRadius: 6,
-              cursor: 'pointer',
-              fontSize: 12,
-            }}
+            leftIcon={<Icon name="sparkles" size={14} color="currentColor" />}
           >
-            <Icon name="sparkles" size={14} color="currentColor" /> Create supporter pass
-          </button>
+            Create supporter pass
+          </Button>
         )}
       </div>
 
@@ -569,21 +514,7 @@ export function MixDetail() {
                   fontSize: 14,
                 }}
               />
-              <button
-                type="submit"
-                style={{
-                  background: colors.accent,
-                  color: colors.bg,
-                  border: 'none',
-                  padding: '10px 16px',
-                  borderRadius: 8,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  fontSize: 14,
-                }}
-              >
-                Post
-              </button>
+              <Button type="submit">Post</Button>
             </div>
           </form>
         ) : (

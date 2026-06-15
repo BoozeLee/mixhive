@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors } from '../styles/tokens';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -10,6 +11,7 @@ import type { Mix, TrackItem } from '../lib/types';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function EditMix() {
+  const t = useTranslations('editMix');
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -152,7 +154,7 @@ export function EditMix() {
   return (
     <div style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px' }}>
       <h1 style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, marginBottom: 24 }}>
-        Edit Mix
+        {t('title')}
       </h1>
 
       {uploadError && (
@@ -175,32 +177,32 @@ export function EditMix() {
         style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
       >
         <Input
-          label="Title"
+          label={t('fieldTitle')}
           value={title}
           onChange={e => setTitle(e.target.value)}
-          placeholder="Mix title"
+          placeholder={t('titlePlaceholder')}
         />
 
         <Textarea
-          label="Description"
+          label={t('description')}
           value={description}
           onChange={e => setDescription(e.target.value)}
           rows={4}
-          placeholder="Describe your mix..."
+          placeholder={t('descriptionPlaceholder')}
         />
 
         <Select
-          label="Genre"
+          label={t('genre')}
           value={genreId === '' ? '' : String(genreId)}
           onChange={e => setGenreId(e.target.value === '' ? '' : Number(e.target.value))}
-          placeholder="Select genre"
+          placeholder={t('selectGenre')}
         />
 
         <Input
-          label="Tags (comma separated)"
+          label={t('tags')}
           value={tags}
           onChange={e => setTags(e.target.value)}
-          placeholder="house, deep, vinyl"
+          placeholder={t('tagsPlaceholder')}
         />
 
         <label
@@ -219,12 +221,12 @@ export function EditMix() {
             onChange={e => setIsExplicit(e.target.checked)}
             style={{ width: 16, height: 16 }}
           />
-          <span>Mark as explicit content</span>
+          <span>{t('explicit')}</span>
         </label>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-            Platform Links (optional)
+            {t('platformLinks')}
           </legend>
           <div style={{ marginTop: 8 }}>
             {[
@@ -261,7 +263,7 @@ export function EditMix() {
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-            Tracklist
+            {t('tracklist')}
           </legend>
           <div style={{ marginTop: 8 }}>
             {tracklist.map((track, index) => (
@@ -278,7 +280,7 @@ export function EditMix() {
                     list[index] = { ...list[index], artist: e.target.value };
                     setTracklist(list);
                   }}
-                  placeholder="Artist"
+                  placeholder={t('artist')}
                   style={{ flex: 1 }}
                 />
                 <Input
@@ -290,7 +292,7 @@ export function EditMix() {
                     list[index] = { ...list[index], title: e.target.value };
                     setTracklist(list);
                   }}
-                  placeholder="Track Title"
+                  placeholder={t('trackTitle')}
                   style={{ flex: 1 }}
                 />
                 <Input
@@ -304,11 +306,11 @@ export function EditMix() {
                     list[index] = { ...list[index], start_time: val };
                     setTracklist(list);
                   }}
-                  placeholder="Start (sec)"
+                  placeholder={t('startSec')}
                   style={{ width: 80 }}
                 />
                 <IconButton
-                  label="Remove track"
+                  label={t('removeTrack')}
                   size={28}
                   onClick={() => {
                     const list = [...tracklist];
@@ -336,7 +338,7 @@ export function EditMix() {
 
         <div>
           <FileInput
-            label="Audio File (leave empty to keep current)"
+            label={t('audioFile')}
             accept="audio/*"
             onChange={e => setAudioFile(e.target.files?.[0] || null)}
           />
@@ -349,7 +351,7 @@ export function EditMix() {
 
         <div>
           <FileInput
-            label="Artwork Image (leave empty to keep current)"
+            label={t('artworkImage')}
             accept="image/*"
             onChange={e => setArtworkFile(e.target.files?.[0] || null)}
           />

@@ -4,6 +4,7 @@ import { StrictMode, useEffect } from 'react';
 import { MotionConfig } from 'framer-motion';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { I18nProvider } from './components/I18nProvider';
 import { registerSW } from './lib/pushSubscription';
 import { useLenis } from './lib/useLenis';
 
@@ -20,7 +21,9 @@ export default function MixHiveClient() {
       {/* reducedMotion="user" makes every Framer animation honor the OS setting */}
       <MotionConfig reducedMotion="user">
         <ErrorBoundary>
-          <App />
+          <I18nProvider>
+            <App />
+          </I18nProvider>
         </ErrorBoundary>
       </MotionConfig>
     </StrictMode>

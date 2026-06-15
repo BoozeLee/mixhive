@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -16,6 +17,8 @@ export function Login() {
   const [generalError, setGeneralError] = useState('');
   const { user, profile, loading, signInWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const t = useTranslations('auth');
+  const tc = useTranslations('common');
 
   // Redirect already-authenticated users so they never see the login form
   useEffect(() => {
@@ -76,7 +79,7 @@ export function Login() {
             textAlign: 'center',
           }}
         >
-          Sign in
+          {t('signInTitle')}
         </h1>
 
         {generalError && (
@@ -98,7 +101,7 @@ export function Login() {
           <Input
             type="email"
             autoComplete="email"
-            placeholder="Email"
+            placeholder={t('email')}
             value={formData.email}
             onChange={e => handleInputChange('email', e.target.value)}
             error={errors.email}
@@ -106,7 +109,7 @@ export function Login() {
           <Input
             type="password"
             autoComplete="current-password"
-            placeholder="Password"
+            placeholder={t('password')}
             value={formData.password}
             onChange={e => handleInputChange('password', e.target.value)}
             error={errors.password}
@@ -116,11 +119,11 @@ export function Login() {
               to="/auth/forgot-password"
               style={{ color: colors.text.muted, fontSize: 12, textDecoration: 'underline' }}
             >
-              Forgot password?
+              {t('forgotPassword')}
             </Link>
           </div>
           <Button type="submit" variant="primary" style={{ width: '100%' }}>
-            Sign in
+            {t('signInButton')}
           </Button>
         </form>
 
@@ -135,7 +138,7 @@ export function Login() {
           }}
         >
           <div style={{ flex: 1, height: 1, background: colors.borderSubtle }} />
-          or
+          {tc('or')}
           <div style={{ flex: 1, height: 1, background: colors.borderSubtle }} />
         </div>
 
@@ -150,15 +153,15 @@ export function Login() {
             gap: 8,
           }}
         >
-          <span style={{ fontSize: 18 }}>G</span> Sign in with Google
+          <span style={{ fontSize: 18 }}>G</span> {t('googleSignIn')}
         </Button>
 
         <p
           style={{ textAlign: 'center', marginTop: 24, color: colors.text.faintest, fontSize: 13 }}
         >
-          No account?{' '}
+          {t('noAccountShort')}{' '}
           <Link to="/register" style={{ color: colors.accent, textDecoration: 'underline' }}>
-            Join Mix Hive
+            {t('joinMixHive')}
           </Link>
         </p>
       </div>

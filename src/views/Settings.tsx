@@ -10,6 +10,7 @@ import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
 import { ProfilePictureUploadSmall } from '../components/ProfilePictureUploadSmall';
 import { NotificationSettings } from '../components/NotificationSettings';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { WalletConnectModal } from '../components/WalletConnectModal';
 import { ProfileSchema, formatZodError } from '../lib/schemas';
 import {
@@ -341,6 +342,27 @@ export function Settings() {
           Choose what reaches this browser. System pushes stay quiet while MixHive is focused.
         </p>
         <NotificationSettings />
+      </div>
+
+      <div
+        style={{
+          borderTop: `1px solid ${colors.border}`,
+          paddingTop: space[8],
+          marginTop: space[8],
+          maxWidth: 320,
+        }}
+      >
+        <h2
+          style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: colors.text.secondary,
+            marginBottom: space[3],
+          }}
+        >
+          Language
+        </h2>
+        <LanguageSwitcher hideLabel />
       </div>
 
       {error && (

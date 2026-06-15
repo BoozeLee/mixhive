@@ -1,5 +1,4 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
 import * as Sentry from '@sentry/nextjs';
 import { colors } from '../styles/tokens';
 
@@ -75,7 +74,7 @@ export class ErrorBoundary extends Component<Props, State> {
           >
             !
           </div>
-          <h1 style={{ margin: '0 0 8px', fontSize: 20 }}>{t('somethingWentWrong')}</h1>
+          <h1 style={{ margin: '0 0 8px', fontSize: 20 }}>Something went wrong</h1>
           <p
             style={{ color: colors.text.dimmed, fontSize: 14, lineHeight: 1.5, margin: '0 0 20px' }}
           >
@@ -98,13 +97,13 @@ export class ErrorBoundary extends Component<Props, State> {
                   wordBreak: 'break-word',
                 }}
               >
-                <strong>{t('error')}</strong> {error.message}
+                <strong>Error:</strong> {error.message}
               </div>
 
               {error.stack && (
                 <details style={{ marginBottom: 16 }}>
                   <summary style={{ cursor: 'pointer', color: colors.text.muted, fontSize: 12 }}>
-                    {t('showStackTraceClick')}
+                    Show stack trace (click to expand)
                   </summary>
                   <pre
                     style={{
@@ -149,7 +148,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   marginBottom: 16,
                 }}
               >
-                {t('copyErrorDetails')}
+                Copy error details
               </button>
             </>
           )}
@@ -167,7 +166,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 cursor: 'pointer',
               }}
             >
-              {t('tryAgain')}
+              Try again
             </button>
             <a
               href="/feed"
@@ -182,7 +181,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 fontSize: 14,
               }}
             >
-              {t('backToFeed')}
+              Back to feed
             </a>
           </div>
         </div>

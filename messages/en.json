@@ -785,14 +785,6 @@
     "thanksForTheFeedback": "Thanks for the feedback",
     "howUsefulWasThis": "How useful was this?"
   },
-  "errorBoundary": {
-    "somethingWentWrong": "Something went wrong",
-    "error": "Error:",
-    "showStackTraceClick": "Show stack trace (click to expand)",
-    "copyErrorDetails": "Copy error details",
-    "tryAgain": "Try again",
-    "backToFeed": "Back to feed"
-  },
   "buzzComposer": {
     "signIn": "Sign in",
     "buzz": "Buzz",

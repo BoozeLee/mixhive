@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/ui/Icon';
@@ -52,6 +53,7 @@ const ROLE_ICONS: Record<string, IconKey> = {
 };
 
 export function CollabQuests() {
+  const t = useTranslations('quests');
   const [quests, setQuests] = useState<CollabQuest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -102,10 +104,10 @@ export function CollabQuests() {
               letterSpacing: '0.05em',
             }}
           >
-            COLLAB QUESTS
+            {t('collabQuests')}
           </h1>
           <p style={{ color: colors.text.muted, margin: '4px 0 0', fontSize: 14 }}>
-            Team up for creative projects. Build something real together.
+            {t('collabSubtitle')}
           </p>
         </div>
         <Link
@@ -178,10 +180,10 @@ export function CollabQuests() {
           <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
             <Icon name="quests" size={44} color="rgba(246,196,0,0.5)" strokeWidth={1.6} />
           </div>
-          <p style={{ fontSize: 18 }}>No quests recruiting right now</p>
+          <p style={{ fontSize: 18 }}>{t('noRecruiting')}</p>
           <p style={{ fontSize: 14 }}>
             <Link to="/collab-quests/new" style={{ color: 'var(--hive-gold)' }}>
-              Post the first quest
+              {t('postFirst')}
             </Link>
           </p>
         </div>
@@ -234,7 +236,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
                   textTransform: 'uppercase',
                 }}
               >
-                RECRUITING
+                {t('recruiting')}
               </span>
               {quest.genre_tags.slice(0, 3).map(t => (
                 <span

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { NotificationsBell } from './NotificationsBell';
 import { SearchBar } from './SearchBar';
@@ -10,15 +11,15 @@ import { Icon } from './ui/Icon';
 import { colors, space } from '../styles/tokens';
 
 const navLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/discover', label: 'Explore' },
-  { to: '/search', label: 'Network' },
-  { to: '/upload', label: 'Upload' },
-  { to: '/opportunities', label: 'Events' },
-  { to: '/marketplace/gear', label: 'Market' },
-  { to: '/collab-quests', label: 'Quests' },
-  { to: '/hub', label: 'Hub' },
-];
+  { to: '/', labelKey: 'home' },
+  { to: '/discover', labelKey: 'explore' },
+  { to: '/search', labelKey: 'network' },
+  { to: '/upload', labelKey: 'upload' },
+  { to: '/opportunities', labelKey: 'events' },
+  { to: '/marketplace/gear', labelKey: 'market' },
+  { to: '/collab-quests', labelKey: 'quests' },
+  { to: '/hub', labelKey: 'hub' },
+] as const;
 
 const menuItemStyle: React.CSSProperties = {
   display: 'block',
@@ -40,6 +41,7 @@ const menuItemStyle: React.CSSProperties = {
 export function Navbar() {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const t = useTranslations('nav');
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -141,7 +143,7 @@ export function Navbar() {
                   e.currentTarget.style.borderBottomColor = 'transparent';
                 }}
               >
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             ))}
           </div>

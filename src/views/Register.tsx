@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -52,6 +53,8 @@ export function Register() {
   const [confirmationEmail, setConfirmationEmail] = useState('');
   const { user, profile, loading, signUpWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const t = useTranslations('auth');
+  const tc = useTranslations('common');
 
   useEffect(() => {
     if (!loading && user) navigate(getPostAuthDestination(profile), { replace: true });
@@ -134,14 +137,16 @@ export function Register() {
         <div style={{ width: '100%', maxWidth: 440, textAlign: 'center' }}>
           <MixhiveWordmark height={26} color={colors.text.primary} />
           <h1 style={{ color: colors.text.primary, fontSize: display.sm, marginTop: space[10] }}>
-            Check your email
+            {t('checkEmailTitle')}
           </h1>
           <p style={{ color: colors.text.secondary, lineHeight: 1.6 }}>
-            We sent a confirmation link to <strong>{confirmationEmail}</strong>. Confirm your
-            address to continue to your required artist profile setup.
+            {t.rich('checkEmailBody', {
+              email: confirmationEmail,
+              bold: chunks => <strong>{chunks}</strong>,
+            })}
           </p>
           <Link to="/login" style={{ color: colors.accent }}>
-            Back to sign in
+            {t('backToSignInPlain')}
           </Link>
         </div>
       </section>
@@ -232,7 +237,7 @@ export function Register() {
               margin: 0,
             }}
           >
-            Create your account
+            {t('signUpTitle')}
           </h2>
           <p
             style={{
@@ -292,7 +297,7 @@ export function Register() {
               fontSize: fontSize.sm,
             }}
           >
-            <div style={{ flex: 1, height: 1, background: colors.border }} /> or{' '}
+            <div style={{ flex: 1, height: 1, background: colors.border }} /> {tc('or')}{' '}
             <div style={{ flex: 1, height: 1, background: colors.border }} />
           </div>
 
@@ -303,16 +308,16 @@ export function Register() {
             <Input
               type="text"
               autoComplete="username"
-              placeholder="Username"
+              placeholder={t('username')}
               value={formData.username}
               onChange={e => change('username', e.target.value)}
               error={errors.username}
-              help="3–30 chars: letters, numbers, underscores"
+              help={t('usernameHelp')}
             />
             <Input
               type="email"
               autoComplete="email"
-              placeholder="Email"
+              placeholder={t('email')}
               value={formData.email}
               onChange={e => change('email', e.target.value)}
               error={errors.email}
@@ -320,30 +325,33 @@ export function Register() {
             <Input
               type="password"
               autoComplete="new-password"
-              placeholder="Password"
+              placeholder={t('password')}
               value={formData.password}
               onChange={e => change('password', e.target.value)}
               error={errors.password}
-              help="8+ chars with upper, lower & a number"
+              help={t('passwordHelp')}
             />
             <Input
               type="text"
               autoComplete="name"
-              placeholder="Display name"
+              placeholder={t('displayName')}
               value={formData.display_name}
               onChange={e => change('display_name', e.target.value)}
               error={errors.display_name}
             />
             <p style={{ color: colors.text.faint, fontSize: fontSize.xs, margin: 0 }}>
-              By joining you agree to the{' '}
-              <Link to="/terms" style={{ color: colors.text.dim }}>
-                Terms
-              </Link>{' '}
-              and{' '}
-              <Link to="/privacy" style={{ color: colors.text.dim }}>
-                Privacy Policy
-              </Link>
-              .
+              {t.rich('termsAgree', {
+                terms: chunks => (
+                  <Link to="/terms" style={{ color: colors.text.dim }}>
+                    {chunks}
+                  </Link>
+                ),
+                privacy: chunks => (
+                  <Link to="/privacy" style={{ color: colors.text.dim }}>
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </p>
             <Button
               type="submit"
@@ -351,7 +359,7 @@ export function Register() {
               disabled={submitting}
               style={{ width: '100%', marginTop: space[2] }}
             >
-              {submitting ? 'Creating account…' : 'Create account'}
+              {submitting ? t('creatingAccount') : t('signUpButton')}
             </Button>
           </form>
 
@@ -363,7 +371,7 @@ export function Register() {
               fontSize: fontSize.base,
             }}
           >
-            Already have an account?{' '}
+            {t('haveAccount')}{' '}
             <Link
               to="/login"
               style={{
@@ -372,7 +380,7 @@ export function Register() {
                 fontWeight: fontWeight.semibold,
               }}
             >
-              Sign in
+              {t('signInButton')}
             </Link>
           </p>
         </div>

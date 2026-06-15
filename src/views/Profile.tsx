@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, useParams } from 'react-router-dom';
 import {
   follow,
@@ -402,7 +403,7 @@ export function ProfilePage() {
                   fontWeight: 700,
                 }}
               >
-                Edit Profile
+                {t('editProfile')}
               </Link>
               <Link
                 to="/upload"
@@ -418,7 +419,7 @@ export function ProfilePage() {
                   fontWeight: 700,
                 }}
               >
-                Upload Mix
+                {t('uploadMix')}
               </Link>
               {startSessionButton}
               {profile.is_admin && (
@@ -436,7 +437,7 @@ export function ProfilePage() {
                     fontWeight: 700,
                   }}
                 >
-                  Verification Admin
+                  {t('verificationAdmin')}
                 </Link>
               )}
               {profile.is_admin && (
@@ -454,7 +455,7 @@ export function ProfilePage() {
                     fontWeight: 700,
                   }}
                 >
-                  Moderation
+                  {t('moderation')}
                 </Link>
               )}
             </>
@@ -473,7 +474,7 @@ export function ProfilePage() {
               cursor: 'pointer',
             }}
           >
-            Copy link
+            {t('copyLink')}
           </button>
         </div>
       </section>
@@ -493,7 +494,7 @@ export function ProfilePage() {
               marginBottom: space[6],
             }}
           >
-            Activity
+            {t('activity')}
           </h2>
           <div style={{ display: 'grid', gap: space[4] }}>
             {milestones.map(item => (
@@ -629,7 +630,7 @@ export function ProfilePage() {
           (buzzes.length === 0 ? (
             <EmptyState
               iconKey="buzz"
-              title="No buzzes yet"
+              title={t('noBuzzes')}
               body={isOwn ? 'Post your first buzz from the feed.' : 'This DJ has not buzzed yet.'}
             />
           ) : (
@@ -646,7 +647,7 @@ export function ProfilePage() {
 
         {profileTab === 'playlists' &&
           (playlists.length === 0 ? (
-            <p style={{ color: colors.text.dim, fontSize: 14 }}>No playlists yet</p>
+            <p style={{ color: colors.text.dim, fontSize: 14 }}>{t('noPlaylists')}</p>
           ) : (
             <div style={{ display: 'grid', gap: space[6] }}>
               {playlists.map(playlist => (

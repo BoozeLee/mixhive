@@ -119,5 +119,40 @@
     "noResults": "No results found",
     "noResultsBody": "Try another spelling, genre, or location.",
     "resultsFor": "Results for <q>{query}</q>"
+  },
+  "feed": {
+    "liveFeed": "Live Feed",
+    "heroTitle": "The Hive Never Sleeps",
+    "heroSubtitle": "Underground mixes, live from the scene.",
+    "genreRadar": "Genre Radar",
+    "trendingNow": "Trending Now",
+    "tabsAria": "Feed tabs",
+    "sidebarAria": "Feed sidebar",
+    "followingPrompt": "<link>Sign in</link> to see your following feed."
+  },
+  "dashboard": {
+    "title": "Hive Growth OS",
+    "topSignal": "Top signal",
+    "recentActivity": "Recent fan activity",
+    "nextActions": "Next best actions",
+    "automationBees": "Automation bees"
+  },
+  "discover": {
+    "eyebrow": "Music Discovery",
+    "title": "Discover",
+    "subtitle": "Explore trending mixes and popular search lanes across the underground.",
+    "trendingMixes": "Trending Mixes",
+    "noTrending": "No trending mixes yet.",
+    "popularGenres": "Popular Genres"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "uploadMix": "Upload Mix",
+    "verificationAdmin": "Verification Admin",
+    "moderation": "Moderation",
+    "copyLink": "Copy link",
+    "activity": "Activity",
+    "noPlaylists": "No playlists yet",
+    "noBuzzes": "No buzzes yet"
   }
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -98,8 +99,9 @@ function RightRailPanel({ title, children }: { title: string; children: React.Re
 
 function GenreRadar() {
   const navigate = useNavigate();
+  const t = useTranslations('feed');
   return (
-    <RightRailPanel title="Genre Radar">
+    <RightRailPanel title={t('genreRadar')}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
         {POPULAR_GENRES.map(genre => {
           const c = getGenreColor(genre);
@@ -139,9 +141,10 @@ function GenreRadar() {
 }
 
 function TrendingNowPanel({ mixes }: { mixes: FeedMix[] }) {
+  const t = useTranslations('feed');
   if (mixes.length === 0) return null;
   return (
-    <RightRailPanel title="Trending Now">
+    <RightRailPanel title={t('trendingNow')}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {mixes.slice(0, 5).map((mix, i) => (
           <Link
@@ -198,6 +201,7 @@ function TrendingNowPanel({ mixes }: { mixes: FeedMix[] }) {
 }
 
 export function Feed() {
+  const t = useTranslations('feed');
   const { user, profile } = useAuth();
   const [tab, setTab] = useState<Tab>('trending');
   const [mixedFeed, setMixedFeed] = useState<MixedTabState>(emptyMixedTab());
@@ -561,13 +565,13 @@ export function Feed() {
               letterSpacing: '0.1em',
             }}
           >
-            Live Feed
+            {t('liveFeed')}
           </p>
           <h1
             className="hive-title"
             style={{ margin: 0, fontSize: 'clamp(22px, 3vw, 32px)', lineHeight: 1.1 }}
           >
-            The Hive Never Sleeps
+            {t('heroTitle')}
           </h1>
           <p
             style={{
@@ -577,7 +581,7 @@ export function Feed() {
               lineHeight: 1.4,
             }}
           >
-            Underground mixes, live from the scene.
+            {t('heroSubtitle')}
           </p>
         </div>
         {user && (
@@ -622,7 +626,7 @@ export function Feed() {
           {/* Tab bar */}
           <div
             role="tablist"
-            aria-label="Feed tabs"
+            aria-label={t('tabsAria')}
             style={{
               display: 'flex',
               gap: 4,
@@ -668,10 +672,13 @@ export function Feed() {
                 fontSize: fontSize.md,
               }}
             >
-              <Link to="/login" style={{ color: colors.accent }}>
-                Sign in
-              </Link>{' '}
-              to see your following feed.
+              {t.rich('followingPrompt', {
+                link: chunks => (
+                  <Link to="/login" style={{ color: colors.accent }}>
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </div>
           )}
 
@@ -725,7 +732,11 @@ export function Feed() {
         </div>
 
         {/* Right rail — desktop only */}
-        <aside className="feed-right-rail" aria-label="Feed sidebar" style={{ alignSelf: 'start' }}>
+        <aside
+          className="feed-right-rail"
+          aria-label={t('sidebarAria')}
+          style={{ alignSelf: 'start' }}
+        >
           {trendingTab.data.length > 0 && <TrendingNowPanel mixes={trendingTab.data} />}
           <GenreRadar />
           {user && <RecommendedDJs userId={user.id} />}

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getMix } from '../lib/api';
 import type { Mix } from '../lib/types';
 import { colors } from '../styles/tokens';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function EmbedMix() {
   const { id } = useParams<{ id: string }>();
@@ -52,7 +53,7 @@ export function EmbedMix() {
           fontFamily: 'sans-serif',
         }}
       >
-        Loading...
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

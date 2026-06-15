@@ -18,6 +18,7 @@ import {
 } from '../lib/agents';
 import { defaultTemplateFor } from '../lib/starter_agents';
 import { colors, fontSize, radius, space, fontWeight } from '../styles/tokens';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 const TRIGGER_OPTIONS: { value: LuaAgentTrigger; label: string; description: string }[] = [
   { value: 'on_follow', label: 'On follow', description: 'Someone follows you.' },
@@ -162,7 +163,9 @@ export function Agents() {
       </header>
 
       {loading ? (
-        <div style={{ color: colors.text.muted }}>Loading…</div>
+        <div style={{ padding: 24, textAlign: 'center' }}>
+          <LoadingSpinner size="lg" />
+        </div>
       ) : agents.length === 0 ? (
         <EmptyState
           iconKey="agents"

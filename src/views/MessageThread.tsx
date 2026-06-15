@@ -8,6 +8,7 @@ import type { DirectMessage, Profile } from '../lib/types';
 import { colors, space, fontSize, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from '../components/hive/HiveButton';
 import toast from 'react-hot-toast';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function MessageThreadPage() {
   const { conversationId } = useParams<{ conversationId: string }>();
@@ -211,7 +212,9 @@ export function MessageThreadPage() {
           </button>
         )}
         {loading && messages.length === 0 && (
-          <p style={{ color: colors.text.dim, textAlign: 'center' }}>Loading…</p>
+          <div style={{ textAlign: 'center', padding: 16 }}>
+            <LoadingSpinner size="lg" />
+          </div>
         )}
         {messages.map(msg => {
           const isMe = msg.sender_id === user?.id;

@@ -7,6 +7,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { AUDIO_BUCKET, ARTWORK_BUCKET } from '../lib/api';
 import { Input, Textarea, Select, FileInput, Button, IconButton } from '../components/ui';
 import type { Mix, TrackItem } from '../lib/types';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function EditMix() {
   const { id } = useParams<{ id: string }>();
@@ -136,8 +137,8 @@ export function EditMix() {
 
   if (loading || !mix) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px 20px', color: colors.text.faint }}>
-        Loading...
+      <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../lib/messagesStore';
 import { LogoIcon } from './Logo';
@@ -9,16 +10,16 @@ import { colors, space, transition, fontSize, fontWeight } from '../styles/token
 interface NavItem {
   path: string;
   icon: IconKey;
-  label: string;
+  labelKey: string;
   ariaLabel: string;
 }
 
 const navItems: NavItem[] = [
-  { path: '/dashboard', icon: 'dashboard', label: 'Growth', ariaLabel: 'Creator dashboard' },
-  { path: '/feed', icon: 'feed', label: 'Feed', ariaLabel: 'Hive Feed' },
-  { path: '/search', icon: 'network', label: 'Radar', ariaLabel: 'Hive Radar' },
-  { path: '/messages', icon: 'messages', label: 'DMs', ariaLabel: 'Direct messages' },
-  { path: '/profile', icon: 'profile', label: 'Cell', ariaLabel: 'Profile cell' },
+  { path: '/dashboard', icon: 'dashboard', labelKey: 'growth', ariaLabel: 'Creator dashboard' },
+  { path: '/feed', icon: 'feed', labelKey: 'feed', ariaLabel: 'Hive Feed' },
+  { path: '/search', icon: 'network', labelKey: 'radar', ariaLabel: 'Hive Radar' },
+  { path: '/messages', icon: 'messages', labelKey: 'dms', ariaLabel: 'Direct messages' },
+  { path: '/profile', icon: 'profile', labelKey: 'cell', ariaLabel: 'Profile cell' },
 ];
 
 // Logo item for mobile navigation
@@ -30,6 +31,7 @@ const logoItem = {
 
 export function MobileNav() {
   const location = useLocation();
+  const t = useTranslations('nav');
   const { user, profile } = useAuth();
   const { unreadTotal } = useMessages();
 
@@ -196,7 +198,7 @@ export function MobileNav() {
                 fontWeight: isActive ? fontWeight.semibold : fontWeight.normal,
               }}
             >
-              {item.label}
+              {t(item.labelKey)}
             </span>
           </Link>
         );

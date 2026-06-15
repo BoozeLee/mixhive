@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -12,6 +13,7 @@ export function ForgotPassword() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { resetPasswordForEmail } = useAuth();
+  const t = useTranslations('auth');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -88,7 +90,7 @@ export function ForgotPassword() {
             textAlign: 'center',
           }}
         >
-          Reset password
+          {t('forgotTitle')}
         </h1>
         <p
           style={{
@@ -99,7 +101,7 @@ export function ForgotPassword() {
             lineHeight: 1.5,
           }}
         >
-          Enter your email and we'll send you a reset link.
+          {t('forgotSubtitle')}
         </p>
 
         {error && (
@@ -121,12 +123,12 @@ export function ForgotPassword() {
           <Input
             type="email"
             autoComplete="email"
-            placeholder="Email"
+            placeholder={t('email')}
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
           <Button type="submit" variant="primary" disabled={loading} style={{ width: '100%' }}>
-            {loading ? 'Sending...' : 'Send reset link'}
+            {loading ? t('sending') : t('sendResetLink')}
           </Button>
         </form>
 
@@ -134,7 +136,7 @@ export function ForgotPassword() {
           style={{ textAlign: 'center', marginTop: 24, color: colors.text.faintest, fontSize: 13 }}
         >
           <Link to="/login" style={{ color: colors.accent, textDecoration: 'underline' }}>
-            Back to sign in
+            {t('backToSignInPlain')}
           </Link>
         </p>
       </div>

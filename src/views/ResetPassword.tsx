@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { colors } from '../styles/tokens';
 
 export function ResetPassword() {
+  const t = useTranslations('auth');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
@@ -141,7 +143,7 @@ export function ResetPassword() {
             textAlign: 'center',
           }}
         >
-          Set new password
+          {t('resetTitle')}
         </h1>
         <p
           style={{
@@ -152,7 +154,7 @@ export function ResetPassword() {
             lineHeight: 1.5,
           }}
         >
-          Enter your new password below.
+          {t('resetSubtitle')}
         </p>
 
         {error && (
@@ -174,19 +176,19 @@ export function ResetPassword() {
           <Input
             type="password"
             autoComplete="new-password"
-            placeholder="New password (6+ characters)"
+            placeholder={t('newPasswordPlaceholder')}
             value={password}
             onChange={e => setPassword(e.target.value)}
           />
           <Input
             type="password"
             autoComplete="new-password"
-            placeholder="Confirm new password"
+            placeholder={t('confirmPasswordPlaceholder')}
             value={confirm}
             onChange={e => setConfirm(e.target.value)}
           />
           <Button type="submit" variant="primary" disabled={loading} style={{ width: '100%' }}>
-            {loading ? 'Updating…' : 'Update password'}
+            {loading ? t('updating') : t('updatePassword')}
           </Button>
         </form>
       </div>

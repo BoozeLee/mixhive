@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
 import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -42,6 +43,7 @@ const CATEGORIES = [
 const DISCIPLINES = ['dj', 'producer', 'visual_artist', 'business'];
 
 export function AgentMarketplace() {
+  const t = useTranslations('agentMarket');
   const [packages, setPackages] = useState<AgentPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -154,11 +156,9 @@ export function AgentMarketplace() {
             letterSpacing: '0.05em',
           }}
         >
-          AGENT MARKETPLACE
+          {t('title')}
         </h1>
-        <p style={{ color: colors.text.muted, margin: '4px 0 0', fontSize: 14 }}>
-          Discover Lua agents that automate your creative workflow
-        </p>
+        <p style={{ color: colors.text.muted, margin: '4px 0 0', fontSize: 14 }}>{t('subtitle')}</p>
       </div>
 
       {/* Filters */}
@@ -175,7 +175,7 @@ export function AgentMarketplace() {
           onChange={e => setDiscipline(e.target.value)}
           style={selectStyle}
         >
-          <option value="">All Disciplines</option>
+          <option value="">{t('allDisciplines')}</option>
           {DISCIPLINES.map(d => (
             <option key={d} value={d}>
               {d.replace('_', ' ')}
@@ -193,7 +193,7 @@ export function AgentMarketplace() {
           }}
         >
           <input type="checkbox" checked={freeOnly} onChange={e => setFreeOnly(e.target.checked)} />
-          Free only
+          {t('freeOnly')}
         </label>
       </div>
 
@@ -237,8 +237,8 @@ export function AgentMarketplace() {
           <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
             <Icon name="agents" size={44} color="rgba(246,196,0,0.5)" strokeWidth={1.6} />
           </div>
-          <p style={{ fontSize: 18 }}>No agents found</p>
-          <p style={{ fontSize: 14 }}>Try different filters</p>
+          <p style={{ fontSize: 18 }}>{t('noAgents')}</p>
+          <p style={{ fontSize: 14 }}>{t('tryFilters')}</p>
         </div>
       ) : (
         <div
@@ -274,7 +274,7 @@ export function AgentMarketplace() {
           alignItems: 'center',
         }}
       >
-        <span style={{ color: colors.text.faint, fontSize: 14 }}>Have your own agent idea?</span>
+        <span style={{ color: colors.text.faint, fontSize: 14 }}>{t('haveIdea')}</span>
         <Link
           to="/agents"
           style={{ color: 'var(--hive-gold)', fontSize: 14, textDecoration: 'none' }}
@@ -342,7 +342,7 @@ function AgentCard({
                 fontWeight: 700,
               }}
             >
-              OFFICIAL
+              {t('official')}
             </span>
           )}
           {pkg.verified && !pkg.official && (
@@ -356,7 +356,7 @@ function AgentCard({
                 fontWeight: 700,
               }}
             >
-              VERIFIED
+              {t('verified')}
             </span>
           )}
         </div>

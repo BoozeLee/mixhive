@@ -270,5 +270,62 @@
     "paidOut": "Paid out",
     "pendingEscrow": "Pending escrow",
     "held": "Held (set up payouts)"
+  },
+  "editMix": {
+    "title": "Edit Mix",
+    "explicit": "Mark as explicit content",
+    "platformLinks": "Platform Links (optional)",
+    "tracklist": "Tracklist",
+    "fieldTitle": "Title",
+    "titlePlaceholder": "Mix title",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your mix...",
+    "genre": "Genre",
+    "selectGenre": "Select genre",
+    "tags": "Tags (comma separated)",
+    "tagsPlaceholder": "house, deep, vinyl",
+    "artist": "Artist",
+    "trackTitle": "Track Title",
+    "startSec": "Start (sec)",
+    "removeTrack": "Remove track",
+    "audioFile": "Audio File (leave empty to keep current)",
+    "artworkImage": "Artwork Image (leave empty to keep current)"
+  },
+  "opportunities": {
+    "graph": "Opportunity Graph",
+    "subtitle": "Find gigs, grants, radio calls, and scene openings.",
+    "pilotInventory": "Pilot inventory",
+    "loadingMatches": "Loading opportunity matches...",
+    "noOpportunities": "No opportunities in this lane yet.",
+    "whyFits": "Why this fits:",
+    "save": "Save",
+    "draftApplication": "Draft application",
+    "dismiss": "Dismiss",
+    "applicationDraft": "Application draft",
+    "close": "Close",
+    "markReady": "Mark draft ready"
+  },
+  "mixDetail": {
+    "edit": "Edit",
+    "supporterPass": "Create supporter pass",
+    "embedHtml": "Paste this HTML to embed this mix on any website:",
+    "tracklist": "Tracklist",
+    "fansAlsoLiked": "Fans Also Liked",
+    "post": "Post",
+    "signIn": "Sign in",
+    "reply": "Reply",
+    "like": "Like",
+    "commentPlaceholder": "Write a comment..."
+  },
+  "agentMarket": {
+    "title": "AGENT MARKETPLACE",
+    "subtitle": "Discover Lua agents that automate your creative workflow",
+    "allDisciplines": "All Disciplines",
+    "freeOnly": "Free only",
+    "noAgents": "No agents found",
+    "tryFilters": "Try different filters",
+    "haveIdea": "Have your own agent idea?",
+    "official": "OFFICIAL",
+    "verified": "VERIFIED"
   }
 }

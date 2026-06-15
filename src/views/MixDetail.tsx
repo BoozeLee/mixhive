@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { usePlayer } from '../lib/playerStore';
@@ -49,6 +50,7 @@ function timeAgo(dateStr: string): string {
 }
 
 export function MixDetail() {
+  const t = useTranslations('mixDetail');
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [mix, setMix] = useState<Mix | null>(null);
@@ -225,7 +227,7 @@ export function MixDetail() {
         <button
           onClick={toggleLike}
           aria-pressed={liked}
-          aria-label="Like"
+          aria-label={t('like')}
           style={{
             background: 'transparent',
             border: 'none',
@@ -362,7 +364,8 @@ export function MixDetail() {
               fontSize: 12,
             }}
           >
-            <Icon name="edit" size={13} color="currentColor" /> Edit
+            <Icon name="edit" size={13} color="currentColor" />
+            {t('edit')}
           </Link>
         )}
         {WEB3_ENABLED && user && mix.dj_id === user.id && (
@@ -372,7 +375,7 @@ export function MixDetail() {
             onClick={() => setShowMintModal(true)}
             leftIcon={<Icon name="sparkles" size={14} color="currentColor" />}
           >
-            Create supporter pass
+            {t('supporterPass')}
           </Button>
         )}
       </div>
@@ -388,7 +391,7 @@ export function MixDetail() {
           }}
         >
           <p style={{ color: colors.text.muted, fontSize: 12, marginBottom: 6 }}>
-            Paste this HTML to embed this mix on any website:
+            {t('embedHtml')}
           </p>
           <textarea
             readOnly
@@ -433,7 +436,7 @@ export function MixDetail() {
           <h3
             style={{ fontSize: 14, fontWeight: 600, color: colors.text.secondary, marginBottom: 8 }}
           >
-            Tracklist
+            {t('tracklist')}
           </h3>
           <div style={{ fontSize: 13, color: colors.text.muted, lineHeight: 2 }}>
             {(mix.tracklist as { artist: string; title: string }[]).map((t, i) => (
@@ -459,7 +462,7 @@ export function MixDetail() {
               marginBottom: 12,
             }}
           >
-            Fans Also Liked
+            {t('fansAlsoLiked')}
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {fansAlsoLiked.map(m => (
@@ -502,7 +505,7 @@ export function MixDetail() {
               <input
                 value={commentBody}
                 onChange={e => setCommentBody(e.target.value)}
-                placeholder="Write a comment..."
+                placeholder={t('commentPlaceholder')}
                 required
                 style={{
                   flex: 1,
@@ -514,13 +517,13 @@ export function MixDetail() {
                   fontSize: 14,
                 }}
               />
-              <Button type="submit">Post</Button>
+              <Button type="submit">{t('post')}</Button>
             </div>
           </form>
         ) : (
           <p style={{ color: colors.text.faintest, fontSize: 13 }}>
             <Link to="/login" style={{ color: colors.accent }}>
-              Sign in
+              {t('signIn')}
             </Link>{' '}
             to comment
           </p>
@@ -562,7 +565,7 @@ export function MixDetail() {
                       cursor: 'pointer',
                     }}
                   >
-                    Reply
+                    {t('reply')}
                   </button>
                 </div>
                 <p style={{ color: colors.text.secondary, fontSize: 14, margin: 0 }}>

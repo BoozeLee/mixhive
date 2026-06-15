@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { runStrategicAgent } from '../lib/agents';
 import type { AgentOutput } from '../lib/agents';
@@ -80,6 +81,7 @@ function draftApplication(match: OpportunityMatch, displayName: string) {
 }
 
 export function Opportunities() {
+  const t = useTranslations('opportunities');
   const { user, profile } = useAuth();
   const [tab, setTab] = useState<Tab>('for-you');
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
@@ -195,7 +197,7 @@ export function Opportunities() {
               letterSpacing: 0.8,
             }}
           >
-            Opportunity Graph
+            {t('graph')}
           </p>
           <h1
             style={{
@@ -206,7 +208,7 @@ export function Opportunities() {
               lineHeight: 1.1,
             }}
           >
-            Find gigs, grants, radio calls, and scene openings.
+            {t('subtitle')}
           </h1>
           <p
             style={{
@@ -238,7 +240,7 @@ export function Opportunities() {
               letterSpacing: 0.8,
             }}
           >
-            Pilot inventory
+            {t('pilotInventory')}
           </div>
           <div
             style={{
@@ -393,7 +395,7 @@ export function Opportunities() {
         ))}
       </div>
 
-      {loading && <div style={{ color: colors.text.muted }}>Loading opportunity matches...</div>}
+      {loading && <div style={{ color: colors.text.muted }}>{t('loadingMatches')}</div>}
       {error && <div style={{ color: colors.danger }}>{error}</div>}
       {!loading && !error && visibleMatches.length === 0 && (
         <div
@@ -405,7 +407,7 @@ export function Opportunities() {
             textAlign: 'center',
           }}
         >
-          No opportunities in this lane yet.
+          {t('noOpportunities')}
         </div>
       )}
 
@@ -508,7 +510,7 @@ export function Opportunities() {
                   paddingLeft: space[4],
                 }}
               >
-                <strong style={{ color: colors.accent }}>Why this fits:</strong> {match.rationale}
+                <strong style={{ color: colors.accent }}>{t('whyFits')}</strong> {match.rationale}
               </div>
 
               <div style={{ display: 'flex', gap: space[2], flexWrap: 'wrap', marginTop: 'auto' }}>
@@ -534,17 +536,17 @@ export function Opportunities() {
                   variant="secondary"
                   onClick={() => setAction(opp.id, 'saved')}
                 >
-                  Save
+                  {t('save')}
                 </Button>
                 <Button type="button" onClick={() => openDraft(match)}>
-                  Draft application
+                  {t('draftApplication')}
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={() => setAction(opp.id, 'dismissed')}
                 >
-                  Dismiss
+                  {t('dismiss')}
                 </Button>
               </div>
             </article>
@@ -577,7 +579,7 @@ export function Opportunities() {
             }}
           >
             <h2 style={{ margin: 0, color: colors.text.primary, fontSize: fontSize.xl }}>
-              Application draft
+              {t('applicationDraft')}
             </h2>
             <p
               style={{
@@ -616,7 +618,7 @@ export function Opportunities() {
               }}
             >
               <Button type="button" variant="ghost" onClick={() => setSelected(null)}>
-                Close
+                {t('close')}
               </Button>
               <Button
                 type="button"
@@ -625,7 +627,7 @@ export function Opportunities() {
                   setSelected(null);
                 }}
               >
-                Mark draft ready
+                {t('markReady')}
               </Button>
             </div>
           </div>

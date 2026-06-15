@@ -83,6 +83,7 @@ function activityText(event: ActivityEvent) {
 }
 
 export function ProfilePage() {
+  const t = useTranslations('profile');
   const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
   const [profile, setProfile] = useState<ProfileType | null>(null);

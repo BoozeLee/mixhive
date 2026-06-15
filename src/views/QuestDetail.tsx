@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams, Link } from 'react-router-dom';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 import { HiveCard } from '../components/hive/HiveCard';
@@ -13,6 +14,7 @@ import { useAuth } from '../hooks/useAuth';
 import type { QuestWithMilestones } from '../lib/types';
 
 export function QuestDetail() {
+  const t = useTranslations('quests');
   const { id } = useParams<{ id: string }>();
   const { profile } = useAuth();
   const [questData, setQuestData] = useState<QuestWithMilestones | null>(null);
@@ -211,13 +213,15 @@ export function QuestDetail() {
       <HiveCard tone="glow" style={{ marginBottom: space[8] }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>CURRENT MOMENTUM</div>
+            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
+              {t('currentMomentum')}
+            </div>
             <div style={{ fontSize: 42, fontWeight: fontWeight.bold, lineHeight: 1 }}>
               {quest.momentum}
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>PROGRESS</div>
+            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>{t('progress')}</div>
             <div style={{ fontSize: fontSize['2xl'], fontWeight: fontWeight.semibold }}>
               {progress}%
             </div>
@@ -250,7 +254,7 @@ export function QuestDetail() {
       {quest.description && (
         <HiveCard style={{ marginBottom: space[8] }}>
           <div style={{ fontSize: fontSize.sm, color: colors.text.muted, marginBottom: space[2] }}>
-            ABOUT THIS QUEST
+            {t('aboutQuest')}
           </div>
           <p style={{ margin: 0, lineHeight: 1.5 }}>{quest.description}</p>
         </HiveCard>
@@ -258,7 +262,7 @@ export function QuestDetail() {
 
       {/* Milestones */}
       <div style={{ marginBottom: space[8] }}>
-        <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>Milestones</h2>
+        <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>{t('milestones')}</h2>
 
         {actionError && (
           <div style={{ color: colors.danger, fontSize: fontSize.sm, marginBottom: space[4] }}>
@@ -269,7 +273,7 @@ export function QuestDetail() {
         {milestones.length === 0 ? (
           <EmptyState
             icon="🎯"
-            title="No milestones yet"
+            title={t('noMilestones')}
             body={
               isOwner
                 ? 'Break this quest into concrete steps below — completing them builds momentum.'
@@ -315,7 +319,7 @@ export function QuestDetail() {
                   </div>
                   {done ? (
                     <span style={{ fontSize: fontSize.sm, color: '#6ccc6c', alignSelf: 'center' }}>
-                      Done
+                      {t('done')}
                     </span>
                   ) : isOwner ? (
                     <HiveButton
@@ -323,7 +327,7 @@ export function QuestDetail() {
                       variant="primary"
                       onClick={() => setOutcomeMilestoneId(m.id)}
                     >
-                      Mark complete
+                      {t('markComplete')}
                     </HiveButton>
                   ) : (
                     <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
@@ -345,7 +349,7 @@ export function QuestDetail() {
             <input
               value={newMilestone}
               onChange={e => setNewMilestone(e.target.value)}
-              placeholder="Add a milestone (e.g. “Play 2 local sets”)"
+              placeholder={t('addMilestonePlaceholder')}
               maxLength={120}
               style={{
                 flex: 1,

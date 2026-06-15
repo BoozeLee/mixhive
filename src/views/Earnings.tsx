@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors } from '../styles/tokens';
 import { supabase } from '../lib/supabase';
 
@@ -51,6 +52,7 @@ function formatTotals(totals: Record<string, number>): string {
 }
 
 export function Earnings() {
+  const t = useTranslations('earnings');
   const [status, setStatus] = useState<ConnectStatus | null>(null);
   const [ledger, setLedger] = useState<LedgerRow[]>([]);
   const [pending, setPending] = useState<PendingTxn[]>([]);
@@ -151,7 +153,7 @@ export function Earnings() {
           letterSpacing: '0.05em',
         }}
       >
-        EARNINGS
+        {t('title')}
       </h1>
       <p style={{ color: colors.text.muted, margin: '4px 0 24px', fontSize: 14 }}>
         Your marketplace payouts — gear sales and agent packages.
@@ -185,7 +187,7 @@ export function Earnings() {
         ) : (
           <div>
             <p style={{ color: colors.white, fontWeight: 600, margin: '0 0 6px' }}>
-              Set up payouts to get paid
+              {t('setupPayouts')}
             </p>
             <p style={{ color: colors.text.muted, fontSize: 13, margin: '0 0 14px' }}>
               {status?.onboarded
@@ -212,9 +214,9 @@ export function Earnings() {
           marginTop: 16,
         }}
       >
-        <Stat label="Paid out" value={paidTotals} accent="var(--hive-gold)" />
-        <Stat label="Pending escrow" value={pendingTotals} accent={colors.warning} />
-        <Stat label="Held (set up payouts)" value={heldTotals} accent={colors.text.muted} />
+        <Stat label={t('paidOut')} value={paidTotals} accent="var(--hive-gold)" />
+        <Stat label={t('pendingEscrow')} value={pendingTotals} accent={colors.warning} />
+        <Stat label={t('held')} value={heldTotals} accent={colors.text.muted} />
       </div>
 
       {/* History */}
@@ -226,7 +228,7 @@ export function Earnings() {
           letterSpacing: '0.04em',
         }}
       >
-        Payout history
+        {t('payoutHistory')}
       </h2>
       {loading ? (
         <div
@@ -248,7 +250,7 @@ export function Earnings() {
           }}
         >
           <div style={{ fontSize: 40, marginBottom: 8 }}>🪙</div>
-          <p>No payouts yet. Sales and agent purchases will appear here.</p>
+          <p>{t('noPayouts')}</p>
         </div>
       ) : (
         <div
@@ -261,12 +263,12 @@ export function Earnings() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ color: colors.text.muted, textAlign: 'left' }}>
-                <th style={th}>Date</th>
-                <th style={th}>Source</th>
-                <th style={th}>Gross</th>
-                <th style={th}>Fee</th>
-                <th style={th}>Net</th>
-                <th style={th}>Status</th>
+                <th style={th}>{t('date')}</th>
+                <th style={th}>{t('source')}</th>
+                <th style={th}>{t('gross')}</th>
+                <th style={th}>{t('fee')}</th>
+                <th style={th}>{t('net')}</th>
+                <th style={th}>{t('status')}</th>
               </tr>
             </thead>
             <tbody>

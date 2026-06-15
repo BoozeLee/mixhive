@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -60,6 +61,7 @@ const PHASE_LABELS: Record<string, { label: string; color: string }> = {
 };
 
 export function CollabQuestDetail() {
+  const t = useTranslations('quests');
   const { id } = useParams<{ id: string }>();
   const [quest, setQuest] = useState<Quest | null>(null);
   const [loading, setLoading] = useState(true);
@@ -261,7 +263,7 @@ export function CollabQuestDetail() {
       {/* Goals */}
       {quest.goals.length > 0 && (
         <section style={{ marginBottom: 28 }}>
-          <h2 style={sectionHeadStyle}>Deliverables</h2>
+          <h2 style={sectionHeadStyle}>{t('deliverables')}</h2>
           <ul
             style={{
               margin: 0,
@@ -295,7 +297,7 @@ export function CollabQuestDetail() {
       <section style={{ marginBottom: 28 }}>
         <h2 style={sectionHeadStyle}>Open Roles ({openRoles.length})</h2>
         {openRoles.length === 0 ? (
-          <p style={{ color: colors.text.faintest, fontSize: 14 }}>All roles filled.</p>
+          <p style={{ color: colors.text.faintest, fontSize: 14 }}>{t('allRolesFilled')}</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {openRoles.map(role => (
@@ -339,7 +341,7 @@ export function CollabQuestDetail() {
                             borderRadius: 4,
                           }}
                         >
-                          PAID
+                          {t('paid')}
                         </span>
                       )}
                     </div>
@@ -395,11 +397,11 @@ export function CollabQuestDetail() {
       {/* Apply message */}
       {!isCreator && quest.phase === 'recruiting' && openRoles.length > 0 && (
         <section style={{ marginBottom: 24 }}>
-          <h2 style={sectionHeadStyle}>Application Message (optional)</h2>
+          <h2 style={sectionHeadStyle}>{t('applicationMessage')}</h2>
           <textarea
             value={applyMessage}
             onChange={e => setApplyMessage(e.target.value)}
-            placeholder="Tell the creator why you're a great fit..."
+            placeholder={t('applyPlaceholder')}
             rows={3}
             style={{
               width: '100%',
@@ -428,7 +430,7 @@ export function CollabQuestDetail() {
             borderRadius: 10,
           }}
         >
-          <h2 style={sectionHeadStyle}>Quest Controls</h2>
+          <h2 style={sectionHeadStyle}>{t('questControls')}</h2>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {quest.phase === 'draft' && (
               <Button
@@ -436,7 +438,7 @@ export function CollabQuestDetail() {
                 disabled={advancing}
                 loading={advancing}
               >
-                Open for Recruiting
+                {t('openForRecruiting')}
               </Button>
             )}
             {quest.phase === 'recruiting' && (
@@ -464,17 +466,17 @@ export function CollabQuestDetail() {
               onClick={() => handleAdvancePhase('cancelled')}
               disabled={advancing}
             >
-              Cancel Quest
+              {t('cancelQuest')}
             </Button>
           </div>
           {quest.phase === 'recruiting' && (
             <p style={{ color: colors.text.faintest, fontSize: 12, marginTop: 8, marginBottom: 0 }}>
-              Launch when all needed roles are filled.
+              {t('launchHint')}
             </p>
           )}
           {quest.phase === 'in_progress' && (
             <p style={{ color: colors.text.faintest, fontSize: 12, marginTop: 8, marginBottom: 0 }}>
-              Marking complete awards XP to all filled role holders.
+              {t('completeHint')}
             </p>
           )}
         </section>

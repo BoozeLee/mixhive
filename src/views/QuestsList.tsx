@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
@@ -24,6 +25,7 @@ interface QuestSummary {
 }
 
 export function QuestsList() {
+  const t = useTranslations('quests');
   const { user } = useAuth();
   const [quests, setQuests] = useState<QuestSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,31 +72,29 @@ export function QuestsList() {
       <header style={{ marginBottom: space[8] }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold }}>
-            My Quests
+            {t('myQuests')}
           </h1>
           <div style={{ display: 'flex', gap: 8 }}>
             <HiveButton variant="secondary" onClick={() => setShowSeedingModal(true)}>
-              Seed Graph
+              {t('seedGraph')}
             </HiveButton>
             <HiveButton variant="primary" onClick={() => setShowCreateModal(true)}>
               + New Quest
             </HiveButton>
           </div>
         </div>
-        <p style={{ color: colors.text.muted, marginTop: space[2] }}>
-          Narrative career missions powered by your MythicNode graph
-        </p>
+        <p style={{ color: colors.text.muted, marginTop: space[2] }}>{t('mythicSubtitle')}</p>
       </header>
 
       <ProposalsInbox />
 
       {/* Active Quests */}
       <section style={{ marginBottom: space[10] }}>
-        <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>Active</h2>
+        <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>{t('active')}</h2>
         {activeQuests.length === 0 ? (
           <EmptyState
             icon="🧭"
-            title="No active quests yet"
+            title={t('noActiveQuests')}
             body="Start a new quest or let one of your Mythic agents propose one for you."
           />
         ) : (
@@ -139,7 +139,7 @@ export function QuestsList() {
                       marginBottom: space[2],
                     }}
                   >
-                    <div>Momentum</div>
+                    <div>{t('momentum')}</div>
                     <div style={{ fontWeight: fontWeight.medium }}>{quest.momentum}</div>
                   </div>
 
@@ -184,7 +184,7 @@ export function QuestsList() {
       {/* Completed / Archived */}
       {completedQuests.length > 0 && (
         <section>
-          <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>Completed</h2>
+          <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>{t('completed')}</h2>
           <div
             style={{
               display: 'grid',

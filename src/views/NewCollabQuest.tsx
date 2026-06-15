@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { colors, withAlpha } from '../styles/tokens';
@@ -42,6 +43,7 @@ const emptyRole = (): RoleForm => ({
 });
 
 export function NewCollabQuest() {
+  const t = useTranslations('newCollabQuest');
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: '',
@@ -138,10 +140,10 @@ export function NewCollabQuest() {
           marginBottom: 4,
         }}
       >
-        Post a Quest
+        {t('postAQuest')}
       </h1>
       <p style={{ color: colors.text.faint, fontSize: 14, marginBottom: 28 }}>
-        Define your creative project and the collaborators you need
+        {t('defineYourCreativeProject')}
       </p>
 
       {error && (
@@ -163,19 +165,19 @@ export function NewCollabQuest() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* Quest basics */}
         <section>
-          <h2 style={sectionHeadStyle}>Quest Details</h2>
+          <h2 style={sectionHeadStyle}>{t('questDetails')}</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <Input
-              label="Quest title *"
+              label={t('questTitle')}
               value={form.title}
               onChange={e => updateForm('title', e.target.value)}
               placeholder='e.g. "Build visual identity for my techno alias"'
             />
             <Textarea
-              label="Narrative (RPG-style context)"
+              label={t('narrativeRpgStyleContext')}
               value={form.narrative}
               onChange={e => updateForm('narrative', e.target.value)}
-              placeholder="Describe the project in your own words..."
+              placeholder={t('describeTheProjectIn')}
               rows={3}
               style={{ resize: 'vertical' }}
             />
@@ -214,33 +216,33 @@ export function NewCollabQuest() {
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
           >
             <Input
-              label="Genre tags (comma-separated)"
+              label={t('genreTagsCommaSeparated')}
               value={form.genre_tags}
               onChange={e => updateForm('genre_tags', e.target.value)}
-              placeholder="techno, ambient, house"
+              placeholder={t('technoAmbientHouse')}
             />
             <Input
-              label="Discipline tags"
+              label={t('disciplineTags')}
               value={form.discipline_tags}
               onChange={e => updateForm('discipline_tags', e.target.value)}
-              placeholder="visual_artist, dj"
+              placeholder={t('visualArtistDj')}
             />
             <Input
-              label="Region (optional)"
+              label={t('regionOptional')}
               value={form.region}
               onChange={e => updateForm('region', e.target.value)}
-              placeholder="Brussels, Remote, Europe"
+              placeholder={t('brusselsRemoteEurope')}
             />
             <Input
-              label="Timeline (days)"
+              label={t('timelineDays')}
               type="number"
               value={form.timeline_days}
               onChange={e => updateForm('timeline_days', e.target.value)}
-              placeholder="30"
+              placeholder={t('30')}
               min="1"
             />
             <Input
-              label="XP reward"
+              label={t('xpReward')}
               type="number"
               value={form.xp_reward}
               onChange={e => updateForm('xp_reward', e.target.value)}
@@ -277,7 +279,7 @@ export function NewCollabQuest() {
                         cursor: 'pointer',
                       }}
                     >
-                      Remove
+                      {t('remove')}
                     </button>
                   )}
                 </div>
@@ -286,33 +288,33 @@ export function NewCollabQuest() {
                   style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}
                 >
                   <Select
-                    label="Type *"
-                    placeholder="Select..."
+                    label={t('type')}
+                    placeholder={t('select')}
                     value={role.role_type}
                     onChange={e => updateRole(i, 'role_type', e.target.value)}
                     options={ROLE_TYPES.map(rt => ({ value: rt, label: rt.replace('_', ' ') }))}
                   />
                   <Input
-                    label="Label *"
+                    label={t('label')}
                     value={role.title}
                     onChange={e => updateRole(i, 'title', e.target.value)}
-                    placeholder="Lead Animator"
+                    placeholder={t('leadAnimator')}
                   />
                   <Input
-                    label="Skills (comma-sep)"
+                    label={t('skillsCommaSep')}
                     value={role.skill_tags}
                     onChange={e => updateRole(i, 'skill_tags', e.target.value)}
-                    placeholder="after_effects, 3d"
+                    placeholder={t('afterEffects3d')}
                   />
                   <Select
-                    label="Experience level"
+                    label={t('experienceLevel')}
                     value={role.experience_level}
                     onChange={e => updateRole(i, 'experience_level', e.target.value)}
                   >
-                    <option value="any">Any level</option>
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="pro">Pro</option>
+                    <option value="any">{t('anyLevel')}</option>
+                    <option value="beginner">{t('beginner')}</option>
+                    <option value="intermediate">{t('intermediate')}</option>
+                    <option value="pro">{t('pro')}</option>
                   </Select>
                 </div>
                 <label
@@ -331,16 +333,16 @@ export function NewCollabQuest() {
                     checked={role.is_paid}
                     onChange={e => updateRole(i, 'is_paid', e.target.checked)}
                   />
-                  Paid role
+                  {t('paidRole')}
                 </label>
                 {role.is_paid && (
                   <div style={{ marginTop: 8 }}>
                     <Input
                       hideLabel
-                      label="Compensation notes"
+                      label={t('compensationNotes')}
                       value={role.compensation_notes}
                       onChange={e => updateRole(i, 'compensation_notes', e.target.value)}
-                      placeholder="e.g. rev share + credit"
+                      placeholder={t('eGRevShare')}
                     />
                   </div>
                 )}

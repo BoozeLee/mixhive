@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Icon } from '../components/ui/Icon';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
@@ -112,6 +113,7 @@ interface SetupForm {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function ProfileSetup() {
+  const t = useTranslations('profileSetup');
   const { user, profile, updateProfile } = useAuth();
   const navigate = useNavigate();
 
@@ -525,13 +527,10 @@ export function ProfileSetup() {
         >
           {/* ── Step 1: Identity ── */}
           {step === 1 && (
-            <StepShell
-              title="Set up your identity"
-              subtitle="Username and display name are required."
-            >
+            <StepShell title={t('setUpYourIdentity')} subtitle={t('usernameAndDisplayName')}>
               <div style={{ marginBottom: space[7] }}>
                 <Input
-                  label="Username *"
+                  label={t('username')}
                   help={usernameChecking ? 'Checking…' : '3–30 chars, letters/numbers/underscores'}
                   type="text"
                   value={form.username}
@@ -540,26 +539,26 @@ export function ProfileSetup() {
                     setUsernameError('');
                   }}
                   onBlur={() => checkUsername(form.username)}
-                  placeholder="djyourusername"
+                  placeholder={t('djyourusername')}
                   error={usernameError || undefined}
                 />
               </div>
               <div style={{ marginBottom: space[7] }}>
                 <Input
-                  label="Display name *"
+                  label={t('displayName')}
                   type="text"
                   value={form.displayName}
                   onChange={e => setField('displayName', e.target.value)}
-                  placeholder="DJ Venom"
+                  placeholder={t('djVenom')}
                 />
               </div>
               <div style={{ marginBottom: space[7] }}>
                 <Input
-                  label="Location"
+                  label={t('location')}
                   type="text"
                   value={form.location}
                   onChange={e => setField('location', e.target.value)}
-                  placeholder="Brussels, Belgium"
+                  placeholder={t('brusselsBelgium')}
                 />
               </div>
               <StepNav onNext={() => setStep(2)} canNext={canProceedStep1} />
@@ -568,10 +567,7 @@ export function ProfileSetup() {
 
           {/* ── Step 2: Avatar ── */}
           {step === 2 && (
-            <StepShell
-              title="Your avatar"
-              subtitle="Upload a photo or let AI generate one for you. An avatar is required."
-            >
+            <StepShell title={t('yourAvatar')} subtitle={t('uploadAPhotoOr')}>
               {/* Mode toggle */}
               <div
                 style={{
@@ -618,7 +614,7 @@ export function ProfileSetup() {
                     onClick={() => fileInputRef.current?.click()}
                     role="button"
                     tabIndex={0}
-                    aria-label="Upload avatar image"
+                    aria-label={t('uploadAvatarImage')}
                     onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
                   >
                     {form.avatarUrl ? (
@@ -711,7 +707,7 @@ export function ProfileSetup() {
                       >
                         No OpenAI key configured.{' '}
                         <Link to="/settings#ai" style={{ color: colors.accent }}>
-                          Add your key in Settings
+                          {t('addYourKeyIn')}
                         </Link>{' '}
                         or{' '}
                         <a
@@ -750,7 +746,7 @@ export function ProfileSetup() {
                       color: colors.text.muted,
                     }}
                   >
-                    Choose a style
+                    {t('chooseAStyle')}
                   </p>
                   <div
                     style={{
@@ -795,10 +791,10 @@ export function ProfileSetup() {
                   </div>
 
                   <Input
-                    label="Describe your vibe (optional)"
+                    label={t('describeYourVibeOptional')}
                     value={avatarPrompt}
                     onChange={e => setAvatarPrompt(e.target.value)}
-                    placeholder="e.g. underground rave, dark industrial…"
+                    placeholder={t('eGUndergroundRave')}
                   />
 
                   <Button
@@ -917,11 +913,8 @@ export function ProfileSetup() {
 
           {/* ── Step 3: Bio + Genres ── */}
           {step === 3 && (
-            <StepShell
-              title="Your sound"
-              subtitle="Choose at least one genre and add a bio. Both are required."
-            >
-              <FormField label="Genres *">
+            <StepShell title={t('yourSound')} subtitle={t('chooseAtLeastOne')}>
+              <FormField label={t('genres')}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
                   {GENRES.map(g => (
                     <button
@@ -947,18 +940,18 @@ export function ProfileSetup() {
               </FormField>
 
               <Input
-                label="Your style / vibe"
-                help="Used by AI for bio + avatar generation"
+                label={t('yourStyleVibe')}
+                help={t('usedByAiFor')}
                 value={form.djStyle}
                 onChange={e => setField('djStyle', e.target.value)}
-                placeholder="e.g. dark hypnotic techno, warehouse energy"
+                placeholder={t('eGDarkHypnotic')}
               />
 
               <Input
-                label="Influences"
+                label={t('influences')}
                 value={form.influences}
                 onChange={e => setField('influences', e.target.value)}
-                placeholder="e.g. Ben Klock, Aphex Twin, Nina Kraviz"
+                placeholder={t('eGBenKlock')}
               />
 
               <div
@@ -971,11 +964,11 @@ export function ProfileSetup() {
               >
                 <div style={{ flex: 1 }}>
                   <Textarea
-                    label="Bio *"
+                    label={t('bio')}
                     value={form.bio}
                     onChange={e => setField('bio', e.target.value)}
                     rows={4}
-                    placeholder="Write your bio or use AI to generate one…"
+                    placeholder={t('writeYourBioOr')}
                     style={{ resize: 'vertical' }}
                   />
                 </div>
@@ -1007,7 +1000,7 @@ export function ProfileSetup() {
                   >
                     No AI key configured — bio generation is unavailable.{' '}
                     <Link to="/settings#ai" style={{ color: colors.accent }}>
-                      Add your key in Settings
+                      {t('addYourKeyIn')}
                     </Link>{' '}
                     to enable this feature.
                   </div>
@@ -1035,8 +1028,8 @@ export function ProfileSetup() {
 
           {/* ── Step 4: DJ Tools & Links ── */}
           {step === 4 && (
-            <StepShell title="Your toolchain" subtitle="Show your gear, DAWs, and social links.">
-              <FormField label="DJ Equipment">
+            <StepShell title={t('yourToolchain')} subtitle={t('showYourGearDaws')}>
+              <FormField label={t('djEquipment')}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
                   {EQUIPMENT_OPTIONS.map(e => (
                     <button
@@ -1059,7 +1052,7 @@ export function ProfileSetup() {
                 </div>
               </FormField>
 
-              <FormField label="Production & DJ Software">
+              <FormField label={t('productionDjSoftware')}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
                   {DAW_OPTIONS.map(d => (
                     <button
@@ -1097,39 +1090,39 @@ export function ProfileSetup() {
                     fontWeight: fontWeight.semibold,
                   }}
                 >
-                  Social links
+                  {t('socialLinks')}
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: space[5] }}>
                   <Input
-                    label="Website"
+                    label={t('website')}
                     type="url"
                     value={form.website}
                     onChange={e => setField('website', e.target.value)}
-                    placeholder="https://yoursite.com"
+                    placeholder={t('httpsYoursiteCom')}
                   />
                   <Input
-                    label="GitHub"
+                    label={t('github')}
                     value={form.github}
                     onChange={e => setField('github', e.target.value)}
-                    placeholder="github.com/yourusername"
+                    placeholder={t('githubComYourusername')}
                   />
                   <Input
-                    label="SoundCloud"
+                    label={t('soundcloud')}
                     value={form.soundcloud}
                     onChange={e => setField('soundcloud', e.target.value)}
-                    placeholder="soundcloud.com/yourusername"
+                    placeholder={t('soundcloudComYourusername')}
                   />
                   <Input
-                    label="Spotify"
+                    label={t('spotify')}
                     value={form.spotify}
                     onChange={e => setField('spotify', e.target.value)}
-                    placeholder="open.spotify.com/artist/…"
+                    placeholder={t('openSpotifyComArtist')}
                   />
                   <Input
-                    label="Instagram"
+                    label={t('instagram')}
                     value={form.instagram}
                     onChange={e => setField('instagram', e.target.value)}
-                    placeholder="@yourusername"
+                    placeholder={t('yourusername')}
                   />
                 </div>
               </div>
@@ -1144,10 +1137,7 @@ export function ProfileSetup() {
 
           {/* ── Step 5: Complete ── */}
           {step === 5 && (
-            <StepShell
-              title="You're ready to buzz"
-              subtitle="Here's your profile preview. You can always edit it later."
-            >
+            <StepShell title={t('youReReadyTo')} subtitle={t('hereSYourProfile')}>
               <div style={{ textAlign: 'center', marginBottom: space[9] }}>
                 {form.avatarUrl ? (
                   <img
@@ -1293,10 +1283,10 @@ export function ProfileSetup() {
                         color: colors.text.primary,
                       }}
                     >
-                      Get your free AI analysis
+                      {t('getYourFreeAi')}
                     </div>
                     <div style={{ fontSize: fontSize.xs, color: colors.text.muted }}>
-                      Run a profile coaching report to see what to improve next.
+                      {t('runAProfileCoaching')}
                     </div>
                   </div>
                 </div>

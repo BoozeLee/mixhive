@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../lib/notificationStore';
 import { colors, space, fontSize } from '../styles/tokens';
@@ -24,6 +25,8 @@ const TYPE_ICON: Record<string, IconKey> = {
 };
 
 export function NotificationsPage() {
+  const t = useTranslations('notifications');
+  const tn = useTranslations('nav');
   const { user } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead, refresh } = useNotifications();
   const [loading, setLoading] = useState(!user); // Loading when no user
@@ -45,8 +48,8 @@ export function NotificationsPage() {
   if (loading) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
-        <SectionHeading eyebrow="Activity" title="Notifications" />
-        <p style={{ color: colors.text.dim, marginTop: space[8] }}>Loading notifications…</p>
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
+        <p style={{ color: colors.text.dim, marginTop: space[8] }}>{t('loading')}</p>
       </div>
     );
   }
@@ -54,9 +57,9 @@ export function NotificationsPage() {
   if (!user) {
     return (
       <div style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
-        <p style={{ marginBottom: space[6] }}>Sign in to see your notifications</p>
+        <p style={{ marginBottom: space[6] }}>{t('signInPrompt')}</p>
         <Link to="/login" style={{ color: colors.accent }}>
-          Sign in
+          {tn('signIn')}
         </Link>
       </div>
     );
@@ -73,14 +76,14 @@ export function NotificationsPage() {
           marginBottom: space[10],
         }}
       >
-        <SectionHeading eyebrow="Activity" title="Notifications" />
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
         <Button
           size="sm"
           variant="ghost"
           onClick={handleMarkAllAsRead}
           disabled={unreadCount === 0}
         >
-          Mark all read
+          {t('markAllRead')}
         </Button>
       </div>
 
@@ -188,7 +191,7 @@ export function NotificationsPage() {
                 </div>
                 {!notification.read && (
                   <span
-                    aria-label="Unread"
+                    aria-label={t('unread')}
                     style={{
                       width: 9,
                       height: 9,

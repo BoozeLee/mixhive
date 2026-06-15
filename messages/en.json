@@ -8,7 +8,10 @@
     "submit": "Submit",
     "delete": "Delete",
     "language": "Language",
-    "or": "or"
+    "or": "or",
+    "remove": "Remove",
+    "loadMore": "Load more",
+    "seeAll": "See all"
   },
   "nav": {
     "feed": "Feed",
@@ -77,5 +80,44 @@
     "termsAgree": "By joining you agree to the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
     "checkEmailTitle": "Check your email",
     "checkEmailBody": "We sent a confirmation link to <bold>{email}</bold>. Confirm your address to continue to your required artist profile setup."
+  },
+  "upload": {
+    "title": "Nectar Upload",
+    "dropTitle": "Drop your mix",
+    "dropZoneAria": "Audio file drop zone — drag and drop or click to browse",
+    "dropHere": "Drop your mix here",
+    "dropIt": "Drop it!",
+    "labelTitle": "Title *",
+    "labelDescription": "Description",
+    "labelGenre": "Genre",
+    "labelTags": "Tags (comma separated)",
+    "labelArtwork": "Artwork (optional)",
+    "titlePlaceholder": "Enter mix title",
+    "descriptionPlaceholder": "Describe your mix...",
+    "genrePlaceholder": "Select genre",
+    "tagsPlaceholder": "house, deep, vinyl",
+    "explicit": "Mark as explicit content",
+    "trackTitle": "Track Title",
+    "startSec": "Start (sec)"
+  },
+  "notifications": {
+    "eyebrow": "Activity",
+    "title": "Notifications",
+    "loading": "Loading notifications…",
+    "markAllRead": "Mark all read",
+    "unread": "Unread",
+    "signInPrompt": "Sign in to see your notifications"
+  },
+  "search": {
+    "title": "Search MixHive",
+    "subtitle": "Find mixes, artists, scenes, and genres.",
+    "resultTypes": "Search result types",
+    "all": "All",
+    "artists": "Artists",
+    "mixes": "Mixes",
+    "scenes": "Scenes",
+    "noResults": "No results found",
+    "noResultsBody": "Try another spelling, genre, or location.",
+    "resultsFor": "Results for <q>{query}</q>"
   }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { MixCard } from '../components/MixCard';
 import { SearchAutocomplete } from '../components/SearchAutocomplete';
 import { SearchFilters } from '../components/SearchFilters';
@@ -21,14 +22,16 @@ import type { Profile } from '../lib/types';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 
 const popularQueries = ['house', 'techno', 'Brussels', 'Amsterdam'];
-const tabs: Array<{ value: SearchEntityType; label: string }> = [
-  { value: 'all', label: 'All' },
-  { value: 'mixes', label: 'Mixes' },
-  { value: 'profiles', label: 'Artists' },
-  { value: 'scenes', label: 'Scenes' },
+const tabs: Array<{ value: SearchEntityType; labelKey: string }> = [
+  { value: 'all', labelKey: 'all' },
+  { value: 'mixes', labelKey: 'mixes' },
+  { value: 'profiles', labelKey: 'artists' },
+  { value: 'scenes', labelKey: 'scenes' },
 ];
 
 export function SearchPage() {
+  const t = useTranslations('search');
+  const tc = useTranslations('common');
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [tab, setTab] = useState<SearchEntityType>('all');
@@ -121,13 +124,12 @@ export function SearchPage() {
   return (
     <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px' }}>
       <h1 style={{ fontSize: 22, fontWeight: 800, color: colors.text.primary, margin: '0 0 16px' }}>
-        {query ? (
-          <>
-            Results for <span style={{ color: colors.accent }}>"{query}"</span>
-          </>
-        ) : (
-          'Search MixHive'
-        )}
+        {query
+          ? t.rich('resultsFor', {
+              query,
+              q: chunks => <span style={{ color: colors.accent }}>"{chunks}"</span>,
+            })
+          : t('title')}
       </h1>
 
       <div style={{ marginBottom: space[9] }}>
@@ -136,9 +138,7 @@ export function SearchPage() {
 
       {!query && (
         <section style={{ textAlign: 'center', padding: '32px 16px', color: colors.text.muted }}>
-          <p style={{ margin: '0 0 18px', fontSize: 14 }}>
-            Find mixes, artists, scenes, and genres.
-          </p>
+          <p style={{ margin: '0 0 18px', fontSize: 14 }}>{t('subtitle')}</p>
           <div
             style={{ display: 'flex', justifyContent: 'center', gap: space[6], flexWrap: 'wrap' }}
           >
@@ -191,7 +191,7 @@ export function SearchPage() {
 
           <div
             role="tablist"
-            aria-label="Search result types"
+            aria-label={t('resultTypes')}
             style={{
               display: 'flex',
               gap: 4,
@@ -201,7 +201,7 @@ export function SearchPage() {
               padding: 4,
             }}
           >
-            {tabs.map(({ value, label }) => (
+            {tabs.map(({ value, labelKey }) => (
               <button
                 key={value}
                 type="button"
@@ -220,7 +220,7 @@ export function SearchPage() {
                   fontWeight: tab === value ? 700 : 500,
                 }}
               >
-                {label}
+                {t(labelKey)}
                 {results.sections[value === 'all' ? 'mixes' : value]?.total && value !== 'all'
                   ? ` (${results.sections[value].total})`
                   : ''}
@@ -249,7 +249,7 @@ export function SearchPage() {
                     loading={loadingMore}
                     onClick={() => void performSearch(query, filters, activeSection.items.length)}
                   >
-                    Load more
+                    {tc('loadMore')}
                   </Button>
                 </div>
               )}
@@ -274,18 +274,13 @@ function GroupedResults({
   results: SearchResponse;
   onSeeAll: (type: SearchEntityType) => void;
 }) {
+  const t = useTranslations('search');
   if (!totalResults(results))
-    return (
-      <EmptyState
-        iconKey="search"
-        title="No results found"
-        body="Try another spelling, genre, or location."
-      />
-    );
+    return <EmptyState iconKey="search" title={t('noResults')} body={t('noResultsBody')} />;
   return (
     <div style={{ display: 'grid', gap: space[12] }}>
       <ResultGroup
-        title="Scenes"
+        title={t('scenes')}
         total={results.sections.scenes.total}
         onSeeAll={() => onSeeAll('scenes')}
       >
@@ -294,7 +289,7 @@ function GroupedResults({
         ))}
       </ResultGroup>
       <ResultGroup
-        title="Artists"
+        title={t('artists')}
         total={results.sections.profiles.total}
         onSeeAll={() => onSeeAll('profiles')}
       >
@@ -303,7 +298,7 @@ function GroupedResults({
         ))}
       </ResultGroup>
       <ResultGroup
-        title="Mixes"
+        title={t('mixes')}
         total={results.sections.mixes.total}
         onSeeAll={() => onSeeAll('mixes')}
       >
@@ -326,6 +321,7 @@ function ResultGroup({
   onSeeAll: () => void;
   children: React.ReactNode;
 }) {
+  const tc = useTranslations('common');
   if (!total) return null;
   return (
     <section>
@@ -341,7 +337,7 @@ function ResultGroup({
           {title} <span style={{ color: colors.text.dim, fontSize: fontSize.sm }}>({total})</span>
         </h2>
         <Button type="button" variant="ghost" size="sm" onClick={onSeeAll}>
-          See all
+          {tc('seeAll')}
         </Button>
       </div>
       <div style={{ display: 'grid', gap: space[6] }}>{children}</div>

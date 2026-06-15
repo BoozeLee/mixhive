@@ -1,4 +1,5 @@
 import type { ProfileAnalytics } from '../lib/types';
+import { useTranslations } from 'next-intl';
 import { Button } from './ui/Button';
 import { colors, radius, space } from '../styles/tokens';
 
@@ -25,6 +26,7 @@ function metric(value: number | string, label: string) {
 }
 
 export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
+  const t = useTranslations('profileAnalyticsDashboard');
   function download(name: string, content: string, type: string) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
@@ -88,17 +90,17 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
         }}
       >
         <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: colors.text.primary }}>
-          Analytics
+          {t('analytics')}
         </h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
           <Button type="button" variant="secondary" size="sm" onClick={copyShareCard}>
-            Share card
+            {t('shareCard')}
           </Button>
           <Button type="button" variant="secondary" size="sm" onClick={exportCsv}>
-            CSV
+            {t('csv')}
           </Button>
           <Button type="button" variant="secondary" size="sm" onClick={exportJson}>
-            JSON
+            {t('json')}
           </Button>
         </div>
       </div>
@@ -142,7 +144,7 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
               textTransform: 'uppercase',
             }}
           >
-            Honey Drop
+            {t('honeyDrop')}
           </div>
           <div style={{ color: colors.text.primary, fontSize: 15, fontWeight: 700, marginTop: 4 }}>
             {analytics.totalPlays >= 1000
@@ -153,7 +155,7 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
           </div>
         </div>
         <Button type="button" variant="primary" size="sm" onClick={copyShareCard}>
-          Copy drop
+          {t('copyDrop')}
         </Button>
       </div>
       <div
@@ -172,7 +174,7 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
           }}
         >
           <h3 style={{ margin: '0 0 12px', color: colors.text.secondary, fontSize: 14 }}>
-            Weekly activity
+            {t('weeklyActivity')}
           </h3>
           <div style={{ display: 'flex', alignItems: 'end', gap: space[4], height: 90 }}>
             {analytics.weeklyEvents.map(item => (
@@ -204,10 +206,10 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
           }}
         >
           <h3 style={{ margin: '0 0 12px', color: colors.text.secondary, fontSize: 14 }}>
-            Top mixes
+            {t('topMixes')}
           </h3>
           {analytics.topMixes.length === 0 ? (
-            <p style={{ color: colors.text.dim, fontSize: 13 }}>No mixes yet.</p>
+            <p style={{ color: colors.text.dim, fontSize: 13 }}>{t('noMixesYet')}</p>
           ) : (
             analytics.topMixes.map(mix => (
               <div

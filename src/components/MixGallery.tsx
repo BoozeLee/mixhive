@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { Icon } from './ui/Icon';
 import { MixCard } from './MixCard';
@@ -18,6 +19,7 @@ export function MixGallery({
   showControls = true,
   className = '',
 }: MixGalleryProps) {
+  const t = useTranslations('mixGallery');
   const [filter, setFilter] = useState<'all' | 'published' | 'recent'>('all');
   const [sortBy, setSortBy] = useState<'date' | 'plays' | 'likes'>('date');
 
@@ -51,7 +53,7 @@ export function MixGallery({
         <div className="mb-4" style={{ display: 'inline-flex' }}>
           <Icon name="music" size={56} />
         </div>
-        <h3 className="text-xl font-semibold text-gray-400 mb-2">No mixes yet</h3>
+        <h3 className="text-xl font-semibold text-gray-400 mb-2">{t('noMixesYet')}</h3>
         <p className="text-gray-500 text-sm">
           {currentUserId
             ? 'Start sharing your mixes with the community!'
@@ -62,7 +64,7 @@ export function MixGallery({
             to="/upload"
             className="inline-block mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
           >
-            Upload Your First Mix
+            {t('uploadYourFirstMix')}
           </Link>
         )}
       </div>
@@ -107,15 +109,15 @@ export function MixGallery({
           </div>
 
           <div className="flex gap-2 items-center">
-            <span className="text-sm text-gray-400">Sort by:</span>
+            <span className="text-sm text-gray-400">{t('sortBy')}</span>
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as 'date' | 'plays' | 'likes')}
               className="bg-gray-700 text-white text-sm rounded px-3 py-1 border border-gray-600 focus:border-purple-500 focus:outline-none"
             >
-              <option value="date">Newest</option>
-              <option value="plays">Most Plays</option>
-              <option value="likes">Most Likes</option>
+              <option value="date">{t('newest')}</option>
+              <option value="plays">{t('mostPlays')}</option>
+              <option value="likes">{t('mostLikes')}</option>
             </select>
           </div>
         </div>
@@ -143,7 +145,7 @@ export function MixGallery({
       {showControls && filteredMixes.length > 8 && (
         <div className="text-center">
           <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-            Load More Mixes
+            {t('loadMoreMixes')}
           </Button>
         </div>
       )}

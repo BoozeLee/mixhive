@@ -1,10 +1,12 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useState, useEffect } from 'react';
 import { colors, fontSize, radius } from '../styles/tokens';
 import { consentDecided, saveConsent } from '../lib/consent';
 
 export function ConsentBanner() {
+  const t = useTranslations('consentBanner');
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export function ConsentBanner() {
   return (
     <div
       role="dialog"
-      aria-label="Cookie consent"
+      aria-label={t('cookieConsent')}
       style={{
         position: 'fixed',
         left: 16,
@@ -51,20 +53,20 @@ export function ConsentBanner() {
       <p style={{ color: colors.text.secondary, fontSize: fontSize.sm, margin: 0 }}>
         We use necessary cookies to run MixHive, and optional analytics to improve it. Read our{' '}
         <a href="/cookies" style={{ color: colors.text.primary, textDecoration: 'underline' }}>
-          Cookie Policy
+          {t('cookiePolicy')}
         </a>{' '}
         and{' '}
         <a href="/privacy" style={{ color: colors.text.primary, textDecoration: 'underline' }}>
-          Privacy Policy
+          {t('privacyPolicy')}
         </a>
         .
       </p>
       <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
         <button onClick={() => decide(true)} style={btn(colors.success, '#000')}>
-          Accept analytics
+          {t('acceptAnalytics')}
         </button>
         <button onClick={() => decide(false)} style={btn('transparent', colors.text.secondary)}>
-          Reject non-essential
+          {t('rejectNonEssential')}
         </button>
       </div>
     </div>

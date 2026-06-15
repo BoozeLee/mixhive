@@ -1,4 +1,5 @@
 import { ProfilePictureUpload } from './ProfilePictureUpload';
+import { useTranslations } from 'next-intl';
 import { Icon } from './ui/Icon';
 import type { IconKey } from '../lib/icons';
 import { ProfileBannerUpload } from './ProfileBannerUpload';
@@ -21,6 +22,7 @@ export function EnhancedProfileHeader({
   mixesCount,
   isOwnProfile,
 }: EnhancedProfileHeaderProps) {
+  const t = useTranslations('enhancedProfileHeader');
   const { user } = useAuth();
   const handleBannerUploadComplete = () => {
     // Update the profile with new banner URL
@@ -58,7 +60,7 @@ export function EnhancedProfileHeader({
               <div className="mb-2" style={{ display: 'inline-flex' }}>
                 <Icon name="music" size={36} />
               </div>
-              <div className="text-lg">Profile Banner</div>
+              <div className="text-lg">{t('profileBanner')}</div>
             </div>
           </div>
         )}
@@ -79,7 +81,7 @@ export function EnhancedProfileHeader({
         {isOwnProfile && (
           <div className="absolute top-4 right-4">
             <button className="bg-black/60 text-white px-3 py-1 rounded-lg text-sm hover:bg-black/80 transition-colors">
-              Edit Banner
+              {t('editBanner')}
             </button>
           </div>
         )}
@@ -160,15 +162,19 @@ export function EnhancedProfileHeader({
             <div className="flex gap-6 text-center">
               <div>
                 <div className="text-xl font-bold text-white">{mixesCount}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wider">Mixes</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">{t('mixes')}</div>
               </div>
               <div>
                 <div className="text-xl font-bold text-white">{followersCount}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wider">Followers</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">
+                  {t('followers')}
+                </div>
               </div>
               <div>
                 <div className="text-xl font-bold text-white">{followingCount}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wider">Following</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">
+                  {t('following')}
+                </div>
               </div>
             </div>
           </div>
@@ -177,10 +183,10 @@ export function EnhancedProfileHeader({
           {!isOwnProfile && (
             <div className="flex gap-3 mt-4">
               <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                Follow
+                {t('follow')}
               </button>
               <button className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                Message
+                {t('message')}
               </button>
             </div>
           )}
@@ -191,13 +197,13 @@ export function EnhancedProfileHeader({
                 href="/settings"
                 className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors inline-block"
               >
-                Edit Profile
+                {t('editProfile')}
               </a>
               <a
                 href="/upload"
                 className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors inline-block"
               >
-                Upload Mix
+                {t('uploadMix')}
               </a>
             </div>
           )}

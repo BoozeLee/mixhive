@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { getMixesByDj, getProfileAnalytics, getUserActivity } from '../lib/api';
 import { listAgents, type LuaAgent } from '../lib/agents';
@@ -30,6 +31,7 @@ function activityLabel(event: ActivityEvent) {
 }
 
 export function Dashboard() {
+  const t = useTranslations('dashboard');
   const { user, profile } = useAuth();
   const [mixes, setMixes] = useState<Mix[]>([]);
   const [analytics, setAnalytics] = useState<ProfileAnalytics | null>(null);
@@ -135,7 +137,7 @@ export function Dashboard() {
               letterSpacing: '0.12em',
             }}
           >
-            Hive Growth OS
+            {t('title')}
           </p>
           <h1
             style={{
@@ -202,7 +204,7 @@ export function Dashboard() {
         <div style={{ display: 'grid', gap: space[8] }}>
           <HiveCard tone="glow">
             <h2 style={{ margin: '0 0 14px', color: colors.text.primary, fontSize: 20 }}>
-              Top signal
+              {t('topSignal')}
             </h2>
             {topMix ? (
               <div
@@ -257,7 +259,7 @@ export function Dashboard() {
 
           <HiveCard>
             <h2 style={{ margin: '0 0 14px', color: colors.text.primary, fontSize: 20 }}>
-              Recent fan activity
+              {t('recentActivity')}
             </h2>
             {activity.length === 0 ? (
               <p style={{ margin: 0, color: colors.text.muted }}>
@@ -297,7 +299,7 @@ export function Dashboard() {
         <aside style={{ display: 'grid', gap: space[8] }}>
           <HiveCard>
             <h2 style={{ margin: '0 0 14px', color: colors.text.primary, fontSize: 20 }}>
-              Next best actions
+              {t('nextActions')}
             </h2>
             <div style={{ display: 'grid', gap: space[5] }}>
               {nextActions.map(action => (
@@ -347,7 +349,7 @@ export function Dashboard() {
 
           <HiveCard>
             <h2 style={{ margin: '0 0 14px', color: colors.text.primary, fontSize: 20 }}>
-              Automation bees
+              {t('automationBees')}
             </h2>
             <p
               style={{

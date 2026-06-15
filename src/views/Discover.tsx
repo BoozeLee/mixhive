@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { getTrending } from '../lib/api';
 import { getPopularSearches } from '../lib/search';
@@ -9,6 +10,7 @@ import type { FeedMix } from '../lib/types';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 
 export function Discover() {
+  const t = useTranslations('discover');
   const [mixes, setMixes] = useState<FeedMix[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,11 +37,7 @@ export function Discover() {
   return (
     <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 16px 96px' }}>
       <header style={{ marginBottom: space[11] }}>
-        <SectionHeading
-          eyebrow="Music Discovery"
-          title="Discover"
-          subtitle="Explore trending mixes and popular search lanes across the underground."
-        />
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
       </header>
 
       <section style={{ marginBottom: space[12] }}>
@@ -53,7 +51,7 @@ export function Discover() {
             letterSpacing: '0.01em',
           }}
         >
-          Trending Mixes
+          {t('trendingMixes')}
         </h2>
         {loading ? (
           <div style={{ display: 'grid', gap: space[4] }}>
@@ -70,7 +68,7 @@ export function Discover() {
             ))}
           </div>
         ) : mixes.length === 0 ? (
-          <p style={{ color: colors.text.dim, fontSize: 14 }}>No trending mixes yet.</p>
+          <p style={{ color: colors.text.dim, fontSize: 14 }}>{t('noTrending')}</p>
         ) : (
           <div style={{ display: 'grid', gap: space[4] }}>
             {mixes.map((mix, i) => (
@@ -93,7 +91,7 @@ export function Discover() {
             letterSpacing: '0.01em',
           }}
         >
-          Popular Genres
+          {t('popularGenres')}
         </h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[4] }}>
           {genres.map(genre => (

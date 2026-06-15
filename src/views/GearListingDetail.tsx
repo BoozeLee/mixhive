@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors } from '../styles/tokens';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -39,6 +40,7 @@ const CONDITIONS: Record<string, string> = {
 };
 
 export function GearListingDetail() {
+  const t = useTranslations('gear');
   const { id } = useParams<{ id: string }>();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
@@ -216,7 +218,7 @@ export function GearListingDetail() {
                   marginBottom: 8,
                 }}
               >
-                Description
+                {t('description')}
               </h3>
               <p
                 style={{
@@ -314,7 +316,7 @@ export function GearListingDetail() {
                 marginBottom: 8,
               }}
             >
-              Availability
+              {t('availability')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {listing.shipping_options.local_pickup && (
@@ -396,7 +398,7 @@ export function GearListingDetail() {
                 fontSize: 13,
               }}
             >
-              Your listing
+              {t('yourListing')}
             </div>
           )}
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
@@ -319,6 +320,7 @@ function HubCard({
   isAuthed: boolean;
   accent: string;
 }) {
+  const t = useTranslations('hub');
   const locked = card.auth && !isAuthed;
 
   return (
@@ -411,7 +413,7 @@ function HubCard({
                 </span>
               )}
               {locked && (
-                <span aria-label="requires sign in" style={{ fontSize: 11, opacity: 0.35 }}>
+                <span aria-label={t('requiresSignIn')} style={{ fontSize: 11, opacity: 0.35 }}>
                   🔒
                 </span>
               )}
@@ -469,6 +471,7 @@ function HubCard({
 // ─── Hub page ──────────────────────────────────────────────────────────────────
 
 export function Hub() {
+  const t = useTranslations('hub');
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabId>('discover');
 
@@ -533,7 +536,7 @@ export function Hub() {
               transition: 'color 0.3s',
             }}
           >
-            Feature Hub
+            {t('featureHub')}
           </div>
 
           {/* Gradient text headline */}
@@ -552,7 +555,7 @@ export function Hub() {
               transition: 'background 0.4s',
             }}
           >
-            MixHive
+            {t('mixhive')}
           </h1>
 
           <p
@@ -590,7 +593,7 @@ export function Hub() {
         {/* Tab bar with layoutId animated pill */}
         <div
           role="tablist"
-          aria-label="Hub navigation"
+          aria-label={t('hubNavigation')}
           style={{
             display: 'flex',
             gap: space[1],

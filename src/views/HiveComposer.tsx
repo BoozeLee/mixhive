@@ -1,4 +1,5 @@
 import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Icon } from '../components/ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -108,6 +109,7 @@ function draftKey(userId: string) {
 }
 
 export function HiveComposer() {
+  const t = useTranslations('hiveComposer');
   const { user } = useAuth();
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(composerReducer, initialState);
@@ -385,12 +387,12 @@ export function HiveComposer() {
             color: colors.text.primary,
           }}
         >
-          Hive Composer
+          {t('hiveComposer')}
         </h1>
 
         <input
           type="text"
-          placeholder="Set title…"
+          placeholder={t('setTitle')}
           value={setTitle}
           onChange={e => setSetTitle(e.target.value)}
           style={{
@@ -473,7 +475,7 @@ export function HiveComposer() {
               fontSize: fontSize.sm,
             }}
           >
-            Dismiss
+            {t('dismiss')}
           </button>
         </div>
       )}
@@ -491,7 +493,7 @@ export function HiveComposer() {
             alignItems: 'center',
           }}
         >
-          <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>Filtering:</span>
+          <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{t('filtering')}</span>
           {genreFilter && (
             <button
               type="button"
@@ -559,7 +561,7 @@ export function HiveComposer() {
       {state.showSearch && (
         <div
           role="dialog"
-          aria-label="Search for a mix"
+          aria-label={t('searchForAMix')}
           style={{
             position: 'fixed',
             inset: 0,
@@ -590,7 +592,7 @@ export function HiveComposer() {
             <input
               autoFocus
               type="text"
-              placeholder="Search mixes…"
+              placeholder={t('searchMixes')}
               value={state.searchQuery}
               onChange={e => handleSearch(e.target.value)}
               style={{
@@ -605,7 +607,7 @@ export function HiveComposer() {
             />
             {state.searching && (
               <p style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: 0 }}>
-                Searching…
+                {t('searching')}
               </p>
             )}
             {state.searchResults.length > 0 && (
@@ -647,7 +649,7 @@ export function HiveComposer() {
               state.searchQuery.length > 1 &&
               state.searchResults.length === 0 && (
                 <p style={{ color: colors.text.dim, fontSize: fontSize.sm, margin: 0 }}>
-                  No mixes found.
+                  {t('noMixesFound')}
                 </p>
               )}
           </div>

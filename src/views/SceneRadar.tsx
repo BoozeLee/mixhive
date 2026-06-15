@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +14,7 @@ import type { AgentOutput } from '../lib/agents';
 type RadarTab = 'scene' | 'orbit';
 
 export function SceneRadar() {
+  const t = useTranslations('sceneRadar');
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
 
@@ -77,9 +79,9 @@ export function SceneRadar() {
   if (!user) {
     return (
       <div style={{ textAlign: 'center', padding: space[8], color: colors.text.muted }}>
-        <p style={{ marginBottom: space[4] }}>Sign in to see your scene radar.</p>
+        <p style={{ marginBottom: space[4] }}>{t('signInToSee')}</p>
         <HiveButton variant="primary" onClick={() => navigate('/login')}>
-          Sign in
+          {t('signIn')}
         </HiveButton>
       </div>
     );
@@ -112,7 +114,7 @@ export function SceneRadar() {
                 color: colors.text.primary,
               }}
             >
-              Scene Radar
+              {t('sceneRadar')}
             </h1>
             <p
               style={{
@@ -191,13 +193,13 @@ export function SceneRadar() {
             marginBottom: space[4],
           }}
         >
-          <strong>Agent error:</strong> {activeError}
+          <strong>{t('agentError')}</strong> {activeError}
           <HiveButton
             variant="secondary"
             onClick={activeRefresh}
             style={{ marginLeft: space[3], fontSize: 12, padding: '4px 10px' }}
           >
-            Retry
+            {t('retry')}
           </HiveButton>
         </div>
       )}
@@ -294,7 +296,7 @@ export function SceneRadar() {
                   color: colors.text.primary,
                 }}
               >
-                Recommendations
+                {t('recommendations')}
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>
                 {activeOutput.suggestions.map((s, i) => (
@@ -369,7 +371,7 @@ export function SceneRadar() {
                   color: colors.text.primary,
                 }}
               >
-                Suggested Actions
+                {t('suggestedActions')}
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[2] }}>
                 {activeOutput.tasks.map((t, i) => (
@@ -480,7 +482,7 @@ export function SceneRadar() {
           <div style={{ marginBottom: space[3], display: 'flex', justifyContent: 'center' }}>
             <Icon name="radar" size={34} color="rgba(246,196,0,0.55)" strokeWidth={1.6} />
           </div>
-          <p style={{ fontSize: fontSize.sm, margin: 0 }}>Click refresh to scan your scene.</p>
+          <p style={{ fontSize: fontSize.sm, margin: 0 }}>{t('clickRefreshToScan')}</p>
         </div>
       )}
     </div>

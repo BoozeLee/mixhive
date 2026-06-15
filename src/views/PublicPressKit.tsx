@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { CSSProperties, ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import type { PressKit } from '../lib/types';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 
 export function PublicPressKit() {
+  const t = useTranslations('publicPressKit');
   const { slug } = useParams();
   const [kit, setKit] = useState<PressKit | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export function PublicPressKit() {
       <div
         style={{ maxWidth: 880, margin: '0 auto', padding: space[10], color: colors.text.muted }}
       >
-        Loading EPK...
+        {t('loadingEpk')}
       </div>
     );
   }
@@ -54,10 +56,10 @@ export function PublicPressKit() {
           textAlign: 'center',
         }}
       >
-        <h1 style={{ color: colors.text.primary }}>EPK not found</h1>
+        <h1 style={{ color: colors.text.primary }}>{t('epkNotFound')}</h1>
         <p>{error || 'This press kit is private or unavailable.'}</p>
         <Link to="/" style={{ color: colors.accent }}>
-          Back to MIXHIVE
+          {t('backToMixhive')}
         </Link>
       </div>
     );
@@ -110,7 +112,7 @@ export function PublicPressKit() {
                   letterSpacing: 1,
                 }}
               >
-                MIXHIVE Electronic Press Kit
+                {t('mixhiveElectronicPressKit')}
               </p>
               <h1
                 style={{
@@ -138,12 +140,12 @@ export function PublicPressKit() {
             gap: space[8],
           }}
         >
-          <Block title="Booking Pitch">{content.booking_pitch}</Block>
-          {content.bio && <Block title="Bio">{content.bio}</Block>}
+          <Block title={t('bookingPitch')}>{content.booking_pitch}</Block>
+          {content.bio && <Block title={t('bio')}>{content.bio}</Block>}
           <section>
-            <h2 style={titleStyle}>Featured Mixes</h2>
+            <h2 style={titleStyle}>{t('featuredMixes')}</h2>
             {content.top_mixes.length === 0 ? (
-              <p style={bodyStyle}>No published MIXHIVE mixes are attached yet.</p>
+              <p style={bodyStyle}>{t('noPublishedMixhiveMixes')}</p>
             ) : (
               <div style={{ display: 'grid', gap: space[4] }}>
                 {content.top_mixes.map(mix => (
@@ -182,7 +184,7 @@ export function PublicPressKit() {
               fontSize: fontSize.xs,
             }}
           >
-            <span>Generated from verified MIXHIVE profile data.</span>
+            <span>{t('generatedFromVerifiedMixhive')}</span>
             <Link
               to="/"
               style={{ color: colors.accent, textDecoration: 'none', fontWeight: fontWeight.bold }}

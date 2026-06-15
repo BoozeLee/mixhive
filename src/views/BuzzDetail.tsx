@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getBuzz, getBuzzReplies, replyToBuzz } from '../lib/api';
@@ -12,6 +13,7 @@ import type { FeedBuzz } from '../lib/types';
 const MAX_CHARS = 280;
 
 export function BuzzDetail() {
+  const t = useTranslations('buzzDetail');
   const { id } = useParams<{ id: string }>();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
@@ -88,7 +90,7 @@ export function BuzzDetail() {
         <SkeletonFeed />
       ) : !buzz ? (
         <div style={{ textAlign: 'center', padding: 40, color: colors.text.dim }}>
-          Buzz not found.
+          {t('buzzNotFound')}
         </div>
       ) : (
         <>
@@ -143,9 +145,9 @@ export function BuzzDetail() {
                   <textarea
                     value={replyBody}
                     onChange={e => setReplyBody(e.target.value.slice(0, MAX_CHARS + 10))}
-                    placeholder="Reply to this buzz…"
+                    placeholder={t('replyToThisBuzz')}
                     rows={2}
-                    aria-label="Write a reply"
+                    aria-label={t('writeAReply')}
                     style={{
                       width: '100%',
                       background: 'transparent',
@@ -221,7 +223,7 @@ export function BuzzDetail() {
                   fontSize: fontSize.base,
                 }}
               >
-                Sign in
+                {t('signIn')}
               </button>{' '}
               to reply
             </div>

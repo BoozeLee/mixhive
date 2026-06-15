@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -59,6 +60,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 
 // Stylized in-app preview — token-built (not a screenshot), avoids empty-DB ugliness.
 function AppPreview() {
+  const t = useTranslations('landing');
   return (
     <div
       style={{
@@ -85,7 +87,7 @@ function AppPreview() {
         />
         <div style={{ minWidth: 0 }}>
           <div style={{ color: colors.text.primary, fontWeight: fontWeight.semibold }}>
-            Midnight Warehouse
+            {t('midnightWarehouse')}
           </div>
           <div style={{ color: colors.text.dim, fontSize: fontSize.sm }}>
             @ken_dovor · 128 BPM · Techno
@@ -106,9 +108,9 @@ function AppPreview() {
         ))}
       </div>
       <div style={{ display: 'flex', gap: space[8] }}>
-        <Stat value="2.4k" label="plays" />
-        <Stat value="312" label="likes" />
-        <Stat value="18" label="reposts" />
+        <Stat value="2.4k" label={t('plays')} />
+        <Stat value="312" label={t('likes')} />
+        <Stat value="18" label={t('reposts')} />
       </div>
       <div style={{ display: 'flex', gap: space[5], flexWrap: 'wrap' }}>
         <span
@@ -146,6 +148,7 @@ const pillars = [
 ];
 
 export function Landing() {
+  const t = useTranslations('landing');
   const navigate = useNavigate();
   const [stats, setStats] = useState<HiveStats | null>(null);
 
@@ -263,10 +266,10 @@ export function Landing() {
             style={{ display: 'flex', gap: space[6], flexWrap: 'wrap', marginTop: space[10] }}
           >
             <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>
-              Join the Hive
+              {t('joinTheHive')}
             </HiveButton>
             <HiveButton variant="ghost" size="lg" onClick={() => navigate('/discover')}>
-              Explore mixes
+              {t('exploreMixes')}
             </HiveButton>
           </motion.div>
 
@@ -280,10 +283,10 @@ export function Landing() {
               flexWrap: 'wrap',
             }}
           >
-            <Stat value={formatCount(s.mixes_total)} label="Mixes" />
-            <Stat value={formatCount(s.voices_total)} label="Voices" />
-            <Stat value={formatCount(s.plays_total)} label="Plays" />
-            <Stat value={formatCount(s.live_now)} label="Live now" />
+            <Stat value={formatCount(s.mixes_total)} label={t('mixes')} />
+            <Stat value={formatCount(s.voices_total)} label={t('voices')} />
+            <Stat value={formatCount(s.plays_total)} label={t('plays2')} />
+            <Stat value={formatCount(s.live_now)} label={t('liveNow')} />
           </motion.div>
         </motion.div>
 
@@ -378,7 +381,7 @@ export function Landing() {
               margin: `${space[8]}px 0 0`,
             }}
           >
-            Your sound belongs here.
+            {t('yourSoundBelongsHere')}
           </h2>
           <div
             style={{
@@ -390,10 +393,10 @@ export function Landing() {
             }}
           >
             <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>
-              Create your account
+              {t('createYourAccount')}
             </HiveButton>
             <HiveButton variant="ghost" size="lg" onClick={() => navigate('/login')}>
-              Sign in
+              {t('signIn')}
             </HiveButton>
           </div>
         </div>

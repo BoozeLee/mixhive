@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Icon } from '../components/ui/Icon';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -51,6 +52,7 @@ function daysFromNow(deadline: string): number {
 }
 
 function OpportunityCard({ opp }: { opp: Opportunity }) {
+  const t = useTranslations('agentInbox');
   const daysUntil = opp.deadline ? daysFromNow(opp.deadline) : null;
 
   return (
@@ -147,7 +149,7 @@ function OpportunityCard({ opp }: { opp: Opportunity }) {
                 color: daysUntil <= 7 ? colors.danger : colors.text.muted,
               }}
             >
-              Deadline
+              {t('deadline')}
             </div>
             <div
               style={{
@@ -236,7 +238,7 @@ function TaskCard({ task, onDone }: { task: CreatorTask; onDone: (id: string) =>
     >
       <button
         onClick={() => onDone(task.id)}
-        aria-label="Mark as done"
+        aria-label={t('markAsDone')}
         style={{
           width: 22,
           height: 22,
@@ -288,6 +290,7 @@ function TaskCard({ task, onDone }: { task: CreatorTask; onDone: (id: string) =>
 }
 
 export function AgentInbox() {
+  const t = useTranslations('agentInbox');
   const { user } = useAuth();
   const [tab, setTab] = useState<Tab>('suggestions');
   const [suggestions, setSuggestions] = useState<AISuggestion[]>([]);
@@ -449,12 +452,12 @@ export function AgentInbox() {
             color: colors.text.primary,
           }}
         >
-          Agent Inbox
+          {t('agentInbox')}
         </h1>
         <p
           style={{ margin: `${space[3]}px 0 0`, fontSize: fontSize.base, color: colors.text.muted }}
         >
-          Your AI suggestions, tasks, and matched opportunities.
+          {t('yourAiSuggestionsTasks')}
         </p>
       </div>
 
@@ -475,8 +478,8 @@ export function AgentInbox() {
           <Icon name="sparkles" size={14} />
         </span>
         <p style={{ margin: 0, fontSize: fontSize.xs, color: colors.text.dim, lineHeight: 1.5 }}>
-          AI is <strong style={{ color: colors.text.muted }}>assistive, not autonomous</strong> —
-          every suggestion requires your review and approval before it changes anything on your
+          {t('aiIs')}<strong style={{ color: colors.text.muted }}>assistive, not autonomous</strong>{' '}
+          — every suggestion requires your review and approval before it changes anything on your
           profile.
         </p>
       </div>
@@ -543,7 +546,7 @@ export function AgentInbox() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
           {loading.suggestions && (
             <div style={{ color: colors.text.muted, fontSize: fontSize.base }}>
-              Loading suggestions…
+              {t('loadingSuggestions')}
             </div>
           )}
           {error.suggestions && (
@@ -556,7 +559,7 @@ export function AgentInbox() {
               <div style={{ marginBottom: space[5], display: 'flex' }}>
                 <Icon name="inbox" size={30} />
               </div>
-              <div style={{ fontSize: fontSize.md }}>No AI suggestions yet.</div>
+              <div style={{ fontSize: fontSize.md }}>{t('noAiSuggestionsYet')}</div>
               <div style={{ fontSize: fontSize.base, marginTop: space[3] }}>
                 Go to your Dashboard and click "Analyse profile" to get started.
               </div>
@@ -579,7 +582,9 @@ export function AgentInbox() {
       {tab === 'tasks' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
           {loading.tasks && (
-            <div style={{ color: colors.text.muted, fontSize: fontSize.base }}>Loading tasks…</div>
+            <div style={{ color: colors.text.muted, fontSize: fontSize.base }}>
+              {t('loadingTasks')}
+            </div>
           )}
           {error.tasks && (
             <div style={{ color: colors.danger, fontSize: fontSize.base }}>{error.tasks}</div>
@@ -589,9 +594,9 @@ export function AgentInbox() {
               style={{ textAlign: 'center', padding: `${space[12]}px 0`, color: colors.text.muted }}
             >
               <div style={{ fontSize: 32, marginBottom: space[5] }}>✓</div>
-              <div style={{ fontSize: fontSize.md }}>All caught up.</div>
+              <div style={{ fontSize: fontSize.md }}>{t('allCaughtUp')}</div>
               <div style={{ fontSize: fontSize.base, marginTop: space[3] }}>
-                No open tasks right now.
+                {t('noOpenTasksRight')}
               </div>
             </div>
           )}
@@ -606,7 +611,7 @@ export function AgentInbox() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
           {loading.opportunities && (
             <div style={{ color: colors.text.muted, fontSize: fontSize.base }}>
-              Loading opportunities…
+              {t('loadingOpportunities')}
             </div>
           )}
           {error.opportunities && (
@@ -621,7 +626,7 @@ export function AgentInbox() {
               <div style={{ marginBottom: space[5], display: 'flex' }}>
                 <Icon name="sparkles" size={30} />
               </div>
-              <div style={{ fontSize: fontSize.md }}>No opportunities available.</div>
+              <div style={{ fontSize: fontSize.md }}>{t('noOpportunitiesAvailable')}</div>
             </div>
           )}
           {opportunities.map(o => (

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { supabase } from '../lib/supabase';
 import { colors, fontSize, fontWeight, getMoodColor, space } from '../styles/tokens';
 import { StoryChapterCell, type StoryChapter } from '../components/story/StoryChapterCell';
@@ -30,6 +31,7 @@ interface SnapshotPeriod {
 }
 
 export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
+  const t = useTranslations('hiveStory');
   const [chapters, setChapters] = useState<StoryChapter[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -121,9 +123,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
           color: colors.text.dim,
         }}
       >
-        <p style={{ fontSize: fontSize.md, margin: '0 0 8px' }}>
-          This artist hasn't shared their journey yet.
-        </p>
+        <p style={{ fontSize: fontSize.md, margin: '0 0 8px' }}>{t('thisArtistHasnT')}</p>
         {isOwn && (
           <p style={{ fontSize: fontSize.sm, color: colors.text.faint }}>
             Enable "Share my journey" in Settings to show your story.
@@ -166,7 +166,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
             fontSize: fontSize.sm,
           }}
         >
-          Retry
+          {t('retry')}
         </button>
       </div>
     );
@@ -213,7 +213,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
               letterSpacing: '0.08em',
             }}
           >
-            Journey
+            {t('journey')}
           </h2>
           <div
             style={{
@@ -263,7 +263,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
               letterSpacing: '0.08em',
             }}
           >
-            Sound Evolution
+            {t('soundEvolution')}
           </h2>
 
           {/* 3-period genre timeline */}
@@ -367,7 +367,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
                           letterSpacing: '0.06em',
                         }}
                       >
-                        Sound consistency
+                        {t('soundConsistency')}
                       </span>
                       <span
                         style={{

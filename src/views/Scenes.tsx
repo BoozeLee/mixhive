@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +17,7 @@ interface Scene {
 }
 
 export function Scenes() {
+  const t = useTranslations('scenes');
   const navigate = useNavigate();
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +42,7 @@ export function Scenes() {
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: 24 }}>
       <h1 style={{ fontSize: fontSize['3xl'], fontWeight: 700, color: colors.text.primary }}>
-        Scenes
+        {t('scenes')}
       </h1>
       <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 4 }}>
         Local underground communities — artists, labels and collectives.
@@ -53,7 +55,7 @@ export function Scenes() {
       ) : error ? (
         <p style={{ color: colors.text.dim, marginTop: 24 }}>Could not load scenes: {error}</p>
       ) : scenes.length === 0 ? (
-        <p style={{ color: colors.text.dim, marginTop: 24 }}>No scenes yet.</p>
+        <p style={{ color: colors.text.dim, marginTop: 24 }}>{t('noScenesYet')}</p>
       ) : (
         <div
           style={{

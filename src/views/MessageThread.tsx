@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../lib/messagesStore';
@@ -11,6 +12,7 @@ import toast from 'react-hot-toast';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function MessageThreadPage() {
+  const t = useTranslations('messageThread');
   const { conversationId } = useParams<{ conversationId: string }>();
   const { user } = useAuth();
   const { markRead } = useMessages();
@@ -208,7 +210,7 @@ export function MessageThreadPage() {
               cursor: 'pointer',
             }}
           >
-            Load more
+            {t('loadMore')}
           </button>
         )}
         {loading && messages.length === 0 && (
@@ -236,7 +238,9 @@ export function MessageThreadPage() {
             >
               {msg.body}
               {msg.status === 'failed' && (
-                <span style={{ color: '#f55', fontSize: 11, marginLeft: space[2] }}>Failed</span>
+                <span style={{ color: '#f55', fontSize: 11, marginLeft: space[2] }}>
+                  {t('failed')}
+                </span>
               )}
             </div>
           );
@@ -279,7 +283,7 @@ export function MessageThreadPage() {
           disabled={!input.trim() || blocked || sending}
           style={{ padding: '8px 14px' }}
         >
-          Send
+          {t('send')}
         </HiveButton>
       </div>
     </div>

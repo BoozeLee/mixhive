@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, useParams } from 'react-router-dom';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 import { BeeMark } from '../components/brand/BeeMark';
@@ -184,6 +185,7 @@ function FeatureCard({ feature, themeColor }: { feature: HiveStoryFeature; theme
 }
 
 export function HiveStoryIssue() {
+  const t = useTranslations('hiveStoryIssue');
   const { slug } = useParams<{ slug: string }>();
   const [issue, setIssue] = useState<HiveStoryIssueData | null>(null);
   const [features, setFeatures] = useState<HiveStoryFeature[]>([]);
@@ -269,7 +271,7 @@ export function HiveStoryIssue() {
         >
           <BeeMark size={46} color="rgba(246,196,0,0.6)" />
         </div>
-        <p style={{ color: colors.text.muted }}>This issue couldn't be found.</p>
+        <p style={{ color: colors.text.muted }}>{t('thisIssueCouldnT')}</p>
         <Link
           to="/hive-story"
           style={{ color: colors.accent, textDecoration: 'none', fontSize: fontSize.sm }}
@@ -301,7 +303,7 @@ export function HiveStoryIssue() {
           (e.currentTarget as HTMLElement).style.color = colors.text.muted;
         }}
       >
-        <span aria-hidden="true">←</span> Hive Story
+        <span aria-hidden="true">←</span> {t('hiveStory')}
       </Link>
 
       {/* Hero */}
@@ -377,9 +379,7 @@ export function HiveStoryIssue() {
 
       {/* Features */}
       {features.length === 0 ? (
-        <p style={{ color: colors.text.dim, textAlign: 'center' }}>
-          No features in this issue yet.
-        </p>
+        <p style={{ color: colors.text.dim, textAlign: 'center' }}>{t('noFeaturesInThis')}</p>
       ) : (
         <section>
           <h2
@@ -390,7 +390,7 @@ export function HiveStoryIssue() {
               marginBottom: space[6],
             }}
           >
-            In this issue
+            {t('inThisIssue')}
           </h2>
           <div style={{ display: 'grid', gap: space[5] }}>
             {features.map(f => (

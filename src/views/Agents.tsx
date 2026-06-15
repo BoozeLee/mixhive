@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button, Input, Textarea } from '../components/ui';
@@ -49,6 +50,7 @@ function parseTriggerParam(value: string | null): LuaAgentTrigger | null {
 }
 
 export function Agents() {
+  const t = useTranslations('agents');
   const { user } = useAuth();
   const [agents, setAgents] = useState<LuaAgent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,7 +95,7 @@ export function Agents() {
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '40px 16px' }}>
         <EmptyState
           iconKey="agents"
-          title="Sign in to manage your agents"
+          title={t('signInToManage')}
           body="Lua agents automate your social-media reactions."
           actionLabel="Sign in"
           actionTo="/login"
@@ -150,7 +152,7 @@ export function Agents() {
       >
         <div>
           <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold }}>
-            Lua agents
+            {t('luaAgents')}
           </h1>
           <p style={{ margin: '4px 0 0', color: colors.text.muted, fontSize: fontSize.md }}>
             Tiny Lua scripts that react to events on your account.{' '}
@@ -169,7 +171,7 @@ export function Agents() {
       ) : agents.length === 0 ? (
         <EmptyState
           iconKey="agents"
-          title="No agents yet"
+          title={t('noAgentsYet')}
           body="Write a small Lua script that fires when something happens — auto-welcome new followers, thank commenters, schedule a weekly digest."
           actionLabel="Create your first agent"
           onAction={() => setCreating(true)}
@@ -255,7 +257,7 @@ function AgentRow({
         </div>
         <div style={{ display: 'flex', gap: space[4] }}>
           <Button variant="ghost" size="sm" onClick={onEdit}>
-            Edit
+            {t('edit')}
           </Button>
           <Button
             variant="secondary"
@@ -402,23 +404,23 @@ function AgentEditor({
           {agent ? `Edit agent — ${agent.name}` : 'New Lua agent'}
         </h1>
         <Button variant="ghost" onClick={onCancel}>
-          Cancel
+          {t('cancel')}
         </Button>
       </header>
 
       <Input
-        label="Name"
+        label={t('name')}
         value={name}
         onChange={e => setName(e.target.value)}
-        placeholder="welcome-new-followers"
+        placeholder={t('welcomeNewFollowers')}
         required
       />
       <Textarea
-        label="Description"
+        label={t('description')}
         rows={2}
         value={description ?? ''}
         onChange={e => setDescription(e.target.value)}
-        placeholder="What this agent does, in plain English."
+        placeholder={t('whatThisAgentDoes')}
       />
 
       <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
@@ -430,7 +432,7 @@ function AgentEditor({
             marginBottom: space[6],
           }}
         >
-          Trigger
+          {t('trigger')}
         </legend>
         <div
           style={{
@@ -476,7 +478,7 @@ function AgentEditor({
             fontWeight: fontWeight.medium,
           }}
         >
-          Lua source
+          {t('luaSource')}
         </label>
         <textarea
           id="lua-code"
@@ -507,21 +509,21 @@ function AgentEditor({
             lineHeight: 1.6,
           }}
         >
-          <strong style={{ color: colors.text.secondary }}>Read:</strong>{' '}
+          <strong style={{ color: colors.text.secondary }}>{t('read')}</strong>{' '}
           <code>mh.get_mix(id)</code> <code>mh.get_profile(id)</code>{' '}
           <code>mh.get_mixes_by_user(uid, limit?)</code> <code>mh.get_followers(uid, limit?)</code>{' '}
           <code>mh.get_following(uid, limit?)</code> <code>mh.fetch_recent_mixes(limit?)</code>
           {'  '}
-          <strong style={{ color: colors.text.secondary }}>Write:</strong>{' '}
+          <strong style={{ color: colors.text.secondary }}>{t('write')}</strong>{' '}
           <code>mh.comment(mix_id, body)</code> <code>mh.delete_comment(id)</code>{' '}
           <code>mh.post_buzz(text)</code> <code>mh.notify(msg)</code> <code>mh.follow(uid)</code>{' '}
           <code>mh.like(mix_id)</code> <code>mh.repost(mix_id)</code>
           {'  '}
-          <strong style={{ color: colors.text.secondary }}>KV:</strong> <code>mh.kv_get(key)</code>{' '}
-          <code>mh.kv_set(key, val, ttl?)</code> <code>mh.kv_del(key)</code>{' '}
-          <code>mh.kv_list()</code>
+          <strong style={{ color: colors.text.secondary }}>{t('kv')}</strong>{' '}
+          <code>mh.kv_get(key)</code> <code>mh.kv_set(key, val, ttl?)</code>{' '}
+          <code>mh.kv_del(key)</code> <code>mh.kv_list()</code>
           {'  '}
-          <strong style={{ color: colors.text.secondary }}>Util:</strong>{' '}
+          <strong style={{ color: colors.text.secondary }}>{t('util')}</strong>{' '}
           <code>mh.json_encode(t)</code> <code>mh.json_decode(s)</code> <code>mh.print(...)</code>
           {'  '}Plus <code>math</code> <code>string</code> <code>table</code>.{' '}
           <a
@@ -537,10 +539,10 @@ function AgentEditor({
 
       {trigger === 'on_schedule' && (
         <Input
-          label="Cron expression"
+          label={t('cronExpression')}
           value={cronExpr}
           onChange={e => setCronExpr(e.target.value)}
-          help="5-field cron, evaluated in UTC. e.g. '0 9 * * 1' = Mondays 09:00, '*/15 * * * *' = every 15 minutes."
+          help={t('5FieldCronEvaluated')}
         />
       )}
 
@@ -581,7 +583,7 @@ function AgentEditor({
               fontSize: fontSize.md,
             }}
           >
-            Agent KV
+            {t('agentKv')}
           </h3>
           <div style={{ display: 'grid', gap: space[3] }}>
             {kvEntries.slice(0, 12).map(entry => (
@@ -618,12 +620,12 @@ function AgentEditor({
               }
             }}
           >
-            Delete
+            {t('delete')}
           </Button>
         )}
         {agent && (
           <Button variant="secondary" loading={testing} onClick={runTest}>
-            Run test
+            {t('runTest')}
           </Button>
         )}
         <Button onClick={save} loading={saving} disabled={!name.trim() || !code.trim()}>
@@ -656,7 +658,7 @@ function AgentEditor({
               margin: `0 0 ${space[6]}px`,
             }}
           >
-            Recent runs
+            {t('recentRuns')}
           </h3>
           <ul
             style={{
@@ -704,7 +706,7 @@ function AgentEditor({
             style={{ display: 'flex', alignItems: 'center', gap: space[5], marginBottom: space[6] }}
           >
             <h3 style={{ fontSize: fontSize.lg, color: colors.text.primary, margin: 0 }}>
-              KV store
+              {t('kvStore')}
             </h3>
             <button
               type="button"

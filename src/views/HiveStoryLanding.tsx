@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 import { BeeMark } from '../components/brand/BeeMark';
@@ -18,6 +19,7 @@ function formatMonth(iso: string) {
 }
 
 function IssueCard({ issue, hero }: { issue: HiveStoryIssue; hero?: boolean }) {
+  const t = useTranslations('hiveStoryLanding');
   return (
     <Link to={`/hive-story/${issue.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
       <article
@@ -111,7 +113,7 @@ function IssueCard({ issue, hero }: { issue: HiveStoryIssue; hero?: boolean }) {
               gap: space[2],
             }}
           >
-            Read issue <span aria-hidden="true">→</span>
+            {t('readIssue')}<span aria-hidden="true">→</span>
           </div>
         </div>
       </article>
@@ -120,6 +122,7 @@ function IssueCard({ issue, hero }: { issue: HiveStoryIssue; hero?: boolean }) {
 }
 
 export function HiveStoryLanding() {
+  const t = useTranslations('hiveStoryLanding');
   const [issues, setIssues] = useState<HiveStoryIssue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -160,10 +163,10 @@ export function HiveStoryLanding() {
             marginBottom: space[2],
           }}
         >
-          Editorial
+          {t('editorial')}
         </div>
         <h1 style={{ fontSize: 32, fontWeight: 800, color: colors.text.primary, margin: 0 }}>
-          Hive Story
+          {t('hiveStory')}
         </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.md, margin: '8px 0 0' }}>
           Monthly spotlight on the artists, mixes, and collabs shaping the underground.
@@ -221,7 +224,7 @@ export function HiveStoryLanding() {
           >
             <BeeMark size={46} color="rgba(246,196,0,0.6)" />
           </div>
-          <p style={{ margin: 0 }}>The first Hive Story issue is coming soon.</p>
+          <p style={{ margin: 0 }}>{t('theFirstHiveStory')}</p>
         </div>
       )}
 
@@ -237,7 +240,7 @@ export function HiveStoryLanding() {
               marginBottom: space[4],
             }}
           >
-            Latest Issue
+            {t('latestIssue')}
           </div>
           <IssueCard issue={latest} hero />
         </section>
@@ -253,7 +256,7 @@ export function HiveStoryLanding() {
               marginBottom: space[6],
             }}
           >
-            Archive
+            {t('archive')}
           </h2>
           <div
             style={{

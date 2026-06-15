@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { listVerificationRequests, reviewVerificationRequest } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
@@ -7,6 +8,7 @@ import { Button } from '../components/ui/Button';
 import { colors, radius, space } from '../styles/tokens';
 
 export function AdminVerification() {
+  const t = useTranslations('adminVerification');
   const { user, profile, loading: authLoading } = useAuth();
   const [requests, setRequests] = useState<VerificationRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,15 +86,15 @@ export function AdminVerification() {
 
   if (authLoading || loading) {
     return (
-      <div style={{ padding: 32, color: colors.text.muted }}>Loading verification queue...</div>
+      <div style={{ padding: 32, color: colors.text.muted }}>{t('loadingVerificationQueue')}</div>
     );
   }
 
   if (!profile?.is_admin) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: 32, color: colors.text.muted }}>
-        <h1 style={{ color: colors.text.primary }}>Verification Admin</h1>
-        <p>You do not have access to this dashboard.</p>
+        <h1 style={{ color: colors.text.primary }}>{t('verificationAdmin')}</h1>
+        <p>{t('youDoNotHave')}</p>
       </div>
     );
   }
@@ -100,7 +102,7 @@ export function AdminVerification() {
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px 16px 96px' }}>
       <h1 style={{ color: colors.text.primary, fontSize: 24, margin: '0 0 8px' }}>
-        Verification Admin
+        {t('verificationAdmin')}
       </h1>
       <p style={{ color: colors.text.muted, margin: '0 0 24px' }}>
         Review DJ verification requests and grant profile badges.
@@ -115,7 +117,7 @@ export function AdminVerification() {
           marginBottom: space[8],
         }}
       >
-        Review note
+        {t('reviewNote')}
         <textarea
           value={reason}
           onChange={event => setReason(event.target.value)}
@@ -155,10 +157,10 @@ export function AdminVerification() {
               setSelectedIds(new Set(requests.filter(r => r.status === 'pending').map(r => r.id)))
             }
           >
-            Select pending
+            {t('selectPending')}
           </Button>
           <Button size="sm" variant="secondary" onClick={() => setSelectedIds(new Set())}>
-            Clear
+            {t('clear')}
           </Button>
           <Button
             size="sm"
@@ -166,7 +168,7 @@ export function AdminVerification() {
             disabled={selectedIds.size === 0}
             onClick={() => batchReview('approved')}
           >
-            Batch approve
+            {t('batchApprove')}
           </Button>
           <Button
             size="sm"
@@ -175,13 +177,13 @@ export function AdminVerification() {
             disabled={selectedIds.size === 0}
             onClick={() => batchReview('rejected')}
           >
-            Batch reject
+            {t('batchReject')}
           </Button>
         </div>
       )}
 
       {requests.length === 0 ? (
-        <p style={{ color: colors.text.dim }}>No verification requests yet.</p>
+        <p style={{ color: colors.text.dim }}>{t('noVerificationRequestsYet')}</p>
       ) : (
         <div style={{ display: 'grid', gap: space[6] }}>
           {requests.map(request => (
@@ -276,7 +278,7 @@ export function AdminVerification() {
                     loading={busyId === request.id}
                     onClick={() => review(request, 'approved', request.requested_badge)}
                   >
-                    Approve
+                    {t('approve')}
                   </Button>
                   <Button
                     size="sm"
@@ -284,7 +286,7 @@ export function AdminVerification() {
                     loading={busyId === request.id}
                     onClick={() => review(request, 'approved', 'artist')}
                   >
-                    Grant Artist
+                    {t('grantArtist')}
                   </Button>
                   <Button
                     size="sm"
@@ -292,7 +294,7 @@ export function AdminVerification() {
                     loading={busyId === request.id}
                     onClick={() => review(request, 'approved', 'official')}
                   >
-                    Grant Official
+                    {t('grantOfficial')}
                   </Button>
                   <Button
                     size="sm"
@@ -300,7 +302,7 @@ export function AdminVerification() {
                     loading={busyId === request.id}
                     onClick={() => review(request, 'rejected')}
                   >
-                    Reject
+                    {t('reject')}
                   </Button>
                 </div>
               )}

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -36,6 +37,7 @@ interface Partner {
 const BADGE_COLOR: Record<string, string> = tierColors;
 
 export function SceneDetail() {
+  const t = useTranslations('sceneDetail');
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [scene, setScene] = useState<Scene | null>(null);
@@ -136,7 +138,7 @@ export function SceneDetail() {
 
       <section style={{ marginTop: 28 }}>
         <h2 style={{ fontSize: fontSize.xl, fontWeight: 600, color: colors.text.primary }}>
-          Active Artists
+          {t('activeArtists')}
         </h2>
         {listings.length === 0 ? (
           <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 8 }}>
@@ -185,7 +187,7 @@ export function SceneDetail() {
       {partners.length > 0 && (
         <section style={{ marginTop: 28 }}>
           <h2 style={{ fontSize: fontSize.xl, fontWeight: 600, color: colors.text.primary }}>
-            Label Partners
+            {t('labelPartners')}
           </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 12 }}>
             {partners.map(p => (

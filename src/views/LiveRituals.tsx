@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
@@ -22,6 +23,7 @@ interface RitualInvite {
 }
 
 export function LiveRituals() {
+  const t = useTranslations('liveRituals');
   const { user } = useAuth();
   const [rituals, setRituals] = useState<Ritual[]>([]);
   const [invites, setInvites] = useState<RitualInvite[]>([]);
@@ -62,13 +64,13 @@ export function LiveRituals() {
     <div
       style={{ maxWidth: 1000, margin: '0 auto', padding: `${space[12]}px ${space[8]}px 120px` }}
     >
-      <h1 style={{ fontSize: fontSize['3xl'] }}>Live Creative Rituals</h1>
+      <h1 style={{ fontSize: fontSize['3xl'] }}>{t('liveCreativeRituals')}</h1>
       <p style={{ color: colors.text.muted }}>
         Enter the process, influence the direction, witness the provenance.
       </p>
       {invites.length > 0 && (
         <section style={{ marginTop: 24 }}>
-          <h2>Creator invitations</h2>
+          <h2>{t('creatorInvitations')}</h2>
           {invites.map(invite => (
             <div
               key={invite.id}
@@ -89,14 +91,14 @@ export function LiveRituals() {
               </span>
               <span style={{ display: 'flex', gap: 6 }}>
                 <HiveButton size="sm" onClick={() => void answerInvite(invite, 'accepted')}>
-                  Join stage
+                  {t('joinStage')}
                 </HiveButton>
                 <HiveButton
                   variant="ghost"
                   size="sm"
                   onClick={() => void answerInvite(invite, 'declined')}
                 >
-                  Decline
+                  {t('decline')}
                 </HiveButton>
               </span>
             </div>
@@ -132,7 +134,7 @@ export function LiveRituals() {
           </Link>
         ))}
         {rituals.length === 0 && (
-          <div style={{ color: colors.text.muted }}>No public rituals are live right now.</div>
+          <div style={{ color: colors.text.muted }}>{t('noPublicRitualsAre')}</div>
         )}
       </div>
     </div>

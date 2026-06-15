@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui';
 import { EmptyState } from '../components/EmptyState';
@@ -9,6 +10,7 @@ import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function AgentsGallery() {
+  const t = useTranslations('agentsGallery');
   const { user } = useAuth();
   const navigate = useNavigate();
   const [agents, setAgents] = useState<PublicLuaAgent[]>([]);
@@ -60,7 +62,7 @@ export function AgentsGallery() {
     <div style={{ maxWidth: 880, margin: '0 auto', padding: '24px 16px' }}>
       <header style={{ marginBottom: space[10] }}>
         <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold }}>
-          Agent gallery
+          {t('agentGallery')}
         </h1>
         <p style={{ margin: '4px 0 0', color: colors.text.muted, fontSize: fontSize.md }}>
           Browse Lua agents and fork them into your account in one click — starter templates ship
@@ -85,7 +87,7 @@ export function AgentsGallery() {
               color: colors.text.primary,
             }}
           >
-            Starter library
+            {t('starterLibrary')}
           </h2>
           <span style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
             {STARTER_AGENTS.length} templates · ships with MixHive
@@ -125,10 +127,10 @@ export function AgentsGallery() {
               color: colors.text.primary,
             }}
           >
-            Community
+            {t('community')}
           </h2>
           <span style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
-            Public agents from other DJs
+            {t('publicAgentsFromOther')}
           </span>
         </header>
 
@@ -139,7 +141,7 @@ export function AgentsGallery() {
         ) : agents.length === 0 ? (
           <EmptyState
             icon="🌍"
-            title="No public agents yet"
+            title={t('noPublicAgentsYet')}
             body="Be the first — open one of your agents, toggle 'Public', and it'll show up here for others to fork."
             actionLabel="Build an agent"
             actionTo="/agents"
@@ -221,7 +223,7 @@ export function AgentsGallery() {
                   </pre>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button onClick={() => handleFork(a)} loading={forking === a.id} size="sm">
-                      Fork into my account
+                      {t('forkIntoMyAccount')}
                     </Button>
                   </div>
                 </article>
@@ -294,7 +296,7 @@ function StarterCard({
       </pre>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button onClick={onFork} loading={forking} size="sm">
-          Fork into my account
+          {t('forkIntoMyAccount')}
         </Button>
       </div>
     </article>

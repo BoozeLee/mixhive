@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../lib/messagesStore';
 import { colors, space, fontSize, fontWeight, radius } from '../styles/tokens';
@@ -17,15 +18,16 @@ function relativeTime(dateStr: string): string {
 }
 
 export function MessagesPage() {
+  const t = useTranslations('messages');
   const { user } = useAuth();
   const { conversations } = useMessages();
 
   if (!user) {
     return (
       <div style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
-        <p style={{ marginBottom: space[6] }}>Sign in to see your messages</p>
+        <p style={{ marginBottom: space[6] }}>{t('signInToSee')}</p>
         <Link to="/login" style={{ color: colors.accent }}>
-          Sign in
+          {t('signIn')}
         </Link>
       </div>
     );
@@ -33,7 +35,7 @@ export function MessagesPage() {
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
-      <SectionHeading eyebrow="Chat" title="Messages" />
+      <SectionHeading eyebrow={t('chat')} title={t('messages')} />
 
       {conversations.length === 0 ? (
         <p style={{ color: colors.text.dim, textAlign: 'center', padding: 40 }}>
@@ -100,7 +102,7 @@ export function MessagesPage() {
                 >
                   {conv.lastMessage ? (
                     <>
-                      {conv.lastMessage.sender_id === user.id && <span>You: </span>}
+                      {conv.lastMessage.sender_id === user.id && <span>{t('you')}</span>}
                       {conv.lastMessage.body}
                     </>
                   ) : (

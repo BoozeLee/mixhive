@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useNavigate } from 'react-router-dom';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getPostAuthDestination } from '../lib/authRouting';
@@ -6,6 +7,7 @@ import type { Profile } from '../lib/types';
 import { colors } from '../styles/tokens';
 
 export function AuthCallback() {
+  const t = useTranslations('authCallback');
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const isMounted = useRef(true);
@@ -141,7 +143,7 @@ export function AuthCallback() {
           {error}
         </p>
         <a href="/login" style={{ color: colors.accent, fontSize: 14, textDecoration: 'none' }}>
-          Back to sign in
+          {t('backToSignIn')}
         </a>
       </div>
     );
@@ -153,10 +155,10 @@ export function AuthCallback() {
     >
       <div style={{ textAlign: 'center' }}>
         <div style={{ color: colors.accent, fontSize: 14, marginBottom: 8 }}>
-          Completing sign in…
+          {t('completingSignIn')}
         </div>
         <div style={{ color: colors.text.faintest, fontSize: 12 }}>
-          Preparing your MixHive profile
+          {t('preparingYourMixhiveProfile')}
         </div>
       </div>
     </div>

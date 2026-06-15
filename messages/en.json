@@ -405,5 +405,231 @@
     "experienceLevel": "Experience level",
     "compensationNotes": "Compensation notes",
     "eGRevShare": "e.g. rev share + credit"
+  },
+  "agents": {
+    "luaAgents": "Lua agents",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "trigger": "Trigger",
+    "luaSource": "Lua source",
+    "read": "Read:",
+    "write": "Write:",
+    "kv": "KV:",
+    "util": "Util:",
+    "agentKv": "Agent KV",
+    "delete": "Delete",
+    "runTest": "Run test",
+    "recentRuns": "Recent runs",
+    "kvStore": "KV store",
+    "signInToManage": "Sign in to manage your agents",
+    "noAgentsYet": "No agents yet",
+    "name": "Name",
+    "welcomeNewFollowers": "welcome-new-followers",
+    "description": "Description",
+    "whatThisAgentDoes": "What this agent does, in plain English.",
+    "cronExpression": "Cron expression",
+    "5FieldCronEvaluated": "5-field cron, evaluated in UTC. e.g. '0 9 * * 1' = Mondays 09:00, '*/15 * * * *' = every 15 minutes."
+  },
+  "adminVerification": {
+    "loadingVerificationQueue": "Loading verification queue...",
+    "verificationAdmin": "Verification Admin",
+    "youDoNotHave": "You do not have access to this dashboard.",
+    "reviewNote": "Review note",
+    "selectPending": "Select pending",
+    "clear": "Clear",
+    "batchApprove": "Batch approve",
+    "batchReject": "Batch reject",
+    "noVerificationRequestsYet": "No verification requests yet.",
+    "approve": "Approve",
+    "grantArtist": "Grant Artist",
+    "grantOfficial": "Grant Official",
+    "reject": "Reject"
+  },
+  "pressKitStudio": {
+    "pressKitAgent": "Press Kit Agent",
+    "generateYourBookingReady": "Generate your booking-ready EPK.",
+    "loadingPressKitWorkspace": "Loading press kit workspace...",
+    "noEpkGeneratedYet": "No EPK generated yet",
+    "openPublicEpk": "Open public EPK",
+    "useWithOpportunities": "Use with opportunities",
+    "reviewAgentInbox": "Review agent inbox",
+    "bookingPitch": "Booking pitch",
+    "bio": "Bio",
+    "featuredMixes": "Featured mixes",
+    "noPublishedMixesYet": "No published mixes yet.",
+    "technicalNotes": "Technical notes"
+  },
+  "sceneRadar": {
+    "signInToSee": "Sign in to see your scene radar.",
+    "signIn": "Sign in",
+    "sceneRadar": "Scene Radar",
+    "agentError": "Agent error:",
+    "retry": "Retry",
+    "recommendations": "Recommendations",
+    "suggestedActions": "Suggested Actions",
+    "clickRefreshToScan": "Click refresh to scan your scene."
+  },
+  "agentInbox": {
+    "deadline": "Deadline",
+    "agentInbox": "Agent Inbox",
+    "yourAiSuggestionsTasks": "Your AI suggestions, tasks, and matched opportunities.",
+    "aiIs": "AI is",
+    "loadingSuggestions": "Loading suggestions…",
+    "noAiSuggestionsYet": "No AI suggestions yet.",
+    "loadingTasks": "Loading tasks…",
+    "allCaughtUp": "All caught up.",
+    "noOpenTasksRight": "No open tasks right now.",
+    "loadingOpportunities": "Loading opportunities…",
+    "noOpportunitiesAvailable": "No opportunities available.",
+    "markAsDone": "Mark as done"
+  },
+  "collabSessionRoom": {
+    "sessionUnavailable": "Session unavailable",
+    "backToDashboard": "Back to Dashboard",
+    "sessionEnded": "Session ended",
+    "dashboard": "Dashboard",
+    "viewQuests": "View Quests",
+    "live": "Live",
+    "copyInviteLink": "Copy invite link",
+    "sessionReview": "Session Review"
+  },
+  "playlistDetail": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "private": "Private",
+    "noMixesInThis": "No mixes in this playlist yet",
+    "remove": "Remove"
+  },
+  "adminModeration": {
+    "loadingModerationQueue": "Loading moderation queue…",
+    "moderation": "Moderation",
+    "youDoNotHave": "You do not have access to this dashboard.",
+    "resolutionNoteAppliedTo": "Resolution note (applied to the action)",
+    "nothingInThisQueue": "Nothing in this queue.",
+    "hideContent": "Hide content",
+    "banOwner": "Ban owner",
+    "dismiss": "Dismiss"
+  },
+  "agentsGallery": {
+    "agentGallery": "Agent gallery",
+    "starterLibrary": "Starter library",
+    "community": "Community",
+    "publicAgentsFromOther": "Public agents from other DJs",
+    "forkIntoMyAccount": "Fork into my account",
+    "noPublicAgentsYet": "No public agents yet"
+  },
+  "authCallback": {
+    "backToSignIn": "Back to sign in",
+    "completingSignIn": "Completing sign in…",
+    "preparingYourMixhiveProfile": "Preparing your MixHive profile"
+  },
+  "buzzDetail": {
+    "buzzNotFound": "Buzz not found.",
+    "signIn": "Sign in",
+    "replyToThisBuzz": "Reply to this buzz…",
+    "writeAReply": "Write a reply"
+  },
+  "devLogin": {
+    "mixhive": "MixHive",
+    "demoMode": "Demo Mode",
+    "noRealAuthenticationRequired": "No real authentication required",
+    "forProductionUseConfigure": "For production use, configure Supabase authentication"
+  },
+  "embedMix": {
+    "thisMixIsUnavailable": "This mix is unavailable"
+  },
+  "hiveComposer": {
+    "hiveComposer": "Hive Composer",
+    "dismiss": "Dismiss",
+    "filtering": "Filtering:",
+    "searching": "Searching…",
+    "noMixesFound": "No mixes found.",
+    "setTitle": "Set title…",
+    "searchForAMix": "Search for a mix",
+    "searchMixes": "Search mixes…"
+  },
+  "hiveStory": {
+    "thisArtistHasnT": "This artist hasn't shared their journey yet.",
+    "retry": "Retry",
+    "journey": "Journey",
+    "soundEvolution": "Sound Evolution",
+    "soundConsistency": "Sound consistency"
+  },
+  "hiveStoryIssue": {
+    "thisIssueCouldnT": "This issue couldn't be found.",
+    "hiveStory": "Hive Story",
+    "noFeaturesInThis": "No features in this issue yet.",
+    "inThisIssue": "In this issue"
+  },
+  "hiveStoryLanding": {
+    "readIssue": "Read issue",
+    "editorial": "Editorial",
+    "hiveStory": "Hive Story",
+    "theFirstHiveStory": "The first Hive Story issue is coming soon.",
+    "latestIssue": "Latest Issue",
+    "archive": "Archive"
+  },
+  "hub": {
+    "featureHub": "Feature Hub",
+    "mixhive": "MixHive",
+    "requiresSignIn": "requires sign in",
+    "hubNavigation": "Hub navigation"
+  },
+  "landing": {
+    "midnightWarehouse": "Midnight Warehouse",
+    "joinTheHive": "Join the Hive",
+    "exploreMixes": "Explore mixes",
+    "yourSoundBelongsHere": "Your sound belongs here.",
+    "createYourAccount": "Create your account",
+    "signIn": "Sign in",
+    "plays": "plays",
+    "likes": "likes",
+    "reposts": "reposts",
+    "mixes": "Mixes",
+    "voices": "Voices",
+    "plays2": "Plays",
+    "liveNow": "Live now"
+  },
+  "liveRituals": {
+    "liveCreativeRituals": "Live Creative Rituals",
+    "creatorInvitations": "Creator invitations",
+    "joinStage": "Join stage",
+    "decline": "Decline",
+    "noPublicRitualsAre": "No public rituals are live right now."
+  },
+  "messageThread": {
+    "loadMore": "Load more",
+    "failed": "Failed",
+    "send": "Send"
+  },
+  "messages": {
+    "signInToSee": "Sign in to see your messages",
+    "signIn": "Sign in",
+    "you": "You:",
+    "chat": "Chat",
+    "messages": "Messages"
+  },
+  "notFound": {
+    "noRouteMatches": "No route matches",
+    "pageNotFound": "Page not found"
+  },
+  "publicPressKit": {
+    "loadingEpk": "Loading EPK...",
+    "epkNotFound": "EPK not found",
+    "backToMixhive": "Back to MIXHIVE",
+    "mixhiveElectronicPressKit": "MIXHIVE Electronic Press Kit",
+    "featuredMixes": "Featured Mixes",
+    "noPublishedMixhiveMixes": "No published MIXHIVE mixes are attached yet.",
+    "generatedFromVerifiedMixhive": "Generated from verified MIXHIVE profile data.",
+    "bookingPitch": "Booking Pitch",
+    "bio": "Bio"
+  },
+  "sceneDetail": {
+    "activeArtists": "Active Artists",
+    "labelPartners": "Label Partners"
+  },
+  "scenes": {
+    "scenes": "Scenes",
+    "noScenesYet": "No scenes yet."
   }
 }

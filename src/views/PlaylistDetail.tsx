@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -15,6 +16,7 @@ import { NotFoundState } from '../components/EmptyState';
 import type { PlaylistWithMixes, FeedMix } from '../lib/types';
 
 export function PlaylistDetail() {
+  const t = useTranslations('playlistDetail');
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -148,7 +150,7 @@ export function PlaylistDetail() {
               }}
             />
             <Button size="sm" onClick={saveTitle}>
-              Save
+              {t('save')}
             </Button>
             <Button
               size="sm"
@@ -158,7 +160,7 @@ export function PlaylistDetail() {
                 setTitleDraft(playlist.title);
               }}
             >
-              Cancel
+              {t('cancel')}
             </Button>
           </div>
         ) : isOwner ? (
@@ -215,7 +217,7 @@ export function PlaylistDetail() {
             />
             <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
               <Button size="sm" onClick={saveDescription}>
-                Save
+                {t('save')}
               </Button>
               <Button
                 size="sm"
@@ -225,7 +227,7 @@ export function PlaylistDetail() {
                   setDescDraft(playlist.description || '');
                 }}
               >
-                Cancel
+                {t('cancel')}
               </Button>
             </div>
           </div>
@@ -282,7 +284,7 @@ export function PlaylistDetail() {
             {playlist.mix_count} {playlist.mix_count === 1 ? 'mix' : 'mixes'}
           </span>
           {!playlist.is_public && (
-            <span style={{ color: withAlpha(colors.accent, 0.4) }}>Private</span>
+            <span style={{ color: withAlpha(colors.accent, 0.4) }}>{t('private')}</span>
           )}
         </div>
 
@@ -303,7 +305,7 @@ export function PlaylistDetail() {
 
       {playlist.mixes.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, color: colors.text.faint, fontSize: 14 }}>
-          No mixes in this playlist yet
+          {t('noMixesInThis')}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -317,7 +319,7 @@ export function PlaylistDetail() {
                   onClick={() => handleRemoveMix(mix.id)}
                   style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }}
                 >
-                  Remove
+                  {t('remove')}
                 </Button>
               )}
             </div>

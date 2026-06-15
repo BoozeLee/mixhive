@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { Icon } from '../components/ui/Icon';
 import { BeeMark } from '../components/brand/BeeMark';
@@ -89,6 +90,7 @@ const GOAL_OPTIONS: { value: string; label: string }[] = [
 ];
 
 export function Settings() {
+  const t = useTranslations('settings');
   const { user, profile, updateProfile } = useAuth();
   const navigate = useNavigate();
 
@@ -294,7 +296,7 @@ export function Settings() {
       style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px 96px' }}
     >
       <h1 style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, marginBottom: 24 }}>
-        Edit profile
+        {t('editProfile')}
       </h1>
 
       {/* Profile Picture */}
@@ -302,7 +304,7 @@ export function Settings() {
         <h2
           style={{ fontSize: 16, fontWeight: 600, color: colors.text.secondary, marginBottom: 16 }}
         >
-          Profile Picture
+          {t('profilePicture')}
         </h2>
         <ProfilePictureUploadSmall
           profile={profile}
@@ -316,7 +318,7 @@ export function Settings() {
           onClick={() => navigate('/studio/avatar')}
           style={{ marginTop: space[5] }}
         >
-          Design with Cosmic-Funk Studio
+          {t('artStudio')}
         </Button>
       </div>
 
@@ -336,7 +338,7 @@ export function Settings() {
             marginBottom: space[3],
           }}
         >
-          Notifications
+          {t('notifications')}
         </h2>
         <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginBottom: space[6] }}>
           Choose what reaches this browser. System pushes stay quiet while MixHive is focused.
@@ -360,7 +362,7 @@ export function Settings() {
             marginBottom: space[3],
           }}
         >
-          Language
+          {t('language')}
         </h2>
         <LanguageSwitcher hideLabel />
       </div>
@@ -382,29 +384,29 @@ export function Settings() {
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <Input
-          label="Display name"
+          label={t('displayName')}
           value={formData.display_name}
           onChange={e => setFormData(prev => ({ ...prev, display_name: e.target.value }))}
           error={formErrors.display_name}
-          placeholder="Enter display name"
+          placeholder={t('displayNamePlaceholder')}
         />
         <Textarea
-          label="Bio"
+          label={t('bio')}
           value={formData.bio}
           onChange={e => setFormData(prev => ({ ...prev, bio: e.target.value }))}
           rows={3}
-          placeholder="Tell us about yourself..."
+          placeholder={t('bioPlaceholder')}
         />
         <Input
-          label="Location"
+          label={t('location')}
           value={formData.location}
           onChange={e => setFormData(prev => ({ ...prev, location: e.target.value }))}
-          placeholder="City, Country"
+          placeholder={t('locationPlaceholder')}
         />
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-            Genres
+            {t('genres')}
           </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {GENRE_OPTIONS.map(g => (
@@ -431,15 +433,15 @@ export function Settings() {
         </fieldset>
 
         <Input
-          label="Performance style"
+          label={t('performanceStyle')}
           value={formData.dj_style}
           onChange={e => setFormData(prev => ({ ...prev, dj_style: e.target.value }))}
-          placeholder="e.g. open format b2b, peak-time techno, vinyl-only..."
+          placeholder={t('performanceStylePlaceholder')}
         />
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-            Equipment
+            {t('equipment')}
           </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {EQUIPMENT_OPTIONS.map(item => (
@@ -497,7 +499,7 @@ export function Settings() {
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-            Social Links
+            {t('socialLinks')}
           </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
             {['twitter', 'instagram', 'soundcloud', 'youtube', 'spotify', 'website'].map(
@@ -524,7 +526,7 @@ export function Settings() {
             )}
           </div>
           <p style={{ color: colors.text.faint, fontSize: 11, marginTop: 4 }}>
-            Add links to your social profiles or website
+            {t('socialLinksHelp')}
           </p>
         </fieldset>
 
@@ -549,7 +551,7 @@ export function Settings() {
             marginBottom: space[3],
           }}
         >
-          Artist Goals
+          {t('artistGoals')}
         </h2>
         <p
           style={{
@@ -565,7 +567,7 @@ export function Settings() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
             <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-              Goals
+              {t('goals')}
             </legend>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {GOAL_OPTIONS.map(opt => {
@@ -602,10 +604,10 @@ export function Settings() {
           </fieldset>
 
           <Input
-            label="Base city"
+            label={t('baseCity')}
             value={goals.base_city || ''}
             onChange={e => setGoals(prev => ({ ...prev, base_city: e.target.value || null }))}
-            placeholder="e.g. Brussels"
+            placeholder={t('baseCityPlaceholder')}
           />
 
           <div>
@@ -635,7 +637,7 @@ export function Settings() {
               style={{ accentColor: colors.accent, width: 16, height: 16 }}
             />
             <span style={{ color: colors.text.primary, fontSize: fontSize.sm }}>
-              Open for bookings
+              {t('openForBookings')}
             </span>
           </label>
 
@@ -791,7 +793,7 @@ export function Settings() {
                   color: colors.text.primary,
                 }}
               >
-                OpenAI API key
+                {t('aiKey')}
               </span>
               {aiKeyStatus === 'loading' && (
                 <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>checking…</span>
@@ -809,7 +811,7 @@ export function Settings() {
               )}
               {aiKeyStatus === 'none' && (
                 <span style={{ fontSize: fontSize.xs, color: colors.text.faint }}>
-                  Not connected
+                  {t('notConnected')}
                 </span>
               )}
             </div>
@@ -836,7 +838,7 @@ export function Settings() {
                   onClick={handleRemoveAiKey}
                   disabled={aiKeySaving}
                 >
-                  Remove
+                  {t('remove')}
                 </Button>
               </div>
             ) : (
@@ -847,7 +849,7 @@ export function Settings() {
                     type={showAiKey ? 'text' : 'password'}
                     value={aiKeyInput}
                     onChange={e => setAiKeyInput(e.target.value)}
-                    placeholder="sk-proj-..."
+                    placeholder={t('aiKeyPlaceholder')}
                     autoComplete="off"
                     style={{
                       width: '100%',
@@ -969,7 +971,7 @@ export function Settings() {
                 whiteSpace: 'nowrap',
               }}
             >
-              Get Pro
+              {t('getPro')}
             </a>
           </div>
         )}
@@ -985,7 +987,7 @@ export function Settings() {
         }}
       >
         <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text.primary, marginBottom: 16 }}>
-          Hive Story
+          {t('hiveStory')}
         </h2>
         <p style={{ fontSize: 13, color: colors.text.muted, marginBottom: 16 }}>
           Share your journey — your milestones, collabs, and sound evolution — on your profile.
@@ -1004,7 +1006,7 @@ export function Settings() {
             onChange={e => handleShowJourneyToggle(e.target.checked)}
             style={{ accentColor: colors.accent, width: 16, height: 16 }}
           />
-          <span style={{ fontSize: 13, color: colors.text.primary }}>Share my journey</span>
+          <span style={{ fontSize: 13, color: colors.text.primary }}>{t('shareJourney')}</span>
         </label>
       </div>
 
@@ -1056,7 +1058,7 @@ export function Settings() {
           >
             <div>
               <div style={{ fontSize: fontSize.xs, color: colors.text.dim, marginBottom: 4 }}>
-                Connected wallet
+                {t('connectedWallet')}
               </div>
               <code
                 style={{
@@ -1084,7 +1086,7 @@ export function Settings() {
             onClick={() => setWalletModalOpen(true)}
             style={{ marginBottom: space[6] }}
           >
-            Connect Wallet
+            {t('connectWallet')}
           </Button>
         )}
 
@@ -1104,7 +1106,7 @@ export function Settings() {
               style={{ accentColor: colors.accent, width: 16, height: 16 }}
             />
             <span style={{ fontSize: fontSize.sm, color: colors.text.primary }}>
-              Show NFT activity from artists I follow in my feed
+              {t('showNft')}
             </span>
           </label>
         )}
@@ -1125,7 +1127,7 @@ export function Settings() {
           Export a copy of your data, or request account deletion (processed within 30 days). See
           our{' '}
           <a href="/privacy" style={{ color: colors.accent }}>
-            Privacy Policy
+            {t('privacyPolicy')}
           </a>
           .
         </p>
@@ -1151,7 +1153,7 @@ export function Settings() {
             variant="secondary"
             size="sm"
           >
-            Download my data
+            {t('downloadData')}
           </Button>
           <Button
             variant="danger"
@@ -1179,7 +1181,7 @@ export function Settings() {
               window.location.href = '/';
             }}
           >
-            Delete my account
+            {t('deleteAccount')}
           </Button>
         </div>
       </div>

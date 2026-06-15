@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { colors, withAlpha } from '../styles/tokens';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { createMix, updateMix } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
@@ -16,6 +17,7 @@ import { generateWaveform, waveformToJson } from '../lib/waveform';
 import type { Mix, TrackItem } from '../lib/types';
 
 export function Upload() {
+  const t = useTranslations('upload');
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -277,7 +279,7 @@ export function Upload() {
             letterSpacing: '0.1em',
           }}
         >
-          Nectar Upload
+          {t('title')}
         </p>
         <h1
           style={{
@@ -288,7 +290,7 @@ export function Upload() {
             lineHeight: 1.1,
           }}
         >
-          Drop your mix
+          {t('dropTitle')}
         </h1>
         <p style={{ margin: '8px 0 0', fontSize: 13, color: colors.text.muted }}>
           Share your sound with the hive. MP3, WAV, AIFF, or FLAC.
@@ -358,7 +360,7 @@ export function Upload() {
           <div
             role="button"
             tabIndex={0}
-            aria-label="Audio file drop zone — drag and drop or click to browse"
+            aria-label={t('dropZoneAria')}
             onDragEnter={e => {
               e.preventDefault();
               setDragOver(true);
@@ -464,7 +466,7 @@ export function Upload() {
                     color: dragOver ? colors.accent : colors.text.dim,
                   }}
                 >
-                  {dragOver ? 'Drop it!' : 'Drop your mix here'}
+                  {dragOver ? t('dropIt') : t('dropHere')}
                 </span>
                 <span style={{ fontSize: 12, color: colors.text.faintest }}>
                   or click to browse — MP3, WAV, AIFF, FLAC
@@ -475,29 +477,29 @@ export function Upload() {
         </div>
 
         <Input
-          label="Title *"
+          label={t('labelTitle')}
           value={formData.title}
           onChange={e => handleInputChange('title', e.target.value)}
           required
           error={formErrors.title}
-          placeholder="Enter mix title"
+          placeholder={t('titlePlaceholder')}
         />
 
         <Textarea
-          label="Description"
+          label={t('labelDescription')}
           value={formData.description}
           onChange={e => handleInputChange('description', e.target.value)}
           rows={3}
-          placeholder="Describe your mix..."
+          placeholder={t('descriptionPlaceholder')}
         />
 
         <Select
-          label="Genre"
+          label={t('labelGenre')}
           value={formData.genreId === '' ? '' : String(formData.genreId)}
           onChange={e =>
             handleInputChange('genreId', e.target.value === '' ? '' : Number(e.target.value))
           }
-          placeholder="Select genre"
+          placeholder={t('genrePlaceholder')}
         >
           {genres.map(g => (
             <option key={g.id} value={g.id}>
@@ -507,14 +509,14 @@ export function Upload() {
         </Select>
 
         <Input
-          label="Tags (comma separated)"
+          label={t('labelTags')}
           value={formData.tags}
           onChange={e => handleInputChange('tags', e.target.value)}
-          placeholder="house, deep, vinyl"
+          placeholder={t('tagsPlaceholder')}
         />
 
         <FileInput
-          label="Artwork (optional)"
+          label={t('labelArtwork')}
           accept="image/*"
           help="Square artwork works best. JPG, PNG, or WebP."
           style={{ minHeight: 48 }}
@@ -545,7 +547,7 @@ export function Upload() {
             }}
             style={{ width: 22, height: 22 }}
           />
-          <span>Mark as explicit content</span>
+          <span>{t('explicit')}</span>
         </label>
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
@@ -634,7 +636,7 @@ export function Upload() {
                     list[index] = { ...list[index], title: e.target.value };
                     setTracklist(list);
                   }}
-                  placeholder="Track Title"
+                  placeholder={t('trackTitle')}
                   style={{ flex: 1 }}
                 />
                 <Input
@@ -646,7 +648,7 @@ export function Upload() {
                     list[index] = { ...list[index], start_time: val };
                     setTracklist(list);
                   }}
-                  placeholder="Start (sec)"
+                  placeholder={t('startSec')}
                   style={{ width: '100%' }}
                 />
                 <button

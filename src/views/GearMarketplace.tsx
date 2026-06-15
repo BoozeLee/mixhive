@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
 import { Link } from 'react-router-dom';
 import { getProfileBadgesFor } from '../lib/api';
@@ -54,6 +55,8 @@ const CONDITION_COLORS: Record<string, string> = {
 };
 
 export function GearMarketplace() {
+  const t = useTranslations('gear');
+  const tc = useTranslations('common');
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -122,10 +125,10 @@ export function GearMarketplace() {
               letterSpacing: '0.05em',
             }}
           >
-            GEAR MARKET
+            {t('market')}
           </h1>
           <p style={{ color: colors.text.muted, margin: '4px 0 0', fontSize: 14 }}>
-            Second-hand DJ &amp; studio equipment from the community
+            {t('subtitle')}
           </p>
         </div>
         <Link
@@ -140,7 +143,7 @@ export function GearMarketplace() {
             textDecoration: 'none',
           }}
         >
-          + List Gear
+          {t('listGear')}
         </Link>
       </div>
 
@@ -154,7 +157,7 @@ export function GearMarketplace() {
           ))}
         </select>
         <select value={condition} onChange={e => setCondition(e.target.value)} style={selectStyle}>
-          <option value="">Any Condition</option>
+          <option value="">{t('anyCondition')}</option>
           {Object.entries(CONDITIONS).map(([v, l]) => (
             <option key={v} value={v}>
               {l}
@@ -163,7 +166,7 @@ export function GearMarketplace() {
         </select>
         <input
           type="number"
-          placeholder="Max price (€)"
+          placeholder={t('maxPrice')}
           value={maxPrice}
           onChange={e => setMaxPrice(e.target.value)}
           style={{ ...selectStyle, width: 150 }}
@@ -185,7 +188,7 @@ export function GearMarketplace() {
               fontSize: 13,
             }}
           >
-            Clear filters
+            {t('clearFilters')}
           </button>
         )}
       </div>
@@ -236,7 +239,7 @@ export function GearMarketplace() {
       ) : listings.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '64px 20px', color: colors.text.faintest }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>🎛</div>
-          <p style={{ fontSize: 18 }}>No listings found</p>
+          <p style={{ fontSize: 18 }}>{t('noListings')}</p>
           <p style={{ fontSize: 14 }}>
             Try different filters or{' '}
             <Link to="/marketplace/gear/new" style={{ color: 'var(--hive-gold)' }}>
@@ -266,7 +269,7 @@ export function GearMarketplace() {
       {!loading && listings.length > 0 && offset + limit < total && (
         <div style={{ textAlign: 'center', marginTop: 32 }}>
           <button onClick={handleLoadMore} style={loadMoreBtnStyle}>
-            Load more
+            {tc('loadMore')}
           </button>
         </div>
       )}

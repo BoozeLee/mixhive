@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -31,6 +32,7 @@ const CONDITIONS = [
 type Step = 1 | 2 | 3;
 
 export function NewGearListing() {
+  const t = useTranslations('gear');
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<Step>(1);
@@ -158,7 +160,7 @@ export function NewGearListing() {
           marginBottom: 4,
         }}
       >
-        List Your Gear
+        {t('listYourGear')}
       </h1>
       <p style={{ color: colors.text.faint, fontSize: 14, marginBottom: 28 }}>
         Sell to the community — DJ gear, studio equipment, and more
@@ -194,7 +196,7 @@ export function NewGearListing() {
         >
           Connect a payout account to sell gear —{' '}
           <Link to="/earnings" style={{ color: 'var(--hive-gold)', fontWeight: 700 }}>
-            Set up payouts
+            {t('setupPayouts')}
           </Link>
         </div>
       )}
@@ -219,8 +221,8 @@ export function NewGearListing() {
       {step === 1 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Select
-            label="Category *"
-            placeholder="Select category"
+            label={t('categoryLabel')}
+            placeholder={t('selectCategory')}
             value={form.category}
             onChange={e => update('category', e.target.value)}
             options={CATEGORIES.map(c => ({ value: c, label: c.replace('_', ' ') }))}
@@ -230,21 +232,21 @@ export function NewGearListing() {
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
           >
             <Input
-              label="Brand"
+              label={t('brand')}
               value={form.brand}
               onChange={e => update('brand', e.target.value)}
-              placeholder="Pioneer DJ"
+              placeholder={t('brandPlaceholder')}
             />
             <Input
-              label="Model"
+              label={t('model')}
               value={form.model}
               onChange={e => update('model', e.target.value)}
-              placeholder="CDJ-2000NXS2"
+              placeholder={t('modelPlaceholder')}
             />
           </div>
           <Select
-            label="Condition *"
-            placeholder="Select condition"
+            label={t('conditionLabel')}
+            placeholder={t('selectCondition')}
             value={form.condition}
             onChange={e => update('condition', e.target.value)}
             options={CONDITIONS}
@@ -270,7 +272,7 @@ export function NewGearListing() {
       {step === 2 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Input
-            label="Listing title"
+            label={t('listingTitle')}
             value={form.title}
             onChange={e => update('title', e.target.value)}
             placeholder={
@@ -278,10 +280,10 @@ export function NewGearListing() {
             }
           />
           <Textarea
-            label="Description"
+            label={t('description')}
             value={form.description}
             onChange={e => update('description', e.target.value)}
-            placeholder="Describe the item condition, included accessories, reason for selling..."
+            placeholder={t('descriptionPlaceholder')}
             rows={5}
             style={{ resize: 'vertical' }}
           />
@@ -323,7 +325,7 @@ export function NewGearListing() {
                     />
                     <button
                       type="button"
-                      aria-label="Remove photo"
+                      aria-label={t('removePhoto')}
                       onClick={() => setPhotos(p => p.filter((_, j) => j !== i))}
                       style={{
                         position: 'absolute',
@@ -376,7 +378,7 @@ export function NewGearListing() {
             style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}
           >
             <Input
-              label="Price *"
+              label={t('priceLabel')}
               type="number"
               value={form.price}
               onChange={e => update('price', e.target.value)}
@@ -384,7 +386,7 @@ export function NewGearListing() {
               min="0"
             />
             <Select
-              label="Currency"
+              label={t('currency')}
               value={form.currency}
               onChange={e => update('currency', e.target.value)}
             >
@@ -398,23 +400,23 @@ export function NewGearListing() {
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
           >
             <Input
-              label="City"
+              label={t('city')}
               value={form.location_city}
               onChange={e => update('location_city', e.target.value)}
-              placeholder="Brussels"
+              placeholder={t('cityPlaceholder')}
             />
             <Input
-              label="Country (ISO)"
+              label={t('countryIso')}
               value={form.location_country}
               onChange={e => update('location_country', e.target.value)}
-              placeholder="BE"
+              placeholder={t('countryPlaceholder')}
               maxLength={2}
             />
           </div>
 
           <div>
             <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
-              Shipping options
+              {t('shippingOptions')}
             </p>
             {[
               { key: 'local_pickup', label: 'Local pickup' },

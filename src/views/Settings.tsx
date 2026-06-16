@@ -749,7 +749,7 @@ export function Settings() {
             }}
           >
             <span style={{ display: 'inline-flex' }}>
-              <BeeMark size={22} color="var(--hive-gold, #f6c400)" />
+              <BeeMark size={22} color={`var(--hive-gold, ${colors.accentBright})`} />
             </span>
             <div>
               <div
@@ -939,7 +939,7 @@ export function Settings() {
             }}
           >
             <span style={{ display: 'inline-flex', flexShrink: 0 }}>
-              <BeeMark size={28} color="var(--hive-gold, #f6c400)" />
+              <BeeMark size={28} color={`var(--hive-gold, ${colors.accentBright})`} />
             </span>
             <div style={{ flex: 1 }}>
               <div

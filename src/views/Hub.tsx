@@ -21,15 +21,15 @@ const TABS = [
     id: 'create',
     label: 'Create',
     watermark: 'CREATE',
-    accent: '#ffd84a',
+    accent: colors.accentBrightest,
     dim: withAlpha(colors.accentBright, 0.086),
   },
   {
     id: 'community',
     label: 'Community',
     watermark: 'COMMUNITY',
-    accent: '#e8b830',
-    dim: '#e8b83016',
+    accent: colors.accentBright,
+    dim: withAlpha(colors.accentBright, 0.086),
   },
   {
     id: 'marketplace',
@@ -38,7 +38,7 @@ const TABS = [
     accent: colors.accent,
     dim: withAlpha(colors.accent, 0.09),
   },
-  { id: 'agents', label: 'Agents & AI', watermark: 'AGENTS', accent: '#d4a830', dim: '#d4a83016' },
+  { id: 'agents', label: 'Agents & AI', watermark: 'AGENTS', accent: colors.accentAmber, dim: withAlpha(colors.accentAmber, 0.086) },
   {
     id: 'profile',
     label: 'Profile',
@@ -50,7 +50,7 @@ const TABS = [
     id: 'editorial',
     label: 'Editorial',
     watermark: 'STORIES',
-    accent: '#ffd84a',
+    accent: colors.accentBrightest,
     dim: withAlpha(colors.accentBright, 0.086),
   },
 ] as const;

@@ -227,7 +227,7 @@ export function CollabQuestDetail() {
             gap: 10,
           }}
         >
-          <Icon name="quests" size={24} color="var(--hive-gold, #f6c400)" /> {quest.title}
+          <Icon name="quests" size={24} color={`var(--hive-gold, ${colors.accentBright})`} /> {quest.title}
         </h1>
         {quest.narrative && (
           <p

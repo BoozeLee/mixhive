@@ -142,7 +142,7 @@ export function PressKitStudio() {
             borderRadius: radius.md,
             background: generating
               ? colors.border
-              : `linear-gradient(135deg, #ffde4d, ${colors.accent})`,
+              : `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent})`,
             color: generating ? colors.text.faint : colors.bg,
             padding: `${space[4]}px ${space[7]}px`,
             fontWeight: fontWeight.bold,

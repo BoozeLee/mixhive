@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { EmptyState } from '../components/EmptyState';
+import { colors } from '../styles/tokens';
 
 export function NotFound() {
   const t = useTranslations('notFound');
@@ -12,8 +13,8 @@ export function NotFound() {
         title={t('pageNotFound')}
         body={
           <>
-            <span style={{ color: '#888' }}>{t('noRouteMatches')}</span>{' '}
-            <code style={{ color: '#f0c040', fontFamily: 'monospace', fontSize: 13 }}>
+            <span style={{ color: colors.text.muted }}>{t('noRouteMatches')}</span>{' '}
+            <code style={{ color: colors.accent, fontFamily: 'monospace', fontSize: 13 }}>
               {location.pathname}
             </code>
             . It might have moved or never existed.

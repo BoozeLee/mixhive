@@ -18,7 +18,7 @@ const STATUS_FILTERS: { value: ModerationSignalStatus | ''; label: string }[] = 
 const SEVERITY_COLOR: Record<string, string> = {
   low: colors.text.dim,
   medium: colors.accent,
-  high: '#fb923c',
+  high: colors.accentAmber,
   critical: colors.danger,
 };
 

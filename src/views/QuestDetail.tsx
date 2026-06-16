@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams, Link } from 'react-router-dom';
-import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
+import { colors, fontSize, fontWeight, radius, space, withAlpha } from '../styles/tokens';
 import { HiveCard } from '../components/hive/HiveCard';
 import { HiveButton } from '../components/hive/HiveButton';
 import { EmptyState } from '../components/EmptyState';
@@ -134,13 +134,13 @@ export function QuestDetail() {
             style={{
               background:
                 quest.status === 'completed'
-                  ? 'rgba(108,204,108,0.18)'
+                  ? withAlpha(colors.success, 0.18)
                   : quest.status === 'active'
                     ? colors.accentMuted
                     : colors.border,
               color:
                 quest.status === 'completed'
-                  ? '#6ccc6c'
+                  ? colors.success
                   : quest.status === 'active'
                     ? colors.accent
                     : colors.text.muted,
@@ -318,7 +318,7 @@ export function QuestDetail() {
                     )}
                   </div>
                   {done ? (
-                    <span style={{ fontSize: fontSize.sm, color: '#6ccc6c', alignSelf: 'center' }}>
+                    <span style={{ fontSize: fontSize.sm, color: colors.success, alignSelf: 'center' }}>
                       {t('done')}
                     </span>
                   ) : isOwner ? (

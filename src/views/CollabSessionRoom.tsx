@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
+import { colors, fontSize, space, fontWeight, radius, withAlpha } from '../styles/tokens';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { HiveButton } from '../components/hive/HiveButton';
 import { MythicSessionRoom } from '../components/MythicSessionRoom';
@@ -174,8 +174,8 @@ export function CollabSessionRoom() {
               textTransform: 'uppercase',
               padding: '2px 6px',
               borderRadius: 3,
-              background: 'rgba(34,197,94,0.15)',
-              color: '#22c55e',
+              background: withAlpha(colors.successStrong, 0.15),
+              color: colors.successStrong,
             }}
           >
             {t('live')}

@@ -95,6 +95,31 @@ export async function getProfileById(id: string): Promise<Profile | null> {
   return data;
 }
 
+export interface LeaderboardEntry {
+  id: string;
+  username: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  xp: number;
+  level: number;
+  reputation_score: number;
+}
+
+/**
+ * Top profiles by XP for the Hive leaderboard. Ordered by XP descending; ties
+ * fall back to reputation. Public read (profiles are world-readable under RLS).
+ */
+export async function getXpLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, avatar_url, xp, level, reputation_score')
+    .order('xp', { ascending: false })
+    .order('reputation_score', { ascending: false })
+    .limit(limit);
+  return (data as LeaderboardEntry[] | null) ?? [];
+}
+
 export async function getProfileBadges(profileId: string): Promise<VerificationBadge[]> {
   if (!isSupabaseConfigured) return [];
   const { data } = await supabase
@@ -1026,9 +1051,14 @@ export async function getProfileAnalytics(
   mixes?: Mix[]
 ): Promise<ProfileAnalytics> {
   const profileMixes = mixes ?? (await getMixesByDj(profileId));
-  const [followers, following] = await Promise.all([
+  const [followers, following, gearResult] = await Promise.all([
     getFollowersCount(profileId),
     getFollowingCount(profileId),
+    supabase
+      .from('equipment_transactions')
+      .select('agreed_price, transaction_state')
+      .eq('seller_profile_id', profileId)
+      .then(({ data }) => data || []),
   ]);
 
   const totalPlays = profileMixes.reduce((sum, mix) => sum + (mix.play_count || 0), 0);
@@ -1089,6 +1119,11 @@ export async function getProfileAnalytics(
     });
   }
 
+  const gearSalesTotal = gearResult
+    .filter(t => t.transaction_state === 'released')
+    .reduce((s, t) => s + Number(t.agreed_price || 0), 0);
+  const gearSalesCount = gearResult.filter(t => t.transaction_state === 'released').length;
+
   return {
     totalPlays,
     totalLikes,
@@ -1105,6 +1140,8 @@ export async function getProfileAnalytics(
     topMixes: sortedMixes,
     genreDistribution,
     weeklyEvents,
+    gearSalesTotal,
+    gearSalesCount,
   };
 }
 

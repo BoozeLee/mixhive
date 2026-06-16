@@ -66,3 +66,27 @@ npm run smoke -- --mock-supabase http://127.0.0.1:3004
   - `npm run lint`
   - `npm run build`
   - `npm run smoke -- --mock-supabase http://127.0.0.1:3024`
+
+## Local Preview Static-Serving — Fixed (2026-06-16)
+
+Found and fixed while doing a real-browser check of the Phase 16 XP/reputation UI.
+
+- **Root cause:** `npm run preview` used `next start`, which does **not** work with
+  `output: 'standalone'` (next.config.mjs) — it serves `/_next/static/chunks/*.js` as
+  `Content-Type: text/plain` / 500 → `ChunkLoadError`, so the client never hydrates. A standalone
+  build must be served by its own `.next/standalone/server.js`, run **from the standalone root**
+  with `.next/static` and `public` assembled alongside it (exactly the Dockerfile's COPY layout).
+- **Fix:** `preview` now runs `node scripts/preview.mjs`, which copies `.next/static` +
+  `public` into `.next/standalone/` and launches `server.js` from there. Verified:
+  `curl -I .../_next/static/chunks/<x>.js` → `application/javascript`, and the app hydrates.
+  `npm run preview -- -p <port>` still works. `output: 'standalone'` is unchanged (deploy-safe).
+- **Verification tooling:** `npm run visual` (`scripts/visual_smoke.mjs`) — bundled-Chromium
+  hydrated screenshot + horizontal-overflow + console-error check at 1440 and 320 px. Uses
+  `bypassCSP: true` and waits on `#main-content`, so it needs no system Chrome.
+  Usage: `node scripts/visual_smoke.mjs <baseURL> <route...>`.
+- **Config (dev-only):** added `'unsafe-eval'` to `script-src` **only** when
+  `NODE_ENV !== 'production'` so `next dev` can run in a real local browser. Production CSP is
+  byte-for-byte unchanged.
+- **Env note:** this sandbox has no outbound network, so Supabase DNS fails
+  (`ERR_NAME_NOT_RESOLVED`) and real data can't load locally; populated-UI verification used the
+  served prod build plus sample data in an isolated component harness.

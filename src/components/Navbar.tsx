@@ -264,6 +264,19 @@ export function Navbar() {
                     View Profile
                   </Link>
                   <Link
+                    to="/leaderboard"
+                    style={menuItemStyle}
+                    onClick={() => setMenuOpen(false)}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
+                  >
+                    Leaderboard
+                  </Link>
+                  <Link
                     to="/settings"
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}

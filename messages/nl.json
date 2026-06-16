@@ -1,1 +1,54 @@
-{}
+{
+  "feed": {
+    "liveFeed": "Livefeed",
+    "heroTitle": "De Korf slaapt nooit",
+    "heroSubtitle": "Underground mixes, live vanuit de scene.",
+    "genreRadar": "Genreradar",
+    "trendingNow": "Nu trending",
+    "tabsAria": "Feedtabbladen",
+    "sidebarAria": "Feed zijbalk",
+    "followingPrompt": "<link>Log in</link> om je volgfeed te zien."
+  },
+  "auth": {
+    "signInTitle": "Inloggen",
+    "signUpTitle": "Maak je account aan",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "username": "Gebruikersnaam",
+    "displayName": "Weergavenaam",
+    "signInButton": "Inloggen",
+    "signUpButton": "Account aanmaken",
+    "creatingAccount": "Account aanmaken…",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "haveAccount": "Heb je al een account?",
+    "noAccountShort": "Geen account?",
+    "joinMixHive": "Word lid van Mix Hive",
+    "googleSignIn": "Inloggen met Google",
+    "backToSignInPlain": "Terug naar inloggen",
+    "checkEmailTitle": "Controleer je e-mail",
+    "usernameHelp": "3–30 tekens: letters, cijfers, underscores",
+    "passwordHelp": "8+ tekens met hoofdletter, kleine letter en een cijfer"
+  },
+  "common": {
+    "or": "of"
+  },
+  "upload": {
+    "title": "Nectar Upload",
+    "dropTitle": "Drop je mix",
+    "dropZoneAria": "Audiobestand dropzone — sleep of klik om te bladeren",
+    "dropHere": "Drop je mix hier",
+    "dropIt": "Drop het!",
+    "labelTitle": "Titel *",
+    "labelDescription": "Beschrijving",
+    "labelGenre": "Genre",
+    "labelTags": "Tags (kommagescheiden)",
+    "labelArtwork": "Illustratie (optioneel)",
+    "titlePlaceholder": "Voer mixtitel in",
+    "descriptionPlaceholder": "Beschrijf je mix…",
+    "genrePlaceholder": "Selecteer genre",
+    "tagsPlaceholder": "house, deep, vinyl",
+    "explicit": "Markeer als expliciete inhoud",
+    "trackTitle": "Tracktitel",
+    "startSec": "Start (sec)"
+  }
+}

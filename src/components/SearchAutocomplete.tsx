@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { getPopularSearches, getSearchSuggestions } from '../lib/search';
@@ -14,9 +15,10 @@ interface SearchAutocompleteProps {
 
 export function SearchAutocomplete({
   onSearch,
-  placeholder = 'Search mixes, artists, scenes...',
+  placeholder,
   className,
 }: SearchAutocompleteProps) {
+  const t = useTranslations('searchAutocomplete');
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
   const [open, setOpen] = useState(false);
@@ -70,7 +72,7 @@ export function SearchAutocomplete({
         .map(title => ({
           type: 'genre' as const,
           title,
-          subtitle: 'Popular search',
+          subtitle: t('popularSearch'),
         }));
 
   return (
@@ -86,11 +88,11 @@ export function SearchAutocomplete({
           value={query}
           onChange={event => setQuery(event.target.value)}
           onFocus={() => setOpen(true)}
-          placeholder={placeholder}
+          placeholder={placeholder || t('placeholder')}
           style={{ flex: 1, minWidth: 0 }}
         />
         <Button type="submit" size="sm" disabled={!query.trim()}>
-          Search
+          {t('search')}
         </Button>
       </form>
 

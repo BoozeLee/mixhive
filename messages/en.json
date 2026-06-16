@@ -858,5 +858,20 @@
     "doesNotExist": "doesn't exist",
     "notFoundBody": "It might have been deleted, made private, or the link is wrong.",
     "backToFeed": "Back to feed"
+  },
+  "searchBar": {
+    "placeholder": "Search DJs, mixes..."
+  },
+  "searchAutocomplete": {
+    "placeholder": "Search mixes, artists, scenes...",
+    "popularSearch": "Popular search",
+    "search": "Search"
+  },
+  "loadingSpinner": {
+    "loading": "Loading..."
+  },
+  "protectedRoute": {
+    "loadingLabel": "Loading protected page",
+    "enteringTheHive": "Entering the hive…"
   }
 }

@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { colors, space } from '../styles/tokens';
 
 interface LogoProps {
@@ -13,6 +14,7 @@ export function Logo({
   showText = true,
   className = '',
 }: LogoProps) {
+  const t = useTranslations('logo');
   const sizeStyles = {
     small: { width: 24, height: 24, textSize: 16 },
     medium: { width: 32, height: 32, textSize: 20 },
@@ -26,7 +28,7 @@ export function Logo({
     <div className={className} style={{ display: 'flex', alignItems: 'center', gap: space[2] }}>
       <img
         src={logoSrc}
-        alt="MixHive Logo"
+        alt={t('altLogo')}
         style={{
           width: currentSize.width,
           height: currentSize.height,
@@ -61,12 +63,12 @@ export function LogoIcon({
   variant?: 'main' | 'business';
   className?: string;
 }) {
+  const t = useTranslations('logo');
   const logoSrc = variant === 'business' ? '/mixhivebusinesslogo.png' : '/mixhive.png';
-
   return (
     <img
       src={logoSrc}
-      alt="MixHive"
+      alt={t('altIcon')}
       className={className}
       style={{
         width: 24,

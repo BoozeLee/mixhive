@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../lib/notificationStore';
 import { isPushSupported, registerSW, subscribeToPush } from '../lib/pushSubscription';
@@ -11,6 +12,7 @@ const PUSH_DENIED_KEY = 'mixhive_push_denied';
 
 export function NotificationsBell() {
   const { user } = useAuth();
+  const t = useTranslations('notificationsBell');
   const { unreadCount } = useNotifications();
   const [showNudge, setShowNudge] = useState(false);
   const [pushState, setPushState] = useState<'idle' | 'requesting' | 'granted' | 'denied'>('idle');
@@ -68,7 +70,7 @@ export function NotificationsBell() {
     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <Link
         to="/notifications"
-        aria-label="Notifications"
+        aria-label={t('notifications')}
         style={{
           position: 'relative',
           color: colors.text.dimmed,
@@ -105,8 +107,8 @@ export function NotificationsBell() {
       {showNudge && pushState === 'idle' && (
         <button
           onClick={handleEnablePush}
-          aria-label="Enable push notifications"
-          title="Enable push notifications"
+          aria-label={t('enablePush')}
+          title={t('enablePush')}
           style={{
             marginLeft: 6,
             background: 'rgba(240,192,64,0.12)',
@@ -121,7 +123,7 @@ export function NotificationsBell() {
             whiteSpace: 'nowrap',
           }}
         >
-          Enable push
+          {t('enablePush')}
         </button>
       )}
 

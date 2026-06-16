@@ -873,5 +873,30 @@
   "protectedRoute": {
     "loadingLabel": "Loading protected page",
     "enteringTheHive": "Entering the hive…"
+  },
+  "shareButton": {
+    "checkOutThisMix": "Check out this mix",
+    "share": "Share",
+    "copied": "Copied",
+    "copyLink": "Copy link",
+    "cancel": "Cancel"
+  },
+  "notificationsBell": {
+    "notifications": "Notifications",
+    "enablePush": "Enable push notifications"
+  },
+  "logo": {
+    "altLogo": "MixHive Logo",
+    "altIcon": "MixHive"
+  },
+  "reportButton": {
+    "report": "Report",
+    "cancel": "Cancel",
+    "couldNotFile": "Could not file report",
+    "reportedThanks": "✓ Reported — thanks",
+    "reportReason": "Report reason",
+    "reasonPlaceholder": "What's wrong with this? (optional)",
+    "reporting": "Reporting…",
+    "submitReport": "Submit report"
   }
 }

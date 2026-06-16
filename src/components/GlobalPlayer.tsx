@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
 import { usePlayer } from '../lib/playerStore';
 import { PlayerQueue } from './PlayerQueue';
 import { IconButton } from './ui/IconButton';
 
 export function GlobalPlayer() {
+  const t = useTranslations('globalPlayer');
   const {
     currentTrack,
     playing,
@@ -111,7 +113,7 @@ export function GlobalPlayer() {
           </div>
         </div>
         <IconButton
-          label={playing ? 'Pause' : 'Play'}
+          label={playing ? t('pause') : t('play')}
           onClick={togglePlay}
           size={28}
           style={{
@@ -123,7 +125,7 @@ export function GlobalPlayer() {
         >
           {playing ? '⏸' : '▶'}
         </IconButton>
-        <IconButton label="Expand" onClick={toggleMini} size={24}>
+        <IconButton label={t('expand')} onClick={toggleMini} size={24}>
           ▲
         </IconButton>
       </div>
@@ -188,11 +190,11 @@ export function GlobalPlayer() {
 
         {/* Prev / Play-Pause / Next */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-          <IconButton label="Previous" onClick={playPrevious} size={28}>
+          <IconButton label={t('previous')} onClick={playPrevious} size={28}>
             ⏮
           </IconButton>
           <IconButton
-            label={playing ? 'Pause' : 'Play'}
+            label={playing ? t('pause') : t('play')}
             onClick={togglePlay}
             size={34}
             style={{
@@ -204,7 +206,7 @@ export function GlobalPlayer() {
           >
             {playing ? '⏸' : '▶'}
           </IconButton>
-          <IconButton label="Next" onClick={playNext} size={28}>
+          <IconButton label={t('next')} onClick={playNext} size={28}>
             ⏭
           </IconButton>
         </div>
@@ -213,7 +215,7 @@ export function GlobalPlayer() {
         <div style={{ flex: 1, minWidth: 80 }}>
           <div
             role="slider"
-            aria-label="Seek"
+            aria-label={t('seek')}
             aria-valuemin={0}
             aria-valuemax={Math.max(0, Math.floor(duration))}
             aria-valuenow={Math.floor(currentTime)}
@@ -263,7 +265,7 @@ export function GlobalPlayer() {
         {/* Volume */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
           <IconButton
-            label={muted ? 'Unmute' : 'Mute'}
+            label={muted ? t('unmute') : t('mute')}
             onClick={toggleMute}
             size={28}
             style={muted ? { color: colors.danger } : undefined}
@@ -278,14 +280,14 @@ export function GlobalPlayer() {
             value={muted ? 0 : volume}
             onChange={e => setVolume(parseFloat(e.target.value))}
             style={{ width: 60, height: 3, accentColor: colors.accent }}
-            title="Volume"
+            title={t('volume')}
           />
         </div>
 
         {/* Queue toggle */}
         {hasQueue && (
           <IconButton
-            label="Queue"
+            label={t('queue')}
             active={showQueue}
             onClick={() => setShowQueue(s => !s)}
             size={28}
@@ -295,12 +297,12 @@ export function GlobalPlayer() {
         )}
 
         {/* Mini mode */}
-        <IconButton label="Minimize" onClick={toggleMini} size={24}>
+        <IconButton label={t('minimize')} onClick={toggleMini} size={24}>
           ▼
         </IconButton>
 
         {/* Close */}
-        <IconButton label="Close" onClick={stop} size={24}>
+        <IconButton label={t('close')} onClick={stop} size={24}>
           ✕
         </IconButton>
       </div>

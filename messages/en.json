@@ -830,5 +830,33 @@
     "clickToLoadAudio": "Click to load audio",
     "clickToPlayAudio": "Click to play audio",
     "playlist": "Playlist"
+  },
+  "globalPlayer": {
+    "play": "Play",
+    "pause": "Pause",
+    "previous": "Previous",
+    "next": "Next",
+    "seek": "Seek",
+    "volume": "Volume",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "queue": "Queue",
+    "expand": "Expand",
+    "minimize": "Minimize",
+    "close": "Close"
+  },
+  "errorComponent": {
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try Again",
+    "retry": "Retry",
+    "unableToConnect": "Unable to connect to the server. Please check your internet connection.",
+    "accessDenied": "You need to be logged in to access this content.",
+    "signIn": "Sign In"
+  },
+  "emptyState": {
+    "notFound": "This item doesn't exist",
+    "doesNotExist": "doesn't exist",
+    "notFoundBody": "It might have been deleted, made private, or the link is wrong.",
+    "backToFeed": "Back to feed"
   }
 }

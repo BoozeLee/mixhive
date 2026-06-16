@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { Icon } from './ui/Icon';
 import { GlowText } from './ui/GlowText';
 import type { IconKey } from '../lib/icons';
@@ -39,6 +40,7 @@ export function EmptyState({
   actionTo,
   onAction,
 }: Props) {
+  const t = useTranslations('emptyState');
   return (
     <div
       role="status"
@@ -112,20 +114,21 @@ export function EmptyState({
 }
 
 export function NotFoundState({
-  what = 'item',
+  what,
   backTo = '/feed',
-  backLabel = 'Back to feed',
+  backLabel,
 }: {
   what?: string;
   backTo?: string;
   backLabel?: string;
 }) {
+  const t = useTranslations('emptyState');
   return (
     <EmptyState
       iconKey="search"
-      title={`This ${what} doesn't exist`}
-      body="It might have been deleted, made private, or the link is wrong."
-      actionLabel={backLabel}
+      title={what ? `${what} ${t('doesNotExist')}` : t('notFound')}
+      body={t('notFoundBody')}
+      actionLabel={backLabel || t('backToFeed')}
       actionTo={backTo}
     />
   );

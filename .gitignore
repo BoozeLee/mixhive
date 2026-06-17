@@ -84,3 +84,6 @@ simple-https*.mjs
 # Supabase CLI scratch directory (re-created on `supabase link`)
 supabase/.temp/
 .vercel
+
+# Go worker build artifact
+worker/audio/audio

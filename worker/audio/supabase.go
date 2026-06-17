@@ -172,9 +172,9 @@ func (s *Supabase) failJob(ctx context.Context, job *AudioJob, msg string) error
 	})
 }
 
-// upsertAudioFeatures writes the computed bpm/energy/mood to the audio_features
-// table, keyed by mix_id (on_conflict merge). musical_key is left null until a
-// chroma analyzer exists. Best-effort — failures are logged, not fatal.
+// upsertAudioFeatures writes the computed bpm/energy/mood/key to the
+// audio_features table, keyed by mix_id (on_conflict merge). Best-effort —
+// failures are logged, not fatal.
 func (s *Supabase) upsertAudioFeatures(ctx context.Context, mixID string, a *AudioAnalysis) error {
 	row := map[string]any{
 		"mix_id":     mixID,
@@ -182,11 +182,14 @@ func (s *Supabase) upsertAudioFeatures(ctx context.Context, mixID string, a *Aud
 		"mood":       a.Mood,
 		"energy":     a.Energy,
 		"source":     "go-worker",
-		"model":      "ffmpeg-autocorr-v1",
+		"model":      "ffmpeg-autocorr-chroma-v2",
 		"updated_at": time.Now().UTC().Format(time.RFC3339),
 	}
 	if a.BPM > 0 {
 		row["bpm"] = a.BPM
+	}
+	if a.Key != "" {
+		row["musical_key"] = a.Key
 	}
 	b, _ := json.Marshal(row)
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,

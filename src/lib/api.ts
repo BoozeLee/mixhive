@@ -44,6 +44,7 @@ import type {
   FeedCursor,
   FeedMix,
   FeedResult,
+  AiAgent,
   Mix,
   MixAgentCredit,
   MixedFeedResult,
@@ -419,6 +420,57 @@ export async function getMixesByAgent(slug: string): Promise<Mix[]> {
   }
   mixes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
   return mixes;
+}
+
+// --- AI agent-artists ---
+
+export async function getAgentFollowerCount(slug: string): Promise<number> {
+  if (!isSupabaseConfigured || !slug) return 0;
+  const { count } = await supabase
+    .from('ai_agent_follows')
+    .select('*', { count: 'exact', head: true })
+    .eq('agent_slug', slug);
+  return count || 0;
+}
+
+/** The agent-artist entity + follower count. Falls back to the credit name if the
+ *  agent row hasn't been backfilled yet. */
+export async function getAgent(slug: string): Promise<AiAgent | null> {
+  if (!isSupabaseConfigured || !slug) return null;
+  const { data } = await supabase
+    .from('ai_agents')
+    .select('slug, name')
+    .eq('slug', slug)
+    .maybeSingle();
+  const name = (data?.name as string | undefined) ?? (await getAgentName(slug));
+  if (!name) return null;
+  return { slug, name, follower_count: await getAgentFollowerCount(slug) };
+}
+
+export async function isFollowingAgent(slug: string, profileId: string): Promise<boolean> {
+  if (!isSupabaseConfigured || !slug || !profileId) return false;
+  const { data } = await supabase
+    .from('ai_agent_follows')
+    .select('agent_slug')
+    .eq('agent_slug', slug)
+    .eq('follower_profile_id', profileId)
+    .maybeSingle();
+  return !!data;
+}
+
+export async function followAgent(slug: string, profileId: string) {
+  if (!isSupabaseConfigured) return { error: null };
+  return supabase
+    .from('ai_agent_follows')
+    .insert({ agent_slug: slug, follower_profile_id: profileId });
+}
+
+export async function unfollowAgent(slug: string, profileId: string) {
+  if (!isSupabaseConfigured) return { error: null };
+  return supabase
+    .from('ai_agent_follows')
+    .delete()
+    .match({ agent_slug: slug, follower_profile_id: profileId });
 }
 
 export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {

@@ -156,6 +156,13 @@ export interface Mix {
   ai_band?: boolean;
 }
 
+/** An AI agent-artist (a followable "AI band member" with a public career). */
+export interface AiAgent {
+  slug: string;
+  name: string;
+  follower_count: number;
+}
+
 /** One AI-agent co-producer credit on a track (an "AI band member"). */
 export interface MixAgentCredit {
   id: string;

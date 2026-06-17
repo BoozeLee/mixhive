@@ -1,22 +1,23 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { colors } from '../styles/tokens';
 import { signInWithMock } from '../lib/mockAuth';
 
 export function DevLogin() {
   const t = useTranslations('devLogin');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDevLogin = async () => {
     setLoading(true);
+    setError(null);
     try {
       const result = await signInWithMock();
-      // Mock auth doesn't return error, just check if user exists
       if (result.user) {
-        // Redirect to home or refresh the page
         window.location.href = '/';
       }
     } catch (err) {
-      console.error('Login failed:', err);
+      setError(t('loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -31,16 +32,31 @@ export function DevLogin() {
         </div>
 
         <div className="space-y-4">
+          {error && (
+            <div
+              style={{
+                background: colors.dangerBg,
+                color: colors.danger,
+                padding: '10px 14px',
+                borderRadius: 8,
+                fontSize: 13,
+                marginBottom: 16,
+              }}
+            >
+              {error}
+            </div>
+          )}
+
           <button
             onClick={handleDevLogin}
             disabled={loading}
             className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
           >
-            {loading ? 'Loading...' : '🎮 Enter Demo Mode'}
+            {loading ? t('loading') : t('enterDemoMode')}
           </button>
 
           <div className="text-center text-gray-400 text-sm">
-            <p>🔧 This is a development mode for testing</p>
+            <p>{t('devModeTesting')}</p>
             <p className="mt-2">{t('noRealAuthenticationRequired')}</p>
           </div>
         </div>

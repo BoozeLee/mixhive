@@ -19,6 +19,7 @@ interface ComposerState {
   loadingSuggestions: boolean;
   dismissedIds: Set<string>;
   selectedId: string | undefined;
+  suggestionError: string | null;
   showSearch: boolean;
   searchQuery: string;
   searchResults: TrackCell[];
@@ -31,6 +32,7 @@ type ComposerAction =
   | { type: 'ADD_TRACK'; track: TrackCell }
   | { type: 'SET_SUGGESTIONS'; suggestions: Suggestion[] }
   | { type: 'SET_LOADING_SUGGESTIONS'; loading: boolean }
+  | { type: 'SET_SUGGESTION_ERROR'; error: string | null }
   | { type: 'DISMISS_SUGGESTION'; mix_id: string }
   | { type: 'SELECT_TRACK'; mix_id: string }
   | { type: 'TOGGLE_SEARCH'; open: boolean }
@@ -58,6 +60,8 @@ function composerReducer(state: ComposerState, action: ComposerAction): Composer
       return { ...state, suggestions: action.suggestions, loadingSuggestions: false };
     case 'SET_LOADING_SUGGESTIONS':
       return { ...state, loadingSuggestions: action.loading };
+    case 'SET_SUGGESTION_ERROR':
+      return { ...state, suggestionError: action.error, loadingSuggestions: false };
     case 'DISMISS_SUGGESTION': {
       const next = new Set(state.dismissedIds);
       next.add(action.mix_id);
@@ -96,6 +100,7 @@ const initialState: ComposerState = {
   loadingSuggestions: false,
   dismissedIds: new Set(),
   selectedId: undefined,
+  suggestionError: null,
   showSearch: false,
   searchQuery: '',
   searchResults: [],
@@ -207,7 +212,7 @@ export function HiveComposer() {
           }
         }
       } catch {
-        dispatch({ type: 'SET_LOADING_SUGGESTIONS', loading: false });
+        dispatch({ type: 'SET_SUGGESTION_ERROR', error: 'Could not load suggestions' });
       }
     },
     [state.tracks, user, bpmRange, genreFilter]
@@ -345,10 +350,10 @@ export function HiveComposer() {
 
       await supabase.from('playlist_mixes').insert(junctions);
       clearDraft();
-      toast.success('Set saved as playlist');
+      toast.success(t('setSavedAsPlaylist'));
       navigate(`/profile/${user.id}`);
     } catch {
-      toast.error('Failed to save set');
+      toast.error(t('failedToSaveSet'));
     } finally {
       dispatch({ type: 'SET_SAVING', saving: false });
     }
@@ -422,7 +427,7 @@ export function HiveComposer() {
               cursor: 'pointer',
             }}
           >
-            ⚡ Agent panel
+            {t('agentPanel')}
           </button>
           <button
             type="button"
@@ -439,7 +444,7 @@ export function HiveComposer() {
               cursor: state.tracks.length > 0 && !state.saving ? 'pointer' : 'default',
             }}
           >
-            {state.saving ? 'Saving…' : 'Save set'}
+            {state.saving ? t('saving') : t('saveSet')}
           </button>
         </div>
       </div>
@@ -461,7 +466,7 @@ export function HiveComposer() {
           }}
         >
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="composer" size={14} /> Draft restored from your last session.
+            <Icon name="composer" size={14} /> {t('draftRestored')}
           </span>
           <button
             type="button"
@@ -523,6 +528,22 @@ export function HiveComposer() {
         </div>
       )}
 
+      {/* Suggestion error */}
+      {state.suggestionError && (
+        <div
+          style={{
+            background: colors.dangerBg,
+            color: colors.danger,
+            padding: '8px 16px',
+            fontSize: 13,
+            textAlign: 'center',
+            flexShrink: 0,
+          }}
+        >
+          {state.suggestionError}
+        </div>
+      )}
+
       {/* Main area */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Canvas */}
@@ -536,7 +557,7 @@ export function HiveComposer() {
                 fontSize: fontSize.md,
               }}
             >
-              Start a new set — click the hex below to search for your first track
+              {t('startNewSet')}
             </div>
           )}
           <ComposerCanvas

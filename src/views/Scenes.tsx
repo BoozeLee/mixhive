@@ -1,10 +1,11 @@
 'use client';
 import { useTranslations } from 'next-intl';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { colors, fontSize, radius } from '../styles/tokens';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
+import { HiveButton } from '../components/hive/HiveButton';
 
 interface Scene {
   slug: string;
@@ -23,7 +24,9 @@ export function Scenes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchScenes = useCallback(() => {
+    setLoading(true);
+    setError(null);
     let active = true;
     fetch('/api/scenes')
       .then(r => r.json())
@@ -39,13 +42,17 @@ export function Scenes() {
     };
   }, []);
 
+  useEffect(() => {
+    fetchScenes();
+  }, [fetchScenes]);
+
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: 24 }}>
       <h1 style={{ fontSize: fontSize['3xl'], fontWeight: 700, color: colors.text.primary }}>
         {t('scenes')}
       </h1>
       <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 4 }}>
-        Local underground communities — artists, labels and collectives.
+        {t('subtitle')}
       </p>
 
       {loading ? (
@@ -53,7 +60,10 @@ export function Scenes() {
           <LoadingSpinner />
         </div>
       ) : error ? (
-        <p style={{ color: colors.text.dim, marginTop: 24 }}>Could not load scenes: {error}</p>
+        <div style={{ padding: 40, textAlign: 'center' }}>
+          <p style={{ color: colors.danger, marginBottom: 16 }}>{t('couldNotLoad', { error })}</p>
+          <HiveButton onClick={fetchScenes}>{t('retry')}</HiveButton>
+        </div>
       ) : scenes.length === 0 ? (
         <p style={{ color: colors.text.dim, marginTop: 24 }}>{t('noScenesYet')}</p>
       ) : (

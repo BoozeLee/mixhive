@@ -78,12 +78,12 @@ export function SceneDetail() {
   if (error || !scene) {
     return (
       <div style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
-        <p style={{ color: colors.text.dim }}>{error || 'Scene not found.'}</p>
+        <p style={{ color: colors.text.dim }}>{error || t('sceneNotFound')}</p>
         <button
           onClick={() => navigate('/scenes')}
           style={{ marginTop: 12, color: colors.text.secondary }}
         >
-          ← All scenes
+          {t('allScenes')}
         </button>
       </div>
     );
@@ -101,7 +101,7 @@ export function SceneDetail() {
           cursor: 'pointer',
         }}
       >
-        ← All scenes
+        {t('allScenes')}
       </button>
 
       <div
@@ -142,7 +142,7 @@ export function SceneDetail() {
         </h2>
         {listings.length === 0 ? (
           <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 8 }}>
-            No artists in this scene yet — be the first to set your location and genre.
+            {t('noArtistsYet')}
           </p>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, marginTop: 12, display: 'grid', gap: 8 }}>
@@ -166,7 +166,7 @@ export function SceneDetail() {
                   {a.verified ? ' ✓' : ''}
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{a.xp} XP</span>
+                  <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{t('xp', { count: a.xp })}</span>
                   <span
                     style={{
                       fontSize: fontSize.xs,

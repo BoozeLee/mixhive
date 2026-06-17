@@ -5,6 +5,7 @@ import { usePlayer } from '../lib/playerStore';
 import { repost, unrepost, hasReposted } from '../lib/api';
 import { LikeButton } from './LikeButton';
 import { ShareButton } from './ShareButton';
+import { AiBandBadge } from './AiBandBadge';
 import { Icon } from './ui/Icon';
 import type { FeedMix } from '../lib/types';
 import {
@@ -315,6 +316,7 @@ export function MixCard({ mix }: Props) {
 
               {/* Stats + genre chip row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                {mix.ai_band && <AiBandBadge />}
                 {mix.genre_name && (
                   <span
                     title={mix.genre_name}

@@ -129,8 +129,7 @@ export function PressKitStudio() {
               lineHeight: 1.6,
             }}
           >
-            Built only from your profile, public links, and published mixes. No invented
-            achievements, no outbound sending.
+            {t('pressKitDescription')}
           </p>
         </div>
         <button
@@ -151,7 +150,7 @@ export function PressKitStudio() {
             minHeight: 44,
           }}
         >
-          {generating ? 'Generating...' : active ? 'Regenerate EPK' : 'Generate EPK'}
+          {generating ? t('generating') : active ? t('regenerateEpk') : t('generateEpk')}
         </button>
       </header>
 
@@ -182,8 +181,7 @@ export function PressKitStudio() {
               lineHeight: 1.6,
             }}
           >
-            Complete your profile and upload at least one mix for a stronger press kit. You can
-            still generate a basic one now.
+            {t('noEpkDescription')}
           </p>
         </section>
       )}
@@ -215,13 +213,16 @@ export function PressKitStudio() {
                 fontSize: fontSize.sm,
               }}
             >
-              Version {active.version} · {active.is_public ? 'Public' : 'Private'} ·{' '}
-              {active.view_count} views
+              {t('versionPublic', {
+                v: active.version,
+                visibility: active.is_public ? t('public') : t('private'),
+                views: active.view_count,
+              })}
             </p>
             <p
               style={{ margin: `${space[2]}px 0 0`, color: colors.text.dim, fontSize: fontSize.xs }}
             >
-              {kits.length} saved version{kits.length === 1 ? '' : 's'} in this workspace
+              {t('savedVersions', { count: kits.length })}
             </p>
             <div style={{ display: 'grid', gap: space[4], marginTop: space[7] }}>
               <Link to={`/epk/${active.public_slug}`} style={linkButtonStyle('primary')}>
@@ -312,7 +313,7 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
           <h3 style={sectionTitleStyle}>{t('bookingPitch')}</h3>
           <p style={bodyStyle}>
             {content.booking_pitch ||
-              'Add more profile details to generate a stronger booking pitch.'}
+              t('addMoreProfileDetails')}
           </p>
         </section>
         {content.bio && (
@@ -343,7 +344,7 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
                   <span
                     style={{ color: colors.text.dim, fontSize: fontSize.xs, marginLeft: space[3] }}
                   >
-                    {mix.play_count} plays
+                    {mix.play_count} {t('plays')}
                   </span>
                 </Link>
               ))}

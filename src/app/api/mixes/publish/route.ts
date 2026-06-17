@@ -1,11 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { slugify } from '@/lib/slug';
 
-// Publish a finished Beehive Studio track straight into MixHive as a real `mixes`
-// row. Authed by the user's Supabase JWT (same auth.users across both products),
-// so `dj_id` is always derived from the verified session — never trusted from the
-// client. Uploads the audio to the public `mix-audio` bucket under `${uid}/...`.
+// Publish a finished track into MixHive as a real `mixes` row, optionally with
+// AI-agent provenance ("AI band" credits). Authed by the user's Supabase JWT, so
+// `dj_id` is always derived from the verified session — never trusted from the
+// client. Uploads audio to the public `mix-audio` bucket under `${uid}/...`, then
+// writes the mix row + credits + `ai_band` flag atomically via an RPC.
 const MAX_AUDIO_BYTES = 100 * 1024 * 1024; // 100 MB
+const MAX_AGENTS = 24;
+
+const cap = (v: unknown, n: number): string | null => {
+  if (typeof v !== 'string') return null;
+  const s = v.trim();
+  return s ? s.slice(0, n) : null;
+};
+
+// Parse + validate the optional AI-agent provenance into credit rows. Returns []
+// when absent/invalid so publishing without provenance behaves exactly as before.
+function parseCredits(meta: Record<string, unknown>) {
+  const prov = meta.provenance as { agents?: unknown } | undefined;
+  const agents = Array.isArray(prov?.agents) ? prov!.agents : [];
+  const out: Array<Record<string, string | null>> = [];
+  for (const a of agents.slice(0, MAX_AGENTS)) {
+    if (!a || typeof a !== 'object') continue;
+    const rec = a as Record<string, unknown>;
+    const name = cap(rec.name, 80);
+    if (!name) continue;
+    out.push({
+      agent_slug: slugify(name),
+      agent_name: name,
+      agent_role: cap(rec.role, 60),
+      contribution: cap(rec.contribution, 280),
+      model: cap(rec.model, 60),
+    });
+  }
+  return out;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -86,8 +117,8 @@ export async function POST(req: NextRequest) {
     }
 
     const durationSecs = Number(meta.durationSecs);
-    const row = {
-      dj_id: user.id,
+    const credits = parseCredits(meta);
+    const pMix = {
       title,
       description: typeof meta.description === 'string' ? meta.description : null,
       audio_url: publicUrl,
@@ -95,19 +126,29 @@ export async function POST(req: NextRequest) {
       genre_id: genreId,
       tags: Array.isArray(meta.tags) ? meta.tags : null,
       platform_links: {
-        source: 'beehive-studio',
+        source: typeof meta.source === 'string' ? meta.source : 'mixhive',
         bpm: meta.bpm ?? null,
         key: meta.key ?? null,
       },
       is_explicit: false,
     };
 
-    const { data: mix, error: insErr } = await sb.from('mixes').insert(row).select('id').single();
-    if (insErr) {
-      return NextResponse.json({ error: insErr.message }, { status: 500 });
+    // One atomic call: mix row + agent credits + ai_band flag (dj_id forced to
+    // auth.uid() inside the RPC). No partial state if credits fail.
+    const { data: mixId, error: rpcErr } = await sb.rpc('publish_mix_with_credits', {
+      p_mix: pMix,
+      p_credits: credits,
+    });
+    if (rpcErr || !mixId) {
+      // Roll back the orphaned upload so a failed publish leaves no stray audio.
+      await sb.storage
+        .from('mix-audio')
+        .remove([path])
+        .catch(() => {});
+      return NextResponse.json({ error: rpcErr?.message || 'publish failed' }, { status: 500 });
     }
 
-    return NextResponse.json({ id: mix.id, audio_url: publicUrl, url: `/mix/${mix.id}` });
+    return NextResponse.json({ id: mixId, audio_url: publicUrl, url: `/mix/${mixId}` });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Internal error' },

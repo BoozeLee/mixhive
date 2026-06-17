@@ -45,6 +45,7 @@ import type {
   FeedMix,
   FeedResult,
   Mix,
+  MixAgentCredit,
   MixedFeedResult,
   ModerationAction,
   ModerationSignal,
@@ -376,6 +377,48 @@ export async function getMix(id: string): Promise<Mix | null> {
     dj: data.profiles,
     genre_name: data.genres?.name,
   };
+}
+
+export async function getMixAgentCredits(mixId: string): Promise<MixAgentCredit[]> {
+  if (!isSupabaseConfigured || !isUuid(mixId)) return [];
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('id, mix_id, agent_slug, agent_name, agent_role, contribution, model, ord')
+    .eq('mix_id', mixId)
+    .order('ord', { ascending: true });
+  return (data as MixAgentCredit[] | null) ?? [];
+}
+
+/** Display name for an agent slug (first credit's name), for the browse header. */
+export async function getAgentName(slug: string): Promise<string | null> {
+  if (!isSupabaseConfigured || !slug) return null;
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('agent_name')
+    .eq('agent_slug', slug)
+    .limit(1)
+    .maybeSingle();
+  return (data?.agent_name as string | undefined) ?? null;
+}
+
+/** Distinct tracks that feature an agent (by slug), most recent first. */
+export async function getMixesByAgent(slug: string): Promise<Mix[]> {
+  if (!isSupabaseConfigured || !slug) return [];
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('mix:mixes!inner(*, genres(name), profiles!mixes_dj_id_fkey(*))')
+    .eq('agent_slug', slug);
+  const seen = new Set<string>();
+  const mixes: Mix[] = [];
+  type Row = { mix: (Mix & { genres?: { name?: string }; profiles?: Profile }) | null };
+  for (const row of (data as Row[] | null) ?? []) {
+    const m = row.mix;
+    if (!m?.id || seen.has(m.id)) continue;
+    seen.add(m.id);
+    mixes.push({ ...m, dj: m.profiles, genre_name: m.genres?.name ?? null });
+  }
+  mixes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  return mixes;
 }
 
 export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {

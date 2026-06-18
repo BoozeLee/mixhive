@@ -33,6 +33,8 @@ const topItems: SidebarItem[] = [
   { path: '/agents/inbox', icon: 'inbox', label: 'Inbox', ariaLabel: 'Agent Inbox' },
   { path: '/messages', icon: 'messages', label: 'Messages', ariaLabel: 'Direct messages' },
   { path: '/agents/gallery', icon: 'agents', label: 'BeeCast', ariaLabel: 'BeeCast agents' },
+  { path: '/ai-band', icon: 'agents', label: 'AI Band', ariaLabel: 'AI Band agents' },
+  { path: '/leaderboard', icon: 'star', label: 'Leaderboard', ariaLabel: 'XP Leaderboard' },
   { path: '/quests', icon: 'quests', label: 'Quests', ariaLabel: 'Mythic Quest Lines' },
   { path: '/scene-radar', icon: 'radar', label: 'Radar', ariaLabel: 'Scene Radar' },
   { path: '/composer', icon: 'composer', label: 'Composer', ariaLabel: 'Hive Composer' },

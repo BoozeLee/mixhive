@@ -1985,6 +1985,109 @@ export async function createQuestMilestone(questId: string, title: string): Prom
   return true;
 }
 
+// --- AI-Band ---
+
+export interface AIAgent {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  personality_traits: string[] | null;
+  genres: string[] | null;
+  style_tags: string[] | null;
+  xp: number;
+  level: number;
+  followers_count: number;
+  mixes_credited: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface AIAgentMix {
+  mix_id: string;
+  role: string;
+  credit_label: string | null;
+  mixes: {
+    id: string;
+    title: string;
+    artwork_url: string | null;
+    audio_url: string | null;
+    play_count: number | null;
+    like_count: number | null;
+    duration_seconds: number | null;
+    created_at: string;
+    profiles: { username: string; display_name: string | null; avatar_url: string | null } | null;
+  } | null;
+}
+
+export async function listAIAgents(limit = 50): Promise<AIAgent[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data, error } = await supabase
+    .from('ai_agents')
+    .select('*')
+    .eq('is_active', true)
+    .order('followers_count', { ascending: false })
+    .limit(limit);
+  if (error) { console.error('listAIAgents', error); return []; }
+  return (data ?? []) as AIAgent[];
+}
+
+export async function getAIAgent(slug: string): Promise<AIAgent | null> {
+  if (!isSupabaseConfigured) return null;
+  const { data } = await supabase
+    .from('ai_agents')
+    .select('*')
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .single();
+  return data as AIAgent | null;
+}
+
+export async function getAIAgentMixes(agentId: string, limit = 20): Promise<AIAgentMix[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data, error } = await supabase
+    .from('mix_agent_credits')
+    .select(`mix_id, role, credit_label, mixes(id, title, artwork_url, audio_url, play_count, like_count, duration_seconds, created_at, profiles(username, display_name, avatar_url))`)
+    .eq('agent_id', agentId)
+    .limit(limit);
+  if (error) { console.error('getAIAgentMixes', error); return []; }
+  return (data ?? []) as AIAgentMix[];
+}
+
+export async function isFollowingAIAgent(userId: string, agentId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false;
+  const { data } = await supabase
+    .from('ai_agent_follows')
+    .select('ai_agent_id')
+    .eq('follower_id', userId)
+    .eq('ai_agent_id', agentId)
+    .maybeSingle();
+  return data !== null;
+}
+
+export async function followAIAgent(userId: string, agentId: string): Promise<void> {
+  const { error } = await supabase
+    .from('ai_agent_follows')
+    .insert({ follower_id: userId, ai_agent_id: agentId });
+  if (error) throw error;
+}
+
+export async function unfollowAIAgent(userId: string, agentId: string): Promise<void> {
+  const { error } = await supabase
+    .from('ai_agent_follows')
+    .delete()
+    .eq('follower_id', userId)
+    .eq('ai_agent_id', agentId);
+  if (error) throw error;
+}
+
+
+export async function getAIAgentLeaderboard(limit = 10): Promise<AIAgent[]> {
+  return listAIAgents(limit);
+}
+
 // --- Helpers ---
 
 function formatFeedMix(m: Record<string, unknown>): FeedMix {

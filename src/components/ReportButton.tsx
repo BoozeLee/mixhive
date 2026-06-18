@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { reportContent } from '../lib/api';
 import { colors, radius, space } from '../styles/tokens';
 import { Button } from './ui/Button';
@@ -12,6 +13,7 @@ interface Props {
 /** User-facing "report this content" affordance. Mirrors BlockButton but opens
  *  a small reason field, then posts via reportContent → /api/reports. */
 export function ReportButton({ sourceTable, sourceId }: Props) {
+  const t = useTranslations('reportButton');
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
@@ -28,18 +30,18 @@ export function ReportButton({ sourceTable, sourceId }: Props) {
       setDone(true);
       setOpen(false);
     } else {
-      setError(res.error ?? 'Could not file report');
+      setError(res.error ?? t('couldNotFile'));
     }
   }
 
   if (done) {
-    return <span style={{ color: colors.text.dim, fontSize: 11 }}>✓ Reported — thanks</span>;
+    return <span style={{ color: colors.text.dim, fontSize: 11 }}>{t('reportedThanks')}</span>;
   }
 
   if (!open) {
     return (
       <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
-        Report
+        {t('report')}
       </Button>
     );
   }
@@ -57,21 +59,21 @@ export function ReportButton({ sourceTable, sourceId }: Props) {
       }}
     >
       <Textarea
-        label="Report reason"
+        label={t('reportReason')}
         hideLabel
         value={reason}
         onChange={e => setReason(e.target.value)}
-        placeholder="What's wrong with this? (optional)"
+        placeholder={t('reasonPlaceholder')}
         rows={2}
         style={{ resize: 'vertical' }}
       />
       {error && <span style={{ color: colors.danger, fontSize: 11 }}>{error}</span>}
       <div style={{ display: 'flex', gap: space[3] }}>
         <Button variant="danger" size="sm" onClick={submit} disabled={busy} loading={busy}>
-          {busy ? 'Reporting…' : 'Submit report'}
+          {busy ? t('reporting') : t('submitReport')}
         </Button>
         <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
-          Cancel
+          {t('cancel')}
         </Button>
       </div>
     </div>

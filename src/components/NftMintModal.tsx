@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useState } from 'react';
 import { Modal } from './ui/Modal';
@@ -38,6 +39,7 @@ export function NftMintModal({
   defaultConfig,
   onDeployed,
 }: Props) {
+  const t = useTranslations('nftMintModal');
   const [step, setStep] = useState<Step>('configure');
   const [name, setName] = useState(defaultConfig?.name ?? '');
   const [description, setDescription] = useState(defaultConfig?.description ?? '');
@@ -160,19 +162,19 @@ export function NftMintModal({
           </div>
 
           <div>
-            <label style={labelStyle}>Description</label>
+            <label style={labelStyle}>{t('description')}</label>
             <textarea
               value={description}
               onChange={e => setDescription(e.target.value)}
               rows={2}
-              placeholder="A limited receipt of early support."
+              placeholder={t('aLimitedReceiptOf')}
               style={{ ...inputStyle, resize: 'vertical' }}
             />
           </div>
 
           <div style={{ display: 'flex', gap: space[4] }}>
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>Max supply</label>
+              <label style={labelStyle}>{t('maxSupply')}</label>
               <input
                 type="number"
                 min={1}
@@ -182,12 +184,12 @@ export function NftMintModal({
                 style={inputStyle}
               />
               <span style={{ fontSize: fontSize.xs, color: colors.text.faint }}>
-                Leave 0 for unlimited
+                {t('leave0ForUnlimited')}
               </span>
             </div>
 
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>Soulbound (non-transferable)</label>
+              <label style={labelStyle}>{t('soulboundNonTransferable')}</label>
               <div style={{ marginTop: 8 }}>
                 <label
                   style={{
@@ -204,7 +206,7 @@ export function NftMintModal({
                     onChange={e => setSoulbound(e.target.checked)}
                     style={{ accentColor: colors.gold }}
                   />
-                  <span>Soulbound token</span>
+                  <span>{t('soulboundToken')}</span>
                 </label>
                 <p style={{ fontSize: fontSize.xs, color: colors.text.faint, margin: '4px 0 0' }}>
                   {soulbound
@@ -225,8 +227,8 @@ export function NftMintModal({
               color: colors.text.muted,
             }}
           >
-            Tokens are minted on <strong>Base L2</strong> via Zora Protocol. Gas is covered by
-            MIXHIVE — free to claim for holders. No secondary market is shown inside the app.
+            {t('tokensAreMintedOn')}<strong>{t('baseL2')}</strong> via Zora Protocol. Gas is covered
+            by MIXHIVE — free to claim for holders. No secondary market is shown inside the app.
           </div>
 
           <div
@@ -238,7 +240,7 @@ export function NftMintModal({
             }}
           >
             <HiveButton variant="secondary" onClick={handleClose}>
-              Cancel
+              {t('cancel')}
             </HiveButton>
             <HiveButton
               variant="secondary"
@@ -273,7 +275,7 @@ export function NftMintModal({
               ← Edit
             </HiveButton>
             <HiveButton variant="primary" onClick={handleDeploy}>
-              Deploy on Base
+              {t('deployOnBase')}
             </HiveButton>
           </div>
         </div>
@@ -304,7 +306,7 @@ export function NftMintModal({
           <div style={{ textAlign: 'center', padding: `${space[4]}px 0` }}>
             <div style={{ fontSize: 40, marginBottom: space[3] }}>✅</div>
             <p style={{ color: colors.text.secondary, fontSize: fontSize.sm }}>
-              Collection <strong>{name}</strong> is live. Fans can now claim tokens from the{' '}
+              {t('collection')}<strong>{name}</strong> is live. Fans can now claim tokens from the{' '}
               {sourceType} page.
             </p>
             {collectionId && (
@@ -314,7 +316,7 @@ export function NftMintModal({
             )}
           </div>
           <HiveButton variant="primary" onClick={handleClose} style={{ width: '100%' }}>
-            Done
+            {t('done')}
           </HiveButton>
         </div>
       )}
@@ -337,6 +339,7 @@ function TokenPreviewCard({
   sourceType: 'mix' | 'quest' | 'event';
   imageUrl?: string;
 }) {
+  const t = useTranslations('nftMintModal');
   return (
     <div
       style={{
@@ -381,7 +384,7 @@ function TokenPreviewCard({
             }
             gold
           />
-          <Tag label="Base L2" />
+          <Tag label={t('baseL2')} />
         </div>
       </div>
     </div>

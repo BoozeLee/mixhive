@@ -18,6 +18,7 @@ type AudioAnalysis struct {
 	BPM         float64 // autocorrelation tempo estimate (0 if undetectable)
 	Energy      float64 // mean loudness 0..1
 	Mood        string  // peak | groove | ambient | transition
+	Key         string  // musical key e.g. "A min" ("" if undetectable)
 }
 
 const decodeSampleRate = 8000 // mono decode rate used for waveform + tempo
@@ -85,6 +86,7 @@ func analyze(ctx context.Context, audio []byte, points int) (*AudioAnalysis, err
 
 	bpm, energy := tempoAndEnergy(samples)
 	mood := classifyMood(bpm, energy)
+	key := detectKey(samples, decodeSampleRate)
 
 	return &AudioAnalysis{
 		Peaks:       peaks,
@@ -92,6 +94,7 @@ func analyze(ctx context.Context, audio []byte, points int) (*AudioAnalysis, err
 		BPM:         bpm,
 		Energy:      round3(energy),
 		Mood:        mood,
+		Key:         key,
 	}, nil
 }
 

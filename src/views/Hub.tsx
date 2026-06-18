@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
@@ -20,15 +21,15 @@ const TABS = [
     id: 'create',
     label: 'Create',
     watermark: 'CREATE',
-    accent: '#ffd84a',
+    accent: colors.accentBrightest,
     dim: withAlpha(colors.accentBright, 0.086),
   },
   {
     id: 'community',
     label: 'Community',
     watermark: 'COMMUNITY',
-    accent: '#e8b830',
-    dim: '#e8b83016',
+    accent: colors.accentBright,
+    dim: withAlpha(colors.accentBright, 0.086),
   },
   {
     id: 'marketplace',
@@ -37,7 +38,7 @@ const TABS = [
     accent: colors.accent,
     dim: withAlpha(colors.accent, 0.09),
   },
-  { id: 'agents', label: 'Agents & AI', watermark: 'AGENTS', accent: '#d4a830', dim: '#d4a83016' },
+  { id: 'agents', label: 'Agents & AI', watermark: 'AGENTS', accent: colors.accentAmber, dim: withAlpha(colors.accentAmber, 0.086) },
   {
     id: 'profile',
     label: 'Profile',
@@ -49,7 +50,7 @@ const TABS = [
     id: 'editorial',
     label: 'Editorial',
     watermark: 'STORIES',
-    accent: '#ffd84a',
+    accent: colors.accentBrightest,
     dim: withAlpha(colors.accentBright, 0.086),
   },
 ] as const;
@@ -319,6 +320,7 @@ function HubCard({
   isAuthed: boolean;
   accent: string;
 }) {
+  const t = useTranslations('hub');
   const locked = card.auth && !isAuthed;
 
   return (
@@ -411,7 +413,7 @@ function HubCard({
                 </span>
               )}
               {locked && (
-                <span aria-label="requires sign in" style={{ fontSize: 11, opacity: 0.35 }}>
+                <span aria-label={t('requiresSignIn')} style={{ fontSize: 11, opacity: 0.35 }}>
                   🔒
                 </span>
               )}
@@ -469,6 +471,7 @@ function HubCard({
 // ─── Hub page ──────────────────────────────────────────────────────────────────
 
 export function Hub() {
+  const t = useTranslations('hub');
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabId>('discover');
 
@@ -533,7 +536,7 @@ export function Hub() {
               transition: 'color 0.3s',
             }}
           >
-            Feature Hub
+            {t('featureHub')}
           </div>
 
           {/* Gradient text headline */}
@@ -552,7 +555,7 @@ export function Hub() {
               transition: 'background 0.4s',
             }}
           >
-            MixHive
+            {t('mixhive')}
           </h1>
 
           <p
@@ -590,7 +593,7 @@ export function Hub() {
         {/* Tab bar with layoutId animated pill */}
         <div
           role="tablist"
-          aria-label="Hub navigation"
+          aria-label={t('hubNavigation')}
           style={{
             display: 'flex',
             gap: space[1],

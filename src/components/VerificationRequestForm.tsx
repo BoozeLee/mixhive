@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { createVerificationRequest, getMyVerificationRequest } from '../lib/api';
 import type { Profile, VerificationBadgeType, VerificationRequest } from '../lib/types';
 import { Button } from './ui/Button';
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function VerificationRequestForm({ profile }: Props) {
+  const t = useTranslations('verificationRequestForm');
   const [request, setRequest] = useState<VerificationRequest | null>(null);
   const [djName, setDjName] = useState(profile.display_name || profile.username);
   const [requestedBadge, setRequestedBadge] = useState<VerificationBadgeType>('verified');
@@ -77,7 +79,7 @@ export function VerificationRequestForm({ profile }: Props) {
         }}
       >
         <h2 style={{ margin: 0, color: colors.text.primary, fontSize: 16 }}>
-          Verification request
+          {t('verificationRequest')}
         </h2>
         <p style={{ color: colors.text.muted, fontSize: 13, margin: '8px 0 0' }}>
           Status:{' '}
@@ -113,10 +115,12 @@ export function VerificationRequestForm({ profile }: Props) {
         marginBottom: space[10],
       }}
     >
-      <h2 style={{ margin: 0, color: colors.text.primary, fontSize: 16 }}>Request verification</h2>
+      <h2 style={{ margin: 0, color: colors.text.primary, fontSize: 16 }}>
+        {t('requestVerification')}
+      </h2>
       <form onSubmit={submit} style={{ display: 'grid', gap: space[6], marginTop: space[6] }}>
         <Input
-          label="DJ or artist name"
+          label={t('djOrArtistName')}
           value={djName}
           onChange={event => setDjName(event.target.value)}
           required
@@ -124,7 +128,7 @@ export function VerificationRequestForm({ profile }: Props) {
         <label
           style={{ color: colors.text.secondary, fontSize: 13, display: 'grid', gap: space[3] }}
         >
-          Badge type
+          {t('badgeType')}
           <select
             value={requestedBadge}
             onChange={event => setRequestedBadge(event.target.value as VerificationBadgeType)}
@@ -136,33 +140,33 @@ export function VerificationRequestForm({ profile }: Props) {
               padding: '8px 10px',
             }}
           >
-            <option value="verified">Verified</option>
-            <option value="artist">Artist</option>
-            <option value="official">Official</option>
+            <option value="verified">{t('verified')}</option>
+            <option value="artist">{t('artist')}</option>
+            <option value="official">{t('official')}</option>
           </select>
         </label>
         <Input
-          label="Website"
+          label={t('website')}
           value={website}
           onChange={event => setWebsite(event.target.value)}
-          placeholder="https://..."
+          placeholder={t('https')}
         />
         <Input
-          label="Social or music link"
+          label={t('socialOrMusicLink')}
           value={social}
           onChange={event => setSocial(event.target.value)}
-          placeholder="SoundCloud, Mixcloud, Instagram, press kit..."
+          placeholder={t('soundcloudMixcloudInstagramPress')}
         />
         <Textarea
-          label="Proof"
+          label={t('proof')}
           value={proof}
           onChange={event => setProof(event.target.value)}
           rows={4}
-          placeholder="Tell us how listeners can verify this profile belongs to you."
+          placeholder={t('tellUsHowListeners')}
           error={error || undefined}
         />
         <Button type="submit" loading={submitting}>
-          Submit request
+          {t('submitRequest')}
         </Button>
       </form>
     </section>

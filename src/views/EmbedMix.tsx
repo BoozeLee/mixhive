@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { getMix } from '../lib/api';
 import type { Mix } from '../lib/types';
@@ -6,6 +7,7 @@ import { colors } from '../styles/tokens';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 export function EmbedMix() {
+  const t = useTranslations('embedMix');
   const { id } = useParams<{ id: string }>();
   const [mix, setMix] = useState<Mix | null>(null);
   const [error, setError] = useState(false);
@@ -37,7 +39,7 @@ export function EmbedMix() {
         <span style={{ color: colors.accent, fontSize: 18, marginBottom: 4 }} aria-hidden="true">
           ♪
         </span>
-        This mix is unavailable
+        {t('thisMixIsUnavailable')}
       </div>
     );
   }

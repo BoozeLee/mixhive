@@ -196,7 +196,7 @@ export function GearMarketplace() {
       {/* Count */}
       {!loading && (
         <p style={{ color: colors.text.faint, fontSize: 13, marginBottom: 16 }}>
-          {total} listing{total !== 1 ? 's' : ''}
+          {t('listingCount', { total })}
         </p>
       )}
 
@@ -241,9 +241,9 @@ export function GearMarketplace() {
           <div style={{ fontSize: 48, marginBottom: 12 }}>🎛</div>
           <p style={{ fontSize: 18 }}>{t('noListings')}</p>
           <p style={{ fontSize: 14 }}>
-            Try different filters or{' '}
+            {t('tryDifferentFilters')}{' '}
             <Link to="/marketplace/gear/new" style={{ color: 'var(--hive-gold)' }}>
-              list your gear
+              {t('listGearLink')}
             </Link>
           </p>
         </div>

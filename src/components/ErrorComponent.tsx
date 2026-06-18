@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, space, radius } from '../styles/tokens';
 
 interface ErrorComponentProps {
@@ -12,12 +13,13 @@ interface ErrorComponentProps {
 
 export function ErrorComponent({
   error,
-  message = 'Something went wrong',
+  message,
   onRetry,
-  retryText = 'Try Again',
+  retryText,
   fullPage = false,
   action,
 }: ErrorComponentProps) {
+  const t = useTranslations('errorComponent');
   const errorMessage = error instanceof Error ? error.message : error;
 
   const content = (
@@ -47,7 +49,7 @@ export function ErrorComponent({
           lineHeight: 1.4,
         }}
       >
-        {message}
+        {message || t('somethingWentWrong')}
       </h2>
 
       {errorMessage && process.env.NODE_ENV === 'development' && (
@@ -100,7 +102,7 @@ export function ErrorComponent({
               e.currentTarget.style.background = colors.accent;
             }}
           >
-            {retryText}
+            {retryText || t('tryAgain')}
           </button>
         )}
 
@@ -129,12 +131,13 @@ export function ErrorComponent({
 
 // Network Error Component
 export function NetworkError({ onRetry }: { onRetry?: () => void }) {
+  const t = useTranslations('errorComponent');
   return (
     <ErrorComponent
       error="Network Error"
-      message="Unable to connect to the server. Please check your internet connection."
+      message={t('unableToConnect')}
       onRetry={onRetry}
-      retryText="Retry"
+      retryText={t('retry')}
       fullPage={true}
     />
   );
@@ -147,10 +150,11 @@ export function NetworkError({ onRetry }: { onRetry?: () => void }) {
 
 // Permission Error Component
 export function PermissionError({ onLogin }: { onLogin?: () => void }) {
+  const t = useTranslations('errorComponent');
   return (
     <ErrorComponent
       error="Access Denied"
-      message="You need to be logged in to access this content."
+      message={t('accessDenied')}
       action={
         onLogin && (
           <button
@@ -166,7 +170,7 @@ export function PermissionError({ onLogin }: { onLogin?: () => void }) {
               cursor: 'pointer',
             }}
           >
-            Sign In
+            {t('signIn')}
           </button>
         )
       }

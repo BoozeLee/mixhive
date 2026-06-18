@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { BeeMark } from './brand/BeeMark';
 import { needsOnboarding } from '../lib/authRouting';
@@ -12,12 +13,13 @@ export function ProtectedRoute({
   allowIncompleteProfile?: boolean;
 }) {
   const { user, profile, loading } = useAuth();
+  const t = useTranslations('protectedRoute');
 
   if (loading)
     return (
       <div
         role="status"
-        aria-label="Loading protected page"
+        aria-label={t('loadingLabel')}
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -50,7 +52,7 @@ export function ProtectedRoute({
             fontFamily: 'var(--font-mono, monospace)',
           }}
         >
-          Entering the hive…
+          {t('enteringTheHive')}
         </div>
       </div>
     );

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -27,6 +28,7 @@ interface Props {
 const STEM_BUCKET = 'mix-audio';
 
 export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
+  const t = useTranslations('mythicSessionRoom');
   const { profile } = useAuth();
   const [snapshot, setSnapshot] = useState<RitualSnapshot | null>(null);
   const [messages, setMessages] = useState<RitualMessage[]>([]);
@@ -314,7 +316,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
   };
 
   if (!snapshot)
-    return <div style={{ padding: 32, color: colors.text.muted }}>Entering ritual…</div>;
+    return <div style={{ padding: 32, color: colors.text.muted }}>{t('enteringRitual')}</div>;
 
   const activeVote = votes.find(vote => vote.status === 'open');
   return (
@@ -375,12 +377,12 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
           )}
           {isCreator && (
             <HiveButton variant="ghost" size="sm" onClick={() => void createHandoff()}>
-              Open in Beehive
+              {t('openInBeehive')}
             </HiveButton>
           )}
           {role === 'owner' && (
             <HiveButton variant="danger" size="sm" onClick={() => void endSession()}>
-              End & review
+              {t('endReview')}
             </HiveButton>
           )}
         </div>
@@ -416,7 +418,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               flexWrap: 'wrap',
             }}
           >
-            <strong>Shared sound</strong>
+            <strong>{t('sharedSound')}</strong>
             {isCreator && (
               <>
                 <input
@@ -433,17 +435,17 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                   loading={uploading}
                   onClick={() => fileRef.current?.click()}
                 >
-                  Add audio
+                  {t('addAudio')}
                 </HiveButton>
               </>
             )}
             {role === 'owner' && (
               <div style={{ display: 'flex', gap: 4 }}>
                 <input
-                  aria-label="Creator username"
+                  aria-label={t('creatorUsername')}
                   value={inviteUsername}
                   onChange={event => setInviteUsername(event.target.value)}
-                  placeholder="@creator"
+                  placeholder={t('creator')}
                   style={{
                     width: 120,
                     background: colors.bg,
@@ -454,7 +456,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                   }}
                 />
                 <HiveButton variant="ghost" size="sm" onClick={() => void inviteCreator()}>
-                  Invite
+                  {t('invite')}
                 </HiveButton>
               </div>
             )}
@@ -467,7 +469,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               borderBottom: `1px solid ${colors.border}`,
             }}
           >
-            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>Now shaping</div>
+            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>{t('nowShaping')}</div>
             <div style={{ margin: '6px 0 12px', fontWeight: fontWeight.bold }}>
               {currentAsset?.name ?? 'Select an asset'}
             </div>
@@ -480,7 +482,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                     void setPlayback(currentAsset, 'playing', audioRef.current?.currentTime ?? 0)
                   }
                 >
-                  Play for everyone
+                  {t('playForEveryone')}
                 </HiveButton>
                 <HiveButton
                   variant="glass"
@@ -489,10 +491,10 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                     void setPlayback(currentAsset, 'paused', audioRef.current?.currentTime ?? 0)
                   }
                 >
-                  Pause
+                  {t('pause')}
                 </HiveButton>
                 <HiveButton variant="ghost" size="sm" onClick={() => setShowVote(true)}>
-                  Open vote
+                  {t('openVote')}
                 </HiveButton>
               </div>
             )}
@@ -520,13 +522,13 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               </button>
             ))}
             {snapshot.assets.length === 0 && (
-              <div style={{ color: colors.text.muted }}>Creators have not added audio yet.</div>
+              <div style={{ color: colors.text.muted }}>{t('creatorsHaveNotAdded')}</div>
             )}
           </div>
         </section>
         <section style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <div style={{ padding: space[6], borderBottom: `1px solid ${colors.border}` }}>
-            <strong>Audience signal</strong> ·{' '}
+            <strong>{t('audienceSignal')}</strong> ·{' '}
             <span style={{ color: colors.text.muted }}>{participants.length} present</span>
           </div>
           {activeVote && (
@@ -566,7 +568,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                   {item.sender_id !== profile?.id && (
                     <button
                       onClick={() => void reportMessage(item.id)}
-                      aria-label="Report message"
+                      aria-label={t('reportMessage')}
                       style={{
                         background: 'transparent',
                         border: 0,
@@ -581,7 +583,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                     <>
                       <button
                         onClick={() => void hideMessage(item.id)}
-                        aria-label="Hide message"
+                        aria-label={t('hideMessage')}
                         style={{
                           background: 'transparent',
                           border: 0,
@@ -593,7 +595,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                       </button>
                       <button
                         onClick={() => void moderateProfile(item.sender_id, 'mute')}
-                        aria-label="Mute audience member"
+                        aria-label={t('muteAudienceMember')}
                         style={{
                           background: 'transparent',
                           border: 0,
@@ -605,7 +607,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                       </button>
                       <button
                         onClick={() => void moderateProfile(item.sender_id, 'remove')}
-                        aria-label="Remove audience member"
+                        aria-label={t('removeAudienceMember')}
                         style={{
                           background: 'transparent',
                           border: 0,
@@ -621,7 +623,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               </div>
             ))}
             {messages.length === 0 && (
-              <div style={{ color: colors.text.muted }}>The room is listening.</div>
+              <div style={{ color: colors.text.muted }}>{t('theRoomIsListening')}</div>
             )}
           </div>
           <div
@@ -639,7 +641,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               onKeyDown={event => {
                 if (event.key === 'Enter') void sendMessage();
               }}
-              placeholder="Add to the ritual…"
+              placeholder={t('addToTheRitual')}
               style={{
                 flex: 1,
                 background: colors.bg,
@@ -655,7 +657,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               disabled={!message.trim()}
               onClick={() => void sendMessage()}
             >
-              Send
+              {t('send')}
             </HiveButton>
           </div>
         </section>
@@ -663,7 +665,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
       {showVote && (
         <div
           role="dialog"
-          aria-label="Create audience vote"
+          aria-label={t('createAudienceVote')}
           style={{
             position: 'absolute',
             inset: '20% 25%',
@@ -674,14 +676,14 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
             zIndex: 20,
           }}
         >
-          <h3>Open a creative fork</h3>
+          <h3>{t('openACreativeFork')}</h3>
           <p style={{ color: colors.text.muted }}>
             Audience members will choose between the first four shared assets.
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
-            <HiveButton onClick={() => void createVote()}>Open vote</HiveButton>
+            <HiveButton onClick={() => void createVote()}>{t('openVote')}</HiveButton>
             <HiveButton variant="ghost" onClick={() => setShowVote(false)}>
-              Cancel
+              {t('cancel')}
             </HiveButton>
           </div>
         </div>

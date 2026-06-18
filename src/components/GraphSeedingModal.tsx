@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from './hive/HiveButton';
 import toast from 'react-hot-toast';
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function GraphSeedingModal({ onClose, onSeeded }: Props) {
+  const t = useTranslations('graphSeedingModal');
   const [activeTab, setActiveTab] = useState<'gig' | 'mix' | 'collab'>('gig');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -124,7 +126,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           padding: 24,
         }}
       >
-        <h2 style={{ marginTop: 0 }}>Seed Your Mythic Graph</h2>
+        <h2 style={{ marginTop: 0 }}>{t('seedYourMythicGraph')}</h2>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
           Log real activity so your agents and quests have data to work with.
         </p>
@@ -161,7 +163,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           <div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                Date
+                {t('date')}
               </label>
               <input
                 type="date"
@@ -184,7 +186,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               <input
                 value={gigForm.venue}
                 onChange={e => setGigForm({ ...gigForm, venue: e.target.value })}
-                placeholder="Fuse, Kiosk Radio, etc."
+                placeholder={t('fuseKioskRadioEtc')}
                 style={{
                   width: '100%',
                   padding: 8,
@@ -200,12 +202,12 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
             >
               <div>
                 <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                  City
+                  {t('city')}
                 </label>
                 <input
                   value={gigForm.city}
                   onChange={e => setGigForm({ ...gigForm, city: e.target.value })}
-                  placeholder="Brussels"
+                  placeholder={t('brussels')}
                   style={{
                     width: '100%',
                     padding: 8,
@@ -218,7 +220,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               </div>
               <div>
                 <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                  Role
+                  {t('role')}
                 </label>
                 <select
                   value={gigForm.role}
@@ -232,17 +234,17 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
                     borderRadius: 6,
                   }}
                 >
-                  <option value="headline">Headline</option>
-                  <option value="support">Support</option>
-                  <option value="resident">Resident</option>
-                  <option value="radio">Radio</option>
-                  <option value="festival">Festival slot</option>
+                  <option value="headline">{t('headline')}</option>
+                  <option value="support">{t('support')}</option>
+                  <option value="resident">{t('resident')}</option>
+                  <option value="radio">{t('radio')}</option>
+                  <option value="festival">{t('festivalSlot')}</option>
                 </select>
               </div>
             </div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                Notes (optional)
+                {t('notesOptional')}
               </label>
               <textarea
                 value={gigForm.notes}
@@ -298,14 +300,14 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               Success! Created {lastResult.nodesCreated} nodes and {lastResult.edgesCreated} edges.
             </div>
             <div style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: 16 }}>
-              This performance is now part of your Mythic legend.
+              {t('thisPerformanceIsNow')}
             </div>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
               <HiveButton variant="secondary" onClick={handleLogAnother}>
-                Log Another Gig
+                {t('logAnotherGig')}
               </HiveButton>
               <HiveButton variant="primary" onClick={handleDone}>
-                Done
+                {t('done')}
               </HiveButton>
             </div>
           </div>
@@ -313,7 +315,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           /* Normal submit buttons */
           <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 16 }}>
             <HiveButton variant="secondary" onClick={onClose} disabled={isSubmitting}>
-              Cancel
+              {t('cancel')}
             </HiveButton>
             <HiveButton
               variant="primary"

@@ -1,4 +1,5 @@
 import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Icon } from '../components/ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -18,6 +19,7 @@ interface ComposerState {
   loadingSuggestions: boolean;
   dismissedIds: Set<string>;
   selectedId: string | undefined;
+  suggestionError: string | null;
   showSearch: boolean;
   searchQuery: string;
   searchResults: TrackCell[];
@@ -30,6 +32,7 @@ type ComposerAction =
   | { type: 'ADD_TRACK'; track: TrackCell }
   | { type: 'SET_SUGGESTIONS'; suggestions: Suggestion[] }
   | { type: 'SET_LOADING_SUGGESTIONS'; loading: boolean }
+  | { type: 'SET_SUGGESTION_ERROR'; error: string | null }
   | { type: 'DISMISS_SUGGESTION'; mix_id: string }
   | { type: 'SELECT_TRACK'; mix_id: string }
   | { type: 'TOGGLE_SEARCH'; open: boolean }
@@ -57,6 +60,8 @@ function composerReducer(state: ComposerState, action: ComposerAction): Composer
       return { ...state, suggestions: action.suggestions, loadingSuggestions: false };
     case 'SET_LOADING_SUGGESTIONS':
       return { ...state, loadingSuggestions: action.loading };
+    case 'SET_SUGGESTION_ERROR':
+      return { ...state, suggestionError: action.error, loadingSuggestions: false };
     case 'DISMISS_SUGGESTION': {
       const next = new Set(state.dismissedIds);
       next.add(action.mix_id);
@@ -95,6 +100,7 @@ const initialState: ComposerState = {
   loadingSuggestions: false,
   dismissedIds: new Set(),
   selectedId: undefined,
+  suggestionError: null,
   showSearch: false,
   searchQuery: '',
   searchResults: [],
@@ -108,6 +114,7 @@ function draftKey(userId: string) {
 }
 
 export function HiveComposer() {
+  const t = useTranslations('hiveComposer');
   const { user } = useAuth();
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(composerReducer, initialState);
@@ -205,7 +212,7 @@ export function HiveComposer() {
           }
         }
       } catch {
-        dispatch({ type: 'SET_LOADING_SUGGESTIONS', loading: false });
+        dispatch({ type: 'SET_SUGGESTION_ERROR', error: 'Could not load suggestions' });
       }
     },
     [state.tracks, user, bpmRange, genreFilter]
@@ -343,10 +350,10 @@ export function HiveComposer() {
 
       await supabase.from('playlist_mixes').insert(junctions);
       clearDraft();
-      toast.success('Set saved as playlist');
+      toast.success(t('setSavedAsPlaylist'));
       navigate(`/profile/${user.id}`);
     } catch {
-      toast.error('Failed to save set');
+      toast.error(t('failedToSaveSet'));
     } finally {
       dispatch({ type: 'SET_SAVING', saving: false });
     }
@@ -385,12 +392,12 @@ export function HiveComposer() {
             color: colors.text.primary,
           }}
         >
-          Hive Composer
+          {t('hiveComposer')}
         </h1>
 
         <input
           type="text"
-          placeholder="Set title…"
+          placeholder={t('setTitle')}
           value={setTitle}
           onChange={e => setSetTitle(e.target.value)}
           style={{
@@ -420,7 +427,7 @@ export function HiveComposer() {
               cursor: 'pointer',
             }}
           >
-            ⚡ Agent panel
+            {t('agentPanel')}
           </button>
           <button
             type="button"
@@ -437,7 +444,7 @@ export function HiveComposer() {
               cursor: state.tracks.length > 0 && !state.saving ? 'pointer' : 'default',
             }}
           >
-            {state.saving ? 'Saving…' : 'Save set'}
+            {state.saving ? t('saving') : t('saveSet')}
           </button>
         </div>
       </div>
@@ -459,7 +466,7 @@ export function HiveComposer() {
           }}
         >
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="composer" size={14} /> Draft restored from your last session.
+            <Icon name="composer" size={14} /> {t('draftRestored')}
           </span>
           <button
             type="button"
@@ -473,7 +480,7 @@ export function HiveComposer() {
               fontSize: fontSize.sm,
             }}
           >
-            Dismiss
+            {t('dismiss')}
           </button>
         </div>
       )}
@@ -491,7 +498,7 @@ export function HiveComposer() {
             alignItems: 'center',
           }}
         >
-          <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>Filtering:</span>
+          <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{t('filtering')}</span>
           {genreFilter && (
             <button
               type="button"
@@ -521,6 +528,22 @@ export function HiveComposer() {
         </div>
       )}
 
+      {/* Suggestion error */}
+      {state.suggestionError && (
+        <div
+          style={{
+            background: colors.dangerBg,
+            color: colors.danger,
+            padding: '8px 16px',
+            fontSize: 13,
+            textAlign: 'center',
+            flexShrink: 0,
+          }}
+        >
+          {state.suggestionError}
+        </div>
+      )}
+
       {/* Main area */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Canvas */}
@@ -534,7 +557,7 @@ export function HiveComposer() {
                 fontSize: fontSize.md,
               }}
             >
-              Start a new set — click the hex below to search for your first track
+              {t('startNewSet')}
             </div>
           )}
           <ComposerCanvas
@@ -559,7 +582,7 @@ export function HiveComposer() {
       {state.showSearch && (
         <div
           role="dialog"
-          aria-label="Search for a mix"
+          aria-label={t('searchForAMix')}
           style={{
             position: 'fixed',
             inset: 0,
@@ -590,7 +613,7 @@ export function HiveComposer() {
             <input
               autoFocus
               type="text"
-              placeholder="Search mixes…"
+              placeholder={t('searchMixes')}
               value={state.searchQuery}
               onChange={e => handleSearch(e.target.value)}
               style={{
@@ -605,7 +628,7 @@ export function HiveComposer() {
             />
             {state.searching && (
               <p style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: 0 }}>
-                Searching…
+                {t('searching')}
               </p>
             )}
             {state.searchResults.length > 0 && (
@@ -647,7 +670,7 @@ export function HiveComposer() {
               state.searchQuery.length > 1 &&
               state.searchResults.length === 0 && (
                 <p style={{ color: colors.text.dim, fontSize: fontSize.sm, margin: 0 }}>
-                  No mixes found.
+                  {t('noMixesFound')}
                 </p>
               )}
           </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { listModerationSignals, reviewModerationSignal } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
@@ -17,11 +18,12 @@ const STATUS_FILTERS: { value: ModerationSignalStatus | ''; label: string }[] = 
 const SEVERITY_COLOR: Record<string, string> = {
   low: colors.text.dim,
   medium: colors.accent,
-  high: '#fb923c',
+  high: colors.accentAmber,
   critical: colors.danger,
 };
 
 export function AdminModeration() {
+  const t = useTranslations('adminModeration');
   const { user, profile, loading: authLoading } = useAuth();
   const [signals, setSignals] = useState<ModerationSignal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,21 +63,25 @@ export function AdminModeration() {
   }
 
   if (authLoading || loading) {
-    return <div style={{ padding: 32, color: colors.text.muted }}>Loading moderation queue…</div>;
+    return (
+      <div style={{ padding: 32, color: colors.text.muted }}>{t('loadingModerationQueue')}</div>
+    );
   }
 
   if (!profile?.is_admin) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: 32, color: colors.text.muted }}>
-        <h1 style={{ color: colors.text.primary }}>Moderation</h1>
-        <p>You do not have access to this dashboard.</p>
+        <h1 style={{ color: colors.text.primary }}>{t('moderation')}</h1>
+        <p>{t('youDoNotHave')}</p>
       </div>
     );
   }
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px 16px 96px' }}>
-      <h1 style={{ color: colors.text.primary, fontSize: 24, margin: '0 0 8px' }}>Moderation</h1>
+      <h1 style={{ color: colors.text.primary, fontSize: 24, margin: '0 0 8px' }}>
+        {t('moderation')}
+      </h1>
       <p style={{ color: colors.text.muted, margin: '0 0 24px' }}>
         Review flagged content and user reports. Hide removes the item; Ban suspends the owner.
       </p>
@@ -110,7 +116,7 @@ export function AdminModeration() {
           marginBottom: space[8],
         }}
       >
-        Resolution note (applied to the action)
+        {t('resolutionNoteAppliedTo')}
         <textarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
@@ -127,7 +133,7 @@ export function AdminModeration() {
       </label>
 
       {signals.length === 0 ? (
-        <p style={{ color: colors.text.dim }}>Nothing in this queue.</p>
+        <p style={{ color: colors.text.dim }}>{t('nothingInThisQueue')}</p>
       ) : (
         <div style={{ display: 'grid', gap: space[6] }}>
           {signals.map(signal => {
@@ -195,7 +201,7 @@ export function AdminModeration() {
                       loading={busyId === signal.id}
                       onClick={() => act(signal, 'hide')}
                     >
-                      Hide content
+                      {t('hideContent')}
                     </Button>
                     <Button
                       size="sm"
@@ -203,7 +209,7 @@ export function AdminModeration() {
                       loading={busyId === signal.id}
                       onClick={() => act(signal, 'ban')}
                     >
-                      Ban owner
+                      {t('banOwner')}
                     </Button>
                     <Button
                       size="sm"
@@ -211,7 +217,7 @@ export function AdminModeration() {
                       loading={busyId === signal.id}
                       onClick={() => act(signal, 'dismiss')}
                     >
-                      Dismiss
+                      {t('dismiss')}
                     </Button>
                   </div>
                 ) : (

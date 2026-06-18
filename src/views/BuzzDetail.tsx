@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getBuzz, getBuzzReplies, replyToBuzz } from '../lib/api';
@@ -12,6 +13,7 @@ import type { FeedBuzz } from '../lib/types';
 const MAX_CHARS = 280;
 
 export function BuzzDetail() {
+  const t = useTranslations('buzzDetail');
   const { id } = useParams<{ id: string }>();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ export function BuzzDetail() {
   const [buzz, setBuzz] = useState<FeedBuzz | null>(null);
   const [replies, setReplies] = useState<FeedBuzz[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [replyBody, setReplyBody] = useState('');
   const [replyBusy, setReplyBusy] = useState(false);
   const [toast, setToast] = useState<{
@@ -30,11 +33,13 @@ export function BuzzDetail() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
+    setFetchError(null);
     Promise.all([getBuzz(id), getBuzzReplies(id, 50)])
       .then(([b, r]) => {
         if (b) setBuzz(b as FeedBuzz);
         setReplies(r.data);
       })
+      .catch(() => setFetchError('Could not load buzz'))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -50,7 +55,7 @@ export function BuzzDetail() {
         setReplyBody('');
       }
     } catch {
-      setToast({ open: true, message: 'Could not post reply', tone: 'danger' });
+      setToast({ open: true, message: t('couldNotPostReply'), tone: 'danger' });
     } finally {
       setReplyBusy(false);
     }
@@ -81,14 +86,18 @@ export function BuzzDetail() {
           gap: space[4],
         }}
       >
-        ← Back
+        {t('back')}
       </button>
 
       {loading ? (
         <SkeletonFeed />
+      ) : fetchError ? (
+        <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>
+          {fetchError}
+        </div>
       ) : !buzz ? (
         <div style={{ textAlign: 'center', padding: 40, color: colors.text.dim }}>
-          Buzz not found.
+          {t('buzzNotFound')}
         </div>
       ) : (
         <>
@@ -143,9 +152,9 @@ export function BuzzDetail() {
                   <textarea
                     value={replyBody}
                     onChange={e => setReplyBody(e.target.value.slice(0, MAX_CHARS + 10))}
-                    placeholder="Reply to this buzz…"
+                    placeholder={t('replyToThisBuzz')}
                     rows={2}
-                    aria-label="Write a reply"
+                    aria-label={t('writeAReply')}
                     style={{
                       width: '100%',
                       background: 'transparent',
@@ -187,7 +196,7 @@ export function BuzzDetail() {
                       style={{
                         padding: `${space[3]}px ${space[8]}px`,
                         background: canReply ? colors.accent : colors.surfaceMuted,
-                        color: canReply ? '#0a0a0a' : colors.text.faint,
+                        color: canReply ? colors.bg : colors.text.faint,
                         border: 'none',
                         borderRadius: radius.pill,
                         fontWeight: fontWeight.bold,
@@ -195,7 +204,7 @@ export function BuzzDetail() {
                         cursor: canReply ? 'pointer' : 'default',
                       }}
                     >
-                      {replyBusy ? '…' : 'Reply'}
+                      {replyBusy ? '…' : t('reply')}
                     </button>
                   </div>
                 </div>
@@ -210,20 +219,20 @@ export function BuzzDetail() {
                 fontSize: fontSize.base,
               }}
             >
-              <button
-                onClick={() => navigate('/login')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: colors.accent,
-                  cursor: 'pointer',
-                  fontWeight: fontWeight.semibold,
-                  fontSize: fontSize.base,
-                }}
-              >
-                Sign in
-              </button>{' '}
-              to reply
+          <button
+            onClick={() => navigate('/login')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: colors.accent,
+              cursor: 'pointer',
+              fontWeight: fontWeight.semibold,
+              fontSize: fontSize.base,
+            }}
+          >
+            {t('signIn')}
+          </button>{' '}
+          {t('toReply')}
             </div>
           )}
 

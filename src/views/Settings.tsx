@@ -94,6 +94,25 @@ export function Settings() {
   const { user, profile, updateProfile } = useAuth();
   const navigate = useNavigate();
 
+  const [deletionStatus, setDeletionStatus] = useState<
+    'requested' | 'cancelled' | null
+  >(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('deletion_requests')
+      .select('status')
+      .eq('user_id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.status === 'requested' || data?.status === 'cancelled') {
+          setDeletionStatus(data.status);
+        }
+      })
+      .catch(() => {});
+  }, [user]);
+
   const [formData, setFormData] = useState({
     display_name: profile?.display_name || '',
     bio: profile?.bio || '',
@@ -749,7 +768,7 @@ export function Settings() {
             }}
           >
             <span style={{ display: 'inline-flex' }}>
-              <BeeMark size={22} color="var(--hive-gold, #f6c400)" />
+              <BeeMark size={22} color={`var(--hive-gold, ${colors.accentBright})`} />
             </span>
             <div>
               <div
@@ -939,7 +958,7 @@ export function Settings() {
             }}
           >
             <span style={{ display: 'inline-flex', flexShrink: 0 }}>
-              <BeeMark size={28} color="var(--hive-gold, #f6c400)" />
+              <BeeMark size={28} color={`var(--hive-gold, ${colors.accentBright})`} />
             </span>
             <div style={{ flex: 1 }}>
               <div
@@ -1121,6 +1140,55 @@ export function Settings() {
             marginBottom: space[4],
           }}
         >
+          {t('billing')}
+        </h2>
+        <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginBottom: space[4] }}>
+          {t('billingDescription')}
+        </p>
+        <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap', alignItems: 'center' }}>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={async () => {
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+              if (!session) return;
+              const res = await fetch('/api/subscription/portal', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${session.access_token}`,
+                },
+                body: JSON.stringify({}),
+              });
+              if (res.ok) {
+                const { url } = await res.json();
+                if (url) window.location.href = url;
+              }
+            }}
+          >
+            {t('manageBilling')}
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => navigate('/pricing')}
+          >
+            {t('upgradePlan')}
+          </Button>
+        </div>
+      </div>
+
+      <div style={{ marginTop: space[8] }}>
+        <h2
+          style={{
+            fontSize: fontSize.lg,
+            fontWeight: 600,
+            color: colors.text.primary,
+            marginBottom: space[4],
+          }}
+        >
           Privacy &amp; Data
         </h2>
         <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginBottom: space[4] }}>
@@ -1155,34 +1223,79 @@ export function Settings() {
           >
             {t('downloadData')}
           </Button>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={async () => {
-              if (
-                !window.confirm(
-                  'Request account deletion? Your account and data will be removed within 30 days, and you will be signed out.'
+          {deletionStatus === 'requested' ? (
+            <>
+              <span
+                style={{
+                  fontSize: fontSize.sm,
+                  color: colors.warning,
+                  alignSelf: 'center',
+                }}
+              >
+                {t('deletionPending')}
+              </span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={async () => {
+                  const {
+                    data: { session },
+                  } = await supabase.auth.getSession();
+                  if (!session) return;
+                  const res = await fetch('/api/account/delete/cancel', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${session.access_token}`,
+                    },
+                    body: JSON.stringify({}),
+                  });
+                  if (res.ok) setDeletionStatus('cancelled');
+                }}
+              >
+                {t('cancelDeletion')}
+              </Button>
+            </>
+          ) : deletionStatus === 'cancelled' ? (
+            <span
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.dim,
+                alignSelf: 'center',
+              }}
+            >
+              {t('deletionCancelled')}
+            </span>
+          ) : (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={async () => {
+                if (
+                  !window.confirm(
+                    'Request account deletion? Your account and data will be removed within 30 days, and you will be signed out.'
+                  )
                 )
-              )
-                return;
-              const {
-                data: { session },
-              } = await supabase.auth.getSession();
-              if (!session) return;
-              await fetch('/api/account/delete', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${session.access_token}`,
-                },
-                body: JSON.stringify({}),
-              });
-              await supabase.auth.signOut();
-              window.location.href = '/';
-            }}
-          >
-            {t('deleteAccount')}
-          </Button>
+                  return;
+                const {
+                  data: { session },
+                } = await supabase.auth.getSession();
+                if (!session) return;
+                await fetch('/api/account/delete', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session.access_token}`,
+                  },
+                  body: JSON.stringify({}),
+                });
+                await supabase.auth.signOut();
+                window.location.href = '/';
+              }}
+            >
+              {t('deleteAccount')}
+            </Button>
+          )}
         </div>
       </div>
 

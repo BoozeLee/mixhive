@@ -49,7 +49,7 @@ so client-side exchange is correct for this architecture (`@supabase/ssr` is not
 1. User clicks "Continue with Google" in `Login.tsx` or `Register.tsx`.
 2. `useAuth.signInWithGoogle()` calls `supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: '<origin>/auth/callback' } })`.
 3. Supabase returns a Google authorize URL; the browser redirects to it.
-4. Google authenticates the user and redirects to `https://wlfjbzdzmrqiiguyoulj.supabase.co/auth/v1/callback` (the Supabase OAuth callback).
+4. Google authenticates the user and redirects to `https://ljdolmqytncxhgojqguh.supabase.co/auth/v1/callback` (the Supabase OAuth callback).
 5. Supabase exchanges the Google code for a Supabase session and redirects to `<origin>/auth/callback?code=<pkce-code>`.
 6. `src/app/auth/callback/page.tsx` extracts `code`, calls `exchangeCodeForSession(code)`, and redirects to `/feed`.
 

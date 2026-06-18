@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, useParams } from 'react-router-dom';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 import { BeeMark } from '../components/brand/BeeMark';
@@ -44,14 +45,7 @@ function formatMonth(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 
-const typeLabel: Record<string, string> = {
-  artist: 'Featured Artist',
-  mix: 'Featured Mix',
-  collab: 'Collab Spotlight',
-  scene: 'Scene Spotlight',
-};
-
-function FeatureCard({ feature, themeColor }: { feature: HiveStoryFeature; themeColor: string }) {
+function FeatureCard({ feature, themeColor, typeLabel, listenLabel }: { feature: HiveStoryFeature; themeColor: string; typeLabel: string; listenLabel: string }) {
   const { profile, mix } = feature;
   const coverUrl = mix?.cover_url ?? profile?.avatar_url;
 
@@ -98,7 +92,7 @@ function FeatureCard({ feature, themeColor }: { feature: HiveStoryFeature; theme
             marginBottom: space[1],
           }}
         >
-          {typeLabel[feature.feature_type] ?? feature.feature_type}
+          {typeLabel}
         </div>
         <h3
           style={{
@@ -175,7 +169,7 @@ function FeatureCard({ feature, themeColor }: { feature: HiveStoryFeature; theme
               fontWeight: fontWeight.semibold,
             }}
           >
-            Listen: {mix.title} →
+            {listenLabel}
           </Link>
         )}
       </div>
@@ -184,17 +178,20 @@ function FeatureCard({ feature, themeColor }: { feature: HiveStoryFeature; theme
 }
 
 export function HiveStoryIssue() {
+  const t = useTranslations('hiveStoryIssue');
   const { slug } = useParams<{ slug: string }>();
   const [issue, setIssue] = useState<HiveStoryIssueData | null>(null);
   const [features, setFeatures] = useState<HiveStoryFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!slug) return;
     let cancelled = false;
     setLoading(true);
     setNotFound(false);
+    setFetchError(null);
 
     fetch(`/api/hive-story/${slug}`)
       .then(r => {
@@ -202,6 +199,7 @@ export function HiveStoryIssue() {
           if (!cancelled) setNotFound(true);
           return null;
         }
+        if (!r.ok) throw new Error(t('issueFetchError'));
         return r.json();
       })
       .then(d => {
@@ -210,8 +208,8 @@ export function HiveStoryIssue() {
           setFeatures(d.features ?? []);
         }
       })
-      .catch(() => {
-        if (!cancelled) setNotFound(true);
+      .catch(e => {
+        if (!cancelled && !notFound) setFetchError(e.message);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -254,6 +252,35 @@ export function HiveStoryIssue() {
     );
   }
 
+  if (fetchError) {
+    return (
+      <div
+        style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px', textAlign: 'center' }}
+      >
+        <div
+          style={{
+            background: colors.dangerBg,
+            color: colors.danger,
+            padding: '10px 14px',
+            borderRadius: 8,
+            fontSize: 13,
+            display: 'inline-block',
+            marginBottom: 16,
+          }}
+        >
+          {fetchError}
+        </div>
+        <br />
+        <Link
+          to="/hive-story"
+          style={{ color: colors.accent, textDecoration: 'none', fontSize: fontSize.sm }}
+        >
+          {t('backToHiveStory')}
+        </Link>
+      </div>
+    );
+  }
+
   if (notFound || !issue) {
     return (
       <div
@@ -269,12 +296,12 @@ export function HiveStoryIssue() {
         >
           <BeeMark size={46} color="rgba(246,196,0,0.6)" />
         </div>
-        <p style={{ color: colors.text.muted }}>This issue couldn't be found.</p>
+        <p style={{ color: colors.text.muted }}>{t('thisIssueCouldnT')}</p>
         <Link
           to="/hive-story"
           style={{ color: colors.accent, textDecoration: 'none', fontSize: fontSize.sm }}
         >
-          ← Back to Hive Story
+          {t('backToHiveStory')}
         </Link>
       </div>
     );
@@ -301,7 +328,7 @@ export function HiveStoryIssue() {
           (e.currentTarget as HTMLElement).style.color = colors.text.muted;
         }}
       >
-        <span aria-hidden="true">←</span> Hive Story
+        <span aria-hidden="true">←</span> {t('hiveStory')}
       </Link>
 
       {/* Hero */}
@@ -347,7 +374,7 @@ export function HiveStoryIssue() {
               marginBottom: space[2],
             }}
           >
-            Hive Story · {formatMonth(issue.published_at)}
+            {t('hiveStory')} · {formatMonth(issue.published_at)}
           </div>
           <h1
             style={{
@@ -377,9 +404,7 @@ export function HiveStoryIssue() {
 
       {/* Features */}
       {features.length === 0 ? (
-        <p style={{ color: colors.text.dim, textAlign: 'center' }}>
-          No features in this issue yet.
-        </p>
+        <p style={{ color: colors.text.dim, textAlign: 'center' }}>{t('noFeaturesInThis')}</p>
       ) : (
         <section>
           <h2
@@ -390,11 +415,27 @@ export function HiveStoryIssue() {
               marginBottom: space[6],
             }}
           >
-            In this issue
+            {t('inThisIssue')}
           </h2>
           <div style={{ display: 'grid', gap: space[5] }}>
             {features.map(f => (
-              <FeatureCard key={f.id} feature={f} themeColor={theme} />
+              <FeatureCard
+                key={f.id}
+                feature={f}
+                themeColor={theme}
+                listenLabel={t('listenMix', { title: f.mix?.title ?? '' })}
+                typeLabel={
+                  f.feature_type === 'artist'
+                    ? t('featuredArtist')
+                    : f.feature_type === 'mix'
+                      ? t('featuredMix')
+                      : f.feature_type === 'collab'
+                        ? t('collabSpotlight')
+                        : f.feature_type === 'scene'
+                          ? t('sceneSpotlight')
+                          : f.feature_type
+                }
+              />
             ))}
           </div>
         </section>

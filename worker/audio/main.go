@@ -138,8 +138,7 @@ func processJob(ctx context.Context, cfg *Config, sb *Supabase, job *AudioJob) e
 			"bpm":              a.BPM,
 			"energy":           a.Energy,
 			"mood":             a.Mood,
-			"key":              nil,
-			"key_note":         "key detection pending (chroma analyzer)",
+			"key":              nullIfEmpty(a.Key),
 			"job_type":         job.JobType,
 		})
 	case "tracklist":

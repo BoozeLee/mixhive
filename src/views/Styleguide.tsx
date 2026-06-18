@@ -275,7 +275,7 @@ export function Styleguide() {
                 display: 'grid',
                 placeItems: 'center',
                 fontSize: fontSize.xs,
-                color: '#000',
+                color: colors.black,
                 fontWeight: fontWeight.semibold,
               }}
             >

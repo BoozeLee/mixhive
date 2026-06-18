@@ -1,8 +1,9 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
+import { colors, fontSize, space, fontWeight, radius, withAlpha } from '../styles/tokens';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { HiveButton } from '../components/hive/HiveButton';
 import { MythicSessionRoom } from '../components/MythicSessionRoom';
@@ -21,6 +22,7 @@ interface SessionMeta {
 type PageMode = 'loading' | 'room' | 'review' | 'ended' | 'error';
 
 export function CollabSessionRoom() {
+  const t = useTranslations('collabSessionRoom');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -98,13 +100,13 @@ export function CollabSessionRoom() {
       >
         <div style={{ fontSize: 40, marginBottom: space[4] }}>⚡</div>
         <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>
-          Session unavailable
+          {t('sessionUnavailable')}
         </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>
           {errorMsg}
         </p>
         <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>
-          Back to Dashboard
+          {t('backToDashboard')}
         </HiveButton>
       </div>
     );
@@ -122,17 +124,17 @@ export function CollabSessionRoom() {
       >
         <div style={{ fontSize: 40, marginBottom: space[4] }}>🎛️</div>
         <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>
-          Session ended
+          {t('sessionEnded')}
         </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>
           {session?.title} — this session has been closed and its provenance written to the graph.
         </p>
         <div style={{ display: 'flex', gap: space[3], justifyContent: 'center' }}>
           <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>
-            Dashboard
+            {t('dashboard')}
           </HiveButton>
           <HiveButton variant="primary" onClick={() => navigate('/quests')}>
-            View Quests
+            {t('viewQuests')}
           </HiveButton>
         </div>
       </div>
@@ -172,11 +174,11 @@ export function CollabSessionRoom() {
               textTransform: 'uppercase',
               padding: '2px 6px',
               borderRadius: 3,
-              background: 'rgba(34,197,94,0.15)',
-              color: '#22c55e',
+              background: withAlpha(colors.successStrong, 0.15),
+              color: colors.successStrong,
             }}
           >
-            Live
+            {t('live')}
           </span>
         </div>
         <div style={{ display: 'flex', gap: space[2] }}>
@@ -189,7 +191,7 @@ export function CollabSessionRoom() {
             }}
             style={{ fontSize: fontSize.xs, padding: '6px 12px' }}
           >
-            Copy invite link
+            {t('copyInviteLink')}
           </HiveButton>
           <HiveButton
             variant="secondary"
@@ -227,7 +229,7 @@ export function CollabSessionRoom() {
                 color: colors.text.primary,
               }}
             >
-              Session Review
+              {t('sessionReview')}
             </h2>
             <div
               style={{

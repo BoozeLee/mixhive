@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import type { SearchFilters as SearchFiltersValue } from '../lib/search';
@@ -36,6 +37,7 @@ export function SearchFilters({
   onReset,
   isLoading = false,
 }: SearchFiltersProps) {
+  const t = useTranslations('searchFilters');
   const [localFilters, setLocalFilters] = useState<SearchFiltersValue>(filters);
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export function SearchFilters({
 
   return (
     <section
-      aria-label="Search filters"
+      aria-label={t('searchFilters')}
       style={{
         background: colors.surface,
         border: `1px solid ${colors.border}`,
@@ -80,7 +82,7 @@ export function SearchFilters({
         }}
       >
         <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text.primary, margin: 0 }}>
-          Filters
+          {t('filters')}
         </h2>
         <div style={{ display: 'flex', gap: space[6] }}>
           <Button
@@ -90,10 +92,10 @@ export function SearchFilters({
             onClick={reset}
             disabled={!hasActiveFilters || isLoading}
           >
-            Reset
+            {t('reset')}
           </Button>
           <Button type="button" size="sm" onClick={onApply} loading={isLoading}>
-            Apply
+            {t('apply')}
           </Button>
         </div>
       </div>
@@ -114,7 +116,7 @@ export function SearchFilters({
               marginBottom: space[5],
             }}
           >
-            Content
+            {t('content')}
           </legend>
           <div style={{ display: 'flex', gap: space[4] }}>
             {(['all', 'mixes', 'profiles', 'scenes'] as const).map(type => (
@@ -143,7 +145,7 @@ export function SearchFilters({
               marginBottom: space[5],
             }}
           >
-            Genre
+            {t('genre')}
           </label>
           <select
             id="search-genre"
@@ -160,7 +162,7 @@ export function SearchFilters({
               font: 'inherit',
             }}
           >
-            <option value="">All genres</option>
+            <option value="">{t('allGenres')}</option>
             {genres.map(genre => (
               <option key={genre} value={genre}>
                 {genre}
@@ -180,11 +182,11 @@ export function SearchFilters({
               marginBottom: space[5],
             }}
           >
-            Location
+            {t('location')}
           </label>
           <Input
             id="search-location"
-            placeholder="City or country"
+            placeholder={t('cityOrCountry')}
             value={localFilters.location || ''}
             onChange={event => update({ location: event.target.value || undefined })}
           />

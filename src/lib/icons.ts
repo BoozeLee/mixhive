@@ -61,6 +61,7 @@ import {
   AudioWaveform,
   Zap,
   Square,
+  Check,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -121,7 +122,8 @@ export type IconKey =
   | 'key'
   | 'wave'
   | 'zap'
-  | 'square';
+  | 'square'
+  | 'check';
 
 export const ICONS: Record<IconKey, LucideIcon> = {
   // navigation / features
@@ -181,6 +183,7 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   wave: AudioWaveform,
   zap: Zap,
   square: Square,
+  check: Check,
 };
 
 // Less-common one-offs that consumers may import directly when not worth a key.

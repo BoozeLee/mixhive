@@ -1,5 +1,57 @@
 {
   "nav": {
     "feed": "Fil"
+  },
+  "feed": {
+    "liveFeed": "Fil en direct",
+    "heroTitle": "La Ruche ne dort jamais",
+    "heroSubtitle": "Mixes underground, en direct de la scène.",
+    "genreRadar": "Radar des genres",
+    "trendingNow": "Tendances",
+    "tabsAria": "Onglets du fil",
+    "sidebarAria": "Barre latérale du fil",
+    "followingPrompt": "<link>Connectez-vous</link> pour voir votre fil d'abonnements."
+  },
+  "auth": {
+    "signInTitle": "Connexion",
+    "signUpTitle": "Créez votre compte",
+    "email": "Email",
+    "password": "Mot de passe",
+    "username": "Nom d'utilisateur",
+    "displayName": "Nom d'affichage",
+    "signInButton": "Se connecter",
+    "signUpButton": "Créer un compte",
+    "creatingAccount": "Création du compte…",
+    "forgotPassword": "Mot de passe oublié ?",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "noAccountShort": "Pas de compte ?",
+    "joinMixHive": "Rejoindre Mix Hive",
+    "googleSignIn": "Se connecter avec Google",
+    "backToSignInPlain": "Retour à la connexion",
+    "checkEmailTitle": "Vérifiez vos emails",
+    "usernameHelp": "3–30 car. : lettres, chiffres, underscores",
+    "passwordHelp": "8+ car. avec majuscule, minuscule et un chiffre"
+  },
+  "common": {
+    "or": "ou"
+  },
+  "upload": {
+    "title": "Nectar - Téléversement",
+    "dropTitle": "Déposez votre mix",
+    "dropZoneAria": "Zone de dépôt de fichier audio — glissez-déposez ou cliquez pour parcourir",
+    "dropHere": "Déposez votre mix ici",
+    "dropIt": "Déposez-le !",
+    "labelTitle": "Titre *",
+    "labelDescription": "Description",
+    "labelGenre": "Genre",
+    "labelTags": "Tags (séparés par des virgules)",
+    "labelArtwork": "Pochette (optionnel)",
+    "titlePlaceholder": "Entrez le titre du mix",
+    "descriptionPlaceholder": "Décrivez votre mix…",
+    "genrePlaceholder": "Sélectionnez un genre",
+    "tagsPlaceholder": "house, deep, vinyl",
+    "explicit": "Marquer comme contenu explicite",
+    "trackTitle": "Titre du morceau",
+    "startSec": "Début (sec)"
   }
 }

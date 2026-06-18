@@ -1,6 +1,15 @@
 # MIXHIVE Strategic Blueprint Realization Inventory
-**Last Updated:** 2026-05-30 (start of Phase 0 audit)  
-**Purpose:** Living checklist mapping every major element of the strategic blueprint (as pasted in the 2026-05-30 user query) to current implementation status. Used to drive the full "deployed, executed, tested, verified, integrated, synergised" effort.
+**Last Updated:** 2026-06-18 (migration 104 · BeeHiveStudio backend)  
+**Purpose:** Living checklist mapping every major element of the strategic blueprint to current implementation status, driving the "deployed, executed, tested, verified, integrated, synergised" effort.
+
+### Update — 2026-06-18 (since the 2026-05-30 audit)
+Shipped: **XP + reputation system with full UI** (level badge, XP bar, reputation meter, `/leaderboard`);
+**AI-Band provenance** (`mix_agent_credits` + credits UI + "AI Band" badge + atomic `publish_mix_with_credits` RPC);
+**Agents as Artists** (`ai_agents` + `ai_agent_follows` + followable `/ai-band/agent/:slug` page);
+**audio worker** now computes waveform/duration/BPM/energy/mood/**musical key** (stdlib chroma+Krumhansl-Schmuckler)
+with `--selftest`, `/api/health/worker`, backfill script, and a `GO_LIVE.md` runbook (built & verified, not yet
+running on the box); verification tooling (`npm run visual`, fixed `npm run preview`).
+Infra: migrated off the dead `vlaio-vanderbouw` project to **BeeHiveStudio** (`ljdolmqytncxhgojqguh`).
 
 Status Legend:
 - **Not Started**
@@ -22,8 +31,10 @@ Status Legend:
 | AI avatar/artwork generation| Implemented     | visual_identity.lua                              | Needs brand kit + packs + consent UX |
 | Genre/scene classification  | Partial Code    | Some classification in agents + graph            | Needs full multi-label + scene clustering |
 | Mix metadata extraction     | Implemented     | dj_set_analyzer.lua + audio tools                | Needs full chaptering + summaries |
-| BPM/key/mood/energy tagging | Implemented     | dj_set_analyzer + audio pipeline                 | Good foundation |
-| Waveform/structure analysis | Partial Code    | Audio tools exist                                | Needs richer sectioning |
+| BPM/key/mood/energy tagging | Deployed        | Go audio worker (`worker/audio/`) — BPM, energy, mood, **key** (chroma) | Live once the worker box is up |
+| Waveform/structure analysis | Implemented     | Go worker 200-pt waveform + duration             | Needs richer sectioning |
+| AI-Band provenance          | Deployed        | migration 103 `mix_agent_credits` + RPC; credits UI + badge | Beehive-side publish pending |
+| Agents as Artists           | Deployed        | migration 104 `ai_agents`/`ai_agent_follows`; `/ai-band/agent/:slug` | Discovery index/leaderboard next |
 | Tracklist assistance        | Partial Code    | In dj_set_analyzer                               | Needs confidence scoring + safe outputs |
 | Event matching              | Partial Code    | opportunity_match + venue_fit                    | Needs full fit scoring + availability |
 | Collaboration matching      | Implemented     | collaboration_match.lua                          | Needs complementary skill graph |
@@ -31,7 +42,7 @@ Status Legend:
 | Release strategy            | Implemented     | release_strategy.lua                             | Needs campaign plans |
 | Fan segment analysis        | Implemented     | fan_insights.lua                                 | Needs LTV clusters + privacy |
 | Promoter/venue fit scoring  | Implemented     | venue_fit.lua                                    | Needs explainable scoring |
-| Growth dashboard            | Research Only   | 18-mythic-metrics-dashboard-spec.md              | Major gap |
+| Growth dashboard            | Partial Code    | XP/reputation UI + `/leaderboard` shipped; full metrics dashboard pending | Timeseries rollups next |
 | Creator agents              | Partial Code    | Many agents implemented                          | Needs full multi-agent orchestration + approval |
 | Moderation/safety           | Implemented     | moderation.lua                                   | Needs advanced pattern detection |
 | Fraud detection             | Partial Code    | Some signals                                     | Needs network graph |
@@ -89,7 +100,11 @@ Many supporting tables from the proposal exist or are partial in the broader sch
 
 ## Overall Assessment
 
-The research and partial implementation are strong (especially Lua agents and mythic graph). The gap is **production completeness, end-to-end synergy, testing, and verification** against the full detailed blueprint.
+The platform is feature-deep with the AI-native layer (provenance + agent-artists) now shipped — the
+remaining gap is **production go-live, adoption, and end-to-end synergy**, not core features.
 
-**Immediate Recommendation:** Proceed with Phase 0 inventory completion, then Phase 1 (Lua infrastructure follow-ups) as the highest-leverage next slice.
+**Immediate Recommendation:** Phase α — bring the audio worker online on the box and complete the
+production cutover to BeeHiveStudio (`worker/GO_LIVE.md` + Vercel env + Google OAuth + backfill),
+which repairs the live site and the dormant audio pipeline. Then AI-Band discovery, then the
+adoption ritual (first 50 DJs + first €). See `ENGINEERING_ROADMAP.md`.
 

@@ -1,9 +1,11 @@
 import { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
 import { SearchAutocomplete } from './SearchAutocomplete';
 import { colors } from '../styles/tokens';
 
 export function SearchBar() {
+  const t = useTranslations('searchBar');
   const wrapperRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ export function SearchBar() {
 
   return (
     <div ref={wrapperRef} style={{ position: 'relative', width: 300, maxWidth: '100%' }}>
-      <SearchAutocomplete onSearch={handleSearch} placeholder="Search DJs, mixes..." />
+      <SearchAutocomplete onSearch={handleSearch} placeholder={t('placeholder')} />
       <kbd
         style={{
           position: 'absolute',

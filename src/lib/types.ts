@@ -117,6 +117,8 @@ export interface ProfileAnalytics {
   topMixes: Mix[];
   genreDistribution: Array<{ name: string; count: number }>;
   weeklyEvents: Array<{ label: string; count: number }>;
+  gearSalesTotal?: number;
+  gearSalesCount?: number;
 }
 
 export interface Mix {
@@ -150,6 +152,27 @@ export interface Mix {
   dj?: Profile;
   genre_name?: string | null;
   weekly_plays?: number;
+  /** True when the track has AI-agent co-producer credits ("AI band"). */
+  ai_band?: boolean;
+}
+
+/** An AI agent-artist (a followable "AI band member" with a public career). */
+export interface AiAgent {
+  slug: string;
+  name: string;
+  follower_count: number;
+}
+
+/** One AI-agent co-producer credit on a track (an "AI band member"). */
+export interface MixAgentCredit {
+  id: string;
+  mix_id: string;
+  agent_slug: string;
+  agent_name: string;
+  agent_role: string | null;
+  contribution: string | null;
+  model: string | null;
+  ord: number;
 }
 
 export interface TrackItem {

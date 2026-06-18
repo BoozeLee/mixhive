@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import type { AISuggestion } from '../lib/types';
 import { colors, space, radius, fontSize, fontWeight, transition } from '../styles/tokens';
@@ -302,6 +303,7 @@ function StarRating({ onRate }: { onRate: (r: number) => void }) {
 }
 
 export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onRate }: Props) {
+  const t = useTranslations('aISuggestionCard');
   const [showRationale, setShowRationale] = useState(false);
   const [localStatus, setLocalStatus] = useState(suggestion.status);
   const [rated, setRated] = useState(false);
@@ -559,7 +561,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                   cursor: 'pointer',
                 }}
               >
-                Cancel
+                {t('cancel')}
               </button>
             </>
           ) : (
@@ -579,7 +581,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                     letterSpacing: 0.5,
                   }}
                 >
-                  Apply suggestions
+                  {t('applySuggestions')}
                 </Link>
               )}
               {suggestion.suggestion_type !== 'profile_coach' && onApply && (
@@ -615,7 +617,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                     cursor: 'pointer',
                   }}
                 >
-                  Edit
+                  {t('edit')}
                 </button>
               )}
               <button
@@ -631,12 +633,12 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                   cursor: 'pointer',
                 }}
               >
-                Dismiss
+                {t('dismiss')}
               </button>
               {!rated && onRate && <StarRating onRate={handleRate} />}
               {rated && (
                 <span style={{ fontSize: fontSize.xs, color: colors.text.muted }}>
-                  Thanks for the feedback
+                  {t('thanksForTheFeedback')}
                 </span>
               )}
             </>
@@ -648,7 +650,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
         onRate && (
           <div style={{ display: 'flex', alignItems: 'center', gap: space[4] }}>
             <span style={{ fontSize: fontSize.xs, color: colors.text.muted }}>
-              How useful was this?
+              {t('howUsefulWasThis')}
             </span>
             <StarRating onRate={handleRate} />
           </div>

@@ -34,6 +34,8 @@ import { StartMythicSessionModal } from '../components/StartMythicSessionModal';
 import { NftMintModal } from '../components/NftMintModal';
 import { HiveButton } from '../components/hive/HiveButton';
 import { SimilarMixesPanel } from '../components/SimilarMixesPanel';
+import { AiBandBadge } from '../components/AiBandBadge';
+import { AgentBandCredits } from '../components/AgentBandCredits';
 import type { Mix, Comment as CommentType, FeedMix } from '../lib/types';
 
 const WEB3_ENABLED = process.env.NEXT_PUBLIC_WEB3_EXPERIMENTS_ENABLED === 'true';
@@ -198,6 +200,11 @@ export function MixDetail() {
         >
           {mix.title}
         </h1>
+        {mix.ai_band && (
+          <div style={{ margin: '0 0 6px' }}>
+            <AiBandBadge size="md" />
+          </div>
+        )}
         {mix.dj && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Link
@@ -471,6 +478,8 @@ export function MixDetail() {
           </div>
         </div>
       )}
+
+      <AgentBandCredits mixId={mix.id} />
 
       <SimilarMixesPanel mixId={mix.id} />
 

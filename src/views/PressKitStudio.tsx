@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Icon } from '../components/ui/Icon';
 import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
@@ -20,6 +21,7 @@ async function authHeaders(): Promise<HeadersInit | null> {
 }
 
 export function PressKitStudio() {
+  const t = useTranslations('pressKitStudio');
   const { profile } = useAuth();
   const [kits, setKits] = useState<PressKit[]>([]);
   const [active, setActive] = useState<PressKit | null>(null);
@@ -106,7 +108,7 @@ export function PressKitStudio() {
               letterSpacing: 0.8,
             }}
           >
-            Press Kit Agent
+            {t('pressKitAgent')}
           </p>
           <h1
             style={{
@@ -117,7 +119,7 @@ export function PressKitStudio() {
               lineHeight: 1.1,
             }}
           >
-            Generate your booking-ready EPK.
+            {t('generateYourBookingReady')}
           </h1>
           <p
             style={{
@@ -127,8 +129,7 @@ export function PressKitStudio() {
               lineHeight: 1.6,
             }}
           >
-            Built only from your profile, public links, and published mixes. No invented
-            achievements, no outbound sending.
+            {t('pressKitDescription')}
           </p>
         </div>
         <button
@@ -140,7 +141,7 @@ export function PressKitStudio() {
             borderRadius: radius.md,
             background: generating
               ? colors.border
-              : `linear-gradient(135deg, #ffde4d, ${colors.accent})`,
+              : `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent})`,
             color: generating ? colors.text.faint : colors.bg,
             padding: `${space[4]}px ${space[7]}px`,
             fontWeight: fontWeight.bold,
@@ -149,11 +150,11 @@ export function PressKitStudio() {
             minHeight: 44,
           }}
         >
-          {generating ? 'Generating...' : active ? 'Regenerate EPK' : 'Generate EPK'}
+          {generating ? t('generating') : active ? t('regenerateEpk') : t('generateEpk')}
         </button>
       </header>
 
-      {loading && <div style={{ color: colors.text.muted }}>Loading press kit workspace...</div>}
+      {loading && <div style={{ color: colors.text.muted }}>{t('loadingPressKitWorkspace')}</div>}
       {error && <div style={{ color: colors.danger, marginBottom: space[6] }}>{error}</div>}
 
       {!loading && !active && (
@@ -170,7 +171,7 @@ export function PressKitStudio() {
             <Icon name="epk" size={34} />
           </div>
           <h2 style={{ margin: 0, color: colors.text.primary, fontSize: fontSize.xl }}>
-            No EPK generated yet
+            {t('noEpkGeneratedYet')}
           </h2>
           <p
             style={{
@@ -180,8 +181,7 @@ export function PressKitStudio() {
               lineHeight: 1.6,
             }}
           >
-            Complete your profile and upload at least one mix for a stronger press kit. You can
-            still generate a basic one now.
+            {t('noEpkDescription')}
           </p>
         </section>
       )}
@@ -213,23 +213,26 @@ export function PressKitStudio() {
                 fontSize: fontSize.sm,
               }}
             >
-              Version {active.version} · {active.is_public ? 'Public' : 'Private'} ·{' '}
-              {active.view_count} views
+              {t('versionPublic', {
+                v: active.version,
+                visibility: active.is_public ? t('public') : t('private'),
+                views: active.view_count,
+              })}
             </p>
             <p
               style={{ margin: `${space[2]}px 0 0`, color: colors.text.dim, fontSize: fontSize.xs }}
             >
-              {kits.length} saved version{kits.length === 1 ? '' : 's'} in this workspace
+              {t('savedVersions', { count: kits.length })}
             </p>
             <div style={{ display: 'grid', gap: space[4], marginTop: space[7] }}>
               <Link to={`/epk/${active.public_slug}`} style={linkButtonStyle('primary')}>
-                Open public EPK
+                {t('openPublicEpk')}
               </Link>
               <Link to="/opportunities" style={linkButtonStyle('secondary')}>
-                Use with opportunities
+                {t('useWithOpportunities')}
               </Link>
               <Link to="/agents/inbox" style={linkButtonStyle('ghost')}>
-                Review agent inbox
+                {t('reviewAgentInbox')}
               </Link>
             </div>
             <p
@@ -256,6 +259,7 @@ export function PressKitStudio() {
 }
 
 function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: string }) {
+  const t = useTranslations('pressKitStudio');
   const content = kit.content;
   return (
     <article
@@ -306,22 +310,22 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
       </div>
       <div style={{ padding: space[8], display: 'grid', gap: space[7] }}>
         <section>
-          <h3 style={sectionTitleStyle}>Booking pitch</h3>
+          <h3 style={sectionTitleStyle}>{t('bookingPitch')}</h3>
           <p style={bodyStyle}>
             {content.booking_pitch ||
-              'Add more profile details to generate a stronger booking pitch.'}
+              t('addMoreProfileDetails')}
           </p>
         </section>
         {content.bio && (
           <section>
-            <h3 style={sectionTitleStyle}>Bio</h3>
+            <h3 style={sectionTitleStyle}>{t('bio')}</h3>
             <p style={bodyStyle}>{content.bio}</p>
           </section>
         )}
         <section>
-          <h3 style={sectionTitleStyle}>Featured mixes</h3>
+          <h3 style={sectionTitleStyle}>{t('featuredMixes')}</h3>
           {content.top_mixes.length === 0 ? (
-            <p style={bodyStyle}>No published mixes yet.</p>
+            <p style={bodyStyle}>{t('noPublishedMixesYet')}</p>
           ) : (
             <div style={{ display: 'grid', gap: space[3] }}>
               {content.top_mixes.map(mix => (
@@ -340,7 +344,7 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
                   <span
                     style={{ color: colors.text.dim, fontSize: fontSize.xs, marginLeft: space[3] }}
                   >
-                    {mix.play_count} plays
+                    {mix.play_count} {t('plays')}
                   </span>
                 </Link>
               ))}
@@ -349,7 +353,7 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
         </section>
         {content.technical_notes.length > 0 && (
           <section>
-            <h3 style={sectionTitleStyle}>Technical notes</h3>
+            <h3 style={sectionTitleStyle}>{t('technicalNotes')}</h3>
             <ul style={{ margin: 0, paddingLeft: 18, color: colors.text.muted, lineHeight: 1.7 }}>
               {content.technical_notes.map(note => (
                 <li key={note}>{note}</li>

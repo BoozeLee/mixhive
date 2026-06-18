@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import { Icon } from './ui/Icon';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -34,6 +35,7 @@ interface Props {
 type AttachType = 'image' | 'audio' | 'video' | 'code' | 'mix' | null;
 
 export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }: Props) {
+  const t = useTranslations('buzzComposer');
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -197,7 +199,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               fontSize: fontSize.base,
             }}
           >
-            Sign in
+            {t('signIn')}
           </button>{' '}
           to post a Buzz
         </span>
@@ -257,7 +259,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               onChange={e => setBody(e.target.value.slice(0, MAX_CHARS + 10))}
               placeholder={placeholder}
               rows={3}
-              aria-label="Buzz text"
+              aria-label={t('buzzText')}
               style={{
                 width: '100%',
                 background: 'transparent',
@@ -290,7 +292,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
                 />
                 <button
                   onClick={() => clearAttachment('image')}
-                  aria-label="Remove image"
+                  aria-label={t('removeImage')}
                   style={{
                     position: 'absolute',
                     top: 6,
@@ -348,28 +350,28 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               style={{ display: 'flex', alignItems: 'center', gap: space[3], marginTop: space[5] }}
             >
               <AttachButton
-                label="🖼"
-                title="Attach image"
+                label={t('s')}
+                title={t('attachImage')}
                 onClick={() => imageInputRef.current?.click()}
               />
               <AttachButton
                 label={<Icon name="music" size={16} />}
-                title="Attach audio"
+                title={t('attachAudio')}
                 onClick={() => audioInputRef.current?.click()}
               />
               <AttachButton
-                label="🎬"
-                title="Attach video"
+                label={t('s2')}
+                title={t('attachVideo')}
                 onClick={() => videoInputRef.current?.click()}
               />
               <AttachButton
-                label="</>"
-                title="Add code snippet"
+                label={t('s3')}
+                title={t('addCodeSnippet')}
                 onClick={() => setActiveAttach('code')}
               />
               <AttachButton
                 label={<Icon name="headphones" size={16} />}
-                title="Attach mix"
+                title={t('attachMix')}
                 onClick={() => setActiveAttach('mix')}
               />
 
@@ -394,7 +396,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
                 leftIcon={<Icon name="buzz" size={14} />}
                 style={{ borderRadius: radius.pill }}
               >
-                Buzz
+                {t('buzz')}
               </Button>
             </div>
           </div>
@@ -428,30 +430,30 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
       <Modal
         open={activeAttach === 'code'}
         onClose={() => setActiveAttach(null)}
-        title="Add code snippet"
+        title={t('addCodeSnippet')}
         width={560}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
           <Select
-            label="Language"
+            label={t('language')}
             value={codeLang}
             onChange={e => setCodeLang(e.target.value)}
             options={LANGUAGES.map(l => ({ value: l, label: l }))}
           />
           <Textarea
-            label="Code"
+            label={t('code')}
             value={codeSnippet}
             onChange={e => setCodeSnippet(e.target.value)}
             rows={10}
-            placeholder="Paste your code here…"
+            placeholder={t('pasteYourCodeHere')}
             style={{ fontFamily: 'monospace', resize: 'vertical' }}
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[6] }}>
             <Button variant="secondary" onClick={() => setActiveAttach(null)}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button onClick={() => setActiveAttach(null)} disabled={!codeSnippet.trim()}>
-              Attach
+              {t('attach')}
             </Button>
           </div>
         </div>
@@ -461,23 +463,23 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
       <Modal
         open={activeAttach === 'mix'}
         onClose={() => setActiveAttach(null)}
-        title="Attach a mix"
+        title={t('attachAMix')}
         width={480}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
           <p style={{ margin: 0, color: colors.text.muted, fontSize: fontSize.base }}>
-            Paste a MixHive mix URL or mix ID.
+            {t('pasteAMixhiveMix')}
           </p>
           <Input
             hideLabel
-            label="Mix URL or ID"
+            label={t('mixUrlOrId')}
             type="url"
             value={attachedMixUrl}
             onChange={e => {
               setAttachedMixUrl(e.target.value);
               setAttachedMixId(parseMixId(e.target.value));
             }}
-            placeholder="https://mixhive.app/mix/…"
+            placeholder={t('httpsMixhiveAppMix')}
           />
           {attachedMixId && (
             <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.success }}>
@@ -486,10 +488,10 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[6] }}>
             <Button variant="secondary" onClick={() => setActiveAttach(null)}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button onClick={() => setActiveAttach(null)} disabled={!attachedMixId}>
-              Attach
+              {t('attach')}
             </Button>
           </div>
         </div>
@@ -562,7 +564,7 @@ function AttachBadge({ label, onRemove }: { label: ReactNode; onRemove: () => vo
       {label}
       <button
         onClick={onRemove}
-        aria-label="Remove"
+        aria-label={t('remove')}
         style={{
           background: 'none',
           border: 'none',

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect } from 'react';
 import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
@@ -27,6 +28,7 @@ export function PostSessionReview({
   onClose,
   onApproved,
 }: PostSessionReviewProps) {
+  const t = useTranslations('postSessionReview');
   const [proposedUpdates, setProposedUpdates] = useState<ProposedUpdate[]>([]);
   const [approvedIds, setApprovedIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -128,7 +130,7 @@ export function PostSessionReview({
     >
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: fontSize.lg, fontWeight: fontWeight.bold }}>
-          Review Session Outcomes
+          {t('reviewSessionOutcomes')}
         </div>
         <div style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
           {sessionTitle} • These changes will be added to your Mythic legend
@@ -138,7 +140,7 @@ export function PostSessionReview({
       <div style={{ marginBottom: 24 }}>
         {proposedUpdates.length === 0 ? (
           <div style={{ color: colors.text.muted, padding: 20, textAlign: 'center' }}>
-            No proposed updates.
+            {t('noProposedUpdates')}
           </div>
         ) : (
           proposedUpdates.map(update => {
@@ -176,7 +178,7 @@ export function PostSessionReview({
                       {update.title}
                       {update.verified && (
                         <span
-                          title="Participant set cryptographically signed at session end"
+                          title={t('participantSetCryptographicallySigned')}
                           style={{
                             fontSize: 11,
                             fontWeight: fontWeight.bold,
@@ -220,7 +222,7 @@ export function PostSessionReview({
                       onClick={() => handleDiscard(update.id)}
                       style={{ fontSize: 12, padding: '6px 12px' }}
                     >
-                      Discard
+                      {t('discard')}
                     </HiveButton>
                   </div>
                 </div>
@@ -232,7 +234,7 @@ export function PostSessionReview({
 
       <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
         <HiveButton variant="secondary" onClick={onClose} disabled={isSubmitting}>
-          Cancel
+          {t('cancel')}
         </HiveButton>
 
         <HiveButton

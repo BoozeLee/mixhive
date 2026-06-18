@@ -22,7 +22,7 @@ The DNS resolution issue has been identified and a placeholder URL has been set 
 ### **Step 2: Get Production URL**
 Once your project is created, copy the project URL from the dashboard:
 - Format: `https://project-id.supabase.co`
-- Example: `https://wlfjbzdzmrqiiguyoulj.supabase.co` (this is your OAuth project ID)
+- Example: `https://ljdolmqytncxhgojqguh.supabase.co` (this is your OAuth project ID)
 
 ### **Step 3: Update Environment File**
 Replace the placeholder in `.env.local`:

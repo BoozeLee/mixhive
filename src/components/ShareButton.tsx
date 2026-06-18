@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from './ui/Button';
 import { IconButton } from './ui/IconButton';
 import type { Mix } from '../lib/types';
@@ -23,11 +24,12 @@ export function ShareButton({
   onShare,
   className,
 }: ShareButtonProps) {
+  const t = useTranslations('shareButton');
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareCount, setShareCount] = useState(0);
   const shareUrl = url || window.location.href;
-  const shareTitle = title || mix?.title || 'Check out this mix';
+  const shareTitle = title || mix?.title || t('checkOutThisMix');
 
   async function copy() {
     await navigator.clipboard.writeText(shareUrl);
@@ -48,7 +50,7 @@ export function ShareButton({
 
   const trigger =
     variant === 'icon' ? (
-      <IconButton label="Share" onClick={() => setOpen(prev => !prev)} className={className}>
+      <IconButton label={t('share')} onClick={() => setOpen(prev => !prev)} className={className}>
         ↗
       </IconButton>
     ) : (
@@ -59,7 +61,7 @@ export function ShareButton({
         onClick={() => setOpen(prev => !prev)}
         className={className}
       >
-        Share{showCount ? ` ${shareCount}` : ''}
+        {t('share')}{showCount ? ` ${shareCount}` : ''}
       </Button>
     );
 
@@ -82,17 +84,17 @@ export function ShareButton({
           }}
         >
           <button type="button" onClick={nativeShare} style={menuItemStyle}>
-            Share
+            {t('share')}
           </button>
           <button type="button" onClick={copy} style={menuItemStyle}>
-            {copied ? 'Copied' : 'Copy link'}
+            {copied ? t('copied') : t('copyLink')}
           </button>
           <button
             type="button"
             onClick={() => setOpen(false)}
             style={{ ...menuItemStyle, color: colors.text.dim }}
           >
-            Cancel
+            {t('cancel')}
           </button>
         </span>
       )}

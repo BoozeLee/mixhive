@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { colors, space } from '../styles/tokens';
 
 interface LoadingSpinnerProps {
@@ -10,10 +11,11 @@ interface LoadingSpinnerProps {
 
 export function LoadingSpinner({
   size = 'medium',
-  message = 'Loading...',
+  message,
   overlay = false,
   className = '',
 }: LoadingSpinnerProps) {
+  const t = useTranslations('loadingSpinner');
   const sizeStyles = {
     small: { width: 16, height: 16, strokeWidth: 2 },
     medium: { width: 24, height: 24, strokeWidth: 3 },
@@ -63,6 +65,8 @@ export function LoadingSpinner({
     </svg>
   );
 
+  const msg = message ?? t('loading');
+
   if (overlay) {
     return (
       <div
@@ -81,7 +85,7 @@ export function LoadingSpinner({
       >
         <div style={{ textAlign: 'center' }}>
           {spinner}
-          {message && (
+          {msg && (
             <p
               style={{
                 marginTop: space[4],
@@ -89,7 +93,7 @@ export function LoadingSpinner({
                 fontSize: 14,
               }}
             >
-              {message}
+              {msg}
             </p>
           )}
         </div>
@@ -109,7 +113,7 @@ export function LoadingSpinner({
       }}
     >
       {spinner}
-      {message && (
+      {msg && (
         <p
           style={{
             marginTop: space[3],
@@ -117,7 +121,7 @@ export function LoadingSpinner({
             fontSize: 14,
           }}
         >
-          {message}
+          {msg}
         </p>
       )}
     </div>
@@ -125,7 +129,8 @@ export function LoadingSpinner({
 }
 
 // Page level loading component
-export function PageLoading({ message = 'Loading...' }: { message?: string }) {
+export function PageLoading({ message }: { message?: string }) {
+  const t = useTranslations('loadingSpinner');
   return (
     <div
       style={{

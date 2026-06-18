@@ -44,7 +44,9 @@ import type {
   FeedCursor,
   FeedMix,
   FeedResult,
+  AiAgent,
   Mix,
+  MixAgentCredit,
   MixedFeedResult,
   ModerationAction,
   ModerationSignal,
@@ -93,6 +95,31 @@ export async function getProfileById(id: string): Promise<Profile | null> {
   if (!isSupabaseConfigured) return null;
   const { data } = await supabase.from('profiles').select('*').eq('id', id).single();
   return data;
+}
+
+export interface LeaderboardEntry {
+  id: string;
+  username: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  xp: number;
+  level: number;
+  reputation_score: number;
+}
+
+/**
+ * Top profiles by XP for the Hive leaderboard. Ordered by XP descending; ties
+ * fall back to reputation. Public read (profiles are world-readable under RLS).
+ */
+export async function getXpLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, avatar_url, xp, level, reputation_score')
+    .order('xp', { ascending: false })
+    .order('reputation_score', { ascending: false })
+    .limit(limit);
+  return (data as LeaderboardEntry[] | null) ?? [];
 }
 
 export async function getProfileBadges(profileId: string): Promise<VerificationBadge[]> {
@@ -351,6 +378,99 @@ export async function getMix(id: string): Promise<Mix | null> {
     dj: data.profiles,
     genre_name: data.genres?.name,
   };
+}
+
+export async function getMixAgentCredits(mixId: string): Promise<MixAgentCredit[]> {
+  if (!isSupabaseConfigured || !isUuid(mixId)) return [];
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('id, mix_id, agent_slug, agent_name, agent_role, contribution, model, ord')
+    .eq('mix_id', mixId)
+    .order('ord', { ascending: true });
+  return (data as MixAgentCredit[] | null) ?? [];
+}
+
+/** Display name for an agent slug (first credit's name), for the browse header. */
+export async function getAgentName(slug: string): Promise<string | null> {
+  if (!isSupabaseConfigured || !slug) return null;
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('agent_name')
+    .eq('agent_slug', slug)
+    .limit(1)
+    .maybeSingle();
+  return (data?.agent_name as string | undefined) ?? null;
+}
+
+/** Distinct tracks that feature an agent (by slug), most recent first. */
+export async function getMixesByAgent(slug: string): Promise<Mix[]> {
+  if (!isSupabaseConfigured || !slug) return [];
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('mix:mixes!inner(*, genres(name), profiles!mixes_dj_id_fkey(*))')
+    .eq('agent_slug', slug);
+  const seen = new Set<string>();
+  const mixes: Mix[] = [];
+  type Row = { mix: (Mix & { genres?: { name?: string }; profiles?: Profile }) | null };
+  for (const row of (data as Row[] | null) ?? []) {
+    const m = row.mix;
+    if (!m?.id || seen.has(m.id)) continue;
+    seen.add(m.id);
+    mixes.push({ ...m, dj: m.profiles, genre_name: m.genres?.name ?? null });
+  }
+  mixes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  return mixes;
+}
+
+// --- AI agent-artists ---
+
+export async function getAgentFollowerCount(slug: string): Promise<number> {
+  if (!isSupabaseConfigured || !slug) return 0;
+  const { count } = await supabase
+    .from('ai_agent_follows')
+    .select('*', { count: 'exact', head: true })
+    .eq('agent_slug', slug);
+  return count || 0;
+}
+
+/** The agent-artist entity + follower count. Falls back to the credit name if the
+ *  agent row hasn't been backfilled yet. */
+export async function getAgent(slug: string): Promise<AiAgent | null> {
+  if (!isSupabaseConfigured || !slug) return null;
+  const { data } = await supabase
+    .from('ai_agents')
+    .select('slug, name')
+    .eq('slug', slug)
+    .maybeSingle();
+  const name = (data?.name as string | undefined) ?? (await getAgentName(slug));
+  if (!name) return null;
+  return { slug, name, follower_count: await getAgentFollowerCount(slug) };
+}
+
+export async function isFollowingAgent(slug: string, profileId: string): Promise<boolean> {
+  if (!isSupabaseConfigured || !slug || !profileId) return false;
+  const { data } = await supabase
+    .from('ai_agent_follows')
+    .select('agent_slug')
+    .eq('agent_slug', slug)
+    .eq('follower_profile_id', profileId)
+    .maybeSingle();
+  return !!data;
+}
+
+export async function followAgent(slug: string, profileId: string) {
+  if (!isSupabaseConfigured) return { error: null };
+  return supabase
+    .from('ai_agent_follows')
+    .insert({ agent_slug: slug, follower_profile_id: profileId });
+}
+
+export async function unfollowAgent(slug: string, profileId: string) {
+  if (!isSupabaseConfigured) return { error: null };
+  return supabase
+    .from('ai_agent_follows')
+    .delete()
+    .match({ agent_slug: slug, follower_profile_id: profileId });
 }
 
 export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
@@ -1026,9 +1146,14 @@ export async function getProfileAnalytics(
   mixes?: Mix[]
 ): Promise<ProfileAnalytics> {
   const profileMixes = mixes ?? (await getMixesByDj(profileId));
-  const [followers, following] = await Promise.all([
+  const [followers, following, gearResult] = await Promise.all([
     getFollowersCount(profileId),
     getFollowingCount(profileId),
+    supabase
+      .from('equipment_transactions')
+      .select('agreed_price, transaction_state')
+      .eq('seller_profile_id', profileId)
+      .then(({ data }) => data || []),
   ]);
 
   const totalPlays = profileMixes.reduce((sum, mix) => sum + (mix.play_count || 0), 0);
@@ -1089,6 +1214,11 @@ export async function getProfileAnalytics(
     });
   }
 
+  const gearSalesTotal = gearResult
+    .filter(t => t.transaction_state === 'released')
+    .reduce((s, t) => s + Number(t.agreed_price || 0), 0);
+  const gearSalesCount = gearResult.filter(t => t.transaction_state === 'released').length;
+
   return {
     totalPlays,
     totalLikes,
@@ -1105,6 +1235,8 @@ export async function getProfileAnalytics(
     topMixes: sortedMixes,
     genreDistribution,
     weeklyEvents,
+    gearSalesTotal,
+    gearSalesCount,
   };
 }
 

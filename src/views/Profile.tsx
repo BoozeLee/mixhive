@@ -30,6 +30,8 @@ import { VerificationRequestForm } from '../components/VerificationRequestForm';
 import { ProfileAnalyticsDashboard } from '../components/ProfileAnalyticsDashboard';
 import { HiveButton } from '../components/hive/HiveButton';
 import { StartMythicSessionModal } from '../components/StartMythicSessionModal';
+import { HiveStanding } from '../components/HiveStanding';
+import { maybeAnnounceXpGain } from '../lib/xpToast';
 import type {
   ActivityEvent,
   Mix,
@@ -160,6 +162,8 @@ export function ProfilePage() {
             actorId: user.id,
             eventType: 'profile_view',
           });
+        } else if (user && user.id === nextProfile.id) {
+          maybeAnnounceXpGain(user.id, nextProfile.xp ?? 0, nextProfile.level ?? 1);
         }
         setLoading(false);
       })
@@ -344,8 +348,6 @@ export function ProfilePage() {
               [followingCount, 'following'],
               [mixes.length, 'mixes'],
               [analytics?.totalPlays || 0, 'plays'],
-              [profile?.level || 1, 'level'],
-              [profile?.xp || 0, 'XP'],
             ].map(([value, label]) => (
               <div
                 key={label}
@@ -364,6 +366,12 @@ export function ProfilePage() {
             ))}
           </div>
         )}
+
+        <HiveStanding
+          xp={profile.xp ?? null}
+          level={profile.level ?? null}
+          reputationScore={profile.reputation_score ?? null}
+        />
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[5], marginTop: space[8] }}>
           {user && !isOwn && (

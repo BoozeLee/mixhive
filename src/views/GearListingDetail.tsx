@@ -74,7 +74,7 @@ export function GearListingDetail() {
 
   const handleBuy = async () => {
     if (!userId) {
-      setBuyError('Sign in to purchase');
+      setBuyError(t('signInToPurchase'));
       return;
     }
     setBuying(true);
@@ -89,10 +89,10 @@ export function GearListingDetail() {
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? 'Checkout failed');
+      if (!res.ok) throw new Error(data.error ?? t('checkoutFailed'));
       window.location.href = data.checkout_url;
     } catch (e) {
-      setBuyError(e instanceof Error ? e.message : 'Purchase failed');
+      setBuyError(e instanceof Error ? e.message : t('purchaseFailed'));
       setBuying(false);
     }
   };
@@ -108,10 +108,10 @@ export function GearListingDetail() {
     return (
       <div style={{ padding: 40, textAlign: 'center' }}>
         <p style={{ color: colors.dangerStrong, marginBottom: 16 }}>
-          {error || 'Listing not found'}
+          {error || t('listingNotFound')}
         </p>
         <Link to="/marketplace/gear" style={{ color: 'var(--hive-gold)' }}>
-          ← Back to Gear Market
+          {t('backToGearMarket')}
         </Link>
       </div>
     );
@@ -120,18 +120,18 @@ export function GearListingDetail() {
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 20px' }}>
       <Link
-        to="/marketplace/gear"
-        style={{
-          color: colors.text.faint,
-          fontSize: 13,
-          textDecoration: 'none',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 4,
-          marginBottom: 20,
-        }}
-      >
-        ← Gear Market
+      to="/marketplace/gear"
+      style={{
+        color: colors.text.faint,
+        fontSize: 13,
+        textDecoration: 'none',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 4,
+        marginBottom: 20,
+      }}
+    >
+      {t('gearMarket')}
       </Link>
 
       <div
@@ -353,8 +353,8 @@ export function GearListingDetail() {
                 }}
               >
                 {buying
-                  ? 'Redirecting to checkout...'
-                  : `Buy Now · ${listing.currency} ${listing.price.toLocaleString()}`}
+                  ? t('redirectingToCheckout')
+                  : t('buyNow', { currency: listing.currency, price: listing.price.toLocaleString() })}
               </button>
               {buyError && (
                 <p
@@ -371,7 +371,7 @@ export function GearListingDetail() {
               <p
                 style={{ color: colors.borderStrong, fontSize: 11, textAlign: 'center', margin: 0 }}
               >
-                Secured escrow — funds held until you confirm receipt
+                {t('escrowNotice')}
               </p>
             </>
           ) : listing.status !== 'active' ? (
@@ -385,7 +385,7 @@ export function GearListingDetail() {
                 fontSize: 14,
               }}
             >
-              This listing is {listing.status}
+              {t('listingStatus', { status: listing.status })}
             </div>
           ) : (
             <div
@@ -410,7 +410,7 @@ export function GearListingDetail() {
               margin: '8px 0 0',
             }}
           >
-            {listing.views_count} views · Listed {new Date(listing.created_at).toLocaleDateString()}
+            {t('metaInfo', { views: listing.views_count, date: new Date(listing.created_at).toLocaleDateString() })}
           </p>
           {userId && userId !== listing.seller_profile_id && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>

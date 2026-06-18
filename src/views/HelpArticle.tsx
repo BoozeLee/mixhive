@@ -115,7 +115,7 @@ const md: Components = {
             margin: '0 0 16px',
             padding: space[6],
             borderRadius: radius.md,
-            background: '#0b0b08',
+            background: colors.surfaceMuted,
             border: `1px solid ${colors.border}`,
             overflowX: 'auto',
           }}
@@ -124,7 +124,7 @@ const md: Components = {
             style={{
               fontFamily: 'var(--font-mono, monospace)',
               fontSize: fontSize.sm,
-              color: '#e8dcae',
+              color: colors.accentBrightest,
               lineHeight: 1.6,
             }}
           >

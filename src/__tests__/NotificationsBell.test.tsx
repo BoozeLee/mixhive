@@ -12,6 +12,13 @@ jest.mock('../lib/notificationStore', () => ({
   useNotifications: jest.fn(),
 }));
 
+jest.mock('next-intl', () => ({
+  useTranslations: () => {
+    const t = (key: string) => key;
+    return t;
+  },
+}));
+
 jest.mock('../lib/supabase', () => ({
   supabase: {
     auth: {

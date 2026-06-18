@@ -58,6 +58,7 @@ e2e-quality-results/
 e2e-results/
 playwright-report/
 e2e/.auth/
+screenshots/
 
 # TypeScript build info
 *.tsbuildinfo
@@ -83,3 +84,6 @@ simple-https*.mjs
 # Supabase CLI scratch directory (re-created on `supabase link`)
 supabase/.temp/
 .vercel
+
+# Go worker build artifact
+worker/audio/audio

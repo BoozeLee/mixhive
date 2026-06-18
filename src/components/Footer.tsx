@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { Icon } from './ui/Icon';
 
 export function Footer() {
+  const t = useTranslations('footer');
   const { user } = useAuth();
 
   return (
@@ -11,29 +13,29 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Description */}
           <div className="col-span-1 md:col-span-2">
-            <h2 className="text-2xl font-bold text-yellow-400 mb-4">MIXHIVE</h2>
+            <h2 className="text-2xl font-bold text-yellow-400 mb-4">{t('mixhive')}</h2>
             <p className="text-gray-400 mb-4">
               The internet's first music hive city for DJs, producers, rave organizers, visual
               artists, and underground culture creators.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                <span className="sr-only">Twitter</span>
+                <span className="sr-only">{t('twitter')}</span>
                 <Icon name="external" size={18} />
               </a>
               <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                <span className="sr-only">Instagram</span>
+                <span className="sr-only">{t('instagram')}</span>
                 <Icon name="camera" size={18} />
               </a>
               <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                <span className="sr-only">YouTube</span>
+                <span className="sr-only">{t('youtube')}</span>
                 <Icon name="video" size={18} />
               </a>
               <a
                 href="#"
                 className="text-gray-400 hover:text-yellow-400 transition-colors inline-flex"
               >
-                <span className="sr-only">Discord</span>
+                <span className="sr-only">{t('discord')}</span>
                 <Icon name="comment" size={18} />
               </a>
             </div>
@@ -41,14 +43,14 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Platform</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">{t('platform')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/discover"
                   className="text-gray-400 hover:text-yellow-400 transition-colors"
                 >
-                  Discover
+                  {t('discover')}
                 </Link>
               </li>
               <li>
@@ -56,7 +58,7 @@ export function Footer() {
                   href="/trending"
                   className="text-gray-400 hover:text-yellow-400 transition-colors"
                 >
-                  Trending
+                  {t('trending')}
                 </Link>
               </li>
               <li>
@@ -64,7 +66,7 @@ export function Footer() {
                   href="/search"
                   className="text-gray-400 hover:text-yellow-400 transition-colors"
                 >
-                  Search
+                  {t('search')}
                 </Link>
               </li>
               {user && (
@@ -74,7 +76,7 @@ export function Footer() {
                       href="/dashboard"
                       className="text-gray-400 hover:text-yellow-400 transition-colors"
                     >
-                      Dashboard
+                      {t('dashboard')}
                     </Link>
                   </li>
                   <li>
@@ -82,7 +84,7 @@ export function Footer() {
                       href="/upload"
                       className="text-gray-400 hover:text-yellow-400 transition-colors"
                     >
-                      Upload Mix
+                      {t('uploadMix')}
                     </Link>
                   </li>
                 </>
@@ -92,26 +94,26 @@ export function Footer() {
 
           {/* Community */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Community</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">{t('community')}</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                  Guidelines
+                  {t('guidelines')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                  FAQ
+                  {t('faq')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                  Support
+                  {t('support')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
-                  Blog
+                  {t('blog')}
                 </a>
               </li>
             </ul>
@@ -122,13 +124,13 @@ export function Footer() {
           <p className="text-gray-400 text-sm">© 2026 MixHive. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
             <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm">
-              Privacy
+              {t('privacy')}
             </a>
             <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm">
-              Terms
+              {t('terms')}
             </a>
             <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm">
-              Cookies
+              {t('cookies')}
             </a>
           </div>
         </div>

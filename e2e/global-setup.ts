@@ -1,5 +1,4 @@
 import { test as setup, expect } from '@playwright/test';
-import { mkdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { hasE2ECredentials } from './helpers/auth';
@@ -8,8 +7,6 @@ const dir = path.dirname(fileURLToPath(import.meta.url));
 const AUTH_FILE = path.join(dir, '.auth/user.json');
 
 setup('authenticate', async ({ page }) => {
-  await mkdir(path.dirname(AUTH_FILE), { recursive: true });
-
   const email = process.env.E2E_TEST_EMAIL;
   const password = process.env.E2E_TEST_PASSWORD;
 

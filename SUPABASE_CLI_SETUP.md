@@ -12,8 +12,8 @@ I've successfully completed the Supabase CLI integration and replaced the demo m
 - CLI is ready for project management
 
 #### **Phase 2: Project Setup** ✅
-- Found existing Supabase project: `vlaio-vanderbouw`
-- Project Reference ID: `wlfjbzdzmrqiiguyoulj`
+- Found existing Supabase project: `BeeHiveStudio`
+- Project Reference ID: `ljdolmqytncxhgojqguh`
 - Successfully linked project to local development
 
 #### **Phase 3: Database Integration** ✅
@@ -30,7 +30,7 @@ I've successfully completed the Supabase CLI integration and replaced the demo m
 
 #### **Phase 5: Environment Configuration** ✅
 - Updated `.env.local` with production Supabase URL:
-  `VITE_SUPABASE_URL=https://wlfjbzdzmrqiiguyoulj.supabase.co`
+  `VITE_SUPABASE_URL=https://ljdolmqytncxhgojqguh.supabase.co`
 - Maintained existing anon key
 - All changes committed and pushed to GitHub
 
@@ -48,9 +48,9 @@ I've successfully completed the Supabase CLI integration and replaced the demo m
 - ✅ **TypeScript Types**: Generated and integrated
 
 ### **Technical Configuration:**
-- **Supabase URL**: `https://wlfjbzdzmrqiiguyoulj.supabase.co`
-- **Anon Key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xbGhkcWhjeHVnanFwdmdkbmZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NjEyNTEsImV4cCI6MjA4MjQzNzI1MX0.rhwbnZcb9-9eUzQ_Z8AL1cjCW6HZ6xEhV9d_RM7RqaY`
-- **Project Reference**: `wlfjbzdzmrqiiguyoulj`
+- **Supabase URL**: `https://ljdolmqytncxhgojqguh.supabase.co`
+- **Anon Key**: see env `SUPABASE_ANON_KEY` (not stored in repo)
+- **Project Reference**: `ljdolmqytncxhgojqguh`
 - **Database**: Migrations applied successfully
 
 ## 🎮 **Demo Mode vs Real Auth:**

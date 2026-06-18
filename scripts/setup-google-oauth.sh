@@ -24,7 +24,7 @@ https://mixhive.app/auth/callback
 https://www.mixhive.app/auth/callback
 https://mixhive-*.vercel.app/auth/callback
 https://mixhive.app/api/auth/callback
-https://wlfjbzdzmrqiiguyoulj.supabase.co/auth/v1/callback
+https://ljdolmqytncxhgojqguh.supabase.co/auth/v1/callback
 EOF
 
 echo ""

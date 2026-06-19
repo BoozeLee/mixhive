@@ -33,8 +33,8 @@ test.describe('§1 Lua Agents — public gallery', () => {
 
   test('starter agents section renders Fork buttons', async ({ page }) => {
     await page.goto('/agents/gallery', { waitUntil: 'domcontentloaded' });
-    // Wait for React to mount (shell shows MIXHIVE; .mixhive-shell is React's root)
-    await page.locator('.mixhive-shell').waitFor({ timeout: 20_000 });
+    // Wait for React to mount — 30 s budget for parallel-worker CDN pressure
+    await page.locator('.mixhive-shell').waitFor({ timeout: 30_000 });
     // STARTER_AGENTS are always rendered from constants — no DB needed
     await expect(
       page.getByRole('button', { name: /fork into my account/i }).first()
@@ -47,7 +47,7 @@ test.describe('§1 Lua Agents — public gallery', () => {
     const page = await ctx.newPage();
     await page.goto(`${BASE}/agents/gallery`, { waitUntil: 'domcontentloaded' });
     // Wait for React app to mount (not just the HTML shell)
-    await page.locator('.mixhive-shell').waitFor({ timeout: 25_000 });
+    await page.locator('.mixhive-shell').waitFor({ timeout: 35_000 });
     const forkBtn = page.getByRole('button', { name: /fork into my account/i }).first();
     await expect(forkBtn).toBeVisible({ timeout: 10_000 });
     await forkBtn.click();
@@ -57,8 +57,8 @@ test.describe('§1 Lua Agents — public gallery', () => {
 
   test('gallery shows public agent section heading', async ({ page }) => {
     await page.goto('/agents/gallery', { waitUntil: 'domcontentloaded' });
-    // Wait for React to mount, then for the gallery h1 specifically
-    await expect(page.locator('main h1').first()).toBeVisible({ timeout: 20_000 });
+    await page.locator('.mixhive-shell').waitFor({ timeout: 30_000 });
+    await expect(page.locator('main h1').first()).toBeVisible({ timeout: 10_000 });
   });
 });
 

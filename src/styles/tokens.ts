@@ -28,7 +28,7 @@ export const colors = {
     secondary: '#ccc',
     dimmed: '#999',
     muted: '#888',
-    dim: '#777', // 4.6:1 on #111 — passes AA normal text
+    dim: '#808080', // 4.78:1 on #111 — passes AA normal text
     faint: '#666', // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
     faintest: '#555', // decorative/disabled only — below AA for text
   },
@@ -271,9 +271,9 @@ export const genreColors: Record<string, string> = {
   house: 'hsl(38, 80%, 52%)',
   'afro house': 'hsl(15, 85%, 55%)',
   breaks: 'hsl(55, 80%, 50%)',
-  electro: 'hsl(230, 80%, 60%)',
+  electro: 'hsl(230, 80%, 70%)',
   // Trap / Urban
-  trap: 'hsl(270, 70%, 55%)',
+  trap: 'hsl(270, 70%, 70%)',
   'hip hop': 'hsl(260, 60%, 55%)',
   // Experimental
   experimental: 'hsl(175, 55%, 48%)',

@@ -76,9 +76,6 @@ const AIBandIndex = lazy(() =>
 const AIBandDetail = lazy(() =>
   import('./views/AIBandDetail').then(m => ({ default: m.AIBandDetail }))
 );
-const Leaderboard = lazy(() =>
-  import('./views/Leaderboard').then(m => ({ default: m.Leaderboard }))
-);
 const DevLogin = lazy(() => import('./views/DevLogin').then(m => ({ default: m.DevLogin })));
 const AdminVerification = lazy(() =>
   import('./views/AdminVerification').then(m => ({ default: m.AdminVerification }))
@@ -236,7 +233,6 @@ function AnimatedRoutes() {
         <Route path="/agents/gallery" element={<AgentsGallery />} />
         <Route path="/ai-band" element={<AIBandIndex />} />
         <Route path="/ai-band/:slug" element={<AIBandDetail />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
         <Route
           path="/admin/verification"
           element={

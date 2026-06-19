@@ -43,6 +43,7 @@ import type {
 import { colors, radius, space } from '../styles/tokens';
 import { HiveStory } from '../views/HiveStory';
 import { SimilarArtistsPanel } from '../components/SimilarArtistsPanel';
+import { FoundingMemberBadge } from '../components/FoundingMemberBadge';
 
 function timeAgo(dateStr: string): string {
   const now = Date.now();
@@ -283,9 +284,14 @@ export function ProfilePage() {
               {profileName}
               <VerificationBadgeSystem profile={profile} badges={badges} />
             </h1>
-            <p style={{ color: colors.text.dim, fontSize: 13, margin: '4px 0 0' }}>
-              @{profile.username}
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
+              <p style={{ color: colors.text.dim, fontSize: 13, margin: 0 }}>
+                @{profile.username}
+              </p>
+              {(profile as { is_founding_member?: boolean }).is_founding_member && (
+                <FoundingMemberBadge size="sm" />
+              )}
+            </div>
             {profile.bio && (
               <p
                 style={{

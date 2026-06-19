@@ -429,6 +429,26 @@ export function ProfileSetup() {
         onboarding_complete: true,
       });
       if (error) throw error;
+
+      // Auto-redeem a pending invite code stored before sign-in
+      const pendingInvite = typeof window !== 'undefined'
+        ? sessionStorage.getItem('pending_invite')
+        : null;
+      if (pendingInvite) {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession) {
+          await fetch('/api/invites/redeem', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${currentSession.access_token}`,
+            },
+            body: JSON.stringify({ code: pendingInvite }),
+          }).catch(() => {/* non-critical */});
+          sessionStorage.removeItem('pending_invite');
+        }
+      }
+
       navigate('/feed');
     } catch (error) {
       setToast({

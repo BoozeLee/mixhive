@@ -72,10 +72,10 @@ export function AgentsGallery() {
     <div style={{ maxWidth: 880, margin: '0 auto', padding: '24px 16px' }}>
       <header style={{ marginBottom: space[10] }}>
         <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold }}>
-          {t('agentGallery')}
+          {t('agentGallery')}
         </h1>
         <p style={{ margin: '4px 0 0', color: colors.text.muted, fontSize: fontSize.md }}>
-          {t('description')}
+          {t('description')}
         </p>
         <div style={{ marginTop: space[6] }}>
           <Link to="/agents" style={{ color: colors.accent, fontSize: fontSize.sm }}>
@@ -96,7 +96,7 @@ export function AgentsGallery() {
               color: colors.text.primary,
             }}
           >
-            {t('starterLibrary')}
+            {t('starterLibrary')}
           </h2>
           <span style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
             {t('templatesCount', { count: STARTER_AGENTS.length })}
@@ -137,10 +137,10 @@ export function AgentsGallery() {
               color: colors.text.primary,
             }}
           >
-            {t('community')}
+            {t('community')}
           </h2>
           <span style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
-            {t('publicAgentsFromOther')}
+            {t('publicAgentsFromOther')}
           </span>
         </header>
 
@@ -151,7 +151,7 @@ export function AgentsGallery() {
         ) : error ? (
           <div style={{ padding: 24, textAlign: 'center' }}>
             <p style={{ color: colors.danger, marginBottom: 16 }}>{error}</p>
-            <Button onClick={loadAgents}>{t('retry')}</Button>
+            <Button onClick={loadAgents}>{t('retry')}</Button>
           </div>
         ) : agents.length === 0 ? (
           <EmptyState
@@ -238,7 +238,7 @@ export function AgentsGallery() {
                   </pre>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button onClick={() => handleFork(a)} loading={forking === a.id} size="sm">
-                      {t('forkIntoMyAccount')}
+                      {t('forkIntoMyAccount')}
                     </Button>
                   </div>
                 </article>

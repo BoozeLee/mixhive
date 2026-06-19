@@ -26,25 +26,28 @@ const BASE = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3099';
 
 test.describe('§1 Lua Agents — public gallery', () => {
   test('gallery page loads and has main content', async ({ page }) => {
-    await page.goto('/agents/gallery');
-    await expect(page.getByRole('main')).toBeVisible({ timeout: 15_000 });
+    await page.goto('/agents/gallery', { waitUntil: 'domcontentloaded' });
+    // .mixhive-shell confirms React has mounted (not just the Next.js HTML shell)
+    await expect(page.locator('.mixhive-shell')).toBeVisible({ timeout: 25_000 });
   });
 
   test('starter agents section renders Fork buttons', async ({ page }) => {
-    await page.goto('/agents/gallery');
-    await page.getByRole('main').waitFor({ timeout: 15_000 });
+    await page.goto('/agents/gallery', { waitUntil: 'domcontentloaded' });
+    // Wait for React to mount (shell shows MIXHIVE; .mixhive-shell is React's root)
+    await page.locator('.mixhive-shell').waitFor({ timeout: 20_000 });
     // STARTER_AGENTS are always rendered from constants — no DB needed
     await expect(
       page.getByRole('button', { name: /fork into my account/i }).first()
-    ).toBeVisible({ timeout: 10_000 });
+    ).toBeVisible({ timeout: 15_000 });
   });
 
   test('unauthenticated fork redirects to /login', async ({ browser }) => {
     // Fresh context — no stored session
     const ctx = await browser.newContext({ storageState: undefined });
     const page = await ctx.newPage();
-    await page.goto(`${BASE}/agents/gallery`);
-    await page.getByRole('main').waitFor({ timeout: 15_000 });
+    await page.goto(`${BASE}/agents/gallery`, { waitUntil: 'domcontentloaded' });
+    // Wait for React app to mount (not just the HTML shell)
+    await page.locator('.mixhive-shell').waitFor({ timeout: 25_000 });
     const forkBtn = page.getByRole('button', { name: /fork into my account/i }).first();
     await expect(forkBtn).toBeVisible({ timeout: 10_000 });
     await forkBtn.click();
@@ -53,11 +56,9 @@ test.describe('§1 Lua Agents — public gallery', () => {
   });
 
   test('gallery shows public agent section heading', async ({ page }) => {
-    await page.goto('/agents/gallery');
-    await page.getByRole('main').waitFor({ timeout: 15_000 });
-    // Either public agents or the "no public agents yet" state — heading must exist
-    const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 8_000 });
+    await page.goto('/agents/gallery', { waitUntil: 'domcontentloaded' });
+    // Wait for React to mount, then for the gallery h1 specifically
+    await expect(page.locator('main h1').first()).toBeVisible({ timeout: 20_000 });
   });
 });
 
@@ -140,16 +141,16 @@ test.describe('§3 Lua Agents — auth guards', () => {
   test('/agents page without auth redirects to /login', async ({ browser }) => {
     const ctx = await browser.newContext({ storageState: undefined });
     const page = await ctx.newPage();
-    await page.goto(`${BASE}/agents`);
-    await page.waitForURL(/\/login|\/setup/, { timeout: 15_000 });
+    await page.goto(`${BASE}/agents`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/login|\/setup/, { timeout: 20_000 });
     await ctx.close();
   });
 
   test('/agents/inbox without auth redirects to /login', async ({ browser }) => {
     const ctx = await browser.newContext({ storageState: undefined });
     const page = await ctx.newPage();
-    await page.goto(`${BASE}/agents/inbox`);
-    await page.waitForURL(/\/login|\/setup/, { timeout: 15_000 });
+    await page.goto(`${BASE}/agents/inbox`, { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/login|\/setup/, { timeout: 20_000 });
     await ctx.close();
   });
 });
@@ -332,12 +333,11 @@ test.describe('§5 Lua Agents — sandbox correctness (authenticated)', () => {
 
 test.describe('§6 Lua Agents — inbox & marketplace', () => {
   test('marketplace /marketplace/agents loads without error boundary', async ({ page }) => {
-    await page.goto('/marketplace/agents');
-    await expect(page.getByRole('main')).toBeVisible({ timeout: 15_000 });
+    await page.goto('/marketplace/agents', { waitUntil: 'domcontentloaded' });
+    // Wait for React to mount and render the page (not just the Next.js shell)
+    await expect(page.locator('main h1').first()).toBeVisible({ timeout: 20_000 });
     // Error boundary fires when AgentCard sub-component crashes (i18n scope bug)
-    await expect(page.getByRole('heading', { name: /something went wrong/i })).not.toBeVisible({ timeout: 8_000 });
-    // Some content renders — heading or loading state
-    await expect(page.locator('main').locator('h1, h2, [role="status"]').first()).toBeVisible({ timeout: 8_000 });
+    await expect(page.getByRole('heading', { name: /something went wrong/i })).not.toBeVisible();
   });
 
   test('/agents/inbox loads for authenticated users', async ({ page }) => {

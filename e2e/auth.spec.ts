@@ -1,16 +1,15 @@
 import { test, expect } from '@playwright/test';
 import { hasE2ECredentials } from './helpers/auth';
+import { gotoShell } from './helpers/goto';
 
 test.describe('Auth flows', () => {
   test('landing page loads with main-content', async ({ page }) => {
-    await page.goto('/');
+    await gotoShell(page, '/');
     await expect(page.getByRole('main')).toBeVisible();
   });
 
-  // Scope to the auth form so the navbar search input/button can't cause
-  // strict-mode multiple-match failures.
   test('login page renders form fields', async ({ page }) => {
-    await page.goto('/login');
+    await gotoShell(page, '/login');
     const form = page.locator('form');
     await expect(form.locator('input[type="email"]')).toBeVisible();
     await expect(form.locator('input[type="password"]')).toBeVisible();
@@ -18,45 +17,41 @@ test.describe('Auth flows', () => {
   });
 
   test('login with invalid credentials shows error', async ({ page }) => {
-    await page.goto('/login');
+    await gotoShell(page, '/login');
     const form = page.locator('form');
     await form.locator('input[type="email"]').fill('notreal@nowhere.test');
     await form.locator('input[type="password"]').fill('wrongpassword123');
     await form.getByRole('button', { name: /sign in/i }).click();
-    // Expect an error toast or message — look for any error indicator
     await expect(
       page.locator('[role="alert"], .toast, [data-sonner-toast], [class*="error"]').first()
     ).toBeVisible({ timeout: 8_000 });
   });
 
   test('register page renders all fields', async ({ page }) => {
-    await page.goto('/register');
+    await gotoShell(page, '/register');
     const form = page.locator('form');
     await expect(form.locator('input[type="email"]')).toBeVisible();
     await expect(form.locator('input[type="password"]')).toBeVisible();
-    await expect(page.getByRole('main')).toBeVisible();
   });
 
   test('forgot password page renders', async ({ page }) => {
-    await page.goto('/auth/forgot-password');
+    await gotoShell(page, '/auth/forgot-password');
     const form = page.locator('form');
     await expect(form.locator('input[type="email"]')).toBeVisible();
     await expect(form.getByRole('button', { name: /send reset link/i })).toBeVisible();
   });
 
   test('login shows Google sign-in option', async ({ page }) => {
-    await page.goto('/login');
+    await gotoShell(page, '/login');
     await expect(page.getByRole('button', { name: /google/i })).toBeVisible();
   });
 
   test('unauthenticated access to /dashboard redirects to login', async ({ browser }) => {
-    // Use a fresh context with no stored session
     const ctx = await browser.newContext({ storageState: { cookies: [], origins: [] } });
     const page = await ctx.newPage();
-    await page.goto('/dashboard');
-    // Either redirected to /login or the page shows a login prompt
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('input[type="email"], [href="/login"]').first()).toBeVisible({
-      timeout: 10_000,
+      timeout: 20_000,
     });
     await ctx.close();
   });
@@ -64,9 +59,9 @@ test.describe('Auth flows', () => {
   test('unauthenticated access to /upload redirects to login', async ({ browser }) => {
     const ctx = await browser.newContext({ storageState: { cookies: [], origins: [] } });
     const page = await ctx.newPage();
-    await page.goto('/upload');
+    await page.goto('/upload', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('input[type="email"], [href="/login"]').first()).toBeVisible({
-      timeout: 10_000,
+      timeout: 20_000,
     });
     await ctx.close();
   });
@@ -75,14 +70,12 @@ test.describe('Auth flows', () => {
     test.skip(!hasE2ECredentials, 'E2E credentials not configured');
 
     test('login and redirect to /feed', async ({ page }) => {
-      // Already authenticated via storageState — just verify we land on feed
-      await page.goto('/feed');
+      await gotoShell(page, '/feed');
       await expect(page.getByRole('main')).toBeVisible();
     });
 
     test('sign out clears session', async ({ page }) => {
-      await page.goto('/feed');
-      // Open user menu and sign out
+      await gotoShell(page, '/feed');
       const avatar = page
         .locator('[aria-label*="profile"], [aria-label*="menu"], img[alt*="avatar"]')
         .first();

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { redisCache } from '@/lib/redis';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+const RATE_LIMIT = 20;
+const RATE_WINDOW = 60; // seconds
 
 function anonClient() {
   return createClient(
@@ -13,8 +17,25 @@ function anonClient() {
 }
 
 export async function GET(req: NextRequest) {
+  const ip =
+    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    req.headers.get('x-real-ip') ??
+    'unknown';
+
+  const rl = await redisCache.incrementRateLimit(`invite_check:${ip}`, RATE_LIMIT, RATE_WINDOW);
+  if (rl.current > rl.limit) {
+    return NextResponse.json({ valid: false }, {
+      status: 429,
+      headers: {
+        'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)),
+        'X-RateLimit-Limit': String(rl.limit),
+        'X-RateLimit-Remaining': '0',
+      },
+    });
+  }
+
   const code = req.nextUrl.searchParams.get('code')?.toUpperCase();
-  if (!code) return NextResponse.json({ valid: false, reason: 'missing_code' }, { status: 400 });
+  if (!code) return NextResponse.json({ valid: false }, { status: 400 });
 
   const { data, error } = await anonClient()
     .from('invites')
@@ -23,7 +44,7 @@ export async function GET(req: NextRequest) {
     .eq('is_active', true)
     .maybeSingle();
 
-  if (error) return NextResponse.json({ valid: false, reason: 'error' }, { status: 500 });
+  if (error) return NextResponse.json({ valid: false }, { status: 500 });
   if (!data) return NextResponse.json({ valid: false });
 
   if (data.expires_at && new Date(data.expires_at) < new Date()) {

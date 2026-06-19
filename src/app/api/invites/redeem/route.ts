@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { handleApiError } from '@/lib/api-errors';
+import { redisCache } from '@/lib/redis';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -26,6 +27,18 @@ function anonClient(jwt: string) {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip =
+      req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+      req.headers.get('x-real-ip') ??
+      'unknown';
+    const rl = await redisCache.incrementRateLimit(`invite_redeem:${ip}`, 5, 60);
+    if (rl.current > rl.limit) {
+      return NextResponse.json({ error: 'rate_limited' }, {
+        status: 429,
+        headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) },
+      });
+    }
+
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'not_authenticated' }, { status: 401 });

@@ -149,7 +149,9 @@
   },
   "overrides": {
     "ws": "^8.21.0",
-    "postcss": "^8.5.15"
+    "postcss": "^8.5.15",
+    "js-yaml": "^4.1.0",
+    "form-data": "^4.0.4"
   },
   "husky": {
     "hooks": {

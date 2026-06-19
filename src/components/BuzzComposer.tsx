@@ -546,6 +546,7 @@ function AttachButton({
 }
 
 function AttachBadge({ label, onRemove }: { label: ReactNode; onRemove: () => void }) {
+  const t = useTranslations('buzzComposer');
   return (
     <div
       style={{

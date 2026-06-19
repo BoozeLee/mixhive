@@ -303,6 +303,7 @@ function AgentCard({
   onInstall: () => void;
   onBuy: () => void;
 }) {
+  const t = useTranslations('agentMarket');
   return (
     <div
       style={{

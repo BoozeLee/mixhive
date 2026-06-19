@@ -116,6 +116,7 @@ export function AgentsGallery() {
             <li key={s.id}>
               <StarterCard
                 starter={s}
+                forkLabel={t('forkIntoMyAccount')}
                 forking={forking === `starter:${s.id}`}
                 onFork={() => handleForkStarter(s)}
               />
@@ -252,10 +253,12 @@ export function AgentsGallery() {
 
 function StarterCard({
   starter,
+  forkLabel,
   forking,
   onFork,
 }: {
   starter: StarterAgent;
+  forkLabel: string;
   forking: boolean;
   onFork: () => void;
 }) {
@@ -310,7 +313,7 @@ function StarterCard({
       </pre>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button onClick={onFork} loading={forking} size="sm">
-          {t('forkIntoMyAccount')}
+          {forkLabel}
         </Button>
       </div>
     </article>

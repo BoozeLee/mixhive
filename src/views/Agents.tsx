@@ -211,6 +211,7 @@ function AgentRow({
   onEdit: () => void;
   onChanged: () => Promise<void>;
 }) {
+  const t = useTranslations('agents');
   const [busy, setBusy] = useState(false);
   const errorRatio =
     agent.run_count === 0 ? 0 : Math.round((agent.error_count / agent.run_count) * 100);
@@ -308,6 +309,7 @@ function AgentEditor({
   onCancel: () => void;
   onSaved: () => Promise<void>;
 }) {
+  const t = useTranslations('agents');
   const initialTrigger: LuaAgentTrigger = agent?.trigger_type ?? presetTrigger ?? 'on_follow';
   const [name, setName] = useState(agent?.name ?? '');
   const [description, setDescription] = useState(agent?.description ?? '');

@@ -199,6 +199,7 @@ export function CollabQuests() {
 }
 
 function QuestCard({ quest }: { quest: CollabQuest }) {
+  const t = useTranslations('quests');
   const openRoles = quest.collab_roles?.filter(r => r.status === 'open') ?? [];
   const uniqueRoleTypes = [...new Set(openRoles.map(r => r.role_type))];
 

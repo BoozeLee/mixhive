@@ -24,13 +24,13 @@ export async function GET(req: NextRequest) {
     .maybeSingle();
 
   if (error) return NextResponse.json({ valid: false, reason: 'error' }, { status: 500 });
-  if (!data) return NextResponse.json({ valid: false, reason: 'not_found' });
+  if (!data) return NextResponse.json({ valid: false });
 
   if (data.expires_at && new Date(data.expires_at) < new Date()) {
-    return NextResponse.json({ valid: false, reason: 'expired' });
+    return NextResponse.json({ valid: false });
   }
   if (data.uses_count >= data.max_uses) {
-    return NextResponse.json({ valid: false, reason: 'exhausted' });
+    return NextResponse.json({ valid: false });
   }
 
   return NextResponse.json({

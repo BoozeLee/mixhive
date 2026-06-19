@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   let body: { label?: string; max_uses?: number; expires_at?: string } = {};
   try { body = await req.json(); } catch { /* empty body is fine */ }
 
-  const code = crypto.randomUUID().replace(/-/g, '').slice(0, 8).toUpperCase();
+  const code = crypto.randomUUID().replace(/-/g, '').toUpperCase();
 
   const { data, error } = await serviceClient()
     .from('invites')

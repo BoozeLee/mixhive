@@ -6,6 +6,10 @@ import { redisCache } from '@/lib/redis';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+// 5 attempts per user per minute — keyed on JWT-validated user.id (cannot be rotated)
+const USER_LIMIT = 5;
+const WINDOW = 60;
+
 function serviceClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,18 +31,7 @@ function anonClient(jwt: string) {
 
 export async function POST(req: NextRequest) {
   try {
-    const ip =
-      req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-      req.headers.get('x-real-ip') ??
-      'unknown';
-    const rl = await redisCache.incrementRateLimit(`invite_redeem:${ip}`, 5, 60);
-    if (rl.current > rl.limit) {
-      return NextResponse.json({ error: 'rate_limited' }, {
-        status: 429,
-        headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) },
-      });
-    }
-
+    // Auth first — rate limit key is the JWT-validated user.id (cannot be spoofed)
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'not_authenticated' }, { status: 401 });
@@ -48,6 +41,18 @@ export async function POST(req: NextRequest) {
     const { data: { user }, error: authError } = await anonClient(jwt).auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: 'invalid_token' }, { status: 401 });
+    }
+
+    // Fail-closed rate limit keyed on server-validated user.id
+    const rl = await redisCache.strictRateLimit(`invite_redeem:user:${user.id}`, USER_LIMIT, WINDOW);
+    if (rl === null) {
+      return NextResponse.json({ error: 'service_unavailable' }, { status: 503 });
+    }
+    if (rl.current > rl.limit) {
+      return NextResponse.json({ error: 'rate_limited' }, {
+        status: 429,
+        headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) },
+      });
     }
 
     const body: { code?: string } = await req.json().catch(() => ({}));

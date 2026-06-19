@@ -60,6 +60,10 @@ export interface RedisHealth extends RedisConnectionInfo {
 class RedisCache {
   private client: Redis | null = null;
   private isConnected = false;
+
+  public get isAvailable(): boolean {
+    return this.isConnected && this.client?.status === 'ready';
+  }
   private connectPromise: Promise<void> | null = null;
   private connectionInfo: RedisConnectionInfo = {
     configured: false,
@@ -361,6 +365,34 @@ class RedisCache {
         remaining: limit,
         reset: resetTime,
       };
+    }
+  }
+
+  /**
+   * Fail-closed variant: returns null when Redis is unavailable or errors.
+   * Callers MUST treat null as "over limit" for security-sensitive endpoints.
+   */
+  public async strictRateLimit(
+    key: string,
+    limit: number,
+    window: number
+  ): Promise<{ current: number; limit: number; remaining: number; reset: number } | null> {
+    await this.connect().catch(() => undefined);
+    if (!this.isAvailable) return null;
+
+    const rateLimitKey = `${KEY_PREFIXES.RATE_LIMIT}${key}`;
+    const now = Date.now();
+    const resetTime = now + window * 1000;
+
+    try {
+      await this.client!.zremrangebyscore(rateLimitKey, 0, now - window * 1000);
+      await this.client!.zadd(rateLimitKey, now, `${now}-${Math.random()}`);
+      await this.client!.expire(rateLimitKey, window);
+      const current = (await this.client!.zcard(rateLimitKey)) ?? 0;
+      return { current, limit, remaining: Math.max(0, limit - current), reset: resetTime };
+    } catch (error) {
+      console.error('strictRateLimit error:', error);
+      return null;
     }
   }
 

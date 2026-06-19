@@ -63,7 +63,7 @@ export const OnboardingProfileSchema = z.object({
     .trim()
     .min(1, 'Display name is required')
     .max(50, 'Display name too long'),
-  avatarUrl: z.string().trim().url('Avatar is required'),
+  avatarUrl: z.string().trim().url().optional().or(z.literal('')),
   bio: z.string().trim().min(1, 'Bio is required').max(1000, 'Bio too long'),
   genres: z.array(z.string()).min(1, 'Choose at least one genre').max(20, 'Maximum 20 genres'),
 });

@@ -117,6 +117,9 @@ export function ProfileSetup() {
   const { user, profile, updateProfile } = useAuth();
   const navigate = useNavigate();
 
+  const finishingRef = useRef(false);
+  const formInitializedRef = useRef(false);
+
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
   const [usernameError, setUsernameError] = useState('');
@@ -180,11 +183,15 @@ export function ProfileSetup() {
   });
 
   useEffect(() => {
-    if (!profile) return;
+    if (!profile || finishingRef.current) return;
     if (profile.onboarding_complete) {
       navigate('/feed', { replace: true });
       return;
     }
+    // Only sync form from profile once on first load — prevents auth refreshes
+    // from wiping fields the user has already typed.
+    if (formInitializedRef.current) return;
+    formInitializedRef.current = true;
     setForm(current => ({
       ...current,
       username: profile.username || current.username,
@@ -407,6 +414,10 @@ export function ProfileSetup() {
       });
       return;
     }
+    // Block the profile effect from racing this save — the effect would
+    // navigate to /feed the moment onboarding_complete flips to true, which
+    // would interrupt the invite redemption below.
+    finishingRef.current = true;
     setSaving(true);
     try {
       const { error } = await updateProfile({
@@ -444,13 +455,14 @@ export function ProfileSetup() {
               Authorization: `Bearer ${currentSession.access_token}`,
             },
             body: JSON.stringify({ code: pendingInvite }),
-          }).catch(() => {/* non-critical */});
+          }).catch(() => {});
           sessionStorage.removeItem('pending_invite');
         }
       }
 
       navigate('/feed');
     } catch (error) {
+      finishingRef.current = false;
       setToast({
         open: true,
         message: error instanceof Error ? error.message : 'Could not save profile. Try again.',
@@ -468,7 +480,7 @@ export function ProfileSetup() {
     form.displayName.trim().length > 0 &&
     !usernameError &&
     !usernameChecking;
-  const canProceedStep2 = Boolean(form.avatarUrl);
+  const canProceedStep2 = true; // avatar is optional — users without an AI key must not be blocked
   const canProceedStep3 = form.bio.trim().length > 0 && form.genres.length > 0;
   const canProceedStep4 = true;
   const canFinish =
@@ -558,7 +570,7 @@ export function ProfileSetup() {
                     setField('username', e.target.value);
                     setUsernameError('');
                   }}
-                  onBlur={() => checkUsername(form.username)}
+                  onBlur={() => checkUsername(form.username).catch(() => {})}
                   placeholder={t('djyourusername')}
                   error={usernameError || undefined}
                 />

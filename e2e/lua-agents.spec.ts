@@ -331,11 +331,13 @@ test.describe('§5 Lua Agents — sandbox correctness (authenticated)', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('§6 Lua Agents — inbox & marketplace', () => {
-  test('marketplace /marketplace/agents loads content', async ({ page }) => {
+  test('marketplace /marketplace/agents loads without error boundary', async ({ page }) => {
     await page.goto('/marketplace/agents');
     await expect(page.getByRole('main')).toBeVisible({ timeout: 15_000 });
-    const text = await page.locator('main').textContent({ timeout: 10_000 });
-    expect(text!.length).toBeGreaterThan(10);
+    // Error boundary fires when AgentCard sub-component crashes (i18n scope bug)
+    await expect(page.getByRole('heading', { name: /something went wrong/i })).not.toBeVisible({ timeout: 8_000 });
+    // Some content renders — heading or loading state
+    await expect(page.locator('main').locator('h1, h2, [role="status"]').first()).toBeVisible({ timeout: 8_000 });
   });
 
   test('/agents/inbox loads for authenticated users', async ({ page }) => {

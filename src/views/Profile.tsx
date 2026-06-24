@@ -284,10 +284,16 @@ export function ProfilePage() {
               {profileName}
               <VerificationBadgeSystem profile={profile} badges={badges} />
             </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-              <p style={{ color: colors.text.dim, fontSize: 13, margin: 0 }}>
-                @{profile.username}
-              </p>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                flexWrap: 'wrap',
+                marginTop: 4,
+              }}
+            >
+              <p style={{ color: colors.text.dim, fontSize: 13, margin: 0 }}>@{profile.username}</p>
               {(profile as { is_founding_member?: boolean }).is_founding_member && (
                 <FoundingMemberBadge size="sm" />
               )}

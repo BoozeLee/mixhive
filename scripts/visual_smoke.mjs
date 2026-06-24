@@ -42,8 +42,7 @@ const NOISE =
   /webpack-hmr|eval\(\) is not supported|Download the React DevTools|status of 404|ERR_NAME_NOT_RESOLVED|ERR_INTERNET_DISCONNECTED|ERR_CONNECTION|net::ERR_/i;
 
 const overflowFn = () =>
-  Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) >
-  window.innerWidth + 1;
+  Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) > window.innerWidth + 1;
 
 function slug(route) {
   return route.replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '') || 'root';

@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../lib/messagesStore';
 import { LogoIcon } from './Logo';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { Icon } from './ui/Icon';
 import type { IconKey } from '../lib/icons';
 import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens';
@@ -60,32 +61,24 @@ export function MobileNav() {
         paddingBottom: space[2],
       }}
     >
-      {/* Logo */}
-      <Link
-        to="/"
-        style={{
-          position: 'relative',
-          textDecoration: 'none',
-          color: location.pathname === '/' ? colors.accent : colors.text.muted,
-          transition: transition.base,
-        }}
-        aria-current={location.pathname === '/' ? 'page' : undefined}
-      >
-        <div style={{ textAlign: 'center', marginBottom: space[1] }}>
-          <LogoIcon variant="business" />
-        </div>
-        <span
+      {/* Logo + language */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+        <Link
+          to="/"
           style={{
-            display: 'block',
-            fontSize: fontSize.xs,
-            marginTop: space[1],
-            textAlign: 'center',
-            fontWeight: location.pathname === '/' ? fontWeight.semibold : fontWeight.normal,
+            position: 'relative',
+            textDecoration: 'none',
+            color: location.pathname === '/' ? colors.accent : colors.text.muted,
+            transition: transition.base,
           }}
+          aria-current={location.pathname === '/' ? 'page' : undefined}
         >
-          {logoItem.label}
-        </span>
-      </Link>
+          <div style={{ textAlign: 'center' }}>
+            <LogoIcon variant="business" />
+          </div>
+        </Link>
+        <LanguageSwitcher hideLabel />
+      </div>
 
       {/* Compose Buzz — gold floating button in center */}
       <Link

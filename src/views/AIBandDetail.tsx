@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { getAIAgent, getAIAgentMixes, followAIAgent, unfollowAIAgent, isFollowingAIAgent } from '../lib/api';
+import {
+  getAIAgent,
+  getAIAgentMixes,
+  followAIAgent,
+  unfollowAIAgent,
+  isFollowingAIAgent,
+} from '../lib/api';
 import type { AIAgent, AIAgentMix } from '../lib/api';
 import { MixCard } from '../components/MixCard';
 import { Button } from '../components/ui/Button';
@@ -62,7 +68,10 @@ export function AIBandDetail() {
   }, [slug, user]);
 
   async function handleFollow() {
-    if (!user || !agent) { navigate('/login?next=/ai-band/' + slug); return; }
+    if (!user || !agent) {
+      navigate('/login?next=/ai-band/' + slug);
+      return;
+    }
     if (followBusy) return;
     setFollowBusy(true);
     const prev = following;
@@ -98,7 +107,9 @@ export function AIBandDetail() {
           This AI agent doesn't exist or is no longer active.
         </p>
         <Link to="/ai-band">
-          <Button variant="secondary" size="sm">Back to AI Band</Button>
+          <Button variant="secondary" size="sm">
+            Back to AI Band
+          </Button>
         </Link>
       </div>
     );
@@ -161,7 +172,9 @@ export function AIBandDetail() {
 
         {/* Info */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: space[4], flexWrap: 'wrap' }}>
+          <div
+            style={{ display: 'flex', alignItems: 'flex-start', gap: space[4], flexWrap: 'wrap' }}
+          >
             <div style={{ flex: 1 }}>
               <h1
                 style={{
@@ -189,7 +202,14 @@ export function AIBandDetail() {
           </div>
 
           {agent.bio && (
-            <p style={{ fontSize: fontSize.md, color: colors.text.secondary, marginTop: space[4], marginBottom: 0 }}>
+            <p
+              style={{
+                fontSize: fontSize.md,
+                color: colors.text.secondary,
+                marginTop: space[4],
+                marginBottom: 0,
+              }}
+            >
               {agent.bio}
             </p>
           )}
@@ -212,7 +232,10 @@ export function AIBandDetail() {
               <span style={{ fontWeight: fontWeight.semibold, color: colors.text.primary }}>
                 Lv.{agent.level}
               </span>
-              <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}> · {agent.xp} XP</span>
+              <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
+                {' '}
+                · {agent.xp} XP
+              </span>
             </div>
           </div>
 

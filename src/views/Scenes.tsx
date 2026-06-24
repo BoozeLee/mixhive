@@ -51,9 +51,7 @@ export function Scenes() {
       <h1 style={{ fontSize: fontSize['3xl'], fontWeight: 700, color: colors.text.primary }}>
         {t('scenes')}
       </h1>
-      <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 4 }}>
-        {t('subtitle')}
-      </p>
+      <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 4 }}>{t('subtitle')}</p>
 
       {loading ? (
         <div style={{ padding: 40, textAlign: 'center' }}>

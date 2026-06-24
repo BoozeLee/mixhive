@@ -26,7 +26,10 @@ export async function requireSubscription(
     global: { headers: { Authorization: `Bearer ${jwt}` } },
   });
 
-  const { data: { user }, error: authErr } = await sb.auth.getUser();
+  const {
+    data: { user },
+    error: authErr,
+  } = await sb.auth.getUser();
   if (authErr || !user) {
     return { ok: false, error: 'Not authenticated', status: 401 };
   }

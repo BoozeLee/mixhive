@@ -22,13 +22,18 @@ export function AIAgentCard({ agent, currentUserId, onFollowToggle }: Props) {
     isFollowingAIAgent(currentUserId, agent.id).then(v => {
       if (!cancelled) setFollowing(v);
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [currentUserId, agent.id]);
 
   async function handleFollow(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    if (!currentUserId) { navigate('/login?next=/ai-band'); return; }
+    if (!currentUserId) {
+      navigate('/login?next=/ai-band');
+      return;
+    }
     if (busy) return;
     setBusy(true);
     const prev = following;
@@ -120,9 +125,7 @@ export function AIAgentCard({ agent, currentUserId, onFollowToggle }: Props) {
             >
               {agent.name}
             </div>
-            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
-              @{agent.slug}
-            </div>
+            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>@{agent.slug}</div>
           </div>
         </div>
 

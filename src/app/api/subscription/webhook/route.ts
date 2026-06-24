@@ -64,7 +64,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function handleSubscriptionChange(sb: ReturnType<typeof makeServiceClient>, sub: Stripe.Subscription) {
+async function handleSubscriptionChange(
+  sb: ReturnType<typeof makeServiceClient>,
+  sub: Stripe.Subscription
+) {
   const userId = sub.metadata?.userId || (await userIdFromCustomer(sb, sub.customer as string));
   if (!userId) return;
 
@@ -82,7 +85,10 @@ async function handleSubscriptionChange(sb: ReturnType<typeof makeServiceClient>
   );
 }
 
-async function handleSubscriptionDeleted(sb: ReturnType<typeof makeServiceClient>, sub: Stripe.Subscription) {
+async function handleSubscriptionDeleted(
+  sb: ReturnType<typeof makeServiceClient>,
+  sub: Stripe.Subscription
+) {
   const userId = sub.metadata?.userId || (await userIdFromCustomer(sb, sub.customer as string));
   if (!userId) return;
 
@@ -92,7 +98,10 @@ async function handleSubscriptionDeleted(sb: ReturnType<typeof makeServiceClient
     .eq('user_id', userId);
 }
 
-async function handleInvoicePaid(sb: ReturnType<typeof makeServiceClient>, invoice: Stripe.Invoice) {
+async function handleInvoicePaid(
+  sb: ReturnType<typeof makeServiceClient>,
+  invoice: Stripe.Invoice
+) {
   const subId = invoice.subscription as string;
   if (!subId) return;
 
@@ -103,14 +112,14 @@ async function handleInvoicePaid(sb: ReturnType<typeof makeServiceClient>, invoi
     .single();
 
   if (data?.user_id) {
-    await sb
-      .from('user_subscriptions')
-      .update({ status: 'active' })
-      .eq('user_id', data.user_id);
+    await sb.from('user_subscriptions').update({ status: 'active' }).eq('user_id', data.user_id);
   }
 }
 
-async function handleInvoiceFailed(sb: ReturnType<typeof makeServiceClient>, invoice: Stripe.Invoice) {
+async function handleInvoiceFailed(
+  sb: ReturnType<typeof makeServiceClient>,
+  invoice: Stripe.Invoice
+) {
   const subId = invoice.subscription as string;
   if (!subId) return;
 
@@ -121,14 +130,14 @@ async function handleInvoiceFailed(sb: ReturnType<typeof makeServiceClient>, inv
     .single();
 
   if (data?.user_id) {
-    await sb
-      .from('user_subscriptions')
-      .update({ status: 'past_due' })
-      .eq('user_id', data.user_id);
+    await sb.from('user_subscriptions').update({ status: 'past_due' }).eq('user_id', data.user_id);
   }
 }
 
-async function userIdFromCustomer(sb: ReturnType<typeof makeServiceClient>, customerId: string): Promise<string | null> {
+async function userIdFromCustomer(
+  sb: ReturnType<typeof makeServiceClient>,
+  customerId: string
+): Promise<string | null> {
   const { data } = await sb
     .from('profiles')
     .select('id')

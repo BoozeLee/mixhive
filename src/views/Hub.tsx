@@ -38,7 +38,13 @@ const TABS = [
     accent: colors.accent,
     dim: withAlpha(colors.accent, 0.09),
   },
-  { id: 'agents', label: 'Agents & AI', watermark: 'AGENTS', accent: colors.accentAmber, dim: withAlpha(colors.accentAmber, 0.086) },
+  {
+    id: 'agents',
+    label: 'Agents & AI',
+    watermark: 'AGENTS',
+    accent: colors.accentAmber,
+    dim: withAlpha(colors.accentAmber, 0.086),
+  },
   {
     id: 'profile',
     label: 'Profile',

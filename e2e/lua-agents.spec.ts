@@ -36,9 +36,9 @@ test.describe('§1 Lua Agents — public gallery', () => {
     // Wait for React to mount — 30 s budget for parallel-worker CDN pressure
     await page.locator('.mixhive-shell').waitFor({ timeout: 30_000 });
     // STARTER_AGENTS are always rendered from constants — no DB needed
-    await expect(
-      page.getByRole('button', { name: /fork into my account/i }).first()
-    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('button', { name: /fork into my account/i }).first()).toBeVisible({
+      timeout: 15_000,
+    });
   });
 
   test('unauthenticated fork redirects to /login', async ({ browser }) => {
@@ -103,7 +103,7 @@ test.describe('§2 Lua Agents — API health', () => {
     if (res.status() === 200) {
       const body = await res.json();
       // Response is either { agents: [] } or directly an array
-      const list = Array.isArray(body) ? body : body.agents ?? body.data ?? [];
+      const list = Array.isArray(body) ? body : (body.agents ?? body.data ?? []);
       expect(Array.isArray(list)).toBe(true);
     }
   });
@@ -181,19 +181,29 @@ test.describe('§4 Lua Agents — builder CRUD (authenticated)', () => {
     await expect(page.locator('#lua-code')).toBeVisible({ timeout: 8_000 });
   });
 
-  test('new agent form via deep-link (?new=1&trigger=manual) renders all triggers', async ({ page }) => {
+  test('new agent form via deep-link (?new=1&trigger=manual) renders all triggers', async ({
+    page,
+  }) => {
     await page.goto('/agents?new=1&trigger=manual');
     await expect(page.locator('#lua-code')).toBeVisible({ timeout: 15_000 });
 
     const triggers = [
-      'on_follow', 'on_unfollow', 'on_mix_upload', 'on_comment',
-      'on_reply', 'on_mention', 'on_like', 'on_repost', 'on_schedule', 'manual',
+      'on_follow',
+      'on_unfollow',
+      'on_mix_upload',
+      'on_comment',
+      'on_reply',
+      'on_mention',
+      'on_like',
+      'on_repost',
+      'on_schedule',
+      'manual',
     ] as const;
 
     for (const t of triggers) {
-      await expect(
-        page.locator(`input[name="trigger"][value="${t}"]`)
-      ).toBeAttached({ timeout: 5_000 });
+      await expect(page.locator(`input[name="trigger"][value="${t}"]`)).toBeAttached({
+        timeout: 5_000,
+      });
     }
   });
 

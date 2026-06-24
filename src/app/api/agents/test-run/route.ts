@@ -63,7 +63,10 @@ export async function POST(req: NextRequest) {
   if (agent.tier && agent.tier !== 'free') {
     const gate = await requireSubscription(token, 'supporter');
     if (!gate.ok) {
-      return NextResponse.json({ error: gate.error, requiredTier: 'supporter' }, { status: gate.status });
+      return NextResponse.json(
+        { error: gate.error, requiredTier: 'supporter' },
+        { status: gate.status }
+      );
     }
   }
 

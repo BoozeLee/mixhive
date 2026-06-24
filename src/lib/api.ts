@@ -2030,7 +2030,10 @@ export async function listAIAgents(limit = 50): Promise<AIAgent[]> {
     .eq('is_active', true)
     .order('followers_count', { ascending: false })
     .limit(limit);
-  if (error) { console.error('listAIAgents', error); return []; }
+  if (error) {
+    console.error('listAIAgents', error);
+    return [];
+  }
   return (data ?? []) as AIAgent[];
 }
 
@@ -2049,10 +2052,15 @@ export async function getAIAgentMixes(agentId: string, limit = 20): Promise<AIAg
   if (!isSupabaseConfigured) return [];
   const { data, error } = await supabase
     .from('mix_agent_credits')
-    .select(`mix_id, role, credit_label, mixes(id, title, artwork_url, audio_url, play_count, like_count, duration_seconds, created_at, profiles(username, display_name, avatar_url))`)
+    .select(
+      `mix_id, role, credit_label, mixes(id, title, artwork_url, audio_url, play_count, like_count, duration_seconds, created_at, profiles(username, display_name, avatar_url))`
+    )
     .eq('agent_id', agentId)
     .limit(limit);
-  if (error) { console.error('getAIAgentMixes', error); return []; }
+  if (error) {
+    console.error('getAIAgentMixes', error);
+    return [];
+  }
   return (data ?? []) as AIAgentMix[];
 }
 
@@ -2082,7 +2090,6 @@ export async function unfollowAIAgent(userId: string, agentId: string): Promise<
     .eq('ai_agent_id', agentId);
   if (error) throw error;
 }
-
 
 export async function getAIAgentLeaderboard(limit = 10): Promise<AIAgent[]> {
   return listAIAgents(limit);

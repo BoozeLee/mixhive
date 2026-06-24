@@ -31,11 +31,16 @@ export default function InvitePage() {
       // Check invite validity
       const res = await fetch(`/api/invites/check?code=${encodeURIComponent(code)}`);
       const json = await res.json();
-      if (!json.valid) { setStatus('invalid'); return; }
+      if (!json.valid) {
+        setStatus('invalid');
+        return;
+      }
       setLabel(json.label ?? null);
 
       // Check if already signed in
-      const { data: { session } } = await sb().auth.getSession();
+      const {
+        data: { session },
+      } = await sb().auth.getSession();
       if (session?.user) {
         setUserId(session.user.id);
         // Check if already a founding member
@@ -59,8 +64,13 @@ export default function InvitePage() {
       return;
     }
     setStatus('redeeming');
-    const { data: { session } } = await sb().auth.getSession();
-    if (!session) { router.push(`/login?next=/invite/${code}`); return; }
+    const {
+      data: { session },
+    } = await sb().auth.getSession();
+    if (!session) {
+      router.push(`/login?next=/invite/${code}`);
+      return;
+    }
 
     const res = await fetch('/api/invites/redeem', {
       method: 'POST',
@@ -72,7 +82,11 @@ export default function InvitePage() {
     });
     const json = await res.json();
     if (!res.ok) {
-      if (json.error === 'already_used') { setAlreadyMember(true); setStatus('done'); return; }
+      if (json.error === 'already_used') {
+        setAlreadyMember(true);
+        setStatus('done');
+        return;
+      }
       setErrorMsg(json.error ?? 'Something went wrong');
       setStatus('error');
       return;
@@ -88,7 +102,15 @@ export default function InvitePage() {
 
   if (status === 'loading') {
     return (
-      <main style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <main
+        style={{
+          minHeight: '100vh',
+          background: bg,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <div style={{ color: text.muted, fontSize: 14 }}>Checking invite…</div>
       </main>
     );
@@ -96,7 +118,16 @@ export default function InvitePage() {
 
   if (status === 'invalid') {
     return (
-      <main style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <main
+        style={{
+          minHeight: '100vh',
+          background: bg,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 24,
+        }}
+      >
         <div style={{ maxWidth: 400, textAlign: 'center' }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🚫</div>
           <h1 style={{ color: text.primary, fontSize: 22, fontWeight: 700, margin: '0 0 8px' }}>
@@ -115,7 +146,16 @@ export default function InvitePage() {
 
   if (status === 'done') {
     return (
-      <main style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <main
+        style={{
+          minHeight: '100vh',
+          background: bg,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 24,
+        }}
+      >
         <div style={{ maxWidth: 440, textAlign: 'center' }}>
           <div style={{ fontSize: 56, marginBottom: 16 }}>⬡</div>
           <h1 style={{ color: gold, fontSize: 26, fontWeight: 800, margin: '0 0 8px' }}>
@@ -123,7 +163,8 @@ export default function InvitePage() {
           </h1>
           {gainedXp != null && (
             <p style={{ color: text.muted, fontSize: 15, margin: '0 0 24px' }}>
-              +500 XP awarded · you are now a <strong style={{ color: gold }}>Founding Member</strong>.
+              +500 XP awarded · you are now a{' '}
+              <strong style={{ color: gold }}>Founding Member</strong>.
             </p>
           )}
           {alreadyMember && !gainedXp && (
@@ -153,12 +194,25 @@ export default function InvitePage() {
 
   if (status === 'error') {
     return (
-      <main style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <main
+        style={{
+          minHeight: '100vh',
+          background: bg,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 24,
+        }}
+      >
         <div style={{ maxWidth: 400, textAlign: 'center' }}>
           <div style={{ fontSize: 40, marginBottom: 16 }}>⚠️</div>
-          <h1 style={{ color: text.primary, fontSize: 20, fontWeight: 700, margin: '0 0 8px' }}>Something went wrong</h1>
+          <h1 style={{ color: text.primary, fontSize: 20, fontWeight: 700, margin: '0 0 8px' }}>
+            Something went wrong
+          </h1>
           <p style={{ color: text.muted, fontSize: 14, margin: '0 0 24px' }}>{errorMsg}</p>
-          <Link href="/" style={{ color: gold, textDecoration: 'none', fontSize: 14 }}>Back to MixHive →</Link>
+          <Link href="/" style={{ color: gold, textDecoration: 'none', fontSize: 14 }}>
+            Back to MixHive →
+          </Link>
         </div>
       </main>
     );
@@ -166,17 +220,32 @@ export default function InvitePage() {
 
   // status === 'valid' or 'redeeming'
   return (
-    <main style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+    <main
+      style={{
+        minHeight: '100vh',
+        background: bg,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+      }}
+    >
       <div style={{ maxWidth: 480, width: '100%' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{ fontSize: 52, marginBottom: 12 }}>⬡</div>
-          <h1 style={{ color: text.primary, fontSize: 28, fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+          <h1
+            style={{
+              color: text.primary,
+              fontSize: 28,
+              fontWeight: 800,
+              margin: '0 0 8px',
+              letterSpacing: '-0.02em',
+            }}
+          >
             You've been invited
           </h1>
-          {label && (
-            <p style={{ color: text.muted, fontSize: 13, margin: '0 0 4px' }}>{label}</p>
-          )}
+          {label && <p style={{ color: text.muted, fontSize: 13, margin: '0 0 4px' }}>{label}</p>}
           <p style={{ color: text.muted, fontSize: 14, margin: 0 }}>
             Join MixHive — the social platform for DJs, producers & underground culture.
           </p>
@@ -196,9 +265,23 @@ export default function InvitePage() {
             <span style={{ fontSize: 22 }}>⬡</span>
             <span style={{ color: gold, fontWeight: 700, fontSize: 15 }}>Founding Member</span>
           </div>
-          <ul style={{ margin: 0, padding: '0 0 0 18px', color: text.muted, fontSize: 13, lineHeight: 1.7 }}>
-            <li><strong style={{ color: text.primary }}>+500 XP</strong> on sign-up — instant head start on the leaderboard</li>
-            <li>Permanent <strong style={{ color: gold }}>⬡ Founding Member</strong> badge on your profile</li>
+          <ul
+            style={{
+              margin: 0,
+              padding: '0 0 0 18px',
+              color: text.muted,
+              fontSize: 13,
+              lineHeight: 1.7,
+            }}
+          >
+            <li>
+              <strong style={{ color: text.primary }}>+500 XP</strong> on sign-up — instant head
+              start on the leaderboard
+            </li>
+            <li>
+              Permanent <strong style={{ color: gold }}>⬡ Founding Member</strong> badge on your
+              profile
+            </li>
             <li>Early access to features before public launch</li>
           </ul>
         </div>
@@ -221,9 +304,10 @@ export default function InvitePage() {
               width: '100%',
               padding: '14px 0',
               borderRadius: 999,
-              background: status === 'redeeming'
-                ? 'rgba(240,192,64,0.4)'
-                : `linear-gradient(135deg, ${gold}, #ffd84a)`,
+              background:
+                status === 'redeeming'
+                  ? 'rgba(240,192,64,0.4)'
+                  : `linear-gradient(135deg, ${gold}, #ffd84a)`,
               color: '#08080a',
               fontWeight: 700,
               fontSize: 16,
@@ -248,7 +332,14 @@ export default function InvitePage() {
                 sessionStorage.setItem('pending_invite', code);
                 router.push(`/login?next=${encodeURIComponent(`/invite/${code}`)}`);
               }}
-              style={{ background: 'none', border: 'none', color: gold, cursor: 'pointer', fontSize: 12, padding: 0 }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: gold,
+                cursor: 'pointer',
+                fontSize: 12,
+                padding: 0,
+              }}
             >
               Sign in first →
             </button>

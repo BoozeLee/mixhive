@@ -94,9 +94,7 @@ export function Settings() {
   const { user, profile, updateProfile } = useAuth();
   const navigate = useNavigate();
 
-  const [deletionStatus, setDeletionStatus] = useState<
-    'requested' | 'cancelled' | null
-  >(null);
+  const [deletionStatus, setDeletionStatus] = useState<'requested' | 'cancelled' | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -1170,11 +1168,7 @@ export function Settings() {
           >
             {t('manageBilling')}
           </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => navigate('/pricing')}
-          >
+          <Button variant="primary" size="sm" onClick={() => navigate('/pricing')}>
             {t('upgradePlan')}
           </Button>
         </div>

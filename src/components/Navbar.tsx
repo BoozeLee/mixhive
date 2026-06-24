@@ -8,6 +8,7 @@ import { Button } from './ui/Button';
 import { BeeMark } from './brand/BeeMark';
 import { MixhiveWordmark } from './brand/MixhiveWordmark';
 import { Icon } from './ui/Icon';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { colors, space } from '../styles/tokens';
 
 const navLinks = [
@@ -302,6 +303,10 @@ export function Navbar() {
                   >
                     Upload Mix
                   </Link>
+
+                  <div style={{ padding: '6px 16px' }}>
+                    <LanguageSwitcher hideLabel />
+                  </div>
 
                   <div style={{ borderTop: '1px solid rgba(240,192,64,0.10)', marginTop: 2 }} />
 

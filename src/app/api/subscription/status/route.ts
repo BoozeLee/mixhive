@@ -11,7 +11,10 @@ export async function GET(req: NextRequest) {
     }
     const jwt = authHeader.slice(7);
     const userClient = makeUserClient(jwt);
-    const { data: { user }, error: authErr } = await userClient.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await userClient.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }

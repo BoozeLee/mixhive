@@ -318,7 +318,9 @@ export function QuestDetail() {
                     )}
                   </div>
                   {done ? (
-                    <span style={{ fontSize: fontSize.sm, color: colors.success, alignSelf: 'center' }}>
+                    <span
+                      style={{ fontSize: fontSize.sm, color: colors.success, alignSelf: 'center' }}
+                    >
                       {t('done')}
                     </span>
                   ) : isOwner ? (

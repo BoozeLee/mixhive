@@ -34,10 +34,7 @@ export async function GET(request: NextRequest) {
     for (const req of requests) {
       try {
         await sb.auth.admin.deleteUser(req.user_id);
-        await sb
-          .from('deletion_requests')
-          .update({ status: 'done' })
-          .eq('id', req.id);
+        await sb.from('deletion_requests').update({ status: 'done' }).eq('id', req.id);
         processed++;
       } catch (err) {
         errors.push({

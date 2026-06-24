@@ -14,11 +14,7 @@ import type { Page } from '@playwright/test';
  *   2. Gate on .mixhive-shell which is the React root div written by App.tsx
  *      — its presence proves React has mounted and the router has matched.
  */
-export async function gotoShell(
-  page: Page,
-  url: string,
-  timeout = 28_000
-): Promise<void> {
+export async function gotoShell(page: Page, url: string, timeout = 28_000): Promise<void> {
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.locator('.mixhive-shell').waitFor({ timeout });
 }

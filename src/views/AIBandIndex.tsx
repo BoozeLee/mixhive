@@ -13,11 +13,16 @@ export function AIBandIndex() {
 
   function load() {
     listAIAgents()
-      .then(a => { setAgents(a); setLoading(false); })
+      .then(a => {
+        setAgents(a);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '24px 16px' }}>

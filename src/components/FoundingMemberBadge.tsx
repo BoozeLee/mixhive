@@ -24,7 +24,9 @@ export function FoundingMemberBadge({ size = 'md' }: Props) {
         whiteSpace: 'nowrap',
       }}
     >
-      <span aria-hidden="true" style={{ fontSize: isSm ? 10 : 12 }}>⬡</span>
+      <span aria-hidden="true" style={{ fontSize: isSm ? 10 : 12 }}>
+        ⬡
+      </span>
       {!isSm && 'Founding Member'}
     </span>
   );

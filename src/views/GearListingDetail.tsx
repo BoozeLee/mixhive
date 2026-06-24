@@ -120,18 +120,18 @@ export function GearListingDetail() {
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 20px' }}>
       <Link
-      to="/marketplace/gear"
-      style={{
-        color: colors.text.faint,
-        fontSize: 13,
-        textDecoration: 'none',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 4,
-        marginBottom: 20,
-      }}
-    >
-      {t('gearMarket')}
+        to="/marketplace/gear"
+        style={{
+          color: colors.text.faint,
+          fontSize: 13,
+          textDecoration: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 4,
+          marginBottom: 20,
+        }}
+      >
+        {t('gearMarket')}
       </Link>
 
       <div
@@ -354,7 +354,10 @@ export function GearListingDetail() {
               >
                 {buying
                   ? t('redirectingToCheckout')
-                  : t('buyNow', { currency: listing.currency, price: listing.price.toLocaleString() })}
+                  : t('buyNow', {
+                      currency: listing.currency,
+                      price: listing.price.toLocaleString(),
+                    })}
               </button>
               {buyError && (
                 <p
@@ -410,7 +413,10 @@ export function GearListingDetail() {
               margin: '8px 0 0',
             }}
           >
-            {t('metaInfo', { views: listing.views_count, date: new Date(listing.created_at).toLocaleDateString() })}
+            {t('metaInfo', {
+              views: listing.views_count,
+              date: new Date(listing.created_at).toLocaleDateString(),
+            })}
           </p>
           {userId && userId !== listing.seller_profile_id && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>

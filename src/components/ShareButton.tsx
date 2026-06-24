@@ -61,7 +61,8 @@ export function ShareButton({
         onClick={() => setOpen(prev => !prev)}
         className={className}
       >
-        {t('share')}{showCount ? ` ${shareCount}` : ''}
+        {t('share')}
+        {showCount ? ` ${shareCount}` : ''}
       </Button>
     );
 

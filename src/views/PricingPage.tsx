@@ -66,7 +66,9 @@ export function PricingPage() {
     }
     const priceId = process.env[`NEXT_PUBLIC_${priceEnvVar}`] || '';
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) return;
 
     const res = await fetch('/api/subscription/create', {
@@ -175,9 +177,7 @@ export function PricingPage() {
               >
                 {tier.price}
               </span>
-              <span style={{ fontSize: fontSize.sm, color: colors.text.dim }}>
-                {tier.period}
-              </span>
+              <span style={{ fontSize: fontSize.sm, color: colors.text.dim }}>{tier.period}</span>
             </div>
 
             <ul

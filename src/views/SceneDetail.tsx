@@ -166,7 +166,9 @@ export function SceneDetail() {
                   {a.verified ? ' ✓' : ''}
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{t('xp', { count: a.xp })}</span>
+                  <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>
+                    {t('xp', { count: a.xp })}
+                  </span>
                   <span
                     style={{
                       fontSize: fontSize.xs,

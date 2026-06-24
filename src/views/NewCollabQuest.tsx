@@ -267,7 +267,9 @@ export function NewCollabQuest() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <span style={{ color: colors.text.muted, fontSize: 13 }}>{t('roleN', { n: i + 1 })}</span>
+                  <span style={{ color: colors.text.muted, fontSize: 13 }}>
+                    {t('roleN', { n: i + 1 })}
+                  </span>
                   {roles.length > 1 && (
                     <button
                       onClick={() => removeRole(i)}

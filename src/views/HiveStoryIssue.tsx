@@ -45,7 +45,17 @@ function formatMonth(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 
-function FeatureCard({ feature, themeColor, typeLabel, listenLabel }: { feature: HiveStoryFeature; themeColor: string; typeLabel: string; listenLabel: string }) {
+function FeatureCard({
+  feature,
+  themeColor,
+  typeLabel,
+  listenLabel,
+}: {
+  feature: HiveStoryFeature;
+  themeColor: string;
+  typeLabel: string;
+  listenLabel: string;
+}) {
   const { profile, mix } = feature;
   const coverUrl = mix?.cover_url ?? profile?.avatar_url;
 

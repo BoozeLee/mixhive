@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getXpLeaderboard, type LeaderboardEntry, getAIAgentLeaderboard, type AIAgent } from '../lib/api';
+import {
+  getXpLeaderboard,
+  type LeaderboardEntry,
+  getAIAgentLeaderboard,
+  type AIAgent,
+} from '../lib/api';
 import { LevelBadge } from '../components/LevelBadge';
 import { EmptyState } from '../components/EmptyState';
 import { SkeletonBar } from '../components/Skeleton';
@@ -23,12 +28,17 @@ export function Leaderboard() {
     setLoading(true);
     Promise.all([getXpLeaderboard(50), getAIAgentLeaderboard(10)])
       .then(([rows, ags]) => {
-        if (!cancelled) { setEntries(rows); setAgents(ags); }
+        if (!cancelled) {
+          setEntries(rows);
+          setAgents(ags);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -50,7 +60,14 @@ export function Leaderboard() {
       >
         {/* Artist XP ranking */}
         <section>
-          <h2 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 700, color: colors.text.secondary }}>
+          <h2
+            style={{
+              margin: '0 0 12px',
+              fontSize: 15,
+              fontWeight: 700,
+              color: colors.text.secondary,
+            }}
+          >
             ⭐ Artist XP
           </h2>
           {loading ? (
@@ -68,7 +85,9 @@ export function Leaderboard() {
               actionTo="/collab-quests"
             />
           ) : (
-            <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: space[5] }}>
+            <ol
+              style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: space[5] }}
+            >
               {entries.map((entry, index) => {
                 const rank = index + 1;
                 const name = entry.display_name || entry.username;
@@ -139,7 +158,14 @@ export function Leaderboard() {
 
         {/* AI Band ranking */}
         <section>
-          <h2 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 700, color: colors.text.secondary }}>
+          <h2
+            style={{
+              margin: '0 0 12px',
+              fontSize: 15,
+              fontWeight: 700,
+              color: colors.text.secondary,
+            }}
+          >
             🤖 AI Band
           </h2>
           {loading ? (
@@ -163,7 +189,9 @@ export function Leaderboard() {
               No AI agents yet.
             </div>
           ) : (
-            <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: space[5] }}>
+            <ol
+              style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: space[5] }}
+            >
               {agents.map((agent, index) => {
                 const rank = index + 1;
                 return (
@@ -209,7 +237,12 @@ export function Leaderboard() {
                             alt={agent.name}
                             width={40}
                             height={40}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              display: 'block',
+                            }}
                           />
                         ) : (
                           <div
@@ -243,7 +276,13 @@ export function Leaderboard() {
                           @{agent.slug} · {agent.mixes_credited} mixes
                         </div>
                       </div>
-                      <div style={{ fontSize: fontSize.sm, color: colors.text.secondary, flexShrink: 0 }}>
+                      <div
+                        style={{
+                          fontSize: fontSize.sm,
+                          color: colors.text.secondary,
+                          flexShrink: 0,
+                        }}
+                      >
                         {agent.followers_count} followers
                       </div>
                     </Link>

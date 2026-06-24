@@ -468,7 +468,9 @@ export function Opportunities() {
                   >
                     {match.score}
                   </div>
-                  <div style={{ color: colors.text.dim, fontSize: fontSize.xs }}>{t('matchLabel')}</div>
+                  <div style={{ color: colors.text.dim, fontSize: fontSize.xs }}>
+                    {t('matchLabel')}
+                  </div>
                 </div>
               </div>
 

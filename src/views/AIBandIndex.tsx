@@ -16,11 +16,16 @@ export function AIBandIndex() {
 
   function load() {
     listAIAgents(50)
-      .then(a => { setAgents(a); setLoading(false); })
+      .then(a => {
+        setAgents(a);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const sorted = useMemo(() => {
     if (sort === 'followers') return [...agents].sort((a, b) => b.followers_count - a.followers_count);

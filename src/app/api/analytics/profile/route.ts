@@ -23,7 +23,10 @@ export async function GET(req: NextRequest) {
       auth: { persistSession: false },
     });
 
-    const { data: { user }, error: authErr } = await userClient.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await userClient.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
@@ -33,11 +36,22 @@ export async function GET(req: NextRequest) {
 
     const [mixesResult, followersResult, followingResult, dailyResult, gearResult] =
       await Promise.all([
-        sb.from('mixes').select('id, title, play_count, like_count, comment_count, genre_name, created_at').eq('dj_id', profileId),
+        sb
+          .from('mixes')
+          .select('id, title, play_count, like_count, comment_count, genre_name, created_at')
+          .eq('dj_id', profileId),
         sb.rpc('get_follower_count', { p_profile_id: profileId }),
         sb.rpc('get_following_count', { p_profile_id: profileId }),
-        sb.from('profile_analytics_daily').select('*').eq('profile_id', profileId).order('day', { ascending: false }).limit(42),
-        sb.from('equipment_transactions').select('agreed_price, platform_fee_pct, currency, transaction_state, created_at').eq('seller_profile_id', profileId),
+        sb
+          .from('profile_analytics_daily')
+          .select('*')
+          .eq('profile_id', profileId)
+          .order('day', { ascending: false })
+          .limit(42),
+        sb
+          .from('equipment_transactions')
+          .select('agreed_price, platform_fee_pct, currency, transaction_state, created_at')
+          .eq('seller_profile_id', profileId),
       ]);
 
     const profileMixes = mixesResult.data || [];
@@ -67,7 +81,11 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => a - b);
     const uploadFrequencyDays =
       createdTimes.length > 1
-        ? Math.round((createdTimes[createdTimes.length - 1] - createdTimes[0]) / (createdTimes.length - 1) / 86400000)
+        ? Math.round(
+            (createdTimes[createdTimes.length - 1] - createdTimes[0]) /
+              (createdTimes.length - 1) /
+              86400000
+          )
         : null;
 
     const since = new Date(Date.now() - 42 * 86400000);
@@ -102,7 +120,9 @@ export async function GET(req: NextRequest) {
       following,
       averagePlaysPerMix: profileMixes.length ? Math.round(totalPlays / profileMixes.length) : 0,
       likeToPlayRatio: totalPlays ? Number(((totalLikes / totalPlays) * 100).toFixed(1)) : 0,
-      followerEngagementRate: followers ? Number((((totalLikes + totalComments) / followers) * 100).toFixed(1)) : 0,
+      followerEngagementRate: followers
+        ? Number((((totalLikes + totalComments) / followers) * 100).toFixed(1))
+        : 0,
       uploadFrequencyDays,
       topMixes: sortedMixes,
       genreDistribution,

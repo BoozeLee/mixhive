@@ -13,11 +13,7 @@ interface SearchAutocompleteProps {
   className?: string;
 }
 
-export function SearchAutocomplete({
-  onSearch,
-  placeholder,
-  className,
-}: SearchAutocompleteProps) {
+export function SearchAutocomplete({ onSearch, placeholder, className }: SearchAutocompleteProps) {
   const t = useTranslations('searchAutocomplete');
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);

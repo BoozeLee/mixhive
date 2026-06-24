@@ -23,7 +23,11 @@ export async function POST(req: NextRequest) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
 
   let body: { label?: string; max_uses?: number; expires_at?: string } = {};
-  try { body = await req.json(); } catch { /* empty body is fine */ }
+  try {
+    body = await req.json();
+  } catch {
+    /* empty body is fine */
+  }
 
   const code = crypto.randomUUID().replace(/-/g, '').toUpperCase();
 

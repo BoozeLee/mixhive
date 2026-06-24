@@ -311,10 +311,7 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
       <div style={{ padding: space[8], display: 'grid', gap: space[7] }}>
         <section>
           <h3 style={sectionTitleStyle}>{t('bookingPitch')}</h3>
-          <p style={bodyStyle}>
-            {content.booking_pitch ||
-              t('addMoreProfileDetails')}
-          </p>
+          <p style={bodyStyle}>{content.booking_pitch || t('addMoreProfileDetails')}</p>
         </section>
         {content.bio && (
           <section>

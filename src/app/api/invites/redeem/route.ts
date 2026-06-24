@@ -38,21 +38,31 @@ export async function POST(req: NextRequest) {
     }
     const jwt = authHeader.slice(7);
 
-    const { data: { user }, error: authError } = await anonClient(jwt).auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await anonClient(jwt).auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: 'invalid_token' }, { status: 401 });
     }
 
     // Fail-closed rate limit keyed on server-validated user.id
-    const rl = await redisCache.strictRateLimit(`invite_redeem:user:${user.id}`, USER_LIMIT, WINDOW);
+    const rl = await redisCache.strictRateLimit(
+      `invite_redeem:user:${user.id}`,
+      USER_LIMIT,
+      WINDOW
+    );
     if (rl === null) {
       return NextResponse.json({ error: 'service_unavailable' }, { status: 503 });
     }
     if (rl.current > rl.limit) {
-      return NextResponse.json({ error: 'rate_limited' }, {
-        status: 429,
-        headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) },
-      });
+      return NextResponse.json(
+        { error: 'rate_limited' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) },
+        }
+      );
     }
 
     const body: { code?: string } = await req.json().catch(() => ({}));

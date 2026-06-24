@@ -21,9 +21,7 @@ function anonClient() {
 function clientIp(req: NextRequest): string {
   // req.ip is set by Vercel's trusted edge and cannot be spoofed by clients.
   // x-real-ip is the same value; XFF leftmost entry is user-controllable and not used.
-  return (req as unknown as { ip?: string }).ip
-    ?? req.headers.get('x-real-ip')
-    ?? 'unknown';
+  return (req as unknown as { ip?: string }).ip ?? req.headers.get('x-real-ip') ?? 'unknown';
 }
 
 export async function GET(req: NextRequest) {
@@ -43,10 +41,13 @@ export async function GET(req: NextRequest) {
   }
 
   if (ipRl.current > ipRl.limit || codeRl.current > codeRl.limit) {
-    return NextResponse.json({ valid: false }, {
-      status: 429,
-      headers: { 'Retry-After': String(Math.ceil((ipRl.reset - Date.now()) / 1000)) },
-    });
+    return NextResponse.json(
+      { valid: false },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(Math.ceil((ipRl.reset - Date.now()) / 1000)) },
+      }
+    );
   }
 
   const { data, error } = await anonClient()
@@ -58,7 +59,8 @@ export async function GET(req: NextRequest) {
 
   if (error) return NextResponse.json({ valid: false }, { status: 500 });
   if (!data) return NextResponse.json({ valid: false });
-  if (data.expires_at && new Date(data.expires_at) < new Date()) return NextResponse.json({ valid: false });
+  if (data.expires_at && new Date(data.expires_at) < new Date())
+    return NextResponse.json({ valid: false });
   if (data.uses_count >= data.max_uses) return NextResponse.json({ valid: false });
 
   return NextResponse.json({

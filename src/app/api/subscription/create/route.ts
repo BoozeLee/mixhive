@@ -11,7 +11,10 @@ export async function POST(req: NextRequest) {
     }
     const jwt = authHeader.slice(7);
     const userClient = makeUserClient(jwt);
-    const { data: { user }, error: authErr } = await userClient.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await userClient.auth.getUser();
     if (authErr || !user) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
@@ -38,10 +41,7 @@ export async function POST(req: NextRequest) {
         metadata: { userId: user.id },
       });
       customerId = customer.id;
-      await sb
-        .from('profiles')
-        .update({ stripe_customer_id: customerId })
-        .eq('id', user.id);
+      await sb.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id);
     }
 
     const session = await stripe.checkout.sessions.create({

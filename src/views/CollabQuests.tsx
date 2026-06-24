@@ -268,7 +268,8 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
                 gap: 8,
               }}
             >
-              <Icon name="quests" size={17} color={`var(--hive-gold, ${colors.accentBright})`} /> {quest.title}
+              <Icon name="quests" size={17} color={`var(--hive-gold, ${colors.accentBright})`} />{' '}
+              {quest.title}
             </h3>
 
             {/* Narrative */}

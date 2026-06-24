@@ -18,6 +18,7 @@ import {
   type SearchFilters as SearchFiltersValue,
   type SearchResponse,
 } from '../lib/search';
+import { listAIAgents, type AIAgent } from '../lib/api';
 import type { Profile } from '../lib/types';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 
@@ -41,6 +42,20 @@ export function SearchPage() {
   const [error, setError] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<SearchFiltersValue>({ type: 'all' });
+  const [allAgents, setAllAgents] = useState<AIAgent[]>([]);
+
+  useEffect(() => {
+    listAIAgents(50).then(setAllAgents).catch(() => {});
+  }, []);
+
+  const filteredAgents = query.trim().length >= 2
+    ? allAgents.filter(a => {
+        const q = query.toLowerCase();
+        return a.name.toLowerCase().includes(q) ||
+          a.slug.toLowerCase().includes(q) ||
+          (a.bio ?? '').toLowerCase().includes(q);
+      }).slice(0, 4)
+    : [];
 
   async function performSearch(searchQuery: string, nextFilters: SearchFiltersValue, offset = 0) {
     const trimmed = searchQuery.trim();
@@ -237,7 +252,7 @@ export function SearchPage() {
               onRetry={() => void performSearch(query, filters)}
             />
           ) : tab === 'all' ? (
-            <GroupedResults results={results} onSeeAll={switchTab} />
+            <GroupedResults results={results} onSeeAll={switchTab} agents={filteredAgents} />
           ) : (
             <>
               <EntityResults type={tab} results={results} />
@@ -270,15 +285,51 @@ function totalResults(results: SearchResponse) {
 function GroupedResults({
   results,
   onSeeAll,
+  agents = [],
 }: {
   results: SearchResponse;
   onSeeAll: (type: SearchEntityType) => void;
+  agents?: AIAgent[];
 }) {
   const t = useTranslations('search');
-  if (!totalResults(results))
+  const hasMainResults = totalResults(results);
+  if (!hasMainResults && !agents.length)
     return <EmptyState iconKey="search" title={t('noResults')} body={t('noResultsBody')} />;
   return (
     <div style={{ display: 'grid', gap: space[12] }}>
+      {agents.length > 0 && (
+        <section>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: space[6],
+            }}
+          >
+            <h2 style={{ margin: 0, color: colors.text.primary, fontSize: fontSize.lg }}>
+              {t('aiBand')}{' '}
+              <span style={{ color: colors.text.dim, fontSize: fontSize.sm }}>({agents.length})</span>
+            </h2>
+            <Link
+              to="/ai-band"
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.accentMuted,
+                textDecoration: 'none',
+                fontWeight: fontWeight.semibold,
+              }}
+            >
+              See all →
+            </Link>
+          </div>
+          <div style={{ display: 'grid', gap: space[4] }}>
+            {agents.map(agent => (
+              <AgentRow key={agent.id} agent={agent} />
+            ))}
+          </div>
+        </section>
+      )}
       <ResultGroup
         title={t('scenes')}
         total={results.sections.scenes.total}
@@ -439,6 +490,76 @@ function ProfileCard({ profile }: { profile: Profile }) {
               }}
             >
               {profile.bio}
+            </p>
+          )}
+        </div>
+      </article>
+    </Link>
+  );
+}
+
+function AgentRow({ agent }: { agent: AIAgent }) {
+  return (
+    <Link to={`/ai-band/${agent.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <article
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: space[8],
+          padding: space[6],
+          background: colors.surface,
+          border: `1px solid ${colors.border}`,
+          borderRadius: radius.lg,
+        }}
+      >
+        <div
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: '50%',
+            flexShrink: 0,
+            background: agent.avatar_url ? undefined : `${colors.accentMuted}44`,
+            border: `2px solid ${colors.accentMuted}`,
+            overflow: 'hidden',
+            display: 'grid',
+            placeItems: 'center',
+            fontSize: 20,
+            color: colors.accentMuted,
+          }}
+        >
+          {agent.avatar_url ? (
+            <img
+              src={agent.avatar_url}
+              alt={agent.name}
+              width={48}
+              height={48}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <span aria-hidden="true">🤖</span>
+          )}
+        </div>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ color: colors.text.primary, fontWeight: fontWeight.bold }}>
+            {agent.name}
+          </div>
+          <div style={{ color: colors.text.dim, fontSize: fontSize.sm }}>
+            @{agent.slug}
+            {agent.followers_count > 0 ? ` · ${agent.followers_count} followers` : ''}
+            {agent.mixes_credited > 0 ? ` · ${agent.mixes_credited} mixes` : ''}
+          </div>
+          {agent.bio && (
+            <p
+              style={{
+                color: colors.text.muted,
+                fontSize: fontSize.sm,
+                margin: `${space[2]}px 0 0`,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {agent.bio}
             </p>
           )}
         </div>

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
-import { getTrending } from '../lib/api';
+import { getTrending, getAIAgentLeaderboard, type AIAgent } from '../lib/api';
 import { getPopularSearches } from '../lib/search';
 import { MixCard } from '../components/MixCard';
+import { AIAgentCard } from '../components/AIAgentCard';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
+import { SkeletonBar } from '../components/Skeleton';
 import type { FeedMix } from '../lib/types';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 
@@ -13,6 +15,8 @@ export function Discover() {
   const t = useTranslations('discover');
   const [mixes, setMixes] = useState<FeedMix[]>([]);
   const [loading, setLoading] = useState(true);
+  const [agents, setAgents] = useState<AIAgent[]>([]);
+  const [agentsLoading, setAgentsLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -26,6 +30,11 @@ export function Discover() {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+
+    getAIAgentLeaderboard(6)
+      .then(result => { if (!cancelled) setAgents(result); })
+      .catch(() => { /* suppress — section stays hidden */ })
+      .finally(() => { if (!cancelled) setAgentsLoading(false); });
 
     return () => {
       cancelled = true;
@@ -79,6 +88,79 @@ export function Discover() {
           </div>
         )}
       </section>
+
+      {(agentsLoading || agents.length > 0) && (
+        <section style={{ marginBottom: space[12] }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'baseline',
+              marginBottom: space[6],
+            }}
+          >
+            <div>
+              <h2
+                style={{
+                  fontSize: fontSize.xl,
+                  fontWeight: fontWeight.bold,
+                  color: colors.text.primary,
+                  margin: 0,
+                  fontFamily: 'var(--font-display, system-ui)',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                {t('aiBand')}
+              </h2>
+              <p style={{ fontSize: fontSize.sm, color: colors.text.dim, margin: `${space[1]}px 0 0` }}>
+                {t('aiBandSubtitle')}
+              </p>
+            </div>
+            <Link
+              to="/ai-band"
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.accentMuted,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+                fontWeight: fontWeight.semibold,
+              }}
+            >
+              See all →
+            </Link>
+          </div>
+
+          {agentsLoading ? (
+            <div
+              style={{
+                display: 'flex',
+                gap: space[5],
+                overflowX: 'auto',
+                paddingBottom: space[2],
+              }}
+            >
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonBar key={i} width={240} height={160} style={{ flexShrink: 0, borderRadius: 12 }} />
+              ))}
+            </div>
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                gap: space[5],
+                overflowX: 'auto',
+                paddingBottom: space[2],
+              }}
+            >
+              {agents.map(agent => (
+                <div key={agent.id} style={{ flexShrink: 0, width: 240 }}>
+                  <AIAgentCard agent={agent} />
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       <section>
         <h2

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -7,7 +7,6 @@ import { ritualRequest } from '../lib/rituals';
 import { supabase } from '../lib/supabase';
 import { colors, fontSize, radius, space } from '../styles/tokens';
 import { HiveButton } from '../components/hive/HiveButton';
-import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 interface Ritual {
   id: string;
@@ -28,12 +27,7 @@ export function LiveRituals() {
   const { user } = useAuth();
   const [rituals, setRituals] = useState<Ritual[]>([]);
   const [invites, setInvites] = useState<RitualInvite[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadData = useCallback(() => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
     void supabase
       .from('collab_sessions')
       .select('id,title,description,created_at')
@@ -41,14 +35,7 @@ export function LiveRituals() {
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(30)
-      .then(({ data }) => {
-        setRituals((data ?? []) as Ritual[]);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(t('ritualsError'));
-        setLoading(false);
-      });
+      .then(({ data }) => setRituals((data ?? []) as Ritual[]));
     if (user) {
       void supabase
         .from('collab_session_invites')
@@ -58,11 +45,7 @@ export function LiveRituals() {
         .gt('expires_at', new Date().toISOString())
         .then(({ data }) => setInvites((data ?? []) as unknown as RitualInvite[]));
     }
-  }, [user, t]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  }, [user]);
 
   const answerInvite = async (invite: RitualInvite, status: 'accepted' | 'declined') => {
     try {
@@ -71,9 +54,9 @@ export function LiveRituals() {
         body: JSON.stringify({ status }),
       });
       setInvites(current => current.filter(item => item.id !== invite.id));
-      toast.success(status === 'accepted' ? t('joinedStage') : t('invitationDeclined'));
+      toast.success(status === 'accepted' ? 'You joined the creator stage' : 'Invitation declined');
     } catch (cause) {
-      toast.error(cause instanceof Error ? cause.message : t('couldNotAnswer'));
+      toast.error(cause instanceof Error ? cause.message : 'Could not answer invitation');
     }
   };
 
@@ -83,7 +66,7 @@ export function LiveRituals() {
     >
       <h1 style={{ fontSize: fontSize['3xl'] }}>{t('liveCreativeRituals')}</h1>
       <p style={{ color: colors.text.muted }}>
-        {t('subtitle')}
+        Enter the process, influence the direction, witness the provenance.
       </p>
       {invites.length > 0 && (
         <section style={{ marginTop: 24 }}>
@@ -104,7 +87,7 @@ export function LiveRituals() {
               }}
             >
               <span>
-                <strong>{invite.collab_sessions?.title || t('privateRitual')}</strong> · {invite.role}
+                <strong>{invite.collab_sessions?.title || 'Private ritual'}</strong> · {invite.role}
               </span>
               <span style={{ display: 'flex', gap: 6 }}>
                 <HiveButton size="sm" onClick={() => void answerInvite(invite, 'accepted')}>
@@ -122,49 +105,38 @@ export function LiveRituals() {
           ))}
         </section>
       )}
-      {loading ? (
-        <div style={{ padding: 40, textAlign: 'center' }}>
-          <LoadingSpinner />
-        </div>
-      ) : error ? (
-        <div style={{ padding: 40, textAlign: 'center' }}>
-          <p style={{ color: colors.danger, marginBottom: 16 }}>{error}</p>
-          <HiveButton onClick={loadData}>{t('retry')}</HiveButton>
-        </div>
-      ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))',
-            gap: 12,
-            marginTop: 24,
-          }}
-        >
-          {rituals.map(ritual => (
-            <Link
-              key={ritual.id}
-              to={`/session/${ritual.id}`}
-              style={{
-                color: colors.text.primary,
-                textDecoration: 'none',
-                background: colors.surface,
-                border: `1px solid ${colors.border}`,
-                borderRadius: radius.lg,
-                padding: 20,
-              }}
-            >
-              <strong>{ritual.title}</strong>
-              <p style={{ color: colors.text.muted }}>
-                {ritual.description || t('liveProcessUnfolding')}
-              </p>
-              <span style={{ color: colors.accent }}>{t('enterRitual')}</span>
-            </Link>
-          ))}
-          {rituals.length === 0 && (
-            <div style={{ color: colors.text.muted }}>{t('noPublicRitualsAre')}</div>
-          )}
-        </div>
-      )}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))',
+          gap: 12,
+          marginTop: 24,
+        }}
+      >
+        {rituals.map(ritual => (
+          <Link
+            key={ritual.id}
+            to={`/session/${ritual.id}`}
+            style={{
+              color: colors.text.primary,
+              textDecoration: 'none',
+              background: colors.surface,
+              border: `1px solid ${colors.border}`,
+              borderRadius: radius.lg,
+              padding: 20,
+            }}
+          >
+            <strong>{ritual.title}</strong>
+            <p style={{ color: colors.text.muted }}>
+              {ritual.description || 'A live creative process is unfolding.'}
+            </p>
+            <span style={{ color: colors.accent }}>Enter ritual →</span>
+          </Link>
+        ))}
+        {rituals.length === 0 && (
+          <div style={{ color: colors.text.muted }}>{t('noPublicRitualsAre')}</div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui';
@@ -15,26 +15,16 @@ export function AgentsGallery() {
   const navigate = useNavigate();
   const [agents, setAgents] = useState<PublicLuaAgent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [forking, setForking] = useState<string | null>(null);
 
-  const loadAgents = useCallback(() => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
     listPublicAgents()
       .then(a => {
         setAgents(a);
         setLoading(false);
       })
-      .catch(e => {
-        setError(e instanceof Error ? e.message : t('failedToLoad'));
-        setLoading(false);
-      });
-  }, [t]);
-
-  useEffect(() => {
-    loadAgents();
-  }, [loadAgents]);
+      .catch(() => setLoading(false));
+  }, []);
 
   async function handleFork(agent: PublicLuaAgent) {
     if (!user) {
@@ -46,7 +36,7 @@ export function AgentsGallery() {
       const newId = await forkAgent(agent);
       navigate(`/agents?edit=${newId}`);
     } catch (e) {
-      alert(e instanceof Error ? e.message : t('forkFailed'));
+      alert(e instanceof Error ? e.message : 'fork failed');
     } finally {
       setForking(null);
     }
@@ -62,7 +52,7 @@ export function AgentsGallery() {
       const newId = await createFromStarter(starter);
       navigate(`/agents?edit=${newId}`);
     } catch (e) {
-      alert(e instanceof Error ? e.message : t('forkFailed'));
+      alert(e instanceof Error ? e.message : 'fork failed');
     } finally {
       setForking(null);
     }
@@ -72,10 +62,11 @@ export function AgentsGallery() {
     <div style={{ maxWidth: 880, margin: '0 auto', padding: '24px 16px' }}>
       <header style={{ marginBottom: space[10] }}>
         <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold }}>
-          {t('agentGallery')}
+          {t('agentGallery')}
         </h1>
         <p style={{ margin: '4px 0 0', color: colors.text.muted, fontSize: fontSize.md }}>
-          {t('description')}
+          Browse Lua agents and fork them into your account in one click — starter templates ship
+          with MixHive, public agents are shared by the community.
         </p>
         <div style={{ marginTop: space[6] }}>
           <Link to="/agents" style={{ color: colors.accent, fontSize: fontSize.sm }}>
@@ -96,10 +87,10 @@ export function AgentsGallery() {
               color: colors.text.primary,
             }}
           >
-            {t('starterLibrary')}
+            {t('starterLibrary')}
           </h2>
           <span style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
-            {t('templatesCount', { count: STARTER_AGENTS.length })}
+            {STARTER_AGENTS.length} templates · ships with MixHive
           </span>
         </header>
         <ul
@@ -116,7 +107,6 @@ export function AgentsGallery() {
             <li key={s.id}>
               <StarterCard
                 starter={s}
-                forkLabel={t('forkIntoMyAccount')}
                 forking={forking === `starter:${s.id}`}
                 onFork={() => handleForkStarter(s)}
               />
@@ -137,10 +127,10 @@ export function AgentsGallery() {
               color: colors.text.primary,
             }}
           >
-            {t('community')}
+            {t('community')}
           </h2>
           <span style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
-            {t('publicAgentsFromOther')}
+            {t('publicAgentsFromOther')}
           </span>
         </header>
 
@@ -148,17 +138,12 @@ export function AgentsGallery() {
           <div style={{ padding: 24, textAlign: 'center' }}>
             <LoadingSpinner size="lg" />
           </div>
-        ) : error ? (
-          <div style={{ padding: 24, textAlign: 'center' }}>
-            <p style={{ color: colors.danger, marginBottom: 16 }}>{error}</p>
-            <Button onClick={loadAgents}>{t('retry')}</Button>
-          </div>
         ) : agents.length === 0 ? (
           <EmptyState
             icon="🌍"
             title={t('noPublicAgentsYet')}
-            body={t('beTheFirst')}
-            actionLabel={t('buildAnAgent')}
+            body="Be the first — open one of your agents, toggle 'Public', and it'll show up here for others to fork."
+            actionLabel="Build an agent"
             actionTo="/agents"
           />
         ) : (
@@ -238,7 +223,7 @@ export function AgentsGallery() {
                   </pre>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button onClick={() => handleFork(a)} loading={forking === a.id} size="sm">
-                      {t('forkIntoMyAccount')}
+                      {t('forkIntoMyAccount')}
                     </Button>
                   </div>
                 </article>
@@ -253,12 +238,10 @@ export function AgentsGallery() {
 
 function StarterCard({
   starter,
-  forkLabel,
   forking,
   onFork,
 }: {
   starter: StarterAgent;
-  forkLabel: string;
   forking: boolean;
   onFork: () => void;
 }) {
@@ -313,7 +296,7 @@ function StarterCard({
       </pre>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button onClick={onFork} loading={forking} size="sm">
-          {forkLabel}
+          {t('forkIntoMyAccount')}
         </Button>
       </div>
     </article>

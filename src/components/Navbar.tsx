@@ -113,7 +113,7 @@ export function Navbar() {
           }}
         >
           <BeeMark size={28} color={`var(--hive-gold, ${colors.accentBright})`} glow />
-          <MixhiveWordmark height={17} color="var(--hive-text, #f5f3e7)" />
+          <MixhiveWordmark height={17} color={`var(--hive-text, ${colors.text.primary})`} />
         </Link>
         {user && (
           <div

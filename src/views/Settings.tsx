@@ -108,7 +108,7 @@ export function Settings() {
           setDeletionStatus(data.status);
         }
       })
-      .catch(() => {});
+      .catch((err: unknown) => console.error('Failed to load deletion status:', err));
   }, [user]);
 
   const [formData, setFormData] = useState({
@@ -175,7 +175,7 @@ export function Settings() {
             booking_open: data.booking_open,
           });
       })
-      .catch(() => undefined);
+      .catch((err: unknown) => console.error('Failed to load DJ settings:', err));
   }, [user]);
 
   const handleAvatarUploadComplete = () => {

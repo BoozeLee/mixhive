@@ -189,7 +189,7 @@ export function BuzzDetail() {
                       style={{
                         padding: `${space[3]}px ${space[8]}px`,
                         background: canReply ? colors.accent : colors.surfaceMuted,
-                        color: canReply ? '#0a0a0a' : colors.text.faint,
+                        color: canReply ? colors.bg : colors.text.faint,
                         border: 'none',
                         borderRadius: radius.pill,
                         fontWeight: fontWeight.bold,

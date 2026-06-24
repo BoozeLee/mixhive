@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../lib/notificationStore';
 import { colors, space, fontSize } from '../styles/tokens';
+import { EmptyState } from '../components/EmptyState';
 import { Button } from '../components/ui/Button';
 import { Icon } from '../components/ui/Icon';
 import { SectionHeading } from '../components/ui/SectionHeading';
@@ -88,9 +89,13 @@ export function NotificationsPage() {
       </div>
 
       {notifications.length === 0 ? (
-        <p style={{ color: colors.text.dim, fontSize: 14, textAlign: 'center', padding: 40 }}>
-          No notifications yet. Follow some DJs and come back.
-        </p>
+        <EmptyState
+          iconKey="notifications"
+          title="No notifications yet"
+          body="Follow some DJs and come back — the hive will keep you posted."
+          actionLabel="Explore DJs"
+          actionTo="/discover"
+        />
       ) : (
         <div style={{ display: 'grid', gap: space[3] }}>
           {notifications.map((notification, i) => (

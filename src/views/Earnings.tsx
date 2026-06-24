@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { colors } from '../styles/tokens';
+import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 
 interface ConnectStatus {
@@ -194,13 +195,13 @@ export function Earnings() {
                 ? 'Your Stripe account needs a few more details before payouts can be enabled.'
                 : 'Connect a Stripe account to sell gear and receive agent-package earnings.'}
             </p>
-            <button onClick={handleConnect} disabled={connecting} style={primaryBtn}>
+            <Button onClick={handleConnect} disabled={connecting} style={{ background: 'var(--hive-gold)' }}>
               {connecting
                 ? 'Opening Stripe…'
                 : status?.onboarded
                   ? 'Finish payout setup'
                   : 'Set up payouts'}
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -335,17 +336,6 @@ const cardStyle: React.CSSProperties = {
   border: `1px solid ${colors.surfaceRaised}`,
   borderRadius: 12,
   padding: 18,
-};
-
-const primaryBtn: React.CSSProperties = {
-  background: 'var(--hive-gold)',
-  color: colors.black,
-  border: 'none',
-  padding: '10px 20px',
-  borderRadius: 8,
-  fontWeight: 700,
-  fontSize: 14,
-  cursor: 'pointer',
 };
 
 const th: React.CSSProperties = { padding: '10px 14px', fontWeight: 600, fontSize: 12 };

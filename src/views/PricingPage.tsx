@@ -145,7 +145,7 @@ export function PricingPage() {
                   left: '50%',
                   transform: 'translateX(-50%)',
                   background: colors.accent,
-                  color: '#000',
+                  color: colors.black,
                   padding: '4px 16px',
                   borderRadius: radius.full,
                   fontSize: fontSize.xs,

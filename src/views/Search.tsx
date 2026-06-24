@@ -45,7 +45,7 @@ export function SearchPage() {
   const [allAgents, setAllAgents] = useState<AIAgent[]>([]);
 
   useEffect(() => {
-    listAIAgents(50).then(setAllAgents).catch(() => {});
+    listAIAgents(50).then(setAllAgents).catch((err: unknown) => console.error('Failed to load agents:', err));
   }, []);
 
   const filteredAgents = query.trim().length >= 2

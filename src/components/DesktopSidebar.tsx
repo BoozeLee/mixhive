@@ -116,7 +116,7 @@ export function DesktopSidebar() {
                   gap: space[6],
                   padding: `${space[4]}px ${space[6]}px`,
                   borderRadius: 999,
-                  background: `linear-gradient(135deg, ${colors.accent}, #ffd84a)`,
+                  background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentBrightest})`,
                   color: colors.bg,
                   textDecoration: 'none',
                   fontWeight: fontWeight.bold,

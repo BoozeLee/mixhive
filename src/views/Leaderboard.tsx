@@ -9,12 +9,12 @@ import {
 import { LevelBadge } from '../components/LevelBadge';
 import { EmptyState } from '../components/EmptyState';
 import { SkeletonBar } from '../components/Skeleton';
-import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
+import { colors, tierColors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 
 function rankAccent(rank: number): string {
-  if (rank === 1) return '#e8c14a';
-  if (rank === 2) return '#b8b8c0';
-  if (rank === 3) return '#b07a4a';
+  if (rank === 1) return tierColors.gold;
+  if (rank === 2) return tierColors.silver;
+  if (rank === 3) return tierColors.bronze;
   return colors.text.faint;
 }
 

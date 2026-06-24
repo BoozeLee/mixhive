@@ -456,7 +456,7 @@ export function ProfileSetup() {
               Authorization: `Bearer ${currentSession.access_token}`,
             },
             body: JSON.stringify({ code: pendingInvite }),
-          }).catch(() => {});
+          }).catch((err: unknown) => console.error('Failed to redeem invite:', err));
           sessionStorage.removeItem('pending_invite');
         }
       }
@@ -571,7 +571,7 @@ export function ProfileSetup() {
                     setField('username', e.target.value);
                     setUsernameError('');
                   }}
-                  onBlur={() => checkUsername(form.username).catch(() => {})}
+                  onBlur={() => checkUsername(form.username).catch((err: unknown) => console.error('Username check failed:', err))}
                   placeholder={t('djyourusername')}
                   error={usernameError || undefined}
                 />

@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { colors, withAlpha } from '../../styles/tokens';
 
 interface Props {
   /** Width of the bright core, as CSS length. */
@@ -21,9 +22,8 @@ export function NeonDivider({ width = 220, style }: Props) {
         height: 2,
         margin: '0 auto',
         borderRadius: 2,
-        background:
-          'linear-gradient(90deg, transparent, rgba(246,196,0,0.15) 20%, #f6c400 50%, rgba(246,196,0,0.15) 80%, transparent)',
-        boxShadow: '0 0 14px rgba(246,196,0,0.45)',
+        background: `linear-gradient(90deg, transparent, ${withAlpha(colors.accent, 0.15)} 20%, ${colors.accentBright} 50%, ${withAlpha(colors.accent, 0.15)} 80%, transparent)`,
+        boxShadow: `0 0 14px ${withAlpha(colors.accent, 0.45)}`,
         ...style,
       }}
     />

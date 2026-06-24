@@ -1,4 +1,5 @@
 import { ImageWithFallback } from '../../lib/assetUrl';
+import { colors } from '../../styles/tokens';
 
 type Variant = 'horizontal' | 'stacked' | 'icon';
 type Size = 'sm' | 'md' | 'lg' | 'hero';
@@ -56,7 +57,7 @@ export function HiveLogo({ variant = 'horizontal', size = 'md', className }: Pro
             fontSize: s.text,
             fontWeight: 400,
             letterSpacing: stacked ? '0.04em' : '0.02em',
-            color: 'var(--hive-gold, #f6c400)',
+            color: 'var(--hive-gold, ' + colors.accentBright + ')',
             textShadow: '0 0 18px rgba(246,196,0,0.4)',
             lineHeight: 1,
           }}

@@ -100,7 +100,7 @@ export function MobileNav() {
             display: 'grid',
             placeItems: 'center',
             borderRadius: '50%',
-            background: `linear-gradient(135deg, ${colors.accent}, #ffd84a)`,
+            background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentBrightest})`,
             color: colors.bg,
             fontSize: 22,
             fontWeight: 900,

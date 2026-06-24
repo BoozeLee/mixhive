@@ -233,12 +233,12 @@ export function MessageThreadPage() {
                 fontSize: fontSize.sm,
                 lineHeight: 1.4,
                 opacity: msg.status === 'pending' ? 0.7 : 1,
-                border: msg.status === 'failed' ? `1px solid #f55` : 'none',
+                border: msg.status === 'failed' ? `1px solid ${colors.danger}` : 'none',
               }}
             >
               {msg.body}
               {msg.status === 'failed' && (
-                <span style={{ color: '#f55', fontSize: 11, marginLeft: space[2] }}>
+                <span style={{ color: colors.danger, fontSize: 11, marginLeft: space[2] }}>
                   {t('failed')}
                 </span>
               )}

@@ -336,7 +336,7 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
               marginBottom: space[6],
               borderRadius: radius.lg,
               overflow: 'hidden',
-              background: '#000',
+              background: colors.black,
             }}
           >
             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}

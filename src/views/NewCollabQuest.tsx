@@ -197,13 +197,14 @@ export function NewCollabQuest() {
                   />
                 ))}
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => setForm(f => ({ ...f, goals: [...f.goals, ''] }))}
-                style={ghostBtnStyle}
+                style={{ border: `1px dashed ${colors.borderStrong}`, color: colors.text.faint }}
               >
-                {t('addGoal')}
-              </button>
+                {t('addGoal')}⁠
+              </Button>
             </div>
           </div>
         </section>
@@ -350,9 +351,14 @@ export function NewCollabQuest() {
                 )}
               </div>
             ))}
-            <button type="button" onClick={addRole} style={ghostBtnStyle}>
-              {t('addRole')}
-            </button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={addRole}
+              style={{ border: `1px dashed ${colors.borderStrong}`, color: colors.text.faint }}
+            >
+              {t('addRole')}⁠
+            </Button>
           </div>
         </section>
 
@@ -377,13 +383,4 @@ const sectionHeadStyle: React.CSSProperties = {
   color: colors.text.faint,
   marginBottom: 14,
   marginTop: 0,
-};
-const ghostBtnStyle: React.CSSProperties = {
-  background: 'transparent',
-  color: colors.text.faint,
-  border: `1px dashed ${colors.borderStrong}`,
-  borderRadius: 8,
-  padding: '8px 16px',
-  fontSize: 13,
-  cursor: 'pointer',
 };

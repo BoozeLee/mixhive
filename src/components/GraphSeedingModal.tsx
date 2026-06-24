@@ -280,8 +280,8 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
         {submitError && (
           <div
             style={{
-              background: '#3a1f1f',
-              color: '#ff6b6b',
+              background: colors.dangerBg,
+              color: colors.danger,
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: fontSize.sm,

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { BeeMark } from './brand/BeeMark';
 import { needsOnboarding } from '../lib/authRouting';
+import { colors } from '../styles/tokens';
 
 export function ProtectedRoute({
   children,
@@ -40,11 +41,11 @@ export function ProtectedRoute({
           }}
           transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <BeeMark size={48} color="#f6c400" />
+          <BeeMark size={48} color={colors.accentBright} />
         </motion.div>
         <div
           style={{
-            color: 'var(--hive-muted, #a9a390)',
+            color: `var(--hive-muted, ${colors.text.muted})`,
             fontSize: 12,
             fontWeight: 700,
             letterSpacing: '0.18em',

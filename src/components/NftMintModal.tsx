@@ -354,7 +354,7 @@ function TokenPreviewCard({
           height: 120,
           background: imageUrl
             ? `url(${imageUrl}) center/cover`
-            : 'linear-gradient(135deg, #1a1a2e, #16213e)',
+            : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.border})`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

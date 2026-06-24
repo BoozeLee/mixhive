@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HiveButton } from './hive/HiveButton';
 import { StartMythicSessionModal } from './StartMythicSessionModal';
+import { colors } from '../styles/tokens';
 
 export function SessionFab() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +25,7 @@ export function SessionFab() {
           style={{
             display: 'block',
             textAlign: 'center',
-            color: '#f6c400',
+            color: colors.accentBright,
             fontSize: 12,
             marginBottom: 6,
           }}

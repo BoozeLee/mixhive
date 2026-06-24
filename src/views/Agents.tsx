@@ -327,10 +327,10 @@ function AgentEditor({
     if (!agent) return;
     listRuns(agent.id)
       .then(setRuns)
-      .catch(() => {});
+      .catch((err: unknown) => console.error('Failed to load runs:', err));
     listAgentKv(agent.id)
       .then(setKvEntries)
-      .catch(() => {});
+      .catch((err: unknown) => console.error('Failed to load KV entries:', err));
   }, [agent]);
 
   function pickTrigger(next: LuaAgentTrigger) {
@@ -715,7 +715,7 @@ function AgentEditor({
               onClick={() =>
                 listAgentKv(agent.id)
                   .then(setKvEntries)
-                  .catch(() => {})
+                  .catch((err: unknown) => console.error('Failed to refresh KV entries:', err))
               }
               style={{
                 fontSize: fontSize.xs,

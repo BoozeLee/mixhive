@@ -199,11 +199,6 @@ async function anonymizeUser(
       dj_style: null,
       dj_equipment: [],
       dj_daw: [],
-      is_dj: false,
-      is_pro: false,
-      verified: false,
-      onboarding_complete: false,
-      stripe_customer_id: null,
       updated_at: now,
     })
     .eq('id', userId);

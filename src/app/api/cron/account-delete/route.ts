@@ -86,10 +86,15 @@ export async function GET(request: NextRequest) {
         errors.push({ userId: req.user_id, error: message });
 
         // Best-effort increment of error_count; column is added by migration 106.
-        try {
-          await sb.from('deletion_requests').update({ error_count: 1 }).eq('id', req.id);
-        } catch {
-          // ignored — schema may not be migrated yet
+        const { error: countErr } = await sb
+          .from('deletion_requests')
+          .update({ error_count: 1 })
+          .eq('id', req.id);
+        if (countErr) {
+          console.error(
+            `[account-delete] failed to increment error_count for ${req.user_id}:`,
+            countErr
+          );
         }
       }
     }
@@ -162,15 +167,21 @@ async function markDone(
   sb: ReturnType<typeof createServerClient>,
   requestId: string
 ): Promise<void> {
-  try {
-    await sb
-      .from('deletion_requests')
-      .update({ status: 'done', finalized_at: new Date().toISOString() })
-      .eq('id', requestId);
-  } catch {
-    // Fallback for pre-migration 106 schema where finalized_at does not exist.
-    await sb.from('deletion_requests').update({ status: 'done' }).eq('id', requestId);
-  }
+  // Try the post-migration 106 schema first.
+  const { error: withTimestampErr } = await sb
+    .from('deletion_requests')
+    .update({ status: 'done', finalized_at: new Date().toISOString() })
+    .eq('id', requestId);
+
+  if (!withTimestampErr) return;
+
+  // Fallback for pre-migration 106 schema where finalized_at does not exist.
+  const { error: withoutTimestampErr } = await sb
+    .from('deletion_requests')
+    .update({ status: 'done' })
+    .eq('id', requestId);
+
+  if (withoutTimestampErr) throw withoutTimestampErr;
 }
 
 async function anonymizeUser(

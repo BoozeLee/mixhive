@@ -76,7 +76,12 @@ export async function GET(request: NextRequest) {
 
         await markDone(sb, req.id);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Unknown error';
+        const message =
+          err instanceof Error
+            ? err.message
+            : typeof err === 'object' && err !== null && 'message' in err
+              ? String((err as { message: unknown }).message)
+              : 'Unknown error';
         console.error(`[account-delete] failed for ${req.user_id}:`, err);
         errors.push({ userId: req.user_id, error: message });
 
@@ -139,20 +144,9 @@ async function hasRetentionRecords(
   }
   if ((txnCount ?? 0) > 0) return true;
 
-  // Active paid subscriptions should be cancelled before deletion; treat as a
-  // retention record so we anonymize rather than dropping billing history.
-  const { count: subCount, error: subErr } = await sb
-    .from('user_subscriptions')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .in('status', ['active', 'trialing', 'past_due', 'unpaid'])
-    .neq('tier', 'free');
-
-  if (subErr) {
-    console.error(`[account-delete] subscription check error for ${userId}:`, subErr);
-  }
-  if ((subCount ?? 0) > 0) return true;
-
+  // TODO: When subscription_tiers / user_subscriptions (migration 102) are
+  // applied in production, also check for active paid subscriptions here and
+  // treat them as retention records.
   return false;
 }
 
@@ -185,11 +179,15 @@ async function anonymizeUser(
 ): Promise<void> {
   const now = new Date().toISOString();
 
-  // Blank all PII in the public profile. Username must stay unique and non-null.
+  // Blank all PII in the public profile. Username must stay unique, non-null,
+  // and conform to profiles_username_format (^[A-Za-z0-9_]{3,30}$).
+  const shortHash = userId.replace(/-/g, '').slice(0, 22);
+  const anonUsername = `deleted_${shortHash}`;
+
   const { error: profileErr } = await sb
     .from('profiles')
     .update({
-      username: `deleted-${userId}`,
+      username: anonUsername,
       display_name: 'Deleted User',
       bio: null,
       avatar_url: null,

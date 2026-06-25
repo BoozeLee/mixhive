@@ -74,22 +74,18 @@ export async function GET(request: NextRequest) {
         const result = await finalizeUser(sb, req.user_id);
         results.push(result);
 
-        await sb
-          .from('deletion_requests')
-          .update({ status: 'done', finalized_at: new Date().toISOString() })
-          .eq('id', req.id);
+        await markDone(sb, req.id);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error';
         console.error(`[account-delete] failed for ${req.user_id}:`, err);
         errors.push({ userId: req.user_id, error: message });
 
-        await sb
-          .from('deletion_requests')
-          .update({ error_count: 1 }) // migration 106 adds error_count default 0
-          .eq('id', req.id)
-          .then(({ error }) => {
-            if (error) console.error(`[account-delete] error_count update failed:`, error);
-          });
+        // Best-effort increment of error_count; column is added by migration 106.
+        try {
+          await sb.from('deletion_requests').update({ error_count: 1 }).eq('id', req.id);
+        } catch {
+          // ignored — schema may not be migrated yet
+        }
       }
     }
 
@@ -166,6 +162,21 @@ async function hardDeleteUser(
 ): Promise<void> {
   const { error } = await sb.auth.admin.deleteUser(userId);
   if (error) throw error;
+}
+
+async function markDone(
+  sb: ReturnType<typeof createServerClient>,
+  requestId: string
+): Promise<void> {
+  try {
+    await sb
+      .from('deletion_requests')
+      .update({ status: 'done', finalized_at: new Date().toISOString() })
+      .eq('id', requestId);
+  } catch {
+    // Fallback for pre-migration 106 schema where finalized_at does not exist.
+    await sb.from('deletion_requests').update({ status: 'done' }).eq('id', requestId);
+  }
 }
 
 async function anonymizeUser(

@@ -3,6 +3,15 @@
 
 begin;
 
+-- App code emits namespaced event types (mix_play, profile_follow, etc.).
+-- Drop the legacy restrictive check so real events can be stored.
+alter table public.analytics_events
+  drop constraint if exists analytics_events_event_type_check;
+
+-- Index optimized for date-first aggregation across profiles.
+create index if not exists idx_analytics_events_rollups
+  on public.analytics_events(created_at, event_type, profile_id);
+
 create or replace function public.rollup_profile_analytics(p_day date)
 returns void
 language plpgsql
@@ -16,14 +25,15 @@ begin
   select
     profile_id,
     p_day,
-    count(*) filter (where event_type = 'profile_view'),
-    count(*) filter (where event_type = 'play'),
-    count(*) filter (where event_type = 'like'),
-    count(*) filter (where event_type = 'comment'),
-    count(*) filter (where event_type = 'share'),
-    count(*) filter (where event_type = 'follow')
+    (count(*) filter (where event_type = 'profile_view'))::int,
+    (count(*) filter (where event_type = 'mix_play'))::int,
+    (count(*) filter (where event_type = 'mix_like'))::int,
+    (count(*) filter (where event_type = 'comment_create'))::int,
+    (count(*) filter (where event_type = 'mix_share'))::int,
+    (count(*) filter (where event_type = 'profile_follow'))::int
   from public.analytics_events
-  where created_at::date = p_day
+  where created_at >= p_day
+    and created_at < p_day + interval '1 day'
     and profile_id is not null
   group by profile_id
   on conflict (profile_id, day) do update set

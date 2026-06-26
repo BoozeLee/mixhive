@@ -12,7 +12,7 @@ export const maxDuration = 30;
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -37,7 +37,9 @@ export async function GET(request: NextRequest) {
     if (upsertErr) throw upsertErr;
 
     // Per-creator rollup for yesterday so the dashboard/recap have fresh data.
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - 1);
+    const yesterday = d.toISOString().slice(0, 10);
     const { error: rollupErr } = await sb.rpc('rollup_profile_analytics', {
       p_day: yesterday,
     });

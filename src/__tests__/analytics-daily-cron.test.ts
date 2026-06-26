@@ -15,13 +15,20 @@ jest.mock('@/lib/supabase', () => ({
 }));
 
 describe('analytics daily cron', () => {
+  let originalCronSecret: string | undefined;
+
   beforeEach(() => {
+    originalCronSecret = process.env.CRON_SECRET;
     jest.clearAllMocks();
     process.env.CRON_SECRET = 'cron-secret';
     mockRpc.mockResolvedValue({ data: null, error: null });
     mockFrom.mockImplementation(() => ({
       upsert: () => Promise.resolve({ error: null }),
     }));
+  });
+
+  afterEach(() => {
+    process.env.CRON_SECRET = originalCronSecret;
   });
 
   function req() {
@@ -33,9 +40,16 @@ describe('analytics daily cron', () => {
   it('calls both platform snapshot and per-profile rollup', async () => {
     const res = await GET(req());
     expect(res.status).toBe(200);
-    expect(mockRpc).toHaveBeenCalledWith('get_hive_stats');
-    expect(mockRpc).toHaveBeenCalledWith('rollup_profile_analytics', {
-      p_day: expect.any(String),
-    });
+    const expectedDate = new Date();
+    expectedDate.setUTCDate(expectedDate.getUTCDate() - 1);
+    const yesterday = expectedDate.toISOString().slice(0, 10);
+    expect(mockRpc.mock.calls[0]).toEqual(['get_hive_stats']);
+    expect(mockRpc.mock.calls[1]).toEqual(['rollup_profile_analytics', { p_day: yesterday }]);
+  });
+
+  it('returns 401 without valid cron secret', async () => {
+    delete process.env.CRON_SECRET;
+    const res = await GET(new NextRequest('https://mixhive.test/api/analytics/daily'));
+    expect(res.status).toBe(401);
   });
 });

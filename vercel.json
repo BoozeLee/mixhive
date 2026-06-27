@@ -147,12 +147,5 @@
       "path": "/api/cron/monthly-recap",
       "schedule": "0 9 1 * *"
     }
-  ],
-  "redirects": [
-    {
-      "source": "/dashboard",
-      "destination": "/feed",
-      "permanent": true
-    }
   ]
 }

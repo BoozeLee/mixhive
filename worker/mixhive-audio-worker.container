@@ -13,6 +13,7 @@ After=network-online.target
 Image=localhost/mixhive-audio-worker:latest
 EnvironmentFile=%h/.config/mixhive/worker.env
 # Pull secrets from the env file above (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ...)
+Network=host
 
 [Service]
 Restart=always

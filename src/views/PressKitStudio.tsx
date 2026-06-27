@@ -228,6 +228,15 @@ export function PressKitStudio() {
               <Link to={`/epk/${active.public_slug}`} style={linkButtonStyle('primary')}>
                 {t('openPublicEpk')}
               </Link>
+              {active.is_public && (
+                <a
+                  href={`/api/epk/${active.public_slug}/pdf`}
+                  download
+                  style={linkButtonStyle('secondary')}
+                >
+                  {t('downloadPdf')}
+                </a>
+              )}
               <Link to="/opportunities" style={linkButtonStyle('secondary')}>
                 {t('useWithOpportunities')}
               </Link>

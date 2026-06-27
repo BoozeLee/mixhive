@@ -2,10 +2,10 @@
 
 > **Purpose:** Pick-up document for the next agent after OpenCode completed Sprint 3 P1/P4 work. Contains the full project plan, all sprints, current state, and the immediate task list so a new session can resume without re-derivation.
 >
-> **Date:** 2026-06-24 · **Repo:** `/home/kilisan/dj-nef-website/mixhive` · **Branch:** `main`
-> **Prod:** `https://mixhive.app` (alias; direct deploy URL currently `https://mixhive-jpkax75vg-boozelees-projects.vercel.app` while `mixhive.app` SSL is provisioned)
-> **Last commit:** `efe6d36` — fix(privacy): handle Supabase error objects in deletion_request status updates
-> **Previous commits:** `87db71a` Sprint 3 P1/P4 · `920feb7` P9 privacy finalization · `8abfff2` worker network fix
+> **Date:** 2026-06-27 · **Repo:** `/home/kilisan/dj-nef-website/mixhive` · **Branch:** `feat/creator-studio-depth`
+> **Prod:** `https://mixhive.app` (alias; direct deploy URL currently `https://mixhive-lwymwi0tq-boozelees-projects.vercel.app` while `mixhive.app` SSL is provisioned)
+> **Last commit:** `33829b4` — fix(dashboard): remove /dashboard → /feed redirect from next.config.mjs
+> **Previous commits:** `efe6d36` markDone fix · `87db71a` Sprint 3 P1/P4 · `920feb7` P9 privacy finalization
 
 ---
 
@@ -16,7 +16,8 @@
 - **Sprint 3 P1/P4 (design-system + states sweep) is DONE.** 30 files touched: raw hex colors migrated to tokens, raw `<button>` elements converted to shared primitives, silent `catch` blocks now log errors, empty/loading/error states upgraded across lower-traffic views.
 - **Sprint 4 P9 privacy finalization is LIVE and VERIFIED.** Enhanced `/api/cron/account-delete` with hard-delete/anonymize split, storage cleanup, and retry tracking; extended `/api/cleanup` with notification retention; added migration 106; wired the Ruby scheduler; added 8 new tests. **Both production e2e paths passed.** The `markDone` helper was fixed to handle Supabase's `{ error }` return shape instead of try/catch, so status flips to `done` even before migration 106 is applied. Migration 106 itself and full type regeneration are still pending because `supabase db push` / `npm run db:types` hang from this environment; the code is backward-compatible without them.
 - **Sprint 3 worker tier is LIVE.** Built audio + scheduler images, fixed audio worker DNS/TLS by switching Quadlet to host network, restarted systemd services, verified end-to-end job processing (waveform job completed in ~3s).
-- **Next work:** P11 Creator Studio depth (analytics 2.0, monthly recap email, EPK polish). Optionally apply migration 106 and regenerate types from an environment where `supabase db push` works.
+- **Creator Studio depth is LIVE and VERIFIED.** Per-creator analytics rollup, unblocked `/dashboard`, monthly recap emails via Resend, EPK PDF export, and server-side oEmbed metadata cache are deployed. Migrations `107` and `108` still need to be applied via Supabase SQL Editor because `supabase db push` hangs locally. `RESEND_API_KEY` must be added to Vercel production env before monthly recap emails will actually send.
+- **Next work:** Merge `feat/creator-studio-depth` to `main`, apply pending migrations, set `RESEND_API_KEY`, then move to Phase β AI-Band discovery hardening or Phase γ adoption ritual.
 - **Critical non-code blockers remain:** leaked Stripe live keys and exposed Supabase PAT must be rotated by a human with dashboard access.
 
 ---
@@ -25,16 +26,16 @@
 
 | Area | Status | Notes |
 |------|--------|-------|
-| `main` branch | clean, no uncommitted changes | `efe6d36` is HEAD |
+| `feat/creator-studio-depth` branch | clean, no uncommitted changes | `33829b4` is HEAD |
 | TypeScript | ✅ clean | `npx tsc --noEmit` passes |
 | Build | ✅ clean | `npm run build` passes |
-| Tests | ✅ 304 passing / 56 suites | up from 296; new `account-delete-cron.test.ts` + `cleanup-cron.test.ts` added |
+| Tests | ✅ 313 passing / 61 suites | added `analytics-daily-cron`, `dashboard-route`, `monthly-recap-cron`, `epk-pdf`, `oembed` |
 | i18n | ✅ EN extracted, FR/NL pilot shipped | PR #68 merged; full FR/NL coverage still pending |
 | AI Band discovery | ✅ committed | `feat/ai-band-discovery` branch exists, merged with `main` at `3fe259d` |
 | Design-system sweep | ✅ P1 done | hex→token + button/form convergence |
 | States sweep | ✅ P4 done | empty/loading/error state upgrade |
 | Privacy | ✅ live (migration/types pending) | consent/export/delete-request/cancel live; enhanced deletion cron + retention automation deployed and e2e-verified; migration 106 + type regeneration still pending due to CLI hang, but code is backward-compatible |
-| Creator Studio | 🟡 partial | portfolio embeds, Creator Wrapped live; analytics 2.0 + monthly email + EPK PDF pending |
+| Creator Studio | ✅ live (migrations/env pending) | per-creator rollup, /dashboard unblocked, monthly recap email wired, EPK PDF export, oEmbed cache; migrations 107/108 + RESEND_API_KEY pending |
 | Marketplace | ✅ code complete | escrow + Connect payouts built, Stripe deferred to P14 gate |
 | Subscriptions | ⬜ not started | P14 gate blocker |
 | Worker tier | ✅ live | systemd Quadlets running; audio worker processing jobs; scheduler firing; Redis healthy |
@@ -191,6 +192,77 @@ worker/mixhive-audio-worker.container  (added Network=host)
 
 ---
 
+## 3.2 Sprint 4 — Creator Studio Depth (Completed)
+
+**Branch:** `feat/creator-studio-depth` · **Head:** `33829b4`
+
+### What was done
+- **Per-creator analytics rollup (Task 1):**
+  - Added migration `107_rollups_profile_analytics_daily.sql` with `rollup_profile_analytics(date)` function.
+  - Fixed `analytics_events` schema mismatch by dropping the restrictive legacy `event_type` check constraint.
+  - Fixed `src/lib/analytics.ts` to write `profile_id`, `metadata`, and `created_at` instead of non-existent `user_id`/`event_data`/`timestamp`.
+  - Extended `/api/analytics/daily` cron to call the rollup for yesterday.
+  - Added `src/__tests__/analytics-daily-cron.test.ts`.
+- **Unblock `/dashboard` (Task 2):**
+  - Removed `/dashboard` → `/feed` redirect from `vercel.json` **and** `next.config.mjs`.
+  - Added `src/__tests__/dashboard-route.test.ts`.
+- **Monthly recap email (Task 3):**
+  - Installed `resend`.
+  - Created `src/lib/email.ts`, `src/components/emails/MonthlyRecapEmail.tsx`.
+  - Wired `/api/cron/monthly-recap` to send emails via Resend when `RESEND_API_KEY` is configured.
+  - Added `src/__tests__/monthly-recap-cron.test.ts`.
+- **EPK PDF export (Task 4):**
+  - Installed `@react-pdf/renderer`.
+  - Created `src/components/epk/EpkPdfDocument.tsx` and `/api/epk/[slug]/pdf` route.
+  - Added "Download PDF" button in `src/views/PressKitStudio.tsx` for public kits.
+  - Added `src/__tests__/epk-pdf.test.ts`.
+- **oEmbed metadata cache (Task 5):**
+  - Added migration `108_oembed_cache.sql`.
+  - Created `src/lib/oembed.ts` and `/api/oembed` route with provider fetching + caching.
+  - Added `src/__tests__/oembed.test.ts`.
+
+### Files Created/Modified
+```
+supabase/migrations/107_rollups_profile_analytics_daily.sql
+supabase/migrations/108_oembed_cache.sql
+src/lib/analytics.ts
+src/app/api/analytics/daily/route.ts
+src/app/api/cron/monthly-recap/route.ts
+src/lib/email.ts
+src/components/emails/MonthlyRecapEmail.tsx
+src/components/epk/EpkPdfDocument.tsx
+src/app/api/epk/[slug]/pdf/route.ts
+src/views/PressKitStudio.tsx
+src/lib/oembed.ts
+src/app/api/oembed/route.ts
+vercel.json
+next.config.mjs
+messages/en.json
+src/__tests__/analytics-daily-cron.test.ts
+src/__tests__/dashboard-route.test.ts
+src/__tests__/monthly-recap-cron.test.ts
+src/__tests__/epk-pdf.test.ts
+src/__tests__/oembed.test.ts
+```
+
+### Verification Results
+- [x] `npx tsc --noEmit` clean.
+- [x] `npm test` — **313 passing / 61 suites**.
+- [x] `npm run build` clean.
+- [x] Deployed to production: `https://mixhive-lwymwi0tq-boozelees-projects.vercel.app`.
+- [x] `/dashboard` returns 200 (no redirect).
+- [x] `/api/oembed?url=...` returns 200.
+
+### Still Required Before Creator Studio Is Fully Live
+- [ ] Apply migrations `107_rollups_profile_analytics_daily.sql` and `108_oembed_cache.sql` via Supabase SQL Editor (`supabase db push` hangs locally).
+- [ ] Add `RESEND_API_KEY` to Vercel production environment variables (human required — secret key).
+- [ ] Re-run production smoke tests after migrations + Resend key are in place:
+  - `curl -H "Authorization: Bearer $CRON_SECRET" /api/analytics/daily`
+  - `curl -H "Authorization: Bearer $CRON_SECRET" /api/cron/monthly-recap`
+  - Generate an EPK and download PDF.
+
+---
+
 ## 4. Full Engineering Roadmap — All Sprints
 
 Source of truth: `docs/MIXHIVE_DETAILED_PLAN.md` and `docs/mixhive-roadmap.md`.
@@ -231,9 +303,9 @@ Source of truth: `docs/MIXHIVE_DETAILED_PLAN.md` and `docs/mixhive-roadmap.md`.
 |---|------|--------|
 | 4.1 | P9 Deletion finalization cron + retention automation | ✅ live, e2e-verified; migration/types pending |
 | 4.2 | P9 Localized privacy policies (depends on i18n) | ⬜ |
-| 4.3 | P11 Analytics 2.0 dashboard | ⬜ |
-| 4.4 | P11 Monthly recap email (cron + Resend/SMTP) | ⬜ |
-| 4.5 | P11 EPK polish (custom sections, PDF export) | ⬜ |
+| 4.3 | P11 Analytics 2.0 dashboard | ✅ live; migration 107 pending |
+| 4.4 | P11 Monthly recap email (cron + Resend/SMTP) | ✅ live; `RESEND_API_KEY` pending |
+| 4.5 | P11 EPK polish (custom sections, PDF export) | ✅ live |
 
 ### ⬜ Sprint 5 — P14 Pre-Launch Gate (July 19–31)
 **Theme:** First paying users — Stripe TEST-ready.

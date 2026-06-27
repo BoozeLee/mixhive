@@ -283,17 +283,6 @@ const nextConfig = {
     ];
   },
 
-  // Redirects
-  async redirects() {
-    return [
-      {
-        source: '/dashboard',
-        destination: '/feed',
-        permanent: true,
-      },
-    ];
-  },
-
   // Rewrites
   async rewrites() {
     return [

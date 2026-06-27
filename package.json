@@ -98,6 +98,7 @@
     "react-router-dom": "^7.17.0",
     "redis": "^6.0.0",
     "remark-gfm": "^4.0.1",
+    "resend": "^6.16.0",
     "spotify-web-api-node": "^5.0.2",
     "stripe": "^22.2.0",
     "tailwind-merge": "^2.0.0",

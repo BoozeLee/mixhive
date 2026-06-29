@@ -35,9 +35,18 @@ JOBS = {
   '/api/analytics/daily'               => Integer(ENV.fetch('IV_ANALYTICS', 86_400))   # daily
 }.freeze
 
+POST_JOBS = Set.new([
+  '/api/cron/notification-prioritizer',
+  '/api/cron/strategic-agents'
+]).freeze
+
 def fire(path)
   uri = URI.join(BASE, path)
-  req = Net::HTTP::Get.new(uri)
+  req = if POST_JOBS.include?(path)
+          Net::HTTP::Post.new(uri)
+        else
+          Net::HTTP::Get.new(uri)
+        end
   req['Authorization'] = "Bearer #{SECRET}"
   res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', open_timeout: 10, read_timeout: 120) do |http|
     http.request(req)

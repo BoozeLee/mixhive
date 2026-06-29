@@ -20,6 +20,12 @@
 tunnel: mixhive-worker
 credentials-file: /home/kilisan/.cloudflared/mixhive-worker.json
 
+# Tunnel created via Cloudflare API token; credentials live in ~/.cloudflared/.
+# NOTE: this network blocks outbound port 7844 to Cloudflare edge, so the tunnel
+# cannot connect from here. Either allow outbound 7844 on the router/firewall,
+# move to a network that permits it, or run the tunnel on a host with outbound
+# 7844 access. protocol: http2 was tested but cloudflared still dials edge:7844.
+
 ingress:
   # Worker/health surface (the Next app's /api/health/worker proxied, or a local probe).
   - hostname: worker.mixhive.app

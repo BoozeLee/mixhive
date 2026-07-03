@@ -14,7 +14,10 @@ function makeClient(jwt?: string) {
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const sb = makeClient();
+    const authHeader = req.headers.get('authorization');
+    const jwt = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined;
+    const sb = makeClient(jwt);
+
     const { data, error } = await sb.from('equipment_listings').select('*').eq('id', id).single();
 
     if (error || !data) {
@@ -27,7 +30,35 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       .eq('id', id)
       .then(() => {});
 
-    return NextResponse.json({ listing: data });
+    let transaction = null;
+    if (jwt) {
+      const {
+        data: { user },
+      } = await sb.auth.getUser();
+      if (user) {
+        const { data: txn } = await sb
+          .from('equipment_transactions')
+          .select('*')
+          .eq('listing_id', id)
+          .in('transaction_state', [
+            'pending_payment',
+            'paid_escrow',
+            'shipped',
+            'delivered',
+            'disputed',
+            'resolved',
+          ])
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (txn && (txn.buyer_profile_id === user.id || txn.seller_profile_id === user.id)) {
+          transaction = txn;
+        }
+      }
+    }
+
+    return NextResponse.json({ listing: data, transaction });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error';
     return NextResponse.json({ error: msg }, { status: 500 });

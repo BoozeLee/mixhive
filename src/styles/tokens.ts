@@ -121,6 +121,7 @@ export const radius = {
   lg: 8,
   xl: 10,
   pill: 999,
+  full: 999, // alias of pill — fully rounded (avatars, chips, circular controls)
 } as const;
 
 export const fontSize = {

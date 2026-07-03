@@ -363,7 +363,7 @@ export function GearListingDetail() {
             >
               <h3
                 style={{
-                  color: colors.hiveGold,
+                  color: colors.accent,
                   fontSize: 14,
                   margin: '0 0 12px',
                   textTransform: 'uppercase',
@@ -372,7 +372,7 @@ export function GearListingDetail() {
               >
                 {t('transactionStatus')}
               </h3>
-              <p style={{ color: colors.text.main, fontSize: 15, fontWeight: 600, margin: '0 0 8px' }}>
+              <p style={{ color: colors.text.primary, fontSize: 15, fontWeight: 600, margin: '0 0 8px' }}>
                 {t(`status_${transaction.transaction_state}`)}
               </p>
 

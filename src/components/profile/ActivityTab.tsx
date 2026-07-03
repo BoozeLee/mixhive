@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { EmptyState } from '../EmptyState';
 import { Icon } from '../ui/Icon';
-import { colors, fontSize, fontWeight, radius, space } from '../../styles/tokens';
+import { colors, fontSize, radius, space } from '../../styles/tokens';
 import type { ActivityEvent } from '../../lib/types';
 
 interface ActivityTabProps {

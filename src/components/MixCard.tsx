@@ -324,7 +324,7 @@ export function MixCard({ mix }: Props) {
                       fontWeight: fontWeight.bold,
                       padding: '2px 7px',
                       borderRadius: radius.pill,
-                      background: colors.hiveGold,
+                      background: colors.accent,
                       color: colors.black,
                       whiteSpace: 'nowrap',
                       display: 'flex',

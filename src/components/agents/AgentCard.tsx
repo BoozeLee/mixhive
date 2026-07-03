@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { Button } from '../ui/Button';
-import { Icon } from '../ui/Icon';
 import { colors, fontSize, fontWeight, radius, space, transition } from '../../styles/tokens';
 import type { StarterAgent } from '../../lib/starter_agents';
 import type { PublicLuaAgent } from '../../lib/agents';

@@ -20,7 +20,7 @@ import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
 import { useAuth } from '../hooks/useAuth';
 import type { FeedMix, Profile, FeedBuzz } from '../lib/types';
-import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
+import { colors, radius, space, fontSize } from '../styles/tokens';
 
 interface DiscoverGenre {
   id: string;
@@ -131,7 +131,7 @@ export function Discover() {
       </header>
 
       {/* Hero: top trending mix */}
-      {!trendingLoading && trending.length > 0 && (
+      {!trendingLoading && trending[0] && (
         <section style={{ marginBottom: space[12] }}>
           <Reveal index={0} from="up">
             <MixCard mix={trending[0]} />

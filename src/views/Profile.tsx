@@ -34,7 +34,7 @@ import { ActivityTab } from '../components/profile/ActivityTab';
 import { AgentsTab } from '../components/profile/AgentsTab';
 import { EventsTab } from '../components/profile/EventsTab';
 import { maybeAnnounceXpGain } from '../lib/xpToast';
-import { colors, radius, space } from '../styles/tokens';
+import { space } from '../styles/tokens';
 import type {
   ActivityEvent,
   Mix,

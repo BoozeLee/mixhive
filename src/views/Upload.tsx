@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { colors, withAlpha } from '../styles/tokens';
-import { useNavigate } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { createMix, updateMix } from '../lib/api';
@@ -8,10 +7,8 @@ import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
-import { Icon } from '../components/ui/Icon';
 import { Select } from '../components/ui/Select';
 import { FileInput } from '../components/ui/FileInput';
-import { UploadSchema, formatZodError } from '../lib/schemas';
 import { AUDIO_BUCKET, ARTWORK_BUCKET, WAVEFORM_BUCKET } from '../lib/api';
 import { generateWaveform, waveformToJson } from '../lib/waveform';
 import { UploadStepper, type UploadStep } from '../components/upload/UploadStepper';
@@ -32,7 +29,6 @@ const PLATFORMS = [
 export function Upload() {
   const t = useTranslations('upload');
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const [step, setStep] = useState<UploadStep>('audio');
   const [formData, setFormData] = useState({
@@ -278,7 +274,7 @@ export function Upload() {
         waveform_url: waveformUrl || null,
         status: 'ready',
         upload_status: 'uploaded',
-        published,
+        published: publish,
       };
 
       if (tracklist.length > 0) {
@@ -342,16 +338,18 @@ export function Upload() {
   function handleNext() {
     const stepOrder = steps.map(s => s.id);
     const nextIndex = stepOrder.indexOf(step) + 1;
-    if (nextIndex < stepOrder.length) {
-      goToStep(stepOrder[nextIndex]);
+    const nextStep = stepOrder[nextIndex];
+    if (nextStep) {
+      goToStep(nextStep);
     }
   }
 
   function handleBack() {
     const stepOrder = steps.map(s => s.id);
     const prevIndex = stepOrder.indexOf(step) - 1;
-    if (prevIndex >= 0) {
-      setStep(stepOrder[prevIndex]);
+    const prevStep = stepOrder[prevIndex];
+    if (prevStep) {
+      setStep(prevStep);
       setGeneralError('');
     }
   }

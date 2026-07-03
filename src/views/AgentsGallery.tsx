@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui';
 import { EmptyState } from '../components/EmptyState';
 import { useAuth } from '../hooks/useAuth';
 import { createFromStarter, forkAgent, listPublicAgents, type PublicLuaAgent } from '../lib/agents';

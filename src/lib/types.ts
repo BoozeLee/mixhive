@@ -13,6 +13,8 @@ export interface Profile {
   verified: boolean;
   is_admin?: boolean;
   is_pro?: boolean;
+  is_founding_member?: boolean;
+  followers_count?: number;
   onboarding_complete?: boolean;
   xp?: number;
   level?: number;

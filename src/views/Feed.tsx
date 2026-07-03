@@ -214,15 +214,12 @@ export function Feed() {
   const [mixedFeed, setMixedFeed] = useState<MixedTabState>(emptyMixedTab());
   const [latestMixed, setLatestMixed] = useState<MixedTabState>(emptyMixedTab());
   const [trendingTab, setTrendingTab] = useState<MixTabState>(emptyMixTab());
-  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
-  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [realtimeUpdates, setRealtimeUpdates] = useState<FeedItem[]>([]);
   const loadingMoreRef = useRef(false);
   const initializedRef = useRef(false);
   const [newCount, setNewCount] = useState(0);
 
-  const { mixUpdates, notifications, isConnected } = useRealtime(user?.id, {
+  const { mixUpdates } = useRealtime(user?.id ?? null, {
     enableMixUpdates: true,
     enableNotifications: true,
   });
@@ -247,6 +244,11 @@ export function Feed() {
     [user]
   );
 
+  // TODO(phase16): this loadFeed path (via feedService.getFeed) coexists with the
+  // mixed-feed effect below (getMixedFollowingFeed / getLatestMixed / getTrending) and
+  // casts EnhancedFeedItem[]/string|null into FeedMix[]/*Cursor with incompatible shapes.
+  // The two loaders are coupled through initializedRef; reconcile to a single canonical
+  // path per the discover-feed-v1.5 spec before shipping the redesigned feed to prod.
   const loadFeed = useCallback(async () => {
     if (loading) return;
     setLoading(true);
@@ -303,13 +305,6 @@ export function Feed() {
 
   useEffect(() => {
     if (!user || !mixUpdates.length) return;
-    const newItems = mixUpdates.map(update => ({
-      type: 'mix' as const,
-      data: update.data,
-      id: update.mixId || update.data.id,
-      created_at: update.timestamp,
-    }));
-    setFeedItems(prev => [...newItems, ...prev].slice(0, 100));
     setNewCount(prev => prev + mixUpdates.length);
   }, [mixUpdates, user]);
 
@@ -563,7 +558,7 @@ export function Feed() {
         ? latestMixed.hasMore
         : trendingTab.hasMore;
 
-  function emptyStateForTab(t: Tab): {
+  function emptyStateForTab(tabId: Tab): {
     iconKey: 'feed' | 'discover' | 'zap';
     title: string;
     body: string;
@@ -571,7 +566,7 @@ export function Feed() {
     actionTo?: string;
     onAction?: () => void;
   } {
-    switch (t) {
+    switch (tabId) {
       case 'feed':
         return {
           iconKey: 'feed',

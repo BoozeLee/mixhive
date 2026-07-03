@@ -10,7 +10,7 @@ import { ReportButton } from '../ReportButton';
 import { HiveButton } from '../hive/HiveButton';
 import { FoundingMemberBadge } from '../FoundingMemberBadge';
 import { Icon } from '../ui/Icon';
-import { colors, fontSize, fontWeight, radius, space, transition } from '../../styles/tokens';
+import { colors, fontSize, fontWeight, radius, space } from '../../styles/tokens';
 import type { Profile as ProfileType, VerificationBadge, ProfileAnalytics } from '../../lib/types';
 
 interface ProfileHeaderProps {
@@ -133,7 +133,7 @@ export function ProfileHeader({
           >
             {profileName}
             <VerificationBadgeSystem profile={profile} badges={badges} />
-            <FoundingMemberBadge profile={profile} />
+            {profile.is_founding_member && <FoundingMemberBadge />}
 
             {/* XP & Level Badge */}
             <div
@@ -148,7 +148,7 @@ export function ProfileHeader({
                 marginLeft: 8,
               }}
             >
-              <span style={{ fontSize: 11, fontWeight: 700, color: colors.hiveGold }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: colors.accent }}>
                 LVL {profile.level || 1}
               </span>
               <div
@@ -158,7 +158,7 @@ export function ProfileHeader({
                   style={{
                     width: `${Math.min(100, (profile.xp || 0) % 100)}%`,
                     height: '100%',
-                    background: colors.hiveGold,
+                    background: colors.accent,
                     borderRadius: 2,
                   }}
                 />
@@ -175,7 +175,6 @@ export function ProfileHeader({
             }}
           >
             <p style={{ color: colors.text.dim, fontSize: 13, margin: 0 }}>@{profile.username}</p>
-            {profile.is_founding_member && <FoundingMemberBadge size="sm" />}
           </div>
           {profile.location && (
             <p style={{ color: colors.text.dim, fontSize: 13, margin: '4px 0 0' }}>
@@ -271,7 +270,7 @@ export function ProfileHeader({
         {user && !isOwn && (
           <>
             <HiveButton
-              variant={following ? 'secondary' : 'primary'}
+              variant={following ? 'glass' : 'primary'}
               onClick={onToggleFollow}
               style={{ minHeight: 40 }}
             >
@@ -285,7 +284,7 @@ export function ProfileHeader({
         {isOwn && (
           <>
             <Link to="/settings" style={{ textDecoration: 'none' }}>
-              <HiveButton variant="secondary" style={{ minHeight: 40 }}>
+              <HiveButton variant="glass" style={{ minHeight: 40 }}>
                 {t('editProfile')}
               </HiveButton>
             </Link>
@@ -294,19 +293,19 @@ export function ProfileHeader({
                 {t('uploadMix')}
               </HiveButton>
             </Link>
-            <HiveButton variant="secondary" onClick={onStartSession} style={{ minHeight: 40 }}>
+            <HiveButton variant="glass" onClick={onStartSession} style={{ minHeight: 40 }}>
               + {t('startMythicSession')}
             </HiveButton>
             {profile.is_admin && (
               <Link to="/admin/verification" style={{ textDecoration: 'none' }}>
-                <HiveButton variant="secondary" style={{ minHeight: 40 }}>
+                <HiveButton variant="glass" style={{ minHeight: 40 }}>
                   {t('verificationAdmin')}
                 </HiveButton>
               </Link>
             )}
             {profile.is_admin && (
               <Link to="/admin/moderation" style={{ textDecoration: 'none' }}>
-                <HiveButton variant="secondary" style={{ minHeight: 40 }}>
+                <HiveButton variant="glass" style={{ minHeight: 40 }}>
                   {t('moderation')}
                 </HiveButton>
               </Link>

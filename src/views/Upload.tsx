@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { colors, withAlpha } from '../styles/tokens';
 import { useNavigate } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
@@ -14,13 +14,27 @@ import { FileInput } from '../components/ui/FileInput';
 import { UploadSchema, formatZodError } from '../lib/schemas';
 import { AUDIO_BUCKET, ARTWORK_BUCKET, WAVEFORM_BUCKET } from '../lib/api';
 import { generateWaveform, waveformToJson } from '../lib/waveform';
+import { UploadStepper, type UploadStep } from '../components/upload/UploadStepper';
+import { UploadProgress } from '../components/upload/UploadProgress';
+import { AudioDropZone } from '../components/upload/AudioDropZone';
+import { AudioPreview } from '../components/upload/AudioPreview';
+import { PostPublishPanel } from '../components/upload/PostPublishPanel';
 import type { Mix, TrackItem } from '../lib/types';
+
+const PLATFORMS = [
+  ['SoundCloud', 'soundcloud'],
+  ['Mixcloud', 'mixcloud'],
+  ['YouTube', 'youtube'],
+  ['Spotify', 'spotify'],
+  ['Apple Music', 'applemusic'],
+] as const;
 
 export function Upload() {
   const t = useTranslations('upload');
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [step, setStep] = useState<UploadStep>('audio');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -30,6 +44,7 @@ export function Upload() {
 
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [artworkFile, setArtworkFile] = useState<File | null>(null);
+  const [artworkPreview, setArtworkPreview] = useState<string>('');
   const [tracklist, setTracklist] = useState<TrackItem[]>([]);
   const [duration, setDuration] = useState<number | null>(null);
   const [isExplicit, setIsExplicit] = useState(false);
@@ -38,11 +53,22 @@ export function Upload() {
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [dragOver, setDragOver] = useState(false);
+  const [uploadLoaded, setUploadLoaded] = useState(0);
+  const [uploadTotal, setUploadTotal] = useState(0);
+  const [uploadLabel, setUploadLabel] = useState('');
   const [detectingDuration, setDetectingDuration] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
-  const [publishedTitle, setPublishedTitle] = useState('');
+  const [publishedMix, setPublishedMix] = useState<{ id: string; title: string } | null>(null);
+  const abortRef = useRef<(() => void) | null>(null);
+
+  const steps = [
+    { id: 'audio' as const, label: t('stepAudio') },
+    { id: 'metadata' as const, label: t('stepMetadata') },
+    { id: 'artwork' as const, label: t('stepArtwork') },
+    { id: 'tracklist' as const, label: t('stepTracklist') },
+    { id: 'publish' as const, label: t('stepPublish') },
+  ];
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
@@ -105,71 +131,109 @@ export function Upload() {
     return cleanup;
   }, [audioFile]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  useEffect(() => {
+    if (!artworkFile) {
+      setArtworkPreview('');
+      return;
+    }
+    const url = URL.createObjectURL(artworkFile);
+    setArtworkPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [artworkFile]);
+
+  async function uploadFileWithProgress(
+    file: File,
+    bucket: string
+  ): Promise<{ url: string; abort: () => void }> {
+    if (!isSupabaseConfigured) throw new Error('Supabase not configured');
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.access_token) throw new Error('Not authenticated');
+
+    const ext = file.name.split('.').pop();
+    const path = `${user!.id}/${crypto.randomUUID()}.${ext}`;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+    const endpoint = `${supabaseUrl}/storage/v1/object/${bucket}/${path}`;
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      abortRef.current = () => {
+        xhr.abort();
+        reject(new Error('Upload cancelled'));
+      };
+
+      xhr.upload.addEventListener('progress', event => {
+        if (event.lengthComputable) {
+          setUploadLoaded(event.loaded);
+          setUploadTotal(event.total);
+          setUploadProgress(Math.round((event.loaded / event.total) * 100));
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        abortRef.current = null;
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const publicUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${path}`;
+          resolve({ url: publicUrl, abort: () => {} });
+        } else {
+          reject(new Error(`Upload failed: ${xhr.statusText}`));
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        abortRef.current = null;
+        reject(new Error('Upload failed'));
+      });
+
+      xhr.addEventListener('abort', () => {
+        abortRef.current = null;
+        reject(new Error('Upload cancelled'));
+      });
+
+      xhr.open('POST', endpoint, true);
+      xhr.setRequestHeader('Authorization', `Bearer ${session.access_token}`);
+      xhr.setRequestHeader('x-upsert', 'false');
+      xhr.send(file);
+    });
+  }
+
+  function cancelUpload() {
+    if (abortRef.current) {
+      abortRef.current();
+      abortRef.current = null;
+    }
+    setUploading(false);
+    setUploadProgress(0);
+    setUploadLoaded(0);
+    setUploadTotal(0);
+  }
+
+  async function handlePublish(publish = true) {
     if (!user || !audioFile) return;
     if (!isSupabaseConfigured) {
       setGeneralError(
-        'Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local before uploading.'
+        'Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local before uploading.'
       );
-      return;
-    }
-
-    // Validate with Zod
-    const validationData = {
-      title: formData.title,
-      description: formData.description || undefined,
-      genre: formData.genreId ? String(formData.genreId) : undefined,
-      tags: formData.tags
-        ? formData.tags
-            .split(',')
-            .map(t => t.trim())
-            .filter(Boolean)
-        : [],
-    };
-
-    const result = UploadSchema.safeParse({
-      ...validationData,
-      // artwork is optional: pass undefined (not null) so the optional File
-      // schema accepts "no artwork" instead of silently failing validation.
-      artworkFile: artworkFile ?? undefined,
-      audioFile: audioFile,
-    });
-
-    if (!result.success) {
-      setFormErrors(formatZodError(result.error));
-      setGeneralError('');
-      setUploading(false);
-      return;
-    }
-
-    // Validate platform links before submitting
-    const linkErrors: Record<string, string> = {};
-    for (const [key, value] of Object.entries(platformLinks)) {
-      if (value && !/^https?:\/\//i.test(value)) {
-        linkErrors[key] = 'Must start with http:// or https://';
-      }
-    }
-    if (Object.keys(linkErrors).length > 0) {
-      setPlatformErrors(prev => ({ ...prev, ...linkErrors }));
-      setGeneralError('Please fix invalid platform URLs before uploading');
-      setUploading(false);
       return;
     }
 
     setFormErrors({});
     setGeneralError('');
     setUploading(true);
-    setUploadProgress(10);
+    setUploadProgress(0);
+    setUploadLoaded(0);
+    setUploadTotal(audioFile.size);
+    setUploadLabel(t('uploading'));
 
     try {
       // Generate waveform data (non-critical, can fail silently)
       let waveformUrl = '';
       try {
+        setUploadLabel(t('processing'));
         const waveform = await generateWaveform(audioFile);
         const jsonStr = waveformToJson(waveform);
         const blob = new Blob([jsonStr], { type: 'application/json' });
-        // Owner-scoped path: migration 091 requires the first segment == auth.uid()
         const waveformPath = `${user.id}/${crypto.randomUUID()}.json`;
         const { error: wfErr } = await supabase.storage
           .from(WAVEFORM_BUCKET)
@@ -181,20 +245,22 @@ export function Upload() {
           waveformUrl = publicUrl;
         }
       } catch {
-        // Waveform generation is non-critical — upload proceeds without it
+        // Waveform generation is non-critical
       }
 
-      setUploadProgress(30);
-      // Upload audio to public bucket for playback
-      const audioUrl = await uploadFile(audioFile, AUDIO_BUCKET);
-      if (!audioUrl) throw new Error('Failed to upload audio');
-      setUploadProgress(70);
+      // Upload audio with real progress
+      setUploadLabel(t('uploading'));
+      const { url: audioUrl } = await uploadFileWithProgress(audioFile, AUDIO_BUCKET);
 
+      // Upload artwork with real progress
       let artworkUrl = '';
       if (artworkFile) {
-        artworkUrl = (await uploadFile(artworkFile, ARTWORK_BUCKET)) || '';
+        setUploadLoaded(0);
+        setUploadTotal(artworkFile.size);
+        setUploadProgress(0);
+        const { url } = await uploadFileWithProgress(artworkFile, ARTWORK_BUCKET);
+        artworkUrl = url;
       }
-      setUploadProgress(85);
 
       const mixData: Partial<Mix> = {
         dj_id: user.id,
@@ -212,7 +278,7 @@ export function Upload() {
         waveform_url: waveformUrl || null,
         status: 'ready',
         upload_status: 'uploaded',
-        published: true,
+        published,
       };
 
       if (tracklist.length > 0) {
@@ -227,40 +293,128 @@ export function Upload() {
 
       if (mix) {
         setUploadProgress(100);
-        // Transition to 'processing' — triggers DB trigger → enqueues waveform job
         void updateMix(mix.id, { upload_status: 'processing' });
-        setPublishedTitle(mix.title);
-        window.setTimeout(() => navigate(`/mix/${mix.id}`), 700);
+        setPublishedMix({ id: mix.id, title: mix.title });
       }
     } catch (err) {
-      setGeneralError(err instanceof Error ? err.message : 'Upload failed');
+      const message = err instanceof Error ? err.message : 'Upload failed';
+      if (message !== 'Upload cancelled') {
+        setGeneralError(message);
+      }
       setUploadProgress(0);
     } finally {
       setUploading(false);
+      abortRef.current = null;
     }
   }
 
-  async function uploadFile(file: File, bucket: string): Promise<string | null> {
-    if (!isSupabaseConfigured) return null;
-    const ext = file.name.split('.').pop();
-    // Owner-scoped path: migration 091 storage RLS requires the object name's
-    // first path segment to equal auth.uid(), else the upload is denied.
-    const path = `${user!.id}/${crypto.randomUUID()}.${ext}`;
-    const { error: uploadErr } = await supabase.storage.from(bucket).upload(path, file);
-    if (uploadErr) throw uploadErr;
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from(bucket).getPublicUrl(path);
-    return publicUrl;
+  function validateStep(targetStep: UploadStep): boolean {
+    const errors: Record<string, string> = {};
+    if (targetStep !== 'audio' && !audioFile) {
+      errors.audio = t('audioRequired');
+    }
+    if (
+      (targetStep === 'artwork' || targetStep === 'tracklist' || targetStep === 'publish') &&
+      !formData.title.trim()
+    ) {
+      errors.title = t('titleRequired');
+    }
+    if ((targetStep === 'tracklist' || targetStep === 'publish') && !formData.genreId) {
+      errors.genre = t('genreRequired');
+    }
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      setGeneralError(t('stepError'));
+      return false;
+    }
+    return true;
   }
 
-  const handleInputChange = (field: keyof typeof formData, value: string | number) => {
+  function goToStep(targetStep: UploadStep) {
+    const stepOrder = steps.map(s => s.id);
+    const currentIndex = stepOrder.indexOf(step);
+    const targetIndex = stepOrder.indexOf(targetStep);
+    if (targetIndex > currentIndex && !validateStep(targetStep)) return;
+    setGeneralError('');
+    setStep(targetStep);
+  }
+
+  function handleNext() {
+    const stepOrder = steps.map(s => s.id);
+    const nextIndex = stepOrder.indexOf(step) + 1;
+    if (nextIndex < stepOrder.length) {
+      goToStep(stepOrder[nextIndex]);
+    }
+  }
+
+  function handleBack() {
+    const stepOrder = steps.map(s => s.id);
+    const prevIndex = stepOrder.indexOf(step) - 1;
+    if (prevIndex >= 0) {
+      setStep(stepOrder[prevIndex]);
+      setGeneralError('');
+    }
+  }
+
+  const handleInputChange = useCallback((field: keyof typeof formData, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear field-specific error when user types
-    if (formErrors[field]) {
-      setFormErrors(prev => ({ ...prev, [field]: '' }));
+    setFormErrors(prev => ({ ...prev, [field]: '' }));
+  }, []);
+
+  function validatePlatformLink(key: string, value: string) {
+    const links = { ...platformLinks };
+    const errors = { ...platformErrors };
+    if (value === '') {
+      delete links[key];
+      delete errors[key];
+    } else if (!/^https?:\/\//i.test(value)) {
+      links[key] = value;
+      errors[key] = 'Must start with http:// or https://';
+    } else {
+      links[key] = value;
+      delete errors[key];
     }
-  };
+    setPlatformLinks(links);
+    setPlatformErrors(errors);
+  }
+
+  function updateTrack(index: number, updates: Partial<TrackItem>) {
+    setTracklist(prev => {
+      const list = [...prev];
+      list[index] = { ...list[index], ...updates };
+      return list;
+    });
+  }
+
+  function removeTrack(index: number) {
+    setTracklist(prev => {
+      const list = [...prev];
+      list.splice(index, 1);
+      return list;
+    });
+  }
+
+  function hasOverlappingTracks(): boolean {
+    const sorted = tracklist
+      .map(t => t.start_time ?? 0)
+      .filter(t => Number.isFinite(t))
+      .sort((a, b) => a - b);
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i] < sorted[i - 1] + 1) return true;
+    }
+    return false;
+  }
+
+  if (publishedMix) {
+    return (
+      <div
+        className="container"
+        style={{ maxWidth: 560, margin: '0 auto', padding: '24px 16px 80px' }}
+      >
+        <PostPublishPanel mixId={publishedMix.id} mixTitle={publishedMix.title} />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -297,32 +451,15 @@ export function Upload() {
         </p>
       </div>
 
-      {/* Upload progress bar */}
+      <UploadStepper steps={steps} currentStep={step} />
+
       {uploading && (
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <span style={{ fontSize: 12, color: colors.accent, fontWeight: 600 }}>Uploading…</span>
-            <span style={{ fontSize: 12, color: colors.text.muted }}>{uploadProgress}%</span>
-          </div>
-          <div
-            style={{
-              height: 4,
-              borderRadius: 999,
-              background: colors.surfaceHover,
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                height: '100%',
-                width: `${uploadProgress}%`,
-                background: `linear-gradient(90deg, ${colors.accent}, ${colors.accentBright})`,
-                borderRadius: 999,
-                transition: 'width 300ms ease',
-              }}
-            />
-          </div>
-        </div>
+        <UploadProgress
+          progress={uploadProgress}
+          loadedBytes={uploadLoaded}
+          totalBytes={uploadTotal}
+          label={uploadLabel}
+        />
       )}
 
       {generalError && (
@@ -341,385 +478,323 @@ export function Upload() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        {/* Drag-and-drop audio upload zone */}
-        <div>
-          <label
-            style={{
-              display: 'block',
-              fontSize: 12,
-              fontWeight: 600,
-              color: colors.text.dimmed,
-              marginBottom: 8,
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-            }}
-          >
-            Audio file *
-          </label>
-          <div
-            role="button"
-            tabIndex={0}
-            aria-label={t('dropZoneAria')}
-            onDragEnter={e => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragOver={e => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragLeave={e => {
-              e.preventDefault();
-              setDragOver(false);
-            }}
-            onDrop={e => {
-              e.preventDefault();
-              setDragOver(false);
-              const file = e.dataTransfer.files?.[0];
-              if (file) setAudioFile(file);
-            }}
-            onClick={() => {
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = 'audio/*';
-              input.onchange = () => {
-                const f = input.files?.[0];
-                if (f) setAudioFile(f);
-              };
-              input.click();
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click();
-            }}
-            style={{
-              minHeight: 120,
-              borderRadius: 10,
-              border: dragOver
-                ? `2px solid ${colors.accent}`
-                : audioFile
-                  ? `2px solid ${withAlpha(colors.accent, 0.33)}`
-                  : `1.5px dashed ${colors.surfaceHover}`,
-              background: dragOver
-                ? withAlpha(colors.accent, 0.08)
-                : audioFile
-                  ? withAlpha(colors.accent, 0.03)
-                  : colors.surface,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              cursor: 'pointer',
-              padding: '24px 20px',
-              transition: 'border-color 120ms ease, background 120ms ease',
-              textAlign: 'center',
-              outline: 'none',
-            }}
-          >
-            {audioFile ? (
-              <>
-                <span aria-hidden="true" style={{ fontSize: 28, color: colors.accent }}>
-                  ✓
-                </span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: colors.text.primary }}>
-                  {audioFile.name}
-                </span>
-                <span style={{ fontSize: 12, color: colors.text.muted }}>
-                  {(audioFile.size / 1024 / 1024).toFixed(1)} MB
-                  {duration &&
-                    !detectingDuration &&
-                    ` · ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`}
-                  {detectingDuration && ' · detecting duration…'}
-                </span>
-                <button
-                  type="button"
-                  onClick={e => {
-                    e.stopPropagation();
-                    setAudioFile(null);
-                    setDuration(null);
-                  }}
-                  style={{
-                    fontSize: 11,
-                    color: colors.danger,
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    marginTop: 4,
-                  }}
-                >
-                  Remove
-                </button>
-              </>
-            ) : (
-              <>
-                <span
-                  aria-hidden="true"
-                  style={{ display: 'flex', color: dragOver ? colors.accent : colors.borderStrong }}
-                >
-                  <Icon name="upload" size={30} color="currentColor" />
-                </span>
-                <span
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: dragOver ? colors.accent : colors.text.dim,
-                  }}
-                >
-                  {dragOver ? t('dropIt') : t('dropHere')}
-                </span>
-                <span style={{ fontSize: 12, color: colors.text.faintest }}>
-                  or click to browse — MP3, WAV, AIFF, FLAC
-                </span>
-              </>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          void handlePublish(true);
+        }}
+        style={{ display: 'flex', flexDirection: 'column', gap: 18 }}
+      >
+        {step === 'audio' && (
+          <>
+            <label
+              style={{
+                display: 'block',
+                fontSize: 12,
+                fontWeight: 600,
+                color: colors.text.dimmed,
+                marginBottom: 8,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+              }}
+            >
+              Audio file *
+            </label>
+            <AudioDropZone
+              audioFile={audioFile}
+              duration={duration}
+              detectingDuration={detectingDuration}
+              onFileSelect={file => {
+                setAudioFile(file);
+                setFormErrors(prev => ({ ...prev, audio: '' }));
+              }}
+            />
+            {formErrors.audio && (
+              <span style={{ color: colors.danger, fontSize: 12 }}>{formErrors.audio}</span>
             )}
-          </div>
-        </div>
+            {audioFile && (
+              <div style={{ marginTop: 12 }}>
+                <AudioPreview file={audioFile} />
+              </div>
+            )}
+          </>
+        )}
 
-        <Input
-          label={t('labelTitle')}
-          value={formData.title}
-          onChange={e => handleInputChange('title', e.target.value)}
-          required
-          error={formErrors.title}
-          placeholder={t('titlePlaceholder')}
-        />
-
-        <Textarea
-          label={t('labelDescription')}
-          value={formData.description}
-          onChange={e => handleInputChange('description', e.target.value)}
-          rows={3}
-          placeholder={t('descriptionPlaceholder')}
-        />
-
-        <Select
-          label={t('labelGenre')}
-          value={formData.genreId === '' ? '' : String(formData.genreId)}
-          onChange={e =>
-            handleInputChange('genreId', e.target.value === '' ? '' : Number(e.target.value))
-          }
-          placeholder={t('genrePlaceholder')}
-        >
-          {genres.map(g => (
-            <option key={g.id} value={g.id}>
-              {g.name}
-            </option>
-          ))}
-        </Select>
-
-        <Input
-          label={t('labelTags')}
-          value={formData.tags}
-          onChange={e => handleInputChange('tags', e.target.value)}
-          placeholder={t('tagsPlaceholder')}
-        />
-
-        <FileInput
-          label={t('labelArtwork')}
-          accept="image/*"
-          help="Square artwork works best. JPG, PNG, or WebP."
-          style={{ minHeight: 48 }}
-          onChange={e => setArtworkFile(e.target.files?.[0] || null)}
-        />
-
-        <label
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            cursor: 'pointer',
-            color: colors.text.secondary,
-            fontSize: 14,
-            minHeight: 44,
-            padding: '8px 0',
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={isExplicit}
-            onChange={e => {
-              if (!audioFile) {
-                setGeneralError('Must select audio file to set explicit content');
-                return;
+        {step === 'metadata' && (
+          <>
+            <Input
+              label={t('labelTitle')}
+              value={formData.title}
+              onChange={e => handleInputChange('title', e.target.value)}
+              required
+              error={formErrors.title}
+              placeholder={t('titlePlaceholder')}
+            />
+            <Textarea
+              label={t('labelDescription')}
+              value={formData.description}
+              onChange={e => handleInputChange('description', e.target.value)}
+              rows={3}
+              placeholder={t('descriptionPlaceholder')}
+            />
+            <Select
+              label={t('labelGenre')}
+              value={formData.genreId === '' ? '' : String(formData.genreId)}
+              onChange={e =>
+                handleInputChange('genreId', e.target.value === '' ? '' : Number(e.target.value))
               }
-              setIsExplicit(e.target.checked);
-            }}
-            style={{ width: 22, height: 22 }}
-          />
-          <span>{t('explicit')}</span>
-        </label>
+              placeholder={t('genrePlaceholder')}
+              error={formErrors.genre}
+            >
+              {genres.map(g => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
+            </Select>
+            <Input
+              label={t('labelTags')}
+              value={formData.tags}
+              onChange={e => handleInputChange('tags', e.target.value)}
+              placeholder={t('tagsPlaceholder')}
+            />
+          </>
+        )}
 
-        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-            Platform Links (optional)
-          </legend>
-          <div style={{ marginTop: 8 }}>
-            {[
-              ['SoundCloud', 'soundcloud'],
-              ['Mixcloud', 'mixcloud'],
-              ['YouTube', 'youtube'],
-              ['Spotify', 'spotify'],
-              ['Apple Music', 'applemusic'],
-            ].map(([label, key]) => (
-              <div
-                key={key}
-                style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}
-              >
-                <Input
-                  type="text"
-                  value={platformLinks[key] || ''}
-                  onChange={e => {
-                    const value = e.target.value.trim();
-                    const links = { ...platformLinks };
-                    const errors = { ...platformErrors };
-                    if (value === '') {
-                      delete links[key];
-                      delete errors[key];
-                    } else if (!/^https?:\/\//i.test(value)) {
-                      links[key] = value;
-                      errors[key] = 'Must start with http:// or https://';
-                    } else {
-                      links[key] = value;
-                      delete errors[key];
-                    }
-                    setPlatformLinks(links);
-                    setPlatformErrors(errors);
-                  }}
-                  placeholder={`${label} URL`}
-                  error={platformErrors[key]}
-                />
-                {platformErrors[key] && (
-                  <small
-                    style={{ color: colors.danger, fontSize: 11, display: 'block', marginTop: 2 }}
-                  >
-                    {platformErrors[key]}
-                  </small>
-                )}
-              </div>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-            Tracklist
-          </legend>
-          <div style={{ marginTop: 8 }}>
-            {tracklist.map((track, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) 96px 44px',
-                  gap: 8,
-                  alignItems: 'center',
-                  marginBottom: 10,
-                }}
-              >
-                <Input
-                  type="text"
-                  value={track.artist}
-                  onChange={e => {
-                    const list = [...tracklist];
-                    list[index] = { ...list[index], artist: e.target.value };
-                    setTracklist(list);
-                  }}
-                  placeholder="Artist"
-                  style={{ flex: 1 }}
-                />
-                <Input
-                  type="text"
-                  value={track.title}
-                  onChange={e => {
-                    const list = [...tracklist];
-                    list[index] = { ...list[index], title: e.target.value };
-                    setTracklist(list);
-                  }}
-                  placeholder={t('trackTitle')}
-                  style={{ flex: 1 }}
-                />
-                <Input
-                  type="number"
-                  value={track.start_time ?? 0}
-                  onChange={e => {
-                    const list = [...tracklist];
-                    const val = e.target.value === '' ? undefined : Number(e.target.value);
-                    list[index] = { ...list[index], start_time: val };
-                    setTracklist(list);
-                  }}
-                  placeholder={t('startSec')}
-                  style={{ width: '100%' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const list = [...tracklist];
-                    list.splice(index, 1);
-                    setTracklist(list);
-                  }}
+        {step === 'artwork' && (
+          <>
+            <FileInput
+              label={t('labelArtwork')}
+              accept="image/*"
+              help="Square artwork works best. JPG, PNG, or WebP."
+              style={{ minHeight: 48 }}
+              onChange={e => setArtworkFile(e.target.files?.[0] || null)}
+            />
+            {artworkPreview && (
+              <div style={{ marginTop: 8 }}>
+                <img
+                  src={artworkPreview}
+                  alt="Artwork preview"
                   style={{
-                    background: colors.dangerBg,
-                    color: colors.danger,
-                    border: 'none',
-                    borderRadius: 6,
-                    minHeight: 40,
-                    padding: '8px 10px',
-                    fontSize: 16,
-                    cursor: 'pointer',
+                    width: '100%',
+                    maxWidth: 280,
+                    aspectRatio: '1 / 1',
+                    objectFit: 'cover',
+                    borderRadius: 12,
+                    border: `1px solid ${colors.border}`,
                   }}
-                >
-                  −
-                </button>
+                />
               </div>
-            ))}
-            <div style={{ marginTop: 12, textAlign: 'right' }}>
-              <button
-                type="button"
-                onClick={() => setTracklist([...tracklist, { artist: '', title: '' }])}
-                style={{
-                  background: colors.surfaceHover,
-                  color: colors.accent,
-                  border: `1px solid ${colors.accent}`,
-                  borderRadius: 6,
-                  minHeight: 40,
-                  padding: '8px 14px',
-                  fontSize: 14,
-                  cursor: 'pointer',
-                }}
-              >
-                + Add Track
-              </button>
-            </div>
-          </div>
-        </fieldset>
+            )}
+          </>
+        )}
 
-        <Button
-          type="submit"
-          disabled={uploading || !audioFile}
-          fullWidth
-          size="lg"
-          style={{ marginTop: 8 }}
-        >
-          {uploading ? 'Uploading...' : 'Publish mix'}
-        </Button>
-        {publishedTitle && (
-          <div
-            role="status"
-            style={{
-              marginTop: 12,
-              padding: 12,
-              borderRadius: 8,
-              border: `1px solid ${colors.accentMuted}`,
-              background: `linear-gradient(135deg, ${colors.accentFaint}, rgba(59,130,246,0.14))`,
-              color: colors.accent,
-              fontSize: 13,
-              fontWeight: 700,
-              textAlign: 'center',
-            }}
-          >
-            Honey Drop live: {publishedTitle}
+        {step === 'tracklist' && (
+          <>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                cursor: 'pointer',
+                color: colors.text.secondary,
+                fontSize: 14,
+                minHeight: 44,
+                padding: '8px 0',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={isExplicit}
+                onChange={e => setIsExplicit(e.target.checked)}
+                style={{ width: 22, height: 22 }}
+              />
+              <span>{t('explicit')}</span>
+            </label>
+
+            <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+              <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+                {t('platformLinks')}
+              </legend>
+              <div style={{ marginTop: 8 }}>
+                {PLATFORMS.map(([label, key]) => (
+                  <div
+                    key={key}
+                    style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}
+                  >
+                    <Input
+                      type="text"
+                      value={platformLinks[key] || ''}
+                      onChange={e => validatePlatformLink(key, e.target.value)}
+                      placeholder={`${label} URL`}
+                      error={platformErrors[key]}
+                    />
+                    {platformErrors[key] && (
+                      <small
+                        style={{
+                          color: colors.danger,
+                          fontSize: 11,
+                          display: 'block',
+                          marginTop: 2,
+                        }}
+                      >
+                        {platformErrors[key]}
+                      </small>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </fieldset>
+
+            <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+              <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
+                Tracklist
+              </legend>
+              <div style={{ marginTop: 8 }}>
+                {tracklist.map((track, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) 96px 44px',
+                      gap: 8,
+                      alignItems: 'center',
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Input
+                      type="text"
+                      value={track.artist}
+                      onChange={e => updateTrack(index, { artist: e.target.value })}
+                      placeholder="Artist"
+                      style={{ flex: 1 }}
+                    />
+                    <Input
+                      type="text"
+                      value={track.title}
+                      onChange={e => updateTrack(index, { title: e.target.value })}
+                      placeholder={t('trackTitle')}
+                      style={{ flex: 1 }}
+                    />
+                    <Input
+                      type="number"
+                      value={track.start_time ?? 0}
+                      onChange={e => {
+                        const val = e.target.value === '' ? undefined : Number(e.target.value);
+                        updateTrack(index, { start_time: val });
+                      }}
+                      placeholder={t('startSec')}
+                      style={{ width: '100%' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeTrack(index)}
+                      style={{
+                        background: colors.dangerBg,
+                        color: colors.danger,
+                        border: 'none',
+                        borderRadius: 6,
+                        minHeight: 40,
+                        padding: '8px 10px',
+                        fontSize: 16,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      −
+                    </button>
+                  </div>
+                ))}
+                {hasOverlappingTracks() && (
+                  <div style={{ color: colors.danger, fontSize: 12, marginBottom: 8 }}>
+                    {t('tracklistOverlapWarning')}
+                  </div>
+                )}
+                <div style={{ marginTop: 12, textAlign: 'right' }}>
+                  <button
+                    type="button"
+                    onClick={() => setTracklist([...tracklist, { artist: '', title: '' }])}
+                    style={{
+                      background: colors.surfaceHover,
+                      color: colors.accent,
+                      border: `1px solid ${colors.accent}`,
+                      borderRadius: 6,
+                      minHeight: 40,
+                      padding: '8px 14px',
+                      fontSize: 14,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {t('addTrack')}
+                  </button>
+                </div>
+              </div>
+            </fieldset>
+          </>
+        )}
+
+        {step === 'publish' && (
+          <>
+            <div
+              style={{
+                padding: 16,
+                background: colors.surface,
+                border: `1px solid ${colors.border}`,
+                borderRadius: 12,
+                color: colors.text.secondary,
+                fontSize: 14,
+              }}
+            >
+              <div style={{ marginBottom: 8 }}>
+                <strong style={{ color: colors.text.primary }}>
+                  {formData.title || 'Untitled mix'}
+                </strong>
+              </div>
+              <div>
+                {audioFile?.name} ·{' '}
+                {(audioFile?.size ?? 0) / 1024 / 1024 > 0
+                  ? `${((audioFile?.size ?? 0) / 1024 / 1024).toFixed(1)} MB`
+                  : ''}
+              </div>
+              <div style={{ marginTop: 8, color: colors.text.muted }}>
+                {genres.find(g => g.id === formData.genreId)?.name || 'No genre'}
+                {formData.tags && ` · ${formData.tags}`}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <Button
+                type="button"
+                disabled={uploading}
+                fullWidth
+                size="lg"
+                variant="secondary"
+                onClick={() => handlePublish(false)}
+              >
+                {uploading ? t('savingDraft') : t('saveDraft')}
+              </Button>
+              <Button type="submit" disabled={uploading || !audioFile} fullWidth size="lg">
+                {uploading ? t('publishing') : t('publishMix')}
+              </Button>
+            </div>
+          </>
+        )}
+
+        {step !== 'publish' && (
+          <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+            {step !== 'audio' && (
+              <Button type="button" variant="secondary" onClick={handleBack} disabled={uploading}>
+                {t('back')}
+              </Button>
+            )}
+            <Button type="button" onClick={handleNext} disabled={uploading}>
+              {t('next')}
+            </Button>
           </div>
+        )}
+
+        {uploading && (
+          <Button type="button" variant="danger" onClick={cancelUpload}>
+            Cancel upload
+          </Button>
         )}
       </form>
     </div>

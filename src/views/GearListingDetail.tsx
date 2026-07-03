@@ -5,31 +5,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { ReportButton } from '../components/ReportButton';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
-
-interface Listing {
-  id: string;
-  seller_profile_id: string;
-  title: string;
-  description?: string;
-  category: string;
-  brand?: string;
-  model?: string;
-  condition: string;
-  price: number;
-  currency: string;
-  location_city?: string;
-  location_country?: string;
-  photos: string[];
-  shipping_options: {
-    local_pickup: boolean;
-    domestic_shipping: boolean;
-    international_shipping: boolean;
-    shipping_notes?: string;
-  };
-  status: string;
-  views_count: number;
-  created_at: string;
-}
+import type { GearListing, GearTransaction } from '../lib/types';
 
 const CONDITIONS: Record<string, string> = {
   new: 'New',
@@ -39,38 +15,80 @@ const CONDITIONS: Record<string, string> = {
   for_parts: 'For Parts',
 };
 
+const actionButtonStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '12px 0',
+  borderRadius: 8,
+  border: 'none',
+  background: colors.accent,
+  color: colors.white,
+  fontWeight: 600,
+  fontSize: 14,
+  cursor: 'pointer',
+};
+
 export function GearListingDetail() {
   const t = useTranslations('gear');
   const { id } = useParams<{ id: string }>();
-  const [listing, setListing] = useState<Listing | null>(null);
+  const [listing, setListing] = useState<GearListing | null>(null);
+  const [transaction, setTransaction] = useState<GearTransaction | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
   const [buying, setBuying] = useState(false);
   const [buyError, setBuyError] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const fetchData = async () => {
+    if (!id) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const headers: Record<string, string> = {};
+      if (session) headers.Authorization = `Bearer ${session.access_token}`;
+
+      const res = await fetch(`/api/marketplace/gear/${id}`, { headers });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Not found');
+      setListing(data.listing);
+      setTransaction(data.transaction);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUserId(session?.user.id ?? null);
     });
-  }, []);
-
-  useEffect(() => {
-    if (!id) return;
-    (async () => {
-      try {
-        const res = await fetch(`/api/marketplace/gear/${id}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error ?? 'Not found');
-        setListing(data.listing);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'Failed to load');
-      } finally {
-        setLoading(false);
-      }
-    })();
+    fetchData();
   }, [id]);
+
+  const handleAction = async (action: 'ship' | 'deliver' | 'confirm' | 'dispute', body?: any) => {
+    if (actionLoading) return;
+    setActionLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Sign in required');
+      const res = await fetch(`/api/marketplace/gear/${id}/${action}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Action failed');
+      await fetchData();
+    } catch (e) {
+      setBuyError(e instanceof Error ? e.message : 'Action failed');
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   const handleBuy = async () => {
     if (!userId) {
@@ -333,7 +351,103 @@ export function GearListingDetail() {
             </div>
           </div>
 
-          {listing.status === 'active' && userId !== listing.seller_profile_id ? (
+          {transaction && (
+            <div
+              style={{
+                background: colors.surfaceRaised,
+                padding: 16,
+                borderRadius: 12,
+                border: `1px solid ${colors.border}`,
+                marginBottom: 20,
+              }}
+            >
+              <h3
+                style={{
+                  color: colors.hiveGold,
+                  fontSize: 14,
+                  margin: '0 0 12px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                {t('transactionStatus')}
+              </h3>
+              <p style={{ color: colors.text.main, fontSize: 15, fontWeight: 600, margin: '0 0 8px' }}>
+                {t(`status_${transaction.transaction_state}`)}
+              </p>
+
+              {/* Seller Controls */}
+              {userId === listing.seller_profile_id && (
+                <div style={{ marginTop: 16 }}>
+                  {transaction.transaction_state === 'paid_escrow' && (
+                    <button
+                      onClick={() => {
+                        const track = prompt('Enter tracking number (optional):');
+                        handleAction('ship', { tracking_number: track });
+                      }}
+                      disabled={actionLoading}
+                      style={actionButtonStyle}
+                    >
+                      {actionLoading ? '...' : t('markAsShipped')}
+                    </button>
+                  )}
+                  {transaction.transaction_state === 'shipped' && (
+                    <button
+                      onClick={() => handleAction('deliver')}
+                      disabled={actionLoading}
+                      style={actionButtonStyle}
+                    >
+                      {actionLoading ? '...' : t('markAsDelivered')}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Buyer Controls */}
+              {userId === transaction.buyer_profile_id && (
+                <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {['paid_escrow', 'shipped', 'delivered'].includes(transaction.transaction_state) && (
+                    <button
+                      onClick={() => handleAction('confirm')}
+                      disabled={actionLoading}
+                      style={{ ...actionButtonStyle, background: 'var(--hive-gold)', color: colors.black }}
+                    >
+                      {actionLoading ? '...' : t('confirmReceipt')}
+                    </button>
+                  )}
+                  {transaction.transaction_state === 'shipped' && (
+                    <button
+                      onClick={() => handleAction('deliver')}
+                      disabled={actionLoading}
+                      style={actionButtonStyle}
+                    >
+                      {actionLoading ? '...' : t('markAsDelivered')}
+                    </button>
+                  )}
+                  {['paid_escrow', 'shipped', 'delivered'].includes(transaction.transaction_state) && (
+                    <button
+                      onClick={() => {
+                        const notes = prompt('Please explain the reason for the dispute:');
+                        if (notes) handleAction('dispute', { notes });
+                      }}
+                      disabled={actionLoading}
+                      style={{ ...actionButtonStyle, background: 'transparent', border: `1px solid ${colors.dangerStrong}`, color: colors.dangerStrong }}
+                    >
+                      {actionLoading ? '...' : t('openDispute')}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {transaction.transaction_state === 'disputed' && (
+                <p style={{ color: colors.dangerStrong, fontSize: 13, marginTop: 12 }}>
+                  {t('disputeUnderReview')}
+                </p>
+              )}
+            </div>
+          )}
+
+          {listing.status === 'active' && userId !== listing.seller_profile_id && !transaction ? (
             <>
               <button
                 onClick={handleBuy}

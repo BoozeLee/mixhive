@@ -316,6 +316,25 @@ export function MixCard({ mix }: Props) {
 
               {/* Stats + genre chip row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                {mix.published_from === 'beehive' && (
+                  <span
+                    title="Published directly from Beehive Studio"
+                    style={{
+                      fontSize: 10,
+                      fontWeight: fontWeight.bold,
+                      padding: '2px 7px',
+                      borderRadius: radius.pill,
+                      background: colors.hiveGold,
+                      color: colors.black,
+                      whiteSpace: 'nowrap',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
+                    <Icon name="zap" size={10} /> BEEHIVE
+                  </span>
+                )}
                 {mix.ai_band && <AiBandBadge />}
                 {mix.genre_name && (
                   <span

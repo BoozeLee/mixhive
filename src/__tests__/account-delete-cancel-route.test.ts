@@ -4,7 +4,6 @@
 import { POST } from '../app/api/account/delete/cancel/route';
 
 let mockUser: { id: string } | null = { id: 'u1' };
-let updatedFilter: Record<string, unknown> = {};
 let updateError: Error | null = null;
 
 jest.mock('@supabase/supabase-js', () => ({
@@ -13,10 +12,9 @@ jest.mock('@supabase/supabase-js', () => ({
       getUser: async () => ({ data: { user: mockUser }, error: mockUser ? null : new Error('no') }),
     },
     from: () => ({
-      update: (row: Record<string, unknown>) => {
-        updatedFilter = row;
+      update: (_row: Record<string, unknown>) => {
         return {
-          eq: (col: string, val: string) => ({
+          eq: (_col: string, _val: string) => ({
             eq: () => Promise.resolve({ error: updateError }),
           }),
         };
@@ -31,7 +29,6 @@ beforeAll(() => {
 });
 beforeEach(() => {
   mockUser = { id: 'u1' };
-  updatedFilter = {};
   updateError = null;
 });
 

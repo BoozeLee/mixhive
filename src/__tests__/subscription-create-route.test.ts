@@ -7,7 +7,6 @@ const mockCreateCustomer = jest.fn();
 const mockCreateSession = jest.fn();
 const mockUser = { id: 'u1', email: 'dj@test.com' };
 const mockSelectSingle = jest.fn();
-const mockUpdateEq = jest.fn();
 const mockFrom = jest.fn();
 
 jest.mock('@/lib/stripe-connect', () => ({

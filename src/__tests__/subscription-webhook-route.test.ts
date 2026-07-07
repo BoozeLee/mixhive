@@ -13,7 +13,7 @@ jest.mock('@/lib/stripe-connect', () => ({
     webhooks: { constructEvent: mockConstructEvent },
   }),
   makeServiceClient: () => ({
-    from: (table: string) => ({
+    from: (_table: string) => ({
       upsert: (row: Record<string, unknown>) => {
         upsertRow = row;
         return { onConflict: () => Promise.resolve({ error: null }) };

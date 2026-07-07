@@ -99,11 +99,14 @@ export function OutcomeLinkModal({ milestoneId, onClose, onDone }: OutcomeLinkMo
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- Pointer backdrop dismissal only; keyboard users dismiss via the explicit Close control.
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Link an outcome"
-      onClick={onClose}
+      onClick={e => {
+        if (e.target === e.currentTarget) onClose();
+      }}
       style={{
         position: 'fixed',
         inset: 0,
@@ -116,7 +119,6 @@ export function OutcomeLinkModal({ milestoneId, onClose, onDone }: OutcomeLinkMo
       }}
     >
       <div
-        onClick={e => e.stopPropagation()}
         style={{
           background: colors.surface,
           border: `1px solid ${colors.borderStrong}`,

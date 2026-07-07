@@ -516,7 +516,7 @@ export async function batchUploadWithCDN(
       });
     }
 
-    let result: UploadResult | null = null;
+    let result: UploadResult | null;
 
     try {
       switch (type) {

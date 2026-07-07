@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cdnConfig, getOptimizedMediaUrl } from '@/lib/cdn';
 import { cdnUploadManager } from '@/lib/cdn';
 import { validateUploadFile } from '@/lib/cdnUpload';
-import type { CDNOptimizationParams } from '@/lib/cdn';
+import type { CDNOptimizationParams, MediaBucket } from '@/lib/cdn';
 
 export async function GET(request: NextRequest) {
   try {
@@ -338,7 +338,7 @@ async function handleUploadTest(params: { file?: unknown; bucket: string; simula
     // Test upload
     const result = await cdnUploadManager.uploadToCDN(
       testFile,
-      bucket as any,
+      bucket as MediaBucket,
       `test-${Date.now()}`,
       progress => {
         console.log('Upload progress:', progress);

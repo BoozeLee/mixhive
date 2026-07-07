@@ -485,7 +485,7 @@ export function Upload() {
       >
         {step === 'audio' && (
           <>
-            <label
+            <div
               style={{
                 display: 'block',
                 fontSize: 12,
@@ -497,7 +497,7 @@ export function Upload() {
               }}
             >
               Audio file *
-            </label>
+            </div>
             <AudioDropZone
               audioFile={audioFile}
               duration={duration}

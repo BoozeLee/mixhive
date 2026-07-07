@@ -147,28 +147,25 @@ export function SceneDetail() {
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, marginTop: 12, display: 'grid', gap: 8 }}>
             {listings.map(a => (
-              <li
-                key={a.user_id}
-                role="button"
-                tabIndex={0}
-                onClick={() => a.username && navigate(`/u/${a.username}`)}
-                onKeyDown={e => {
-                  if ((e.key === 'Enter' || e.key === ' ') && a.username) {
-                    e.preventDefault();
-                    navigate(`/u/${a.username}`);
-                  }
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: 12,
-                  background: colors.surface,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: radius.md,
-                  cursor: a.username ? 'pointer' : 'default',
-                }}
-              >
+              <li key={a.user_id}>
+                <button
+                  type="button"
+                  disabled={!a.username}
+                  onClick={() => a.username && navigate(`/u/${a.username}`)}
+                  style={{
+                    width: '100%',
+                    font: 'inherit',
+                    textAlign: 'left',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: 12,
+                    background: colors.surface,
+                    border: `1px solid ${colors.border}`,
+                    borderRadius: radius.md,
+                    cursor: a.username ? 'pointer' : 'default',
+                  }}
+                >
                 <span style={{ color: colors.text.primary, fontSize: fontSize.md }}>
                   {a.display_name || a.username || 'Unknown'}
                   {a.verified ? ' ✓' : ''}
@@ -188,6 +185,7 @@ export function SceneDetail() {
                     {a.badge}
                   </span>
                 </span>
+                </button>
               </li>
             ))}
           </ul>

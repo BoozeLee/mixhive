@@ -149,8 +149,11 @@ export function NftMintModal({
       {step === 'configure' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
           <div>
-            <label style={labelStyle}>Collection name *</label>
+            <label htmlFor="nft-collection-name" style={labelStyle}>
+              Collection name *
+            </label>
             <input
+              id="nft-collection-name"
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}

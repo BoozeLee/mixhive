@@ -379,7 +379,7 @@ export class CDNUploadManager {
   ): Promise<string | null> {
     // This is a mock implementation - in real scenario, this would use actual CDN API
     const totalSize = file.size;
-    let uploadedSize = 0;
+    let uploadedSize: number;
 
     // Simulate chunked upload
     const chunkSize = Math.min(totalSize / 10, 1024 * 1024); // 1MB chunks or 10 chunks

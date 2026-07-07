@@ -8,9 +8,9 @@ echo ""
 cd "$(dirname "$0")/.."
 
 # Values retrieved via `supabase projects api-keys`
-SUPABASE_URL="https://wlfjbzdzmrqiiguyoulj.supabase.co"
-ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsZmpiemR6bXJxaWlndXlvdWxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NTg3NzIsImV4cCI6MjA5NTAzNDc3Mn0.HcsJo1Y7FemYsputRsEtCB9HJifeNUvvfPNCpWcyqAw"
-SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsZmpiemR6bXJxaWlndXlvdWxqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTQ1ODc3MiwiZXhwIjoyMDk1MDM0NzcyfQ.miESu8_JVfXFbdoZNmZc9aOqmq1pUp1yInb3TAP_5L8"
+SUPABASE_URL="https://ljdolmqytncxhgojqguh.supabase.co"
+ANON_KEY="${SUPABASE_ANON_KEY:?export SUPABASE_ANON_KEY}"
+SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY:?export SUPABASE_SERVICE_ROLE_KEY}"
 
 echo "Adding NEXT_PUBLIC_SUPABASE_URL to Preview..."
 printf "%s\n\n" "$SUPABASE_URL" | vercel env add NEXT_PUBLIC_SUPABASE_URL preview

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
-import { log_performance, LogPerformanceParams } from '@/lib/database-queries';
+import { log_performance } from '@/lib/database-queries';
 import { z } from 'zod';
 import { handleApiError, unauthorized } from '@/lib/api-errors';
 

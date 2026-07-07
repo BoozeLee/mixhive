@@ -65,7 +65,7 @@ class FeedService {
     }
 
     // Fetch fresh data
-    let freshData: any[] = [];
+    let freshData: unknown[] = [];
     let newCursor: string | null = null;
     let hasMore = false;
 

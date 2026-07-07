@@ -28,15 +28,25 @@ JOBS = {
   '/api/cron/push-sender'              => Integer(ENV.fetch('IV_PUSH', 300)),          # every 5m
   '/api/cron/notification-prioritizer' => Integer(ENV.fetch('IV_NOTIF', 3600)),        # hourly
   '/api/cron/strategic-agents'         => Integer(ENV.fetch('IV_STRATEGIC', 86_400)),  # daily
-  '/api/cron/embed-refresh'            => Integer(ENV.fetch('IV_EMBED', 86_400)),       # daily
-  '/api/cron/payouts-auto-release'     => Integer(ENV.fetch('IV_PAYOUTS', 21_600)),     # 6h
-  '/api/cleanup'                       => Integer(ENV.fetch('IV_CLEANUP', 86_400)),     # daily
-  '/api/analytics/daily'               => Integer(ENV.fetch('IV_ANALYTICS', 86_400))    # daily
+  '/api/cron/embed-refresh'            => Integer(ENV.fetch('IV_EMBED', 86_400)),      # daily
+  '/api/cron/payouts-auto-release'     => Integer(ENV.fetch('IV_PAYOUTS', 21_600)),    # 6h
+  '/api/cron/account-delete'           => Integer(ENV.fetch('IV_ACCOUNT_DELETE', 86_400)), # daily
+  '/api/cleanup'                       => Integer(ENV.fetch('IV_CLEANUP', 86_400)),    # daily
+  '/api/analytics/daily'               => Integer(ENV.fetch('IV_ANALYTICS', 86_400))   # daily
 }.freeze
+
+POST_JOBS = Set.new([
+  '/api/cron/notification-prioritizer',
+  '/api/cron/strategic-agents'
+]).freeze
 
 def fire(path)
   uri = URI.join(BASE, path)
-  req = Net::HTTP::Get.new(uri)
+  req = if POST_JOBS.include?(path)
+          Net::HTTP::Post.new(uri)
+        else
+          Net::HTTP::Get.new(uri)
+        end
   req['Authorization'] = "Bearer #{SECRET}"
   res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', open_timeout: 10, read_timeout: 120) do |http|
     http.request(req)

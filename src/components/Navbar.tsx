@@ -8,6 +8,7 @@ import { Button } from './ui/Button';
 import { BeeMark } from './brand/BeeMark';
 import { MixhiveWordmark } from './brand/MixhiveWordmark';
 import { Icon } from './ui/Icon';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { colors, space } from '../styles/tokens';
 
 const navLinks = [
@@ -112,7 +113,7 @@ export function Navbar() {
           }}
         >
           <BeeMark size={28} color={`var(--hive-gold, ${colors.accentBright})`} glow />
-          <MixhiveWordmark height={17} color="var(--hive-text, #f5f3e7)" />
+          <MixhiveWordmark height={17} color={`var(--hive-text, ${colors.text.primary})`} />
         </Link>
         {user && (
           <div
@@ -264,6 +265,19 @@ export function Navbar() {
                     View Profile
                   </Link>
                   <Link
+                    to="/leaderboard"
+                    style={menuItemStyle}
+                    onClick={() => setMenuOpen(false)}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
+                  >
+                    Leaderboard
+                  </Link>
+                  <Link
                     to="/settings"
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
@@ -289,6 +303,10 @@ export function Navbar() {
                   >
                     Upload Mix
                   </Link>
+
+                  <div style={{ padding: '6px 16px' }}>
+                    <LanguageSwitcher hideLabel />
+                  </div>
 
                   <div style={{ borderTop: '1px solid rgba(240,192,64,0.10)', marginTop: 2 }} />
 

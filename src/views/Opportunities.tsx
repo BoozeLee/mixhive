@@ -12,21 +12,21 @@ import { Button } from '../components/ui/Button';
 type Tab = 'for-you' | 'saved' | 'applied' | 'dismissed';
 type OpportunityAction = OpportunitySaveStatus;
 
-const tabLabels: Record<Tab, string> = {
-  'for-you': 'For You',
-  saved: 'Saved',
-  applied: 'Applied',
-  dismissed: 'Dismissed',
+const TAB_KEYS: Record<Tab, string> = {
+  'for-you': 'forYou',
+  saved: 'savedTab',
+  applied: 'appliedTab',
+  dismissed: 'dismissedTab',
 };
 
-const typeLabels: Record<string, string> = {
-  gig: 'Gig',
-  grant: 'Grant',
-  residency: 'Residency',
-  contest: 'Contest',
-  festival: 'Festival',
-  collab_call: 'Collab',
-  radio: 'Radio',
+const TYPE_KEYS: Record<string, string> = {
+  gig: 'typeGig',
+  grant: 'typeGrant',
+  residency: 'typeResidency',
+  contest: 'typeContest',
+  festival: 'typeFestival',
+  collab_call: 'typeCollab',
+  radio: 'typeRadio',
 };
 
 function scoreOpportunity(
@@ -141,7 +141,7 @@ export function Opportunities() {
         });
         setActions(map);
       })
-      .catch(() => undefined);
+      .catch((err: unknown) => console.error('Failed to load opportunity saves:', err));
   }, [user]);
 
   const matches = useMemo(() => {
@@ -158,7 +158,7 @@ export function Opportunities() {
 
   function setAction(id: string, action: OpportunityAction, draftText?: string) {
     setActions(prev => ({ ...prev, [id]: action }));
-    if (user) upsertOpportunitySave(user.id, id, action, draftText).catch(() => undefined);
+    if (user) upsertOpportunitySave(user.id, id, action, draftText).catch((err: unknown) => console.error('Failed to save opportunity action:', err));
   }
 
   function openDraft(match: OpportunityMatch) {
@@ -218,8 +218,7 @@ export function Opportunities() {
               lineHeight: 1.6,
             }}
           >
-            Explainable matches for the Belgian pilot. MIXHIVE drafts applications, but never sends
-            outreach automatically.
+            {t('pilotDescription')}
           </p>
         </div>
         <div
@@ -253,7 +252,7 @@ export function Opportunities() {
             {opportunities.length}
           </div>
           <div style={{ color: colors.text.muted, fontSize: fontSize.xs }}>
-            manual + Supabase-backed opportunities
+            {t('manualSupabaseBacked')}
           </div>
           {user && (
             <Button
@@ -268,7 +267,7 @@ export function Opportunities() {
               }
               style={{ marginTop: space[4] }}
             >
-              {matchBusy ? 'Matching…' : 'Match me to opportunities'}
+              {matchBusy ? t('matching') : t('matchMe')}
             </Button>
           )}
         </div>
@@ -309,8 +308,10 @@ export function Opportunities() {
               fontSize: fontSize.sm,
             }}
           >
-            AI Match Results — top {Math.min(3, matchResult.suggestions.length)} of{' '}
-            {matchResult.suggestions.length}
+            {t('aiMatchResults', {
+              count: Math.min(3, matchResult.suggestions.length),
+              total: matchResult.suggestions.length,
+            })}
           </div>
           <div style={{ padding: `${space[4]}px ${space[5]}px`, display: 'grid', gap: space[3] }}>
             {matchResult.suggestions.slice(0, 3).map((s, i) => (
@@ -341,7 +342,7 @@ export function Opportunities() {
                     {s.type.replace(/_/g, ' ')}
                   </span>
                   <span style={{ color: colors.text.dim, fontSize: fontSize.xs }}>
-                    {Math.round(s.confidence * 100)}% match
+                    {t('percentMatch', { pct: Math.round(s.confidence * 100) })}
                   </span>
                 </div>
                 <p
@@ -357,7 +358,7 @@ export function Opportunities() {
               </div>
             ))}
             <a href="/agents/inbox" style={{ color: colors.accent, fontSize: fontSize.xs }}>
-              View all in agents inbox →
+              {t('viewAllInAgents')}
             </a>
           </div>
         </div>
@@ -390,7 +391,7 @@ export function Opportunities() {
               transition: transition.base,
             }}
           >
-            {tabLabels[key]}
+            {t(TAB_KEYS[key])}
           </button>
         ))}
       </div>
@@ -455,7 +456,7 @@ export function Opportunities() {
                     textTransform: 'uppercase',
                   }}
                 >
-                  {typeLabels[opp.opp_type] || opp.opp_type}
+                  {t(TYPE_KEYS[opp.opp_type] || opp.opp_type)}
                 </span>
                 <div style={{ textAlign: 'right' }}>
                   <div
@@ -467,7 +468,9 @@ export function Opportunities() {
                   >
                     {match.score}
                   </div>
-                  <div style={{ color: colors.text.dim, fontSize: fontSize.xs }}>match</div>
+                  <div style={{ color: colors.text.dim, fontSize: fontSize.xs }}>
+                    {t('matchLabel')}
+                  </div>
                 </div>
               </div>
 
@@ -588,8 +591,7 @@ export function Opportunities() {
                 lineHeight: 1.5,
               }}
             >
-              Review and edit this draft manually. MIXHIVE does not send applications or messages
-              automatically.
+              {t('draftDescription')}
             </p>
             <textarea
               value={draft}

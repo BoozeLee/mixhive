@@ -85,7 +85,7 @@ export function NewGearListing() {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session) {
-      setError('Sign in required');
+      setError(t('signInRequired'));
       setUploading(false);
       return;
     }
@@ -144,7 +144,7 @@ export function NewGearListing() {
       if (!res.ok) throw new Error(data.error ?? 'Failed to create listing');
       navigate(`/marketplace/gear/${data.listing.id}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to create');
+      setError(e instanceof Error ? e.message : t('failedToCreate'));
     } finally {
       setSubmitting(false);
     }
@@ -163,7 +163,7 @@ export function NewGearListing() {
         {t('listYourGear')}
       </h1>
       <p style={{ color: colors.text.faint, fontSize: 14, marginBottom: 28 }}>
-        Sell to the community — DJ gear, studio equipment, and more
+        {t('sellToCommunity')}
       </p>
 
       {/* Step indicator */}
@@ -255,14 +255,14 @@ export function NewGearListing() {
             <Button
               onClick={() => {
                 if (!form.category || !form.condition) {
-                  setError('Category and condition are required');
+                  setError(t('categoryAndConditionRequired'));
                   return;
                 }
                 setError('');
                 setStep(2);
               }}
             >
-              Continue →
+              {t('continue')}
             </Button>
           </div>
         </div>
@@ -291,9 +291,11 @@ export function NewGearListing() {
           {/* Photo upload */}
           <div>
             <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
-              Photos * (min 1)
+              {t('photosMin1')}
             </p>
             <div
+              role="button"
+              tabIndex={0}
               style={{
                 border: `2px dashed ${colors.borderStrong}`,
                 borderRadius: 12,
@@ -303,8 +305,14 @@ export function NewGearListing() {
                 color: colors.text.faintest,
               }}
               onClick={() => fileRef.current?.click()}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  fileRef.current?.click();
+                }
+              }}
             >
-              {uploading ? 'Uploading...' : 'Click to upload photos'}
+              {uploading ? t('uploading') : t('clickToUploadPhotos')}
               <input
                 ref={fileRef}
                 type="file"
@@ -352,19 +360,19 @@ export function NewGearListing() {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
             <Button variant="secondary" onClick={() => setStep(1)}>
-              ← Back
+              {t('back')}
             </Button>
             <Button
               onClick={() => {
                 if (photos.length === 0) {
-                  setError('At least one photo required');
+                  setError(t('atLeastOnePhotoRequired'));
                   return;
                 }
                 setError('');
                 setStep(3);
               }}
             >
-              Continue →
+              {t('continue')}
             </Button>
           </div>
         </div>
@@ -447,14 +455,14 @@ export function NewGearListing() {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
             <Button variant="secondary" onClick={() => setStep(2)}>
-              ← Back
+              {t('back')}
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={submitting || !form.price}
               loading={submitting}
             >
-              {submitting ? 'Publishing...' : 'Publish Listing'}
+              {submitting ? t('publishing') : t('publishListing')}
             </Button>
           </div>
         </div>

@@ -28,7 +28,7 @@ export interface CacheOptions {
 }
 
 export interface FeedCacheData {
-  data: any[];
+  data: unknown[];
   cursor: string | null;
   timestamp: number;
 }
@@ -60,6 +60,10 @@ export interface RedisHealth extends RedisConnectionInfo {
 class RedisCache {
   private client: Redis | null = null;
   private isConnected = false;
+
+  public get isAvailable(): boolean {
+    return this.isConnected && this.client?.status === 'ready';
+  }
   private connectPromise: Promise<void> | null = null;
   private connectionInfo: RedisConnectionInfo = {
     configured: false,
@@ -256,7 +260,7 @@ class RedisCache {
   // Trending mixes caching
   public async setTrendingCache(
     genre: string,
-    trendingData: any[],
+    trendingData: unknown[],
     cursor: string | null = null
   ): Promise<void> {
     const cacheKey = `${KEY_PREFIXES.TRENDING}${genre || 'all'}`;
@@ -273,9 +277,11 @@ class RedisCache {
 
   public async getTrendingCache(
     genre: string = 'all'
-  ): Promise<{ data: any[]; cursor: string | null } | null> {
+  ): Promise<{ data: unknown[]; cursor: string | null } | null> {
     const cacheKey = `${KEY_PREFIXES.TRENDING}${genre}`;
-    const cached = await this.get<{ data: any[]; cursor: string | null }>(cacheKey);
+    const cached = await this.get<{ data: unknown[]; cursor: string | null; timestamp: number }>(
+      cacheKey
+    );
 
     if (!cached) return null;
 
@@ -299,14 +305,14 @@ class RedisCache {
   }
 
   // Notification caching
-  public async setNotificationsCache(userId: string, notifications: any[]): Promise<void> {
+  public async setNotificationsCache(userId: string, notifications: unknown[]): Promise<void> {
     await this.set(`${KEY_PREFIXES.NOTIFICATION}${userId}`, notifications, {
       ttl: TTL.NOTIFICATIONS,
     });
   }
 
-  public async getNotificationsCache(userId: string): Promise<any[] | null> {
-    return this.get<any[]>(`${KEY_PREFIXES.NOTIFICATION}${userId}`);
+  public async getNotificationsCache(userId: string): Promise<unknown[] | null> {
+    return this.get<unknown[]>(`${KEY_PREFIXES.NOTIFICATION}${userId}`);
   }
 
   // Rate limiting
@@ -361,6 +367,34 @@ class RedisCache {
         remaining: limit,
         reset: resetTime,
       };
+    }
+  }
+
+  /**
+   * Fail-closed variant: returns null when Redis is unavailable or errors.
+   * Callers MUST treat null as "over limit" for security-sensitive endpoints.
+   */
+  public async strictRateLimit(
+    key: string,
+    limit: number,
+    window: number
+  ): Promise<{ current: number; limit: number; remaining: number; reset: number } | null> {
+    await this.connect().catch(() => undefined);
+    if (!this.isAvailable) return null;
+
+    const rateLimitKey = `${KEY_PREFIXES.RATE_LIMIT}${key}`;
+    const now = Date.now();
+    const resetTime = now + window * 1000;
+
+    try {
+      await this.client!.zremrangebyscore(rateLimitKey, 0, now - window * 1000);
+      await this.client!.zadd(rateLimitKey, now, `${now}-${Math.random()}`);
+      await this.client!.expire(rateLimitKey, window);
+      const current = (await this.client!.zcard(rateLimitKey)) ?? 0;
+      return { current, limit, remaining: Math.max(0, limit - current), reset: resetTime };
+    } catch (error) {
+      console.error('strictRateLimit error:', error);
+      return null;
     }
   }
 

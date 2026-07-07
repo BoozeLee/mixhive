@@ -28,6 +28,17 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
+      // Honor the underscore convention the codebase already uses for
+      // intentionally-unused args/vars/caught-errors (e.g. `_request`, `_genre`).
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+
       // v7 of eslint-plugin-react-hooks added this advisory rule; most flagged
       // sites here are legitimate async-fetch synchronization patterns.
       'react-hooks/set-state-in-effect': 'off',

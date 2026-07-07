@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
+import { Button } from '../components/ui/Button';
 import { Link } from 'react-router-dom';
 import { getProfileBadgesFor } from '../lib/api';
 import type { VerificationBadge } from '../lib/types';
@@ -172,31 +173,27 @@ export function GearMarketplace() {
           style={{ ...selectStyle, width: 150 }}
         />
         {(category || condition || maxPrice) && (
-          <button
+          <Button
+            variant="ghost"
             onClick={() => {
               setCategory('');
               setCondition('');
               setMaxPrice('');
             }}
             style={{
-              background: 'transparent',
               border: `1px solid ${colors.borderStrong}`,
               color: colors.text.dimmed,
-              borderRadius: 8,
-              padding: '8px 14px',
-              cursor: 'pointer',
-              fontSize: 13,
             }}
           >
             {t('clearFilters')}
-          </button>
+          </Button>
         )}
       </div>
 
       {/* Count */}
       {!loading && (
         <p style={{ color: colors.text.faint, fontSize: 13, marginBottom: 16 }}>
-          {total} listing{total !== 1 ? 's' : ''}
+          {t('listingCount', { total })}
         </p>
       )}
 
@@ -241,9 +238,9 @@ export function GearMarketplace() {
           <div style={{ fontSize: 48, marginBottom: 12 }}>🎛</div>
           <p style={{ fontSize: 18 }}>{t('noListings')}</p>
           <p style={{ fontSize: 14 }}>
-            Try different filters or{' '}
+            {t('tryDifferentFilters')}{' '}
             <Link to="/marketplace/gear/new" style={{ color: 'var(--hive-gold)' }}>
-              list your gear
+              {t('listGearLink')}
             </Link>
           </p>
         </div>
@@ -268,9 +265,9 @@ export function GearMarketplace() {
       {/* Load more */}
       {!loading && listings.length > 0 && offset + limit < total && (
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <button onClick={handleLoadMore} style={loadMoreBtnStyle}>
+          <Button variant="ghost" onClick={handleLoadMore} style={{ border: `1px solid ${colors.borderStrong}` }}>
             {tc('loadMore')}
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -407,14 +404,4 @@ const selectStyle: React.CSSProperties = {
   padding: '8px 12px',
   fontSize: 13,
   cursor: 'pointer',
-};
-
-const loadMoreBtnStyle: React.CSSProperties = {
-  background: 'transparent',
-  border: `1px solid ${colors.borderStrong}`,
-  color: colors.text.secondary,
-  padding: '12px 32px',
-  borderRadius: 8,
-  cursor: 'pointer',
-  fontSize: 14,
 };

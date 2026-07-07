@@ -39,7 +39,7 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
     }
 
     // Build update object
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (action_taken !== undefined) updateData.action_taken = action_taken;
     if (flagged_by !== undefined) updateData.flagged_by = flagged_by;
     if (payload !== undefined) updateData.payload = payload;

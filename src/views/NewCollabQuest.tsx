@@ -74,10 +74,10 @@ export function NewCollabQuest() {
   const handleSubmit = async () => {
     setError('');
     const validGoals = form.goals.filter(g => g.trim());
-    if (!form.title.trim()) return setError('Title required');
-    if (validGoals.length === 0) return setError('At least one goal required');
+    if (!form.title.trim()) return setError(t('titleRequired'));
+    if (validGoals.length === 0) return setError(t('goalRequired'));
     const validRoles = roles.filter(r => r.role_type && r.title.trim());
-    if (validRoles.length === 0) return setError('At least one role required');
+    if (validRoles.length === 0) return setError(t('roleRequired'));
 
     setSubmitting(true);
     try {
@@ -171,7 +171,7 @@ export function NewCollabQuest() {
               label={t('questTitle')}
               value={form.title}
               onChange={e => updateForm('title', e.target.value)}
-              placeholder='e.g. "Build visual identity for my techno alias"'
+              placeholder={t('exampleQuestTitle')}
             />
             <Textarea
               label={t('narrativeRpgStyleContext')}
@@ -183,7 +183,7 @@ export function NewCollabQuest() {
             />
             <div>
               <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
-                Goals * (what will be delivered)
+                {t('goalsDelivered')}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
                 {form.goals.map((g, i) => (
@@ -197,20 +197,21 @@ export function NewCollabQuest() {
                   />
                 ))}
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => setForm(f => ({ ...f, goals: [...f.goals, ''] }))}
-                style={ghostBtnStyle}
+                style={{ border: `1px dashed ${colors.borderStrong}`, color: colors.text.faint }}
               >
-                + Add goal
-              </button>
+                {t('addGoal')}⁠
+              </Button>
             </div>
           </div>
         </section>
 
         {/* Tags & logistics */}
         <section>
-          <h2 style={sectionHeadStyle}>Tags &amp; Logistics</h2>
+          <h2 style={sectionHeadStyle}>{t('tagsLogistics')}</h2>
           <div
             className="p15-form-2col"
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
@@ -254,7 +255,7 @@ export function NewCollabQuest() {
 
         {/* Roles */}
         <section>
-          <h2 style={sectionHeadStyle}>Roles Needed *</h2>
+          <h2 style={sectionHeadStyle}>{t('rolesNeeded')}</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {roles.map((role, i) => (
               <div
@@ -267,7 +268,9 @@ export function NewCollabQuest() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <span style={{ color: colors.text.muted, fontSize: 13 }}>Role {i + 1}</span>
+                  <span style={{ color: colors.text.muted, fontSize: 13 }}>
+                    {t('roleN', { n: i + 1 })}
+                  </span>
                   {roles.length > 1 && (
                     <button
                       onClick={() => removeRole(i)}
@@ -348,9 +351,14 @@ export function NewCollabQuest() {
                 )}
               </div>
             ))}
-            <button type="button" onClick={addRole} style={ghostBtnStyle}>
-              + Add role
-            </button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={addRole}
+              style={{ border: `1px dashed ${colors.borderStrong}`, color: colors.text.faint }}
+            >
+              {t('addRole')}⁠
+            </Button>
           </div>
         </section>
 
@@ -361,7 +369,7 @@ export function NewCollabQuest() {
           size="lg"
           style={{ alignSelf: 'flex-end' }}
         >
-          {submitting ? 'Posting...' : 'Post Quest'}
+          {submitting ? t('posting') : t('postQuest')}
         </Button>
       </div>
     </div>
@@ -375,13 +383,4 @@ const sectionHeadStyle: React.CSSProperties = {
   color: colors.text.faint,
   marginBottom: 14,
   marginTop: 0,
-};
-const ghostBtnStyle: React.CSSProperties = {
-  background: 'transparent',
-  color: colors.text.faint,
-  border: `1px dashed ${colors.borderStrong}`,
-  borderRadius: 8,
-  padding: '8px 16px',
-  fontSize: 13,
-  cursor: 'pointer',
 };

@@ -1,4 +1,4 @@
-import { audioProcessingWorker, AudioProcessingConfig } from './audio-processing';
+import { audioProcessingWorker } from './audio-processing';
 import { mythicGraphProcessingWorker } from './mythic-graph-processing';
 import {
   get_pending_audio_jobs,
@@ -95,8 +95,8 @@ export class JobProcessor {
       );
 
       const allJobs = [
-        ...audioJobs.map((j: any) => ({ ...j, _domain: 'audio' })),
-        ...mythicJobs.map((j: any) => ({ ...j, _domain: 'mythic_graph' })),
+        ...audioJobs.map((j: Record<string, unknown>) => ({ ...j, _domain: 'audio' })),
+        ...mythicJobs.map((j: Record<string, unknown>) => ({ ...j, _domain: 'mythic_graph' })),
       ];
 
       if (allJobs.length === 0) {
@@ -119,7 +119,7 @@ export class JobProcessor {
   /**
    * Process a single job (supports both audio and mythic_graph domains)
    */
-  private async processJob(job: any): Promise<void> {
+  private async processJob(job: Record<string, unknown>): Promise<void> {
     const jobId = job.id;
     const domain = job._domain || 'audio';
 
@@ -255,7 +255,7 @@ export class JobProcessor {
   /**
    * Log helper method
    */
-  private log(message: string, ...args: any[]): void {
+  private log(message: string, ...args: unknown[]): void {
     if (this.config.enableLogging) {
       const timestamp = new Date().toISOString();
       console.log(`[${timestamp}] JobProcessor: ${message}`, ...args);

@@ -2,7 +2,7 @@
 import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect } from 'react';
-import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
+import { colors, fontSize, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from './hive/HiveButton';
 import toast from 'react-hot-toast';
 
@@ -32,7 +32,7 @@ export function PostSessionReview({
   const [proposedUpdates, setProposedUpdates] = useState<ProposedUpdate[]>([]);
   const [approvedIds, setApprovedIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, setIsLoading] = useState(true);
 
   // Fetch real edges created from this session (populated by the job processor)
   useEffect(() => {
@@ -49,7 +49,7 @@ export function PostSessionReview({
           .limit(20);
 
         if (edges && edges.length > 0) {
-          const formatted = edges.map((edge: any) => ({
+          const formatted = edges.map((edge: Record<string, unknown>) => ({
             id: edge.id,
             type: edge.edge_type,
             title: `${edge.edge_type} with other participant(s)`,
@@ -59,7 +59,7 @@ export function PostSessionReview({
           }));
           setProposedUpdates(formatted);
         } else setProposedUpdates([]);
-      } catch (e) {
+      } catch (_e) {
         setProposedUpdates([]);
       } finally {
         setIsLoading(false);

@@ -38,6 +38,7 @@ export interface LuaAgent {
   is_public?: boolean;
   fork_of?: string | null;
   fork_count?: number;
+  tags?: string[];
 }
 
 export interface PublicLuaAgent extends LuaAgent {

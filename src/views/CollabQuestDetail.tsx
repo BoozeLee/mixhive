@@ -227,7 +227,8 @@ export function CollabQuestDetail() {
             gap: 10,
           }}
         >
-          <Icon name="quests" size={24} color={`var(--hive-gold, ${colors.accentBright})`} /> {quest.title}
+          <Icon name="quests" size={24} color={`var(--hive-gold, ${colors.accentBright})`} />{' '}
+          {quest.title}
         </h1>
         {quest.narrative && (
           <p
@@ -321,7 +322,7 @@ export function CollabQuestDetail() {
                 >
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <span style={{ display: 'inline-flex', color: 'var(--hive-gold, #f6c400)' }}>
+                      <span style={{ display: 'inline-flex', color: `var(--hive-gold, ${colors.accent})` }}>
                         <Icon
                           name={ROLE_ICONS[role.role_type] ?? 'sparkles'}
                           size={18}

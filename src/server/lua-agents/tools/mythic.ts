@@ -4,7 +4,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-let _admin: any = null;
+let _admin: unknown = null;
 
 function adminClient() {
   if (!_admin) {

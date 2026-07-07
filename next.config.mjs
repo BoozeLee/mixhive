@@ -159,11 +159,14 @@ const nextConfig = {
     );
 
     // CDN-specific cache configuration
+    // Dev only: React's dev runtime needs eval(); allow it in development so a
+    // local browser can run the client app. Production CSP is unchanged.
+    const scriptEval = process.env.NODE_ENV !== 'production' ? " 'unsafe-eval'" : '';
     const getCdnHeaders = source => {
       return [
         {
           key: 'Content-Security-Policy',
-          value: `default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vitals.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${mediaSources}; media-src 'self' blob: ${mediaSources}; font-src 'self' data:; connect-src 'self' ${connectSources}; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; worker-src 'self' blob:`,
+          value: `default-src 'self'; script-src 'self' 'unsafe-inline'${scriptEval} https://va.vercel-scripts.com https://vitals.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${mediaSources}; media-src 'self' blob: ${mediaSources}; font-src 'self' data:; connect-src 'self' ${connectSources}; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; worker-src 'self' blob:`,
         },
         { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
         { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -276,17 +279,6 @@ const nextConfig = {
           { key: 'Content-Type', value: 'application/json' },
           { key: 'X-CDN-Health', value: 'enabled' },
         ],
-      },
-    ];
-  },
-
-  // Redirects
-  async redirects() {
-    return [
-      {
-        source: '/dashboard',
-        destination: '/feed',
-        permanent: true,
       },
     ];
   },

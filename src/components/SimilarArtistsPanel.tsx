@@ -94,7 +94,7 @@ export function SimilarArtistsPanel({ profileId }: { profileId: string }) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#0a0a0a',
+                  color: colors.bg,
                   fontSize: 13,
                   fontWeight: fontWeight.bold,
                 }}

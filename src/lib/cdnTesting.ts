@@ -8,7 +8,6 @@
 import { cdnConfig } from './cdn';
 import { cdnHealthMonitor } from './cdnHealth';
 import { cdnCostOptimizer } from './cdnCostOptimization';
-import type { CDNHealthStatus, UploadProgress } from './cdn';
 
 interface TestCase {
   id: string;
@@ -23,7 +22,7 @@ interface TestCaseResult {
   passed: boolean;
   duration: number;
   message: string;
-  details?: any;
+  details?: unknown;
   error?: Error;
 }
 
@@ -473,7 +472,7 @@ class CDNTester {
 
   // Get performance metrics
   async getPerformanceMetrics(): Promise<PerformanceMetrics> {
-    const healthStatus = cdnHealthMonitor.getHealthStatus();
+    const _healthStatus = cdnHealthMonitor.getHealthStatus();
     const bandwidthMetrics = cdnCostOptimizer.getBandwidthMetrics();
 
     return {
@@ -579,7 +578,7 @@ class CDNTester {
       case 'json':
         return JSON.stringify(reports, null, 2);
 
-      case 'csv':
+      case 'csv': {
         let csv = 'Suite Name,Test Name,Status,Duration,Message\n';
         reports.forEach(suite => {
           suite.results.forEach(result => {
@@ -587,6 +586,7 @@ class CDNTester {
           });
         });
         return csv;
+      }
 
       case 'html':
         return this.generateHTMLReport(reports);

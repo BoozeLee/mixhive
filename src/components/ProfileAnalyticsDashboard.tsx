@@ -120,6 +120,12 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
           analytics.uploadFrequencyDays ? `${analytics.uploadFrequencyDays}d` : 'n/a',
           'upload cadence'
         )}
+        {analytics.gearSalesCount !== undefined && (
+          <>
+            {metric(analytics.gearSalesCount, 'gear sales')}
+            {metric(`€${analytics.gearSalesTotal?.toFixed(0) || '0'}`, 'gear revenue')}
+          </>
+        )}
       </div>
       <div
         style={{

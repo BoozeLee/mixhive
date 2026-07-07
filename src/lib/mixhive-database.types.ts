@@ -491,7 +491,7 @@ export interface Database {
           id: string;
           user_id: string | null;
           event_type: string;
-          event_data: Record<string, any> | null;
+          event_data: Record<string, unknown> | null;
           user_agent: string | null;
           ip_address: string | null;
           created_at: string;
@@ -500,7 +500,7 @@ export interface Database {
           id?: string;
           user_id?: string | null;
           event_type: string;
-          event_data?: Record<string, any> | null;
+          event_data?: Record<string, unknown> | null;
           user_agent?: string | null;
           ip_address?: string | null;
           created_at?: string;
@@ -509,7 +509,7 @@ export interface Database {
           id?: string;
           user_id?: string | null;
           event_type?: string;
-          event_data?: Record<string, any> | null;
+          event_data?: Record<string, unknown> | null;
           user_agent?: string | null;
           ip_address?: string | null;
           created_at?: string;

@@ -160,6 +160,16 @@ export function notificationPresentation(notification: NotificationLike): Notifi
         body: customBody || 'You have a new update',
         url: safeNotificationPath(ctaUrl),
       };
+    case 'quest_complete': {
+      const questId = dataString(data, 'quest_id');
+      return {
+        category: 'social',
+        urgency: 'immediate',
+        title: 'Quest complete',
+        body: customBody || 'Your collab quest is complete!',
+        url: safeNotificationPath(questId ? `/collab-quests/${questId}` : '/notifications'),
+      };
+    }
     default:
       return {
         category: 'social',

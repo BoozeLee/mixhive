@@ -67,7 +67,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
       .on('presence', { event: 'sync' }, () => {
         const next = Object.values(channel.presenceState())
           .flat()
-          .map((entry: any) => ({
+          .map((entry: Record<string, unknown>) => ({
             id: entry.profile_id as string,
             username: (entry.username as string) || 'Anonymous',
             avatar_url: (entry.avatar_url as string | null) ?? null,

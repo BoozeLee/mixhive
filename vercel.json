@@ -138,13 +138,14 @@
     {
       "path": "/api/cron/payouts-auto-release",
       "schedule": "0 4 * * *"
-    }
-  ],
-  "redirects": [
+    },
     {
-      "source": "/dashboard",
-      "destination": "/feed",
-      "permanent": true
+      "path": "/api/cron/account-delete",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/monthly-recap",
+      "schedule": "0 9 1 * *"
     }
   ]
 }

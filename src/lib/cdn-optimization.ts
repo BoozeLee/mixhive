@@ -305,7 +305,7 @@ export class CDNAAnalytics {
     operation: 'serve' | 'optimize' | 'cache_hit' | 'cache_miss',
     size: number,
     duration: number,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<void> {
     try {
       await this.supabase.from('cdn_analytics').insert([

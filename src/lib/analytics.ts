@@ -1,5 +1,4 @@
 import { supabase } from './storage';
-import type { Database } from './mixhive-database.types';
 
 // Analytics event types
 export type AnalyticsEventType =
@@ -30,48 +29,38 @@ export type AnalyticsEventType =
 // Analytics event data
 export interface AnalyticsEvent {
   event_type: AnalyticsEventType;
-  event_data?: Record<string, any>;
-  user_id?: string;
+  metadata?: Record<string, unknown>;
+  profile_id?: string;
   session_id?: string;
   page_url?: string;
   referrer?: string;
   user_agent?: string;
   ip_address?: string;
-  timestamp: string;
+  created_at: string;
 }
 
 // User behavior tracking
 export class AnalyticsTracker {
   private sessionId: string;
-  private userId?: string;
   private currentPage?: string;
 
   constructor() {
     this.sessionId = this.generateSessionId();
-    this.userId = this.getUserId();
   }
 
   private generateSessionId(): string {
     return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private getUserId(): string | undefined {
-    // Get user from Supabase auth
-    const {
-      data: { user },
-    } = supabase.auth.getUser();
-    return user?.id;
-  }
-
   private async trackEvent(event: AnalyticsEvent): Promise<void> {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
       const analyticsEvent = {
         ...event,
+        profile_id: user?.id,
         session_id: this.sessionId,
-        user_id: this.userId,
-        timestamp: new Date().toISOString(),
+        created_at: new Date().toISOString(),
       };
-
       await supabase.from('analytics_events').insert([analyticsEvent]);
     } catch (error) {
       console.error('Analytics tracking error:', error);
@@ -85,13 +74,11 @@ export class AnalyticsTracker {
     this.currentPage = pageUrl;
 
     await this.trackEvent({
-      event_type: 'page_view',
+      event_type: 'profile_view',
       page_url: pageUrl,
       referrer,
-      event_data: {
-        title: document.title,
-        timestamp: Date.now(),
-      },
+      metadata: { title: document.title },
+      created_at: new Date().toISOString(),
     });
   }
 
@@ -107,10 +94,8 @@ export class AnalyticsTracker {
   ): Promise<void> {
     await this.trackEvent({
       event_type: `mix_${action}` as AnalyticsEventType,
-      event_data: {
-        mix_id: mixId,
-        ...data,
-      },
+      metadata: { mix_id: mixId, ...data },
+      created_at: new Date().toISOString(),
     });
   }
 
@@ -119,14 +104,12 @@ export class AnalyticsTracker {
     target: 'profile' | 'comment' | 'buzz',
     action: 'view' | 'follow' | 'unfollow' | 'create' | 'delete' | 'like' | 'share',
     targetId: string,
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   ): Promise<void> {
     await this.trackEvent({
       event_type: `${target}_${action}` as AnalyticsEventType,
-      event_data: {
-        target_id: targetId,
-        ...data,
-      },
+      metadata: { target_id: targetId, ...data },
+      created_at: new Date().toISOString(),
     });
   }
 
@@ -138,28 +121,29 @@ export class AnalyticsTracker {
   ): Promise<void> {
     await this.trackEvent({
       event_type: 'search_perform',
-      event_data: {
+      metadata: {
         query,
         results_count: resultsCount,
         search_type: searchType,
-        timestamp: Date.now(),
       },
+      created_at: new Date().toISOString(),
     });
 
     // Also save to search history for logged-in users
-    if (this.userId) {
-      try {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.id) {
         await supabase.from('search_history').insert([
           {
-            user_id: this.userId,
+            user_id: user.id,
             query,
             search_type: searchType,
             results_count: resultsCount,
           },
         ]);
-      } catch (error) {
-        console.error('Search history error:', error);
       }
+    } catch (error) {
+      console.error('Search history error:', error);
     }
   }
 
@@ -167,33 +151,36 @@ export class AnalyticsTracker {
   async trackUploadStart(mixId?: string): Promise<void> {
     await this.trackEvent({
       event_type: 'upload_start',
-      event_data: {
+      metadata: {
         mix_id: mixId,
         timestamp: Date.now(),
       },
+      created_at: new Date().toISOString(),
     });
   }
 
   async trackUploadComplete(mixId: string, fileSize: number, duration: number): Promise<void> {
     await this.trackEvent({
       event_type: 'upload_complete',
-      event_data: {
+      metadata: {
         mix_id: mixId,
         file_size: fileSize,
         duration,
         timestamp: Date.now(),
       },
+      created_at: new Date().toISOString(),
     });
   }
 
   async trackUploadError(mixId?: string, error?: string): Promise<void> {
     await this.trackEvent({
       event_type: 'upload_error',
-      event_data: {
+      metadata: {
         mix_id: mixId,
         error,
         timestamp: Date.now(),
       },
+      created_at: new Date().toISOString(),
     });
   }
 
@@ -201,9 +188,10 @@ export class AnalyticsTracker {
   async trackAuthAction(action: 'login' | 'register' | 'logout'): Promise<void> {
     await this.trackEvent({
       event_type: `auth_${action}` as AnalyticsEventType,
-      event_data: {
+      metadata: {
         timestamp: Date.now(),
       },
+      created_at: new Date().toISOString(),
     });
   }
 
@@ -211,16 +199,17 @@ export class AnalyticsTracker {
   async trackUIInteraction(
     element: string,
     action: 'click' | 'hover' | 'input',
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   ): Promise<void> {
     await this.trackEvent({
       event_type: 'ui_interaction',
-      event_data: {
+      metadata: {
         element,
         action,
         ...data,
         timestamp: Date.now(),
       },
+      created_at: new Date().toISOString(),
     });
   }
 }
@@ -238,7 +227,7 @@ export class AnalyticsAPI {
     const { data, error } = await this.supabase
       .from('analytics_events')
       .select('*')
-      .eq('user_id', userId)
+      .eq('profile_id', userId)
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString());
 
@@ -257,7 +246,7 @@ export class AnalyticsAPI {
       .from('analytics_events')
       .select('*')
       .eq('event_type', 'mix_play')
-      .eq('event_data->>mix_id', mixId)
+      .eq('metadata->>mix_id', mixId)
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString());
 
@@ -268,7 +257,7 @@ export class AnalyticsAPI {
 
   // Get trending mixes
   async getTrendingMixes(days: number = 7) {
-    const endDate = new Date();
+    const _endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
@@ -292,10 +281,10 @@ export class AnalyticsAPI {
   }
 
   // Process analytics data
-  private processAnalyticsData(events: any[]) {
+  private processAnalyticsData(events: unknown[]) {
     const totalEvents = events.length;
     const uniqueSessions = new Set(events.map(e => e.session_id)).size;
-    const uniqueUsers = new Set(events.map(e => e.user_id)).size;
+    const uniqueUsers = new Set(events.map(e => e.profile_id)).size;
 
     const eventsByType = events.reduce(
       (acc, event) => {
@@ -328,12 +317,12 @@ export class AnalyticsAPI {
   }
 
   // Process mix analytics data
-  private processMixAnalyticsData(events: any[]) {
+  private processMixAnalyticsData(events: unknown[]) {
     const totalPlays = events.length;
-    const uniqueListeners = new Set(events.map(e => e.user_id)).size;
+    const uniqueListeners = new Set(events.map(e => e.profile_id)).size;
     const avgCompletion =
       events.reduce((sum, event) => {
-        const percentage = event.event_data?.percentage_watched || 0;
+        const percentage = event.metadata?.percentageWatched || 0;
         return sum + percentage;
       }, 0) / totalPlays;
 
@@ -364,7 +353,7 @@ if (typeof window !== 'undefined') {
   const originalPushState = history.pushState;
   const originalReplaceState = history.replaceState;
 
-  history.pushState = function (...args: any[]) {
+  history.pushState = function (...args: unknown[]) {
     originalPushState.apply(this, args);
     const newPage = window.location.pathname;
     if (newPage !== currentPage) {
@@ -373,7 +362,7 @@ if (typeof window !== 'undefined') {
     }
   };
 
-  history.replaceState = function (...args: any[]) {
+  history.replaceState = function (...args: unknown[]) {
     originalReplaceState.apply(this, args);
     const newPage = window.location.pathname;
     if (newPage !== currentPage) {

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireSubscription } from '@/lib/subscription';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
@@ -58,8 +59,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'agent not found or disabled' }, { status: 404 });
   }
 
-  // Pro/partner agents: future tier gate — for now allow all authenticated users
-  // TODO: check user subscription tier against agent.tier before running
+  // Pro/partner agents require supporter+ subscription
+  if (agent.tier && agent.tier !== 'free') {
+    const gate = await requireSubscription(token, 'supporter');
+    if (!gate.ok) {
+      return NextResponse.json(
+        { error: gate.error, requiredTier: 'supporter' },
+        { status: gate.status }
+      );
+    }
+  }
 
   const origin = new URL(req.url).origin;
   const runtimeRes = await fetch(`${origin}/api/lua-agent/execute`, {

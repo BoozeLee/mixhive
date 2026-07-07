@@ -48,9 +48,12 @@ describe('required onboarding profile fields', () => {
     expect(OnboardingProfileSchema.safeParse(valid).success).toBe(true);
   });
 
+  it('accepts a profile without avatar (optional — can be set later via Art Studio)', () => {
+    expect(OnboardingProfileSchema.safeParse({ ...valid, avatarUrl: '' }).success).toBe(true);
+  });
+
   it.each([
     ['display name', { ...valid, displayName: '' }],
-    ['avatar', { ...valid, avatarUrl: '' }],
     ['bio', { ...valid, bio: '' }],
     ['genre', { ...valid, genres: [] }],
   ])('rejects a profile without %s', (_label, candidate) => {

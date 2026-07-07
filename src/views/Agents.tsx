@@ -211,6 +211,7 @@ function AgentRow({
   onEdit: () => void;
   onChanged: () => Promise<void>;
 }) {
+  const t = useTranslations('agents');
   const [busy, setBusy] = useState(false);
   const errorRatio =
     agent.run_count === 0 ? 0 : Math.round((agent.error_count / agent.run_count) * 100);
@@ -308,6 +309,7 @@ function AgentEditor({
   onCancel: () => void;
   onSaved: () => Promise<void>;
 }) {
+  const t = useTranslations('agents');
   const initialTrigger: LuaAgentTrigger = agent?.trigger_type ?? presetTrigger ?? 'on_follow';
   const [name, setName] = useState(agent?.name ?? '');
   const [description, setDescription] = useState(agent?.description ?? '');
@@ -325,10 +327,10 @@ function AgentEditor({
     if (!agent) return;
     listRuns(agent.id)
       .then(setRuns)
-      .catch(() => {});
+      .catch((err: unknown) => console.error('Failed to load runs:', err));
     listAgentKv(agent.id)
       .then(setKvEntries)
-      .catch(() => {});
+      .catch((err: unknown) => console.error('Failed to load KV entries:', err));
   }, [agent]);
 
   function pickTrigger(next: LuaAgentTrigger) {
@@ -713,7 +715,7 @@ function AgentEditor({
               onClick={() =>
                 listAgentKv(agent.id)
                   .then(setKvEntries)
-                  .catch(() => {})
+                  .catch((err: unknown) => console.error('Failed to refresh KV entries:', err))
               }
               style={{
                 fontSize: fontSize.xs,

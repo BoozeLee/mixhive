@@ -62,7 +62,7 @@ export function ConsentBanner() {
         .
       </p>
       <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
-        <button onClick={() => decide(true)} style={btn(colors.success, '#000')}>
+        <button onClick={() => decide(true)} style={btn(colors.success, colors.black)}>
           {t('acceptAnalytics')}
         </button>
         <button onClick={() => decide(false)} style={btn('transparent', colors.text.secondary)}>

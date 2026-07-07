@@ -62,10 +62,19 @@ const EditMix = lazy(() => import('./views/EditMix').then(m => ({ default: m.Edi
 const PlaylistDetail = lazy(() =>
   import('./views/PlaylistDetail').then(m => ({ default: m.PlaylistDetail }))
 );
+const PricingPage = lazy(() =>
+  import('./views/PricingPage').then(m => ({ default: m.PricingPage }))
+);
 const NotFound = lazy(() => import('./views/NotFound').then(m => ({ default: m.NotFound })));
 const Agents = lazy(() => import('./views/Agents').then(m => ({ default: m.Agents })));
 const AgentsGallery = lazy(() =>
   import('./views/AgentsGallery').then(m => ({ default: m.AgentsGallery }))
+);
+const AIBandIndex = lazy(() =>
+  import('./views/AIBandIndex').then(m => ({ default: m.AIBandIndex }))
+);
+const AIBandDetail = lazy(() =>
+  import('./views/AIBandDetail').then(m => ({ default: m.AIBandDetail }))
 );
 const DevLogin = lazy(() => import('./views/DevLogin').then(m => ({ default: m.DevLogin })));
 const AdminVerification = lazy(() =>
@@ -100,6 +109,12 @@ const NewGearListing = lazy(() =>
 );
 const AgentMarketplace = lazy(() =>
   import('./views/AgentMarketplace').then(m => ({ default: m.AgentMarketplace }))
+);
+const Leaderboard = lazy(() =>
+  import('./views/Leaderboard').then(m => ({ default: m.Leaderboard }))
+);
+const AgentTracks = lazy(() =>
+  import('./views/AgentTracks').then(m => ({ default: m.AgentTracks }))
 );
 const CollabQuests = lazy(() =>
   import('./views/CollabQuests').then(m => ({ default: m.CollabQuests }))
@@ -198,6 +213,7 @@ function AnimatedRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route path="/pricing" element={<PricingPage />} />
         <Route
           path="/settings"
           element={
@@ -215,6 +231,8 @@ function AnimatedRoutes() {
           }
         />
         <Route path="/agents/gallery" element={<AgentsGallery />} />
+        <Route path="/ai-band" element={<AIBandIndex />} />
+        <Route path="/ai-band/:slug" element={<AIBandDetail />} />
         <Route
           path="/admin/verification"
           element={
@@ -372,6 +390,8 @@ function AnimatedRoutes() {
           }
         />
         {/* Phase 15 — Collab Quests */}
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/ai-band/agent/:slug" element={<AgentTracks />} />
         <Route path="/collab-quests" element={<CollabQuests />} />
         <Route path="/collab-quests/:id" element={<CollabQuestDetail />} />
         <Route

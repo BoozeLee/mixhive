@@ -63,7 +63,7 @@ export const OnboardingProfileSchema = z.object({
     .trim()
     .min(1, 'Display name is required')
     .max(50, 'Display name too long'),
-  avatarUrl: z.string().trim().url('Avatar is required'),
+  avatarUrl: z.string().trim().url().optional().or(z.literal('')),
   bio: z.string().trim().min(1, 'Bio is required').max(1000, 'Bio too long'),
   genres: z.array(z.string()).min(1, 'Choose at least one genre').max(20, 'Maximum 20 genres'),
 });
@@ -140,3 +140,29 @@ export function formatZodError(error: z.ZodError): Record<string, string> {
 
   return errors;
 }
+
+// ── Subscription schemas ──────────────────────────────────────────────────────
+
+export const SubscriptionTierSchema = z.enum(['free', 'supporter', 'insider', 'patron']);
+export type SubscriptionTierZ = z.infer<typeof SubscriptionTierSchema>;
+
+export const SubscriptionStatusSchema = z.enum([
+  'active',
+  'canceled',
+  'past_due',
+  'incomplete',
+  'incomplete_expired',
+  'trialing',
+  'unpaid',
+]);
+
+export const CreateSubscriptionSchema = z.object({
+  priceId: z.string().min(1, 'Price ID is required'),
+});
+
+export const SubscriptionStatusSchema_Response = z.object({
+  tier: SubscriptionTierSchema.default('free'),
+  status: SubscriptionStatusSchema.default('active'),
+  current_period_end: z.string().nullable().optional(),
+  stripe_subscription_id: z.string().nullable().optional(),
+});

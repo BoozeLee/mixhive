@@ -1,3 +1,5 @@
+import { colors } from '../styles/tokens';
+
 export function SkeletonBar({
   width = '100%',
   height = 14,
@@ -26,9 +28,9 @@ export function SkeletonCard() {
         display: 'flex',
         gap: 14,
         padding: 14,
-        background: '#0d0d0d',
+        background: colors.surfaceMuted,
         borderRadius: 10,
-        border: '1px solid #111',
+        border: `1px solid ${colors.surface}`,
       }}
     >
       <SkeletonBar width={70} height={70} style={{ borderRadius: 8, flexShrink: 0 }} />

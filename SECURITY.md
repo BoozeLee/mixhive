@@ -9,7 +9,7 @@ I take security seriously. If you discover a security vulnerability, please repo
 ### Private Reporting
 
 - **GitHub Security Advisory**: Use the [Private Vulnerability Reporting](https://github.com/BoozeLee/mixhive/security/advisories/new) feature.
-- **Email**: Send details to [your security email] with `SECURITY` in the subject line.
+- **Email**: Send details to kiliaanv2@gmail.com with `SECURITY` in the subject line.
 - **Signal/Encrypted**: Available upon request for highly sensitive findings.
 
 ### What to Include
@@ -63,13 +63,15 @@ treat a regression here as a blocker. When a transitive advisory has no clean up
 fix, prefer a pinned `overrides` entry in `package.json` over `npm audit fix --force`
 (which can force breaking major downgrades). Current overrides and why:
 
-- `ws` → `^8.21.0` — patches the `ws` uninitialized-memory advisory (GHSA-58qx-3vcg-4xpx)
-  that reached us via `ethers@6`, without downgrading `ethers`.
-- `postcss` → `^8.5.15` — patches the PostCSS stringify XSS advisory (GHSA-qx2v-qp2m-jg93)
-  in the copy bundled by `next`, without downgrading `next`.
+- `ws` → `^8.21.0` — patches GHSA-58qx-3vcg-4xpx (uninitialized memory) via `ethers@6`.
+- `postcss` → `^8.5.15` — patches GHSA-qx2v-qp2m-jg93 (XSS) bundled in `next`.
+- `js-yaml` → `^4.1.0` — patches quadratic-complexity DoS (GHSA-h4hr-7fg3-h35w) in js-yaml 3.x
+  pulled transitively by `jest → babel-plugin-istanbul → @istanbuljs/load-nyc-config`.
+- `form-data` → `^4.0.4` — patches CRLF injection (GHSA-fjgf-jrpq-cjmf) in form-data 3.x
+  pulled by `spotify-web-api-node → superagent`. Drop when spotify-web-api-node is replaced.
 
-Re-evaluate these overrides on each `next`/`ethers` major bump; drop them once the upstream
-ranges no longer pull a vulnerable version.
+Re-evaluate on each major bump of `next`, `ethers`, `jest`, or `spotify-web-api-node`; drop
+overrides once upstream ranges no longer pull a vulnerable version.
 
 ## Database / RLS Notes
 

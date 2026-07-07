@@ -1,4 +1,5 @@
 import { getOrCreateDm, sendMessage } from '../lib/api';
+import { supabase } from '../lib/supabase';
 
 jest.mock('../lib/supabase', () => ({
   isSupabaseConfigured: true,
@@ -14,8 +15,6 @@ jest.mock('../lib/supabase', () => ({
     auth: { getUser: jest.fn(() => ({ data: { user: { id: 'u1' } } })) },
   },
 }));
-
-const { supabase } = require('../lib/supabase');
 
 describe('Messaging API helpers', () => {
   beforeEach(() => jest.clearAllMocks());

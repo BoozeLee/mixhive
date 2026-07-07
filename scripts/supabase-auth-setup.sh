@@ -63,7 +63,7 @@ https://mixhive-*.vercel.app
 https://mixhive-*.vercel.app/auth/callback
 https://mixhive-*.vercel.app/auth/reset-password
 https://*.mixhive.vercel.app/auth/callback
-https://wlfjbzdzmrqiiguyoulj.supabase.co/auth/v1/callback
+https://ljdolmqytncxhgojqguh.supabase.co/auth/v1/callback
 http://localhost:3000
 http://localhost:3000/auth/callback
 http://localhost:3000/auth/reset-password
@@ -113,7 +113,7 @@ echo ""
 echo "Alternative: manual vercel CLI (one env at a time):"
 echo ""
 
-SUPABASE_URL="https://wlfjbzdzmrqiiguyoulj.supabase.co"
+SUPABASE_URL="https://ljdolmqytncxhgojqguh.supabase.co"
 
 cat << EOF
 # Core Supabase (run for 'preview' then repeat for 'production' or use the API script above)

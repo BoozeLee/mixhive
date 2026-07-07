@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
+import { colors, fontSize, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from './hive/HiveButton';
 import toast from 'react-hot-toast';
 
@@ -280,8 +280,8 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
         {submitError && (
           <div
             style={{
-              background: '#3a1f1f',
-              color: '#ff6b6b',
+              background: colors.dangerBg,
+              color: colors.danger,
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: fontSize.sm,

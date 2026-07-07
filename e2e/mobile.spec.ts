@@ -1,9 +1,5 @@
 import { test, expect } from '@playwright/test';
-
-// Only run on mobile viewport projects
-// These tests are only meaningful on narrow viewports; skip on desktop
-// by checking the project name via the PLAYWRIGHT_PROJECT env var or
-// by examining the viewport width at runtime.
+import { gotoShell } from './helpers/goto';
 
 const ROUTES = [
   '/',
@@ -22,8 +18,8 @@ const ROUTES = [
 test.describe('Mobile overflow', () => {
   for (const route of ROUTES) {
     test(`${route} — no horizontal overflow`, async ({ page }) => {
-      await page.goto(route);
-      await expect(page.getByRole('main')).toBeVisible({ timeout: 12_000 });
+      await gotoShell(page, route);
+      await expect(page.getByRole('main')).toBeVisible();
 
       const overflow = await page.evaluate(() => {
         return document.documentElement.scrollWidth > document.documentElement.clientWidth + 2;
@@ -33,8 +29,8 @@ test.describe('Mobile overflow', () => {
   }
 
   test('all tap targets ≥44px wide on home', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.getByRole('main')).toBeVisible({ timeout: 12_000 });
+    await gotoShell(page, '/');
+    await expect(page.getByRole('main')).toBeVisible();
 
     const tinyTargets = await page.evaluate(() => {
       const interactive = document.querySelectorAll('button, a[href]');
@@ -50,7 +46,6 @@ test.describe('Mobile overflow', () => {
       return tiny.slice(0, 10);
     });
 
-    // Warn but don't hard-fail — some icon-only decorative elements may be smaller
     if (tinyTargets.length > 0) {
       console.warn(`⚠️ Small tap targets on /: ${tinyTargets.join(', ')}`);
     }

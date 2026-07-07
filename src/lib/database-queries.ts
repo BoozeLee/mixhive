@@ -1,4 +1,5 @@
 import { createServerClient } from '@/lib/supabase';
+import type { Json } from './database.types';
 
 export interface AudioJob {
   id: string;
@@ -8,7 +9,7 @@ export interface AudioJob {
   retry_count: number;
   max_retries: number;
   error_message?: string;
-  result?: any;
+  result?: Json;
   created_at: string;
   updated_at: string;
   started_at?: string;
@@ -21,9 +22,9 @@ export interface AudioJobResult {
   waveformUrl?: string;
   waveformData?: number[];
   durationSeconds?: number;
-  audioMetadata?: any;
+  audioMetadata?: Json;
   error?: string;
-  processingErrors?: any[];
+  processingErrors?: Json[];
 }
 
 export interface LogPerformanceParams {
@@ -86,7 +87,7 @@ export async function mark_audio_job_processing(jobId: string): Promise<void> {
 /**
  * Mark a job as complete with results
  */
-export async function mark_audio_job_complete(jobId: string, result: any): Promise<void> {
+export async function mark_audio_job_complete(jobId: string, result: Json): Promise<void> {
   const supabase = createServerClient();
 
   const { error } = await supabase.rpc('mark_audio_job_complete', {
@@ -212,15 +213,15 @@ export async function update_mix_processing_status(
   updates?: {
     processingStartedAt?: string;
     processingCompletedAt?: string;
-    processingErrors?: any[];
+    processingErrors?: Json[];
     waveformUrl?: string;
     durationSeconds?: number;
-    audioMetadata?: any;
+    audioMetadata?: Json;
   }
 ): Promise<void> {
   const supabase = createServerClient();
 
-  const updateData: any = { upload_status: status };
+  const updateData: Record<string, Json> = { upload_status: status };
 
   if (updates?.processingStartedAt) {
     updateData.processing_started_at = updates.processingStartedAt;
@@ -246,7 +247,10 @@ export async function update_mix_processing_status(
     updateData.audio_metadata = updates.audioMetadata;
   }
 
-  const { error } = await supabase.from('mixes').update(updateData).eq('id', mixId);
+  const { error } = await supabase
+    .from('mixes')
+    .update(updateData as never)
+    .eq('id', mixId);
 
   if (error) {
     throw new Error(`Failed to update mix processing status: ${error.message}`);
@@ -259,13 +263,13 @@ export async function update_mix_processing_status(
 
 export interface MythicGraphJob {
   id: string;
-  scope: Record<string, any>;
+  scope: Record<string, Json>;
   job_type: string;
   status: 'pending' | 'processing' | 'complete' | 'failed';
   retry_count: number;
   max_retries: number;
   error_message?: string;
-  result?: any;
+  result?: Json;
   created_at: string;
   updated_at: string;
   started_at?: string;
@@ -273,7 +277,7 @@ export interface MythicGraphJob {
 }
 
 export async function enqueue_mythic_graph_job(
-  scope: Record<string, any>,
+  scope: Record<string, Json>,
   jobType: string,
   maxRetries: number = 3
 ): Promise<string> {
@@ -338,7 +342,7 @@ export async function mark_mythic_graph_job_processing(jobId: string): Promise<v
   }
 }
 
-export async function mark_mythic_graph_job_complete(jobId: string, result?: any): Promise<void> {
+export async function mark_mythic_graph_job_complete(jobId: string, result?: Json): Promise<void> {
   const supabase = createServerClient();
 
   const { error } = await supabase.rpc('mark_mythic_graph_job_complete', {

@@ -8,11 +8,7 @@
 import { supabase } from './supabase';
 import { cdnUploadManager, getOptimizedMediaUrl, getCDNCacheHeaders } from './cdn';
 import type { UploadProgress, CDNOptimizationParams, MediaBucket } from './cdn';
-import type {
-  AudioOptimizationParams,
-  ImageOptimizationParams,
-  VideoOptimizationParams,
-} from './cdnUrlTransformers';
+import type { ImageOptimizationParams } from './cdnUrlTransformers';
 
 // Export bucket constants for consistency
 export {

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   follow,
   getFollowersCount,
@@ -20,16 +20,21 @@ import { useAuth } from '../hooks/useAuth';
 import { MixCard } from '../components/MixCard';
 import { BuzzCard } from '../components/BuzzCard';
 import { PlaylistCard } from '../components/PlaylistCard';
-import { BlockButton } from '../components/BlockButton';
-import { MessageButton } from '../components/MessageButton';
-import { ReportButton } from '../components/ReportButton';
 import { SkeletonProfile } from '../components/Skeleton';
 import { EmptyState, NotFoundState } from '../components/EmptyState';
-import { VerificationBadgeSystem } from '../components/VerificationBadgeSystem';
-import { VerificationRequestForm } from '../components/VerificationRequestForm';
 import { ProfileAnalyticsDashboard } from '../components/ProfileAnalyticsDashboard';
-import { HiveButton } from '../components/hive/HiveButton';
+import { HiveStory } from '../views/HiveStory';
+import { SimilarArtistsPanel } from '../components/SimilarArtistsPanel';
 import { StartMythicSessionModal } from '../components/StartMythicSessionModal';
+import { ProfileHeader } from '../components/profile/ProfileHeader';
+import { ProfileTabs, type ProfileTab } from '../components/profile/ProfileTabs';
+import { FeaturedMixHero } from '../components/profile/FeaturedMixHero';
+import { AboutTab } from '../components/profile/AboutTab';
+import { ActivityTab } from '../components/profile/ActivityTab';
+import { AgentsTab } from '../components/profile/AgentsTab';
+import { EventsTab } from '../components/profile/EventsTab';
+import { maybeAnnounceXpGain } from '../lib/xpToast';
+import { space } from '../styles/tokens';
 import type {
   ActivityEvent,
   Mix,
@@ -38,54 +43,12 @@ import type {
   ProfileAnalytics,
   VerificationBadge,
 } from '../lib/types';
-import { colors, radius, space } from '../styles/tokens';
-import { HiveStory } from '../views/HiveStory';
-import { SimilarArtistsPanel } from '../components/SimilarArtistsPanel';
-
-function timeAgo(dateStr: string): string {
-  const now = Date.now();
-  const then = new Date(dateStr).getTime();
-  const diff = Math.floor((now - then) / 1000);
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 2592000) return `${Math.floor(diff / 86400)}d ago`;
-  return `${Math.floor(diff / 2592000)}mo ago`;
-}
-
-function activityText(event: ActivityEvent) {
-  if (event.activity_type === 'upload')
-    return (
-      <>
-        Uploaded{' '}
-        <Link to={`/mix/${event.mix_id}`} style={{ color: colors.text.secondary }}>
-          {event.mix_title}
-        </Link>
-      </>
-    );
-  if (event.activity_type === 'like')
-    return (
-      <>
-        Liked{' '}
-        <Link to={`/mix/${event.mix_id}`} style={{ color: colors.text.secondary }}>
-          {event.mix_title}
-        </Link>
-      </>
-    );
-  return (
-    <>
-      Followed{' '}
-      <Link to={`/u/${event.target_username}`} style={{ color: colors.text.secondary }}>
-        {event.target_display_name || event.target_username}
-      </Link>
-    </>
-  );
-}
 
 export function ProfilePage() {
   const t = useTranslations('profile');
   const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
+
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [badges, setBadges] = useState<VerificationBadge[]>([]);
   const [analytics, setAnalytics] = useState<ProfileAnalytics | null>(null);
@@ -93,27 +56,14 @@ export function ProfilePage() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [activity, setActivity] = useState<ActivityEvent[]>([]);
   const [buzzes, setBuzzes] = useState<import('../lib/types').FeedBuzz[]>([]);
-  const [profileTab, setProfileTab] = useState<'mixes' | 'buzzes' | 'playlists' | 'story'>('mixes');
+  const [profileTab, setProfileTab] = useState<ProfileTab>('mixes');
   const [following, setFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [showStats, setShowStats] = useState(true);
   const [showSessionModal, setShowSessionModal] = useState(false);
 
   const isOwn = Boolean(user && profile?.id === user.id);
-  const profileName = profile?.display_name || profile?.username || 'Profile';
-
-  // Button for own profile to start Mythic Collab Session (Experiment 1)
-  const startSessionButton = isOwn && (
-    <HiveButton
-      variant="primary"
-      onClick={() => setShowSessionModal(true)}
-      style={{ marginBottom: 16 }}
-    >
-      + Start Mythic Session
-    </HiveButton>
-  );
 
   useEffect(() => {
     if (!username) return;
@@ -160,6 +110,8 @@ export function ProfilePage() {
             actorId: user.id,
             eventType: 'profile_view',
           });
+        } else if (user && user.id === nextProfile.id) {
+          maybeAnnounceXpGain(user.id, nextProfile.xp ?? 0, nextProfile.level ?? 1);
         }
         setLoading(false);
       })
@@ -188,413 +140,73 @@ export function ProfilePage() {
 
   const milestones = useMemo(() => {
     const items: string[] = [];
-    if (mixes.length >= 1) items.push('First mix published');
-    if (mixes.length >= 10) items.push('10 mix streak');
-    if (mixes.length >= 100) items.push('100 mixes milestone');
-    if (followersCount >= 100) items.push('100 listeners in the hive');
-    if (followersCount >= 1000) items.push('1,000 followers milestone');
-    if (badges.length > 0 || profile?.verified) items.push('Verified profile');
+    if (mixes.length >= 1) items.push(t('milestoneFirstMix'));
+    if (mixes.length >= 10) items.push(t('milestoneTenMixes'));
+    if (mixes.length >= 100) items.push(t('milestoneHundredMixes'));
+    if (followersCount >= 100) items.push(t('milestoneHundredListeners'));
+    if (followersCount >= 1000) items.push(t('milestoneThousandListeners'));
+    if (badges.length > 0 || profile?.verified) items.push(t('milestoneVerified'));
     return items;
-  }, [mixes.length, followersCount, badges.length, profile?.verified]);
+  }, [mixes.length, followersCount, badges.length, profile?.verified, t]);
+
+  const tabs = useMemo(
+    () => [
+      { id: 'mixes' as const, label: t('tabMixes'), count: mixes.length, icon: 'mix' as const },
+      { id: 'buzzes' as const, label: t('tabBuzzes'), count: buzzes.length, icon: 'buzz' as const },
+      {
+        id: 'playlists' as const,
+        label: t('tabPlaylists'),
+        count: playlists.length,
+        icon: 'music' as const,
+      },
+      { id: 'story' as const, label: t('tabStory'), icon: 'story' as const },
+      { id: 'activity' as const, label: t('tabActivity'), icon: 'feed' as const },
+      { id: 'agents' as const, label: t('tabAgents'), icon: 'agents' as const },
+      { id: 'events' as const, label: t('tabEvents'), icon: 'events' as const },
+      { id: 'about' as const, label: t('tabAbout'), icon: 'profile' as const },
+    ],
+    [t, mixes.length, buzzes.length, playlists.length]
+  );
+
+  const featuredMix = mixes.length > 0 ? mixes[0] : null;
 
   if (loading) return <SkeletonProfile />;
   if (!profile) return <NotFoundState what="DJ" />;
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '16px 12px 96px' }}>
-      <section style={{ marginBottom: space[11] }}>
-        <div
-          style={{
-            width: '100%',
-            height: 'clamp(200px, 32vw, 300px)',
-            borderRadius: radius.lg,
-            overflow: 'hidden',
-            position: 'relative',
-            background: `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.accentFaint})`,
-          }}
-        >
-          {profile.banner_url ? (
-            <img
-              src={profile.banner_url}
-              alt={`${profileName} banner`}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          ) : (
-            <div
-              style={{
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: colors.accentMuted,
-                fontSize: 48,
-              }}
-            >
-              ♪
-            </div>
-          )}
-        </div>
+      <ProfileHeader
+        profile={profile}
+        badges={badges}
+        analytics={analytics}
+        followersCount={followersCount}
+        followingCount={followingCount}
+        mixesCount={mixes.length}
+        following={following}
+        isOwn={isOwn}
+        onToggleFollow={toggleFollow}
+        onCopyLink={copyProfileLink}
+        onStartSession={() => setShowSessionModal(true)}
+      />
 
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'flex-end',
-            gap: space[8],
-            marginTop: -42,
-            padding: '0 10px',
-          }}
-        >
-          <div
-            style={{
-              width: 96,
-              height: 96,
-              borderRadius: '50%',
-              background: profile.avatar_url
-                ? `url(${profile.avatar_url}) center/cover`
-                : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.accentFaint})`,
-              border: `4px solid ${colors.bg}`,
-              flexShrink: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: colors.accentMuted,
-              fontSize: 30,
-            }}
-          >
-            {!profile.avatar_url && '♪'}
-          </div>
-          <div style={{ flex: 1, minWidth: 220, paddingTop: 48 }}>
-            <h1
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: space[4],
-                flexWrap: 'wrap',
-                margin: 0,
-                fontSize: 26,
-                color: colors.text.primary,
-              }}
-            >
-              {profileName}
-              <VerificationBadgeSystem profile={profile} badges={badges} />
-            </h1>
-            <p style={{ color: colors.text.dim, fontSize: 13, margin: '4px 0 0' }}>
-              @{profile.username}
-            </p>
-            {profile.bio && (
-              <p
-                style={{
-                  color: colors.text.secondary,
-                  fontSize: 14,
-                  lineHeight: 1.5,
-                  margin: '10px 0 0',
-                }}
-              >
-                {profile.bio}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[6], marginTop: space[8] }}>
-          {profile.genres.map(genre => (
-            <span
-              key={genre}
-              style={{
-                background: colors.surfaceHover,
-                color: colors.text.secondary,
-                padding: '5px 10px',
-                borderRadius: radius.pill,
-                fontSize: 12,
-              }}
-            >
-              {genre}
-            </span>
-          ))}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setShowStats(value => !value)}
-          style={{
-            marginTop: space[8],
-            background: 'transparent',
-            border: `1px solid ${colors.border}`,
-            borderRadius: radius.md,
-            color: colors.text.secondary,
-            padding: '8px 10px',
-            cursor: 'pointer',
-          }}
-        >
-          {showStats ? 'Hide stats' : 'Show stats'}
-        </button>
-
-        {showStats && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: space[5],
-              marginTop: space[5],
-            }}
-          >
-            {[
-              [followersCount, 'followers'],
-              [followingCount, 'following'],
-              [mixes.length, 'mixes'],
-              [analytics?.totalPlays || 0, 'plays'],
-              [profile?.level || 1, 'level'],
-              [profile?.xp || 0, 'XP'],
-            ].map(([value, label]) => (
-              <div
-                key={label}
-                style={{
-                  background: colors.surface,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: radius.lg,
-                  padding: space[6],
-                }}
-              >
-                <div style={{ color: colors.text.primary, fontWeight: 800, fontSize: 20 }}>
-                  {value}
-                </div>
-                <div style={{ color: colors.text.dim, fontSize: 12 }}>{label}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[5], marginTop: space[8] }}>
-          {user && !isOwn && (
-            <>
-              <button
-                onClick={toggleFollow}
-                style={{
-                  minHeight: 40,
-                  padding: '9px 22px',
-                  borderRadius: radius.md,
-                  border: following ? `1px solid ${colors.borderStrong}` : 'none',
-                  background: following ? colors.surface : colors.accent,
-                  color: following ? colors.text.secondary : colors.bg,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                {following ? 'Following' : 'Follow'}
-              </button>
-              <MessageButton targetUserId={profile.id} />
-              <BlockButton targetUserId={profile.id} currentUserId={user.id} />
-              <ReportButton sourceTable="profiles" sourceId={profile.id} />
-            </>
-          )}
-          {isOwn && (
-            <>
-              <Link
-                to="/settings"
-                style={{
-                  minHeight: 40,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  padding: '9px 22px',
-                  borderRadius: radius.md,
-                  border: `1px solid ${colors.borderStrong}`,
-                  color: colors.text.secondary,
-                  textDecoration: 'none',
-                  fontWeight: 700,
-                }}
-              >
-                {t('editProfile')}
-              </Link>
-              <Link
-                to="/upload"
-                style={{
-                  minHeight: 40,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  padding: '9px 22px',
-                  borderRadius: radius.md,
-                  background: colors.accent,
-                  color: colors.bg,
-                  textDecoration: 'none',
-                  fontWeight: 700,
-                }}
-              >
-                {t('uploadMix')}
-              </Link>
-              {startSessionButton}
-              {profile.is_admin && (
-                <Link
-                  to="/admin/verification"
-                  style={{
-                    minHeight: 40,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    padding: '9px 22px',
-                    borderRadius: radius.md,
-                    border: `1px solid ${colors.borderStrong}`,
-                    color: colors.text.secondary,
-                    textDecoration: 'none',
-                    fontWeight: 700,
-                  }}
-                >
-                  {t('verificationAdmin')}
-                </Link>
-              )}
-              {profile.is_admin && (
-                <Link
-                  to="/admin/moderation"
-                  style={{
-                    minHeight: 40,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    padding: '9px 22px',
-                    borderRadius: radius.md,
-                    border: `1px solid ${colors.borderStrong}`,
-                    color: colors.text.secondary,
-                    textDecoration: 'none',
-                    fontWeight: 700,
-                  }}
-                >
-                  {t('moderation')}
-                </Link>
-              )}
-            </>
-          )}
-          <button
-            type="button"
-            onClick={copyProfileLink}
-            style={{
-              minHeight: 40,
-              padding: '9px 18px',
-              borderRadius: radius.md,
-              border: `1px solid ${colors.borderStrong}`,
-              background: colors.surface,
-              color: colors.text.secondary,
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            {t('copyLink')}
-          </button>
-        </div>
-      </section>
-
-      {isOwn && <VerificationRequestForm profile={profile} />}
       {analytics && (
         <ProfileAnalyticsDashboard analytics={analytics} profileName={profile.username} />
       )}
 
-      {(activity.length > 0 || milestones.length > 0) && (
-        <section style={{ marginBottom: space[12] }}>
-          <h2
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: colors.text.primary,
-              marginBottom: space[6],
-            }}
-          >
-            {t('activity')}
-          </h2>
-          <div style={{ display: 'grid', gap: space[4] }}>
-            {milestones.map(item => (
-              <div
-                key={item}
-                style={{
-                  color: colors.accent,
-                  fontSize: 13,
-                  background: `linear-gradient(135deg, ${colors.surface}, ${colors.accentFaint})`,
-                  border: `1px solid ${colors.accentMuted}`,
-                  borderRadius: radius.md,
-                  padding: space[5],
-                }}
-              >
-                ◆ {item}
-              </div>
-            ))}
-            {activity.slice(0, 8).map((event, index) => (
-              <div
-                key={`${event.created_at}-${index}`}
-                style={{
-                  display: 'flex',
-                  gap: space[4],
-                  color: colors.text.muted,
-                  fontSize: 13,
-                  background: colors.surface,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: radius.md,
-                  padding: space[5],
-                }}
-              >
-                <span aria-hidden="true">
-                  {event.activity_type === 'upload'
-                    ? '♪'
-                    : event.activity_type === 'like'
-                      ? '♥'
-                      : '+'}
-                </span>
-                <span style={{ flex: 1 }}>{activityText(event)}</span>
-                <span style={{ color: colors.text.dim }}>{timeAgo(event.created_at)}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {featuredMix && <FeaturedMixHero mix={featuredMix} profile={profile} />}
 
       <SimilarArtistsPanel profileId={profile.id} />
 
-      {/* Content tabs: Mixes / Buzzes / Playlists */}
       <section>
-        <div
-          style={{
-            display: 'flex',
-            gap: 4,
-            marginBottom: space[8],
-            background: colors.surface,
-            borderRadius: 10,
-            padding: 4,
-          }}
-        >
-          {(['mixes', 'buzzes', 'playlists', 'story'] as const).map(t => (
-            <button
-              key={t}
-              onClick={() => setProfileTab(t)}
-              style={{
-                flex: 1,
-                padding: '8px 12px',
-                borderRadius: 8,
-                border: 'none',
-                background: profileTab === t ? colors.accent : 'transparent',
-                color: profileTab === t ? colors.bg : colors.text.faint,
-                fontWeight: profileTab === t ? 700 : 400,
-                cursor: 'pointer',
-                fontSize: 13,
-                textTransform: 'capitalize',
-              }}
-            >
-              {t === 'mixes'
-                ? `Mixes (${mixes.length})`
-                : t === 'buzzes'
-                  ? `Buzzes (${buzzes.length})`
-                  : t === 'playlists'
-                    ? `Playlists (${playlists.length})`
-                    : 'Story'}
-            </button>
-          ))}
-        </div>
+        <ProfileTabs tabs={tabs} activeTab={profileTab} onChange={setProfileTab} />
 
         {profileTab === 'mixes' &&
           (mixes.length === 0 ? (
             <EmptyState
-              icon="◆"
-              title={isOwn ? 'Drop the first mix' : 'No mixes in this hive yet'}
-              body={
-                isOwn
-                  ? 'Start the booth with a fresh upload and your first Honey Drop stats card.'
-                  : 'This DJ has not published a mix yet.'
-              }
-              actionLabel={isOwn ? 'Upload mix' : undefined}
+              iconKey="mix"
+              title={isOwn ? t('noMixesTitleOwn') : t('noMixesTitleOther')}
+              body={isOwn ? t('noMixesBodyOwn') : t('noMixesBodyOther')}
+              actionLabel={isOwn ? t('noMixesAction') : undefined}
               actionTo={isOwn ? '/upload' : undefined}
             />
           ) : (
@@ -632,7 +244,7 @@ export function ProfilePage() {
             <EmptyState
               iconKey="buzz"
               title={t('noBuzzes')}
-              body={isOwn ? 'Post your first buzz from the feed.' : 'This DJ has not buzzed yet.'}
+              body={isOwn ? t('noBuzzesBodyOwn') : t('noBuzzesBodyOther')}
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
@@ -648,7 +260,11 @@ export function ProfilePage() {
 
         {profileTab === 'playlists' &&
           (playlists.length === 0 ? (
-            <p style={{ color: colors.text.dim, fontSize: 14 }}>{t('noPlaylists')}</p>
+            <EmptyState
+              iconKey="music"
+              title={t('noPlaylistsTitle')}
+              body={isOwn ? t('noPlaylistsBodyOwn') : t('noPlaylistsBodyOther')}
+            />
           ) : (
             <div style={{ display: 'grid', gap: space[6] }}>
               {playlists.map(playlist => (
@@ -666,6 +282,14 @@ export function ProfilePage() {
             isOwn={isOwn}
           />
         )}
+
+        {profileTab === 'activity' && <ActivityTab activity={activity} milestones={milestones} />}
+
+        {profileTab === 'agents' && <AgentsTab isOwn={isOwn} />}
+
+        {profileTab === 'events' && <EventsTab />}
+
+        {profileTab === 'about' && <AboutTab profile={profile} />}
       </section>
 
       <StartMythicSessionModal

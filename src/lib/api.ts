@@ -32,7 +32,6 @@ import type {
   ArtistGoals,
   Buzz,
   Conversation,
-  ConversationMember,
   ConversationSummary,
   DirectMessage,
   MythicQuest,
@@ -44,7 +43,9 @@ import type {
   FeedCursor,
   FeedMix,
   FeedResult,
+  AiAgent,
   Mix,
+  MixAgentCredit,
   MixedFeedResult,
   ModerationAction,
   ModerationSignal,
@@ -93,6 +94,31 @@ export async function getProfileById(id: string): Promise<Profile | null> {
   if (!isSupabaseConfigured) return null;
   const { data } = await supabase.from('profiles').select('*').eq('id', id).single();
   return data;
+}
+
+export interface LeaderboardEntry {
+  id: string;
+  username: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  xp: number;
+  level: number;
+  reputation_score: number;
+}
+
+/**
+ * Top profiles by XP for the Hive leaderboard. Ordered by XP descending; ties
+ * fall back to reputation. Public read (profiles are world-readable under RLS).
+ */
+export async function getXpLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, avatar_url, xp, level, reputation_score')
+    .order('xp', { ascending: false })
+    .order('reputation_score', { ascending: false })
+    .limit(limit);
+  return (data as LeaderboardEntry[] | null) ?? [];
 }
 
 export async function getProfileBadges(profileId: string): Promise<VerificationBadge[]> {
@@ -351,6 +377,99 @@ export async function getMix(id: string): Promise<Mix | null> {
     dj: data.profiles,
     genre_name: data.genres?.name,
   };
+}
+
+export async function getMixAgentCredits(mixId: string): Promise<MixAgentCredit[]> {
+  if (!isSupabaseConfigured || !isUuid(mixId)) return [];
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('id, mix_id, agent_slug, agent_name, agent_role, contribution, model, ord')
+    .eq('mix_id', mixId)
+    .order('ord', { ascending: true });
+  return (data as MixAgentCredit[] | null) ?? [];
+}
+
+/** Display name for an agent slug (first credit's name), for the browse header. */
+export async function getAgentName(slug: string): Promise<string | null> {
+  if (!isSupabaseConfigured || !slug) return null;
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('agent_name')
+    .eq('agent_slug', slug)
+    .limit(1)
+    .maybeSingle();
+  return (data?.agent_name as string | undefined) ?? null;
+}
+
+/** Distinct tracks that feature an agent (by slug), most recent first. */
+export async function getMixesByAgent(slug: string): Promise<Mix[]> {
+  if (!isSupabaseConfigured || !slug) return [];
+  const { data } = await supabase
+    .from('mix_agent_credits')
+    .select('mix:mixes!inner(*, genres(name), profiles!mixes_dj_id_fkey(*))')
+    .eq('agent_slug', slug);
+  const seen = new Set<string>();
+  const mixes: Mix[] = [];
+  type Row = { mix: (Mix & { genres?: { name?: string }; profiles?: Profile }) | null };
+  for (const row of (data as Row[] | null) ?? []) {
+    const m = row.mix;
+    if (!m?.id || seen.has(m.id)) continue;
+    seen.add(m.id);
+    mixes.push({ ...m, dj: m.profiles, genre_name: m.genres?.name ?? null });
+  }
+  mixes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  return mixes;
+}
+
+// --- AI agent-artists ---
+
+export async function getAgentFollowerCount(slug: string): Promise<number> {
+  if (!isSupabaseConfigured || !slug) return 0;
+  const { count } = await supabase
+    .from('ai_agent_follows')
+    .select('*', { count: 'exact', head: true })
+    .eq('agent_slug', slug);
+  return count || 0;
+}
+
+/** The agent-artist entity + follower count. Falls back to the credit name if the
+ *  agent row hasn't been backfilled yet. */
+export async function getAgent(slug: string): Promise<AiAgent | null> {
+  if (!isSupabaseConfigured || !slug) return null;
+  const { data } = await supabase
+    .from('ai_agents')
+    .select('slug, name')
+    .eq('slug', slug)
+    .maybeSingle();
+  const name = (data?.name as string | undefined) ?? (await getAgentName(slug));
+  if (!name) return null;
+  return { slug, name, follower_count: await getAgentFollowerCount(slug) };
+}
+
+export async function isFollowingAgent(slug: string, profileId: string): Promise<boolean> {
+  if (!isSupabaseConfigured || !slug || !profileId) return false;
+  const { data } = await supabase
+    .from('ai_agent_follows')
+    .select('agent_slug')
+    .eq('agent_slug', slug)
+    .eq('follower_profile_id', profileId)
+    .maybeSingle();
+  return !!data;
+}
+
+export async function followAgent(slug: string, profileId: string) {
+  if (!isSupabaseConfigured) return { error: null };
+  return supabase
+    .from('ai_agent_follows')
+    .insert({ agent_slug: slug, follower_profile_id: profileId });
+}
+
+export async function unfollowAgent(slug: string, profileId: string) {
+  if (!isSupabaseConfigured) return { error: null };
+  return supabase
+    .from('ai_agent_follows')
+    .delete()
+    .match({ agent_slug: slug, follower_profile_id: profileId });
 }
 
 export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
@@ -915,7 +1034,7 @@ export async function listConversations(): Promise<ConversationSummary[]> {
 
   const summaries: ConversationSummary[] = [];
 
-  for (const row of data as any[]) {
+  for (const row of data as unknown[]) {
     const conversation: Conversation = row.conversation;
     const members: { profile_id: string; profile: Profile }[] = row.conversation?.members ?? [];
     const otherMember = members.find(m => m.profile_id !== userId)?.profile;
@@ -968,7 +1087,7 @@ export async function getMessages(
     return { messages: [] };
   }
 
-  const messages = (data as any[]).reverse();
+  const messages = (data as unknown[]).reverse();
   const nextCursor =
     data.length === limit ? (data[data.length - 1] as DirectMessage).created_at : undefined;
 
@@ -1026,9 +1145,14 @@ export async function getProfileAnalytics(
   mixes?: Mix[]
 ): Promise<ProfileAnalytics> {
   const profileMixes = mixes ?? (await getMixesByDj(profileId));
-  const [followers, following] = await Promise.all([
+  const [followers, following, gearResult] = await Promise.all([
     getFollowersCount(profileId),
     getFollowingCount(profileId),
+    supabase
+      .from('equipment_transactions')
+      .select('agreed_price, transaction_state')
+      .eq('seller_profile_id', profileId)
+      .then(({ data }) => data || []),
   ]);
 
   const totalPlays = profileMixes.reduce((sum, mix) => sum + (mix.play_count || 0), 0);
@@ -1089,6 +1213,11 @@ export async function getProfileAnalytics(
     });
   }
 
+  const gearSalesTotal = gearResult
+    .filter(t => t.transaction_state === 'released')
+    .reduce((s, t) => s + Number(t.agreed_price || 0), 0);
+  const gearSalesCount = gearResult.filter(t => t.transaction_state === 'released').length;
+
   return {
     totalPlays,
     totalLikes,
@@ -1105,6 +1234,8 @@ export async function getProfileAnalytics(
     topMixes: sortedMixes,
     genreDistribution,
     weeklyEvents,
+    gearSalesTotal,
+    gearSalesCount,
   };
 }
 
@@ -1703,7 +1834,7 @@ export async function getQuestDetail(questId: string): Promise<QuestWithMileston
 
   return {
     ...(quest as MythicQuest),
-    milestones: (milestones || []) as any[],
+    milestones: (milestones || []) as unknown[],
   } as QuestWithMilestones;
 }
 
@@ -1851,6 +1982,116 @@ export async function createQuestMilestone(questId: string, title: string): Prom
     return false;
   }
   return true;
+}
+
+// --- AI-Band ---
+
+export interface AIAgent {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  personality_traits: string[] | null;
+  genres: string[] | null;
+  style_tags: string[] | null;
+  xp: number;
+  level: number;
+  followers_count: number;
+  mixes_credited: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface AIAgentMix {
+  mix_id: string;
+  role: string;
+  credit_label: string | null;
+  mixes: {
+    id: string;
+    title: string;
+    artwork_url: string | null;
+    audio_url: string | null;
+    play_count: number | null;
+    like_count: number | null;
+    duration_seconds: number | null;
+    created_at: string;
+    profiles: { username: string; display_name: string | null; avatar_url: string | null } | null;
+  } | null;
+}
+
+export async function listAIAgents(limit = 50): Promise<AIAgent[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data, error } = await supabase
+    .from('ai_agents')
+    .select('*')
+    .eq('is_active', true)
+    .order('followers_count', { ascending: false })
+    .limit(limit);
+  if (error) {
+    console.error('listAIAgents', error);
+    return [];
+  }
+  return (data ?? []) as AIAgent[];
+}
+
+export async function getAIAgent(slug: string): Promise<AIAgent | null> {
+  if (!isSupabaseConfigured) return null;
+  const { data } = await supabase
+    .from('ai_agents')
+    .select('*')
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .single();
+  return data as AIAgent | null;
+}
+
+export async function getAIAgentMixes(agentId: string, limit = 20): Promise<AIAgentMix[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data, error } = await supabase
+    .from('mix_agent_credits')
+    .select(
+      `mix_id, role, credit_label, mixes(id, title, artwork_url, audio_url, play_count, like_count, duration_seconds, created_at, profiles(username, display_name, avatar_url))`
+    )
+    .eq('agent_id', agentId)
+    .limit(limit);
+  if (error) {
+    console.error('getAIAgentMixes', error);
+    return [];
+  }
+  return (data ?? []) as AIAgentMix[];
+}
+
+export async function isFollowingAIAgent(userId: string, agentId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false;
+  const { data } = await supabase
+    .from('ai_agent_follows')
+    .select('ai_agent_id')
+    .eq('follower_id', userId)
+    .eq('ai_agent_id', agentId)
+    .maybeSingle();
+  return data !== null;
+}
+
+export async function followAIAgent(userId: string, agentId: string): Promise<void> {
+  const { error } = await supabase
+    .from('ai_agent_follows')
+    .insert({ follower_id: userId, ai_agent_id: agentId });
+  if (error) throw error;
+}
+
+export async function unfollowAIAgent(userId: string, agentId: string): Promise<void> {
+  const { error } = await supabase
+    .from('ai_agent_follows')
+    .delete()
+    .eq('follower_id', userId)
+    .eq('ai_agent_id', agentId);
+  if (error) throw error;
+}
+
+export async function getAIAgentLeaderboard(limit = 10): Promise<AIAgent[]> {
+  return listAIAgents(limit);
 }
 
 // --- Helpers ---

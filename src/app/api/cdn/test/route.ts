@@ -83,7 +83,7 @@ async function handleHealthTest() {
         });
         latency = Date.now() - startTime;
         connectivity = response.ok ? 'healthy' : 'degraded';
-      } catch (error) {
+      } catch (_error) {
         connectivity = 'unreachable';
       }
     }
@@ -310,7 +310,7 @@ async function handleTransformTest(params: {
 }
 
 // Upload test
-async function handleUploadTest(params: { file?: any; bucket: string; simulateFailure?: boolean }) {
+async function handleUploadTest(params: { file?: unknown; bucket: string; simulateFailure?: boolean }) {
   try {
     const { file, bucket, simulateFailure } = params;
 
@@ -445,7 +445,7 @@ async function handleCostOptimizationTest(params: { testSize?: string; networkTy
 }
 
 // Batch test
-async function handleBatchTest(params: { tests: Array<{ type: string; params: any }> }) {
+async function handleBatchTest(params: { tests: Array<{ type: string; params: unknown }> }) {
   try {
     const { tests } = params;
     const results = [];

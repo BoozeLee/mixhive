@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { parseMentions } from '../lib/types';
 import type { MentionPart } from '../lib/types';
+import { colors } from '../styles/tokens';
 
 interface Props {
   body: string;
@@ -16,7 +17,7 @@ export function MentionRenderer({ body }: Props) {
           <Link
             key={i}
             to={`/u/${part.value}`}
-            style={{ color: '#f0c040', textDecoration: 'none', fontWeight: 500 }}
+            style={{ color: colors.accent, textDecoration: 'none', fontWeight: 500 }}
             onClick={e => e.stopPropagation()}
           >
             @{part.value}

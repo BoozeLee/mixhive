@@ -13,6 +13,22 @@ type ServiceStatus = {
   failed?: number;
 };
 
+// Per-check backstop so a single hung dependency can't make the whole endpoint hang past a
+// client/smoke timeout. Parallelized in GET, so the endpoint returns in ~CHECK_TIMEOUT_MS worst case.
+const CHECK_TIMEOUT_MS = 6_000;
+
+async function withTimeout(check: Promise<ServiceStatus>): Promise<ServiceStatus> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<ServiceStatus>(resolve => {
+    timer = setTimeout(() => resolve({ status: 'degraded' }), CHECK_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([check, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function redisStatus(): Promise<ServiceStatus> {
   const started = Date.now();
   try {
@@ -64,12 +80,13 @@ async function queueStatus(table: 'audio_jobs' | 'push_delivery_jobs'): Promise<
 }
 
 export async function GET() {
-  const services = {
-    database: await databaseStatus(),
-    redis: await redisStatus(),
-    audio_queue: await queueStatus('audio_jobs'),
-    push_queue: await queueStatus('push_delivery_jobs'),
-  };
+  const [database, redis, audio_queue, push_queue] = await Promise.all([
+    withTimeout(databaseStatus()),
+    withTimeout(redisStatus()),
+    withTimeout(queueStatus('audio_jobs')),
+    withTimeout(queueStatus('push_delivery_jobs')),
+  ]);
+  const services = { database, redis, audio_queue, push_queue };
   const status = Object.values(services).some(service => service.status === 'unhealthy')
     ? 'unhealthy'
     : Object.values(services).some(service => service.status === 'degraded')

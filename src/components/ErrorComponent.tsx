@@ -35,7 +35,7 @@ export function ErrorComponent({
         style={{
           fontSize: 48,
           marginBottom: space[4],
-          color: '#f55',
+          color: colors.danger,
         }}
       >
         ⚠️

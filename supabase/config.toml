@@ -32,7 +32,7 @@ additional_redirect_urls = [
   "https://mixhive-*.vercel.app/auth/callback",
   "https://mixhive-*.vercel.app/auth/reset-password",
   "https://*.mixhive.vercel.app/auth/callback",
-  "https://wlfjbzdzmrqiiguyoulj.supabase.co/auth/v1/callback",
+  "https://ljdolmqytncxhgojqguh.supabase.co/auth/v1/callback",
   "http://localhost:3000",
   "http://localhost:3000/auth/callback",
   "http://localhost:3000/auth/reset-password",
@@ -44,6 +44,6 @@ additional_redirect_urls = [
 enabled = true
 client_id = "783905427337-iq3juomf8tr5k64pf259u6flqb13krrn.apps.googleusercontent.com"
 secret = "env(GOOGLE_CLIENT_SECRET)"
-redirect_uri = "https://wlfjbzdzmrqiiguyoulj.supabase.co/auth/v1/callback"
+redirect_uri = "https://ljdolmqytncxhgojqguh.supabase.co/auth/v1/callback"
 
 [functions]

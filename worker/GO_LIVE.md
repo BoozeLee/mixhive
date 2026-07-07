@@ -1,10 +1,12 @@
-# Audio Worker — Go-Live Checklist (run on the self-hosted box)
+# Audio Worker — Go-Live Checklist
 
 Phase α: bring the always-on audio worker online so uploaded mixes get
 **waveform + duration + BPM + key + mood** in production (Vercel serverless can't
 run this). The worker code is verified deploy-ready (builds, `go test` green, and
-`--selftest` produces real analysis incl. musical key). These steps run **on the
-box** — they can't be done from CI/the dev sandbox.
+`--selftest` produces real analysis incl. musical key).
+
+**Status: ✅ COMPLETE** — audio worker + scheduler both running since Jul 5, 2026.
+See [verification below](#7-verify-end-to-end) for current operational status.
 
 Prereqs: Podman, rootless systemd, and outbound HTTPS to Supabase.
 
@@ -60,7 +62,17 @@ Watch the queue drain in the worker logs.
   `waveform_data` + `duration_seconds`, and `audio_features` gets `bpm` / `mood`
   / `musical_key` (`source = go-worker`, `model = ffmpeg-autocorr-chroma-v2`).
 - `audio_jobs` rows move `pending → processing → complete`.
-- `/api/health/worker` reports healthy.
+- `/api/health` at mixhive.vercel.app reports `audio_queue` healthy.
+
+### Current Operational Status (Jul 7, 2026)
+- **mixhive-audio-worker**: Up 47h (Quadlet, auto-restart)
+- **mixhive-scheduler**: Up 47h, firing push-sender every 5min, nft-sync +
+  notification-prioritizer hourly — all returning 200
+- **Sample output**: Mix `6866f9e4..` → waveform ✓, duration 34s, BPM 64.3,
+  key C maj, mood transition (source: `go-worker`)
+- **Production health**: mixhive.vercel.app/api/health → all green
+- **Cloudflare Tunnel**: See `cloudflared-config.yml` — blocked on port 7844
+  outbound (requires router config)
 
 ## Rollback
 `systemctl --user stop mixhive-audio-worker mixhive-scheduler` and

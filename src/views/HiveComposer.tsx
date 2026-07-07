@@ -611,7 +611,6 @@ export function HiveComposer() {
             }}
           >
             <input
-              autoFocus
               type="text"
               placeholder={t('searchMixes')}
               value={state.searchQuery}

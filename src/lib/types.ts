@@ -13,6 +13,8 @@ export interface Profile {
   verified: boolean;
   is_admin?: boolean;
   is_pro?: boolean;
+  is_founding_member?: boolean;
+  followers_count?: number;
   onboarding_complete?: boolean;
   xp?: number;
   level?: number;
@@ -47,6 +49,84 @@ export interface MythicQuest {
   status: 'active' | 'paused' | 'completed' | 'abandoned';
   momentum: number;
   created_by_agent_id?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type GearCategory =
+  | 'mixer'
+  | 'controller'
+  | 'turntable'
+  | 'cdj'
+  | 'monitor'
+  | 'headphones'
+  | 'synthesizer'
+  | 'sampler'
+  | 'interface'
+  | 'cable_accessory'
+  | 'other';
+
+export type GearCondition = 'new' | 'like_new' | 'used_good' | 'used_fair' | 'for_parts';
+
+export type GearListingStatus = 'active' | 'reserved' | 'sold' | 'hidden';
+
+export interface GearListing {
+  id: string;
+  seller_profile_id: string;
+  title: string;
+  description: string | null;
+  category: GearCategory;
+  brand: string | null;
+  model: string | null;
+  condition: GearCondition;
+  price: number;
+  currency: string;
+  location_city: string | null;
+  location_country: string | null;
+  location_region: string | null;
+  photos: string[];
+  shipping_options: {
+    local_pickup: boolean;
+    domestic_shipping: boolean;
+    international_shipping: boolean;
+    shipping_notes?: string;
+  };
+  status: GearListingStatus;
+  views_count: number;
+  saves_count: number;
+  boosted_until: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type GearTransactionState =
+  | 'pending_payment'
+  | 'paid_escrow'
+  | 'shipped'
+  | 'delivered'
+  | 'disputed'
+  | 'resolved'
+  | 'released'
+  | 'refunded';
+
+export interface GearTransaction {
+  id: string;
+  listing_id: string;
+  buyer_profile_id: string;
+  seller_profile_id: string;
+  agreed_price: number;
+  currency: string;
+  payment_provider: 'stripe' | 'paypal' | 'manual';
+  payment_reference: string | null;
+  payment_intent_id: string | null;
+  transaction_state: GearTransactionState;
+  shipped_at: string | null;
+  tracking_number: string | null;
+  delivered_at: string | null;
+  dispute_opened_at: string | null;
+  dispute_notes: string | null;
+  resolved_at: string | null;
+  platform_fee_pct: number;
   created_at: string;
   updated_at: string;
 }
@@ -154,6 +234,8 @@ export interface Mix {
   weekly_plays?: number;
   /** True when the track has AI-agent co-producer credits ("AI band"). */
   ai_band?: boolean;
+  published_from?: 'beehive' | null;
+  beehive_metadata?: Record<string, unknown>;
 }
 
 /** An AI agent-artist (a followable "AI band member" with a public career). */
@@ -217,7 +299,9 @@ export interface Notification {
     | 'gear_payout'
     | 'gear_refunded'
     | 'gear_disputed'
-    | 'earnings_paid';
+    | 'earnings_paid'
+    | 'quest_complete'
+    | 'beehive_publish';
   actor_id: string | null;
   mix_id: string | null;
   buzz_id: string | null;
@@ -718,4 +802,28 @@ export interface MixTrack {
   confidence: number | null;
   source: string;
   created_at: string;
+}
+
+// ── Subscriptions ─────────────────────────────────────────────────────────────
+
+export type SubscriptionTier = 'free' | 'supporter' | 'insider' | 'patron';
+
+export type SubscriptionStatus =
+  | 'active'
+  | 'canceled'
+  | 'past_due'
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'trialing'
+  | 'unpaid';
+
+export interface UserSubscription {
+  id: string;
+  user_id: string;
+  tier: SubscriptionTier;
+  stripe_subscription_id: string | null;
+  status: SubscriptionStatus;
+  current_period_end: string | null;
+  created_at: string;
+  updated_at: string;
 }

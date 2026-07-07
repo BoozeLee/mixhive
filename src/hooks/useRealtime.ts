@@ -66,7 +66,7 @@ export function useRealtime(
           });
         };
 
-        const commentHandler = (event: RealtimeEvent) => {
+        const _commentHandler = (event: RealtimeEvent) => {
           setState(prev => {
             const updatedComments = [event, ...prev.comments].slice(0, 50); // Keep last 50 comments
             return { ...prev, comments: updatedComments };
@@ -131,7 +131,7 @@ export function useRealtime(
   }, [userId, options?.enableMixUpdates, options?.enableNotifications, options?.enableComments]);
 
   // Manual methods to trigger events
-  const triggerMixUpload = async (mixData: any) => {
+  const triggerMixUpload = async (mixData: unknown) => {
     try {
       await realtimeManager.broadcastMixUpload(mixData);
     } catch (error) {
@@ -143,7 +143,7 @@ export function useRealtime(
     }
   };
 
-  const triggerComment = async (commentData: any) => {
+  const triggerComment = async (commentData: unknown) => {
     try {
       await realtimeManager.broadcastComment(commentData);
     } catch (error) {
@@ -155,7 +155,7 @@ export function useRealtime(
     }
   };
 
-  const triggerNotification = async (notificationData: any) => {
+  const triggerNotification = async (notificationData: unknown) => {
     try {
       await realtimeManager.broadcastNotification(notificationData);
     } catch (error) {

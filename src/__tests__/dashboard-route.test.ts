@@ -10,7 +10,7 @@ describe('dashboard routing', () => {
       readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8')
     );
     const dashboardRedirect = vercelJson.redirects?.find(
-      (r: any) => r.source === '/dashboard'
+      (r: { source: string }) => r.source === '/dashboard'
     );
     expect(dashboardRedirect).toBeUndefined();
   });

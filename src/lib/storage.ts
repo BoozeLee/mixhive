@@ -18,13 +18,13 @@ export interface StorageFile {
   size: number;
   mimetype: string;
   updated_at: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UploadOptions {
   upsert?: boolean;
   contentType?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface CDNTransformations {
@@ -59,8 +59,8 @@ export class StorageManager {
     path: string,
     file: File | Blob,
     options: UploadOptions = {}
-  ): Promise<{ data: StorageFile | null; error: any }> {
-    const { data, error } = await supabase.storage.from(this.bucket).upload(path, file, {
+  ): Promise<{ data: StorageFile | null; error: Error | null }> {
+    const { error } = await supabase.storage.from(this.bucket).upload(path, file, {
       upsert: options.upsert || false,
       contentType: options.contentType,
       metadata: options.metadata,
@@ -78,7 +78,7 @@ export class StorageManager {
   }
 
   // Download a file from storage
-  async downloadFile(path: string): Promise<{ data: Blob | null; error: any }> {
+  async downloadFile(path: string): Promise<{ data: Blob | null; error: Error | null }> {
     const { data, error } = await supabase.storage.from(this.bucket).download(path);
 
     if (error) {
@@ -114,7 +114,7 @@ export class StorageManager {
   }
 
   // Delete a file from storage
-  async deleteFile(path: string): Promise<{ error: any }> {
+  async deleteFile(path: string): Promise<{ error: Error | null }> {
     const { error } = await supabase.storage.from(this.bucket).remove([path]);
 
     if (error) {
@@ -133,7 +133,7 @@ export class StorageManager {
       offset?: number;
       sortBy?: { column: 'name' | 'size' | 'updated_at'; order: 'asc' | 'desc' };
     } = {}
-  ): Promise<{ data: StorageFile[] | null; error: any }> {
+  ): Promise<{ data: StorageFile[] | null; error: Error | null }> {
     const { limit = 100, offset = 0, sortBy } = options;
 
     let query = supabase.storage.from(this.bucket).list(path, { limit, offset });
@@ -172,10 +172,10 @@ export async function uploadAvatar(
   userId: string,
   avatarFile: File,
   options: UploadOptions = {}
-): Promise<{ url: string | null; error: any }> {
+): Promise<{ url: string | null; error: Error | null }> {
   const path = `${userId}/avatar.${avatarFile.type.split('/')[1]}`;
 
-  const { data, error } = await avatarStorage.uploadFile(path, avatarFile, {
+  const { error } = await avatarStorage.uploadFile(path, avatarFile, {
     ...options,
     metadata: {
       userId,
@@ -206,7 +206,7 @@ export async function getAvatarUrl(userId: string, size: number = 200): string {
   });
 }
 
-export async function deleteAvatar(userId: string): Promise<{ error: any }> {
+export async function deleteAvatar(userId: string): Promise<{ error: Error | null }> {
   const path = `${userId}/avatar.jpg`;
   return await avatarStorage.deleteFile(path);
 }
@@ -216,10 +216,10 @@ export async function uploadBanner(
   userId: string,
   bannerFile: File,
   options: UploadOptions = {}
-): Promise<{ url: string | null; error: any }> {
+): Promise<{ url: string | null; error: Error | null }> {
   const path = `${userId}/banner.${bannerFile.type.split('/')[1]}`;
 
-  const { data, error } = await bannerStorage.uploadFile(path, bannerFile, {
+  const { error } = await bannerStorage.uploadFile(path, bannerFile, {
     ...options,
     metadata: {
       userId,
@@ -254,7 +254,7 @@ export async function getBannerUrl(
   });
 }
 
-export async function deleteBanner(userId: string): Promise<{ error: any }> {
+export async function deleteBanner(userId: string): Promise<{ error: Error | null }> {
   const path = `${userId}/banner.jpg`;
   return await bannerStorage.deleteFile(path);
 }
@@ -263,11 +263,11 @@ export async function deleteBanner(userId: string): Promise<{ error: any }> {
 export async function uploadMix(
   userId: string,
   mixFile: File,
-  metadata: Record<string, any> = {}
-): Promise<{ url: string | null; error: any }> {
+  metadata: Record<string, unknown> = {}
+): Promise<{ url: string | null; error: Error | null }> {
   const path = `${userId}/mixes/${Date.now()}-${mixFile.name}`;
 
-  const { data, error } = await mixStorage.uploadFile(path, mixFile, {
+  const { error } = await mixStorage.uploadFile(path, mixFile, {
     metadata: {
       userId,
       uploadDate: new Date().toISOString(),
@@ -287,7 +287,7 @@ export async function getMixUrl(mixPath: string): string {
   return mixStorage.getPublicUrl(mixPath);
 }
 
-export async function deleteMix(userId: string, mixPath: string): Promise<{ error: any }> {
+export async function deleteMix(userId: string, mixPath: string): Promise<{ error: Error | null }> {
   return await mixStorage.deleteFile(mixPath);
 }
 
@@ -297,10 +297,10 @@ export async function uploadArtwork(
   mixId: string,
   artworkFile: File,
   options: UploadOptions = {}
-): Promise<{ url: string | null; error: any }> {
+): Promise<{ url: string | null; error: Error | null }> {
   const path = `${userId}/mixes/${mixId}/artwork.${artworkFile.type.split('/')[1]}`;
 
-  const { data, error } = await artworkStorage.uploadFile(path, artworkFile, {
+  const { error } = await artworkStorage.uploadFile(path, artworkFile, {
     ...options,
     metadata: {
       userId,
@@ -333,7 +333,7 @@ export async function getArtworkUrl(userId: string, mixId: string, size: number 
   });
 }
 
-export async function deleteArtwork(userId: string, mixId: string): Promise<{ error: any }> {
+export async function deleteArtwork(userId: string, mixId: string): Promise<{ error: Error | null }> {
   const path = `${userId}/mixes/${mixId}/artwork.jpg`;
   return await artworkStorage.deleteFile(path);
 }
@@ -344,11 +344,11 @@ export async function uploadBuzzMedia(
   mediaFile: File,
   mediaType: 'image' | 'video',
   options: UploadOptions = {}
-): Promise<{ url: string | null; error: any }> {
+): Promise<{ url: string | null; error: Error | null }> {
   const extension = mediaType === 'image' ? 'jpg' : 'mp4';
   const path = `${userId}/buzz/${Date.now()}.${extension}`;
 
-  const { data, error } = await buzzMediaStorage.uploadFile(path, mediaFile, {
+  const { error } = await buzzMediaStorage.uploadFile(path, mediaFile, {
     ...options,
     metadata: {
       userId,
@@ -406,7 +406,7 @@ export async function getBuzzMediaUrl(
   );
 }
 
-export async function deleteBuzzMedia(userId: string, mediaId: string): Promise<{ error: any }> {
+export async function deleteBuzzMedia(userId: string, mediaId: string): Promise<{ error: Error | null }> {
   const path = `${userId}/buzz/${mediaId}`;
   return await buzzMediaStorage.deleteFile(path);
 }
@@ -454,7 +454,7 @@ export async function getUserStorageUsage(userId: string): Promise<{
   return result;
 }
 
-export async function cleanupUserStorage(userId: string): Promise<{ error: any }> {
+export async function cleanupUserStorage(userId: string): Promise<{ error: Error | null }> {
   const buckets = ['avatars', 'banners', 'mixes', 'artwork', 'buzz-media'] as const;
 
   const errors = [];

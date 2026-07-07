@@ -63,7 +63,7 @@ export const CDNAudio: React.FC<CDNAudioProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isOptimized, setIsOptimized] = useState(false);
   const [error, setError] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [_isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Get CDN-optimized URL
@@ -302,8 +302,16 @@ export const CDNLazyAudio: React.FC<CDNAudioProps> = props => {
     return (
       <div
         ref={containerRef}
+        role="button"
+        tabIndex={0}
         className={`bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer ${props.className}`}
         onClick={handleClick}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
       >
         <div className="mb-2" style={{ display: 'inline-flex' }}>
           <Icon name="music" size={22} />
@@ -317,8 +325,16 @@ export const CDNLazyAudio: React.FC<CDNAudioProps> = props => {
     return (
       <div
         ref={containerRef}
+        role="button"
+        tabIndex={0}
         className={`bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer ${props.className}`}
         onClick={handleClick}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
       >
         <div className="mb-2" style={{ display: 'inline-flex' }}>
           <Icon name="music" size={22} />

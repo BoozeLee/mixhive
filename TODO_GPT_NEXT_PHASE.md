@@ -4,11 +4,11 @@ Use this as the terminal-facing task checklist for GPT/Codex/Claude Code work.
 
 ## 0. Guardrails
 
-- [ ] Keep `mixhive.app` DNS out of scope.
-- [ ] Use Vercel deployment URLs and `https://mixhive.vercel.app` for readiness.
-- [ ] Do not commit secrets or `.env.local`.
-- [ ] Do not edit existing migrations.
-- [ ] Run verification before deploy.
+- [x] Keep `mixhive.app` DNS out of scope.
+- [x] Use Vercel deployment URLs and `https://mixhive.vercel.app` for readiness.
+- [x] Do not commit secrets or `.env.local`.
+- [x] Do not edit existing migrations.
+- [x] Run verification before deploy.
 
 ## 1. GPT-Codex - Integration
 
@@ -21,8 +21,9 @@ Use this as the terminal-facing task checklist for GPT/Codex/Claude Code work.
 - [x] Run `npm run lint`.
 - [x] Run `npm run build`.
 - [x] Run local browser smoke after Claude's latest changes.
-- [ ] Deploy to Vercel. Claude currently owns this active deploy.
-- [ ] Run production browser smoke after Claude's deploy is READY.
+- [x] Deploy to Vercel.
+- [x] Run production HTTP smoke after deploy is READY.
+- [ ] Run production browser smoke (Playwright not available in this environment).
 
 ## 2. GPT-Product - Feature Specs
 
@@ -35,13 +36,13 @@ Use this as the terminal-facing task checklist for GPT/Codex/Claude Code work.
 
 ## 3. GPT-UI / Claude Code - Experience
 
-- [ ] Upgrade `/discover` into a multi-lane exploration hub.
-- [ ] Improve `/feed` tab hierarchy and empty states.
-- [ ] Upgrade profile pages into premium hive-cell pages.
-- [ ] Improve upload form hierarchy and progress states.
-- [ ] Improve agent gallery cards and onboarding copy.
-- [ ] Verify 320px mobile layout.
-- [ ] Remove route-level console warnings.
+- [x] Upgrade `/discover` into a multi-lane exploration hub.
+- [x] Improve `/feed` tab hierarchy and empty states.
+- [x] Upgrade profile pages into premium hive-cell pages.
+- [x] Improve upload form hierarchy and progress states.
+- [x] Improve agent gallery cards and onboarding copy.
+- [x] Verify 320px mobile layout (code-level audit; real-device QA recommended).
+- [x] Remove route-level console warnings (code-level audit; runtime console QA recommended).
 
 ## 4. GPT-Backend - Schema/API Planning
 
@@ -54,29 +55,29 @@ Use this as the terminal-facing task checklist for GPT/Codex/Claude Code work.
 
 ## 5. GPT-QA - Verification
 
-- [ ] Smoke `/`.
-- [ ] Smoke `/feed`.
-- [ ] Smoke `/discover`.
-- [ ] Smoke `/search`.
-- [ ] Smoke `/dashboard`.
-- [ ] Smoke `/setup`.
-- [ ] Smoke `/upload`.
-- [ ] Smoke `/agents/gallery`.
-- [ ] Smoke `/mix/test-id`.
-- [ ] Smoke `/buzz/test-id`.
-- [ ] Smoke `/u/test-user`.
-- [ ] Check 320 x 740.
-- [ ] Check 390 x 844.
-- [ ] Check 768 x 900.
-- [ ] Check 1440 x 900.
-- [ ] Verify no unhandled console errors.
-- [ ] Verify no 404/500 asset failures.
-- [ ] Verify WebGL fallback does not block clicks.
+- [x] Smoke `/`.
+- [x] Smoke `/feed`.
+- [x] Smoke `/discover`.
+- [x] Smoke `/search`.
+- [x] Smoke `/dashboard`.
+- [x] Smoke `/setup`.
+- [x] Smoke `/upload`.
+- [x] Smoke `/agents/gallery`.
+- [x] Smoke `/mix/test-id`.
+- [x] Smoke `/buzz/test-id`.
+- [x] Smoke `/u/test-user`.
+- [ ] Check 320 x 740 (requires Playwright/browser).
+- [ ] Check 390 x 844 (requires Playwright/browser).
+- [ ] Check 768 x 900 (requires Playwright/browser).
+- [ ] Check 1440 x 900 (requires Playwright/browser).
+- [ ] Verify no unhandled console errors (requires browser).
+- [ ] Verify no 404/500 asset failures (requires browser).
+- [ ] Verify WebGL fallback does not block clicks (requires browser).
 
 ## 6. Launch Readiness
 
 - [ ] README reflects Next.js, not Vite.
 - [ ] CLAUDE.md reflects current ownership split.
 - [ ] AGENT_BUILD_PLAN and GPT_TASK_PLAN are current.
-- [ ] Latest Vercel deployment is `READY`.
-- [ ] `https://mixhive.vercel.app` returns HTTP 200.
+- [x] Latest Vercel deployment is `READY`.
+- [x] `https://mixhive.vercel.app` returns HTTP 200.

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { colors, fontSize } from '../styles/tokens';
 
 const wrap = {
@@ -18,43 +19,27 @@ const h2 = {
 const p = { fontSize: fontSize.sm, lineHeight: 1.6, marginTop: 8 } as const;
 
 export function Privacy() {
+  const t = useTranslations('privacy');
+
   return (
     <div style={wrap}>
-      <h1 style={h1}>Privacy Policy</h1>
-      <p style={{ ...p, color: colors.text.dim }}>Last updated 2026-06-09 · Policy version v1</p>
+      <h1 style={h1}>{t('title')}</h1>
+      <p style={{ ...p, color: colors.text.dim }}>{t('lastUpdated')}</p>
 
-      <h2 style={h2}>Who we are</h2>
-      <p style={p}>
-        MixHive is a social platform for DJs, producers and underground music creators. This policy
-        explains what personal data we process and your rights under the GDPR (and equivalent laws
-        such as LGPD, APPI and PIPA).
-      </p>
+      <h2 style={h2}>{t('whoWeAreHeading')}</h2>
+      <p style={p}>{t('whoWeAreBody')}</p>
 
-      <h2 style={h2}>Data we process</h2>
-      <p style={p}>
-        Account data (email, profile, links), content you upload (mixes, playlists, comments),
-        social graph (follows, messages), and limited technical data (consent records, basic logs).
-        Analytics are only collected if you opt in via the cookie banner.
-      </p>
+      <h2 style={h2}>{t('dataHeading')}</h2>
+      <p style={p}>{t('dataBody')}</p>
 
-      <h2 style={h2}>Legal bases</h2>
-      <p style={p}>
-        We rely on contract (to provide the service), consent (for optional analytics/marketing),
-        and legitimate interest (security and abuse prevention).
-      </p>
+      <h2 style={h2}>{t('legalHeading')}</h2>
+      <p style={p}>{t('legalBody')}</p>
 
-      <h2 style={h2}>Your rights</h2>
-      <p style={p}>
-        You can access and export your data, and request deletion, from Settings → Privacy &amp;
-        Data. Deletion is processed within a 30-day window. You may withdraw analytics consent at
-        any time via the cookie banner.
-      </p>
+      <h2 style={h2}>{t('rightsHeading')}</h2>
+      <p style={p}>{t('rightsBody')}</p>
 
-      <h2 style={h2}>Contact</h2>
-      <p style={p}>
-        For privacy requests, contact the MixHive team via your account settings. Localized
-        (DE/ES/etc.) versions of this policy will accompany regional launches.
-      </p>
+      <h2 style={h2}>{t('contactHeading')}</h2>
+      <p style={p}>{t('contactBody')}</p>
     </div>
   );
 }

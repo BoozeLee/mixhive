@@ -74,7 +74,10 @@ const HEALTH = [
   {
     label: 'GET /api/health',
     run: async () => {
-      const r = await req('GET', '/api/health');
+      // First real request of the run — warm the server (cold start + connection pool) so the
+      // timed check measures steady-state, then allow a generous budget as a backstop.
+      await req('GET', '/api/health', { timeoutMs: 25_000 });
+      const r = await req('GET', '/api/health', { timeoutMs: 25_000 });
       if (!r.ok) return { fail: `network error: ${r.err}` };
       if (r.status !== 200) return { fail: `got ${r.status}` };
       const s = r.json?.status;

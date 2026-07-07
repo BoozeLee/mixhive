@@ -7,6 +7,42 @@ export interface SpotifyAuthConfig {
   scopes: string[];
 }
 
+// Minimal shapes of the Spotify Web API objects consumed by the display formatters below.
+interface SpotifyImage {
+  url: string;
+  width?: number | null;
+  height?: number | null;
+}
+interface SpotifyTrack {
+  id: string;
+  name: string;
+  artists: { id: string; name: string }[];
+  album: { id: string; name: string; images: SpotifyImage[] };
+  duration_ms: number;
+  popularity: number;
+  external_urls: { spotify: string };
+  preview_url: string | null;
+}
+interface SpotifyArtist {
+  id: string;
+  name: string;
+  images: SpotifyImage[];
+  popularity: number;
+  external_urls: { spotify: string };
+  genres: string[];
+}
+interface SpotifyPlaylist {
+  id: string;
+  name: string;
+  description: string | null;
+  images: SpotifyImage[];
+  external_urls: { spotify: string };
+  owner: { id: string; display_name: string };
+  tracks: { total: number };
+  public: boolean | null;
+  collaborative: boolean;
+}
+
 export const SpotifyAuthConfig: SpotifyAuthConfig = {
   clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || '',
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET || '',
@@ -144,11 +180,11 @@ export const SpotifyAuth = {
   },
 
   // Format track information for display
-  formatTrackInfo: (track: any) => {
+  formatTrackInfo: (track: SpotifyTrack) => {
     return {
       id: track.id,
       name: track.name,
-      artists: track.artists.map((artist: any) => ({
+      artists: track.artists.map(artist => ({
         id: artist.id,
         name: artist.name,
       })),
@@ -165,7 +201,7 @@ export const SpotifyAuth = {
   },
 
   // Format artist information for display
-  formatArtistInfo: (artist: any) => {
+  formatArtistInfo: (artist: SpotifyArtist) => {
     return {
       id: artist.id,
       name: artist.name,
@@ -177,7 +213,7 @@ export const SpotifyAuth = {
   },
 
   // Format playlist information for display
-  formatPlaylistInfo: (playlist: any) => {
+  formatPlaylistInfo: (playlist: SpotifyPlaylist) => {
     return {
       id: playlist.id,
       name: playlist.name,

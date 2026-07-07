@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { colors, fontSize, space, fontWeight, radius } from '../styles/tokens';
+import { colors, fontSize, fontWeight, radius } from '../styles/tokens';
 import { HiveButton } from './hive/HiveButton';
 import toast from 'react-hot-toast';
 

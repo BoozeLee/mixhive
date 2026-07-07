@@ -17,7 +17,7 @@ const NotificationContext = createContext<NotificationContextType | null>(null);
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   // Fetch notifications from server API (with Redis caching)
   const fetchNotifications = useCallback(async () => {

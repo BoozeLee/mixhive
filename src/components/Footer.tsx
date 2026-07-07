@@ -19,25 +19,25 @@ export function Footer() {
               artists, and underground culture creators.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
+              <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
                 <span className="sr-only">{t('twitter')}</span>
                 <Icon name="external" size={18} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
+              </button>
+              <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
                 <span className="sr-only">{t('instagram')}</span>
                 <Icon name="camera" size={18} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
+              </button>
+              <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
                 <span className="sr-only">{t('youtube')}</span>
                 <Icon name="video" size={18} />
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-yellow-400 transition-colors inline-flex"
+              </button>
+              <button
+                type="button"
+                className="text-gray-400 hover:text-yellow-400 transition-colors inline-flex bg-transparent border-0 p-0 cursor-pointer"
               >
                 <span className="sr-only">{t('discord')}</span>
                 <Icon name="comment" size={18} />
-              </a>
+              </button>
             </div>
           </div>
 
@@ -97,24 +97,24 @@ export function Footer() {
             <h3 className="text-lg font-semibold text-white mb-4">{t('community')}</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
+                <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
                   {t('guidelines')}
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
+                <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
                   {t('faq')}
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
+                <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
                   {t('support')}
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors">
+                <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
                   {t('blog')}
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -123,15 +123,15 @@ export function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">© 2026 MixHive. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
-            <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm">
+            <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer">
               {t('privacy')}
-            </a>
-            <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm">
+            </button>
+            <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer">
               {t('terms')}
-            </a>
-            <a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm">
+            </button>
+            <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer">
               {t('cookies')}
-            </a>
+            </button>
           </div>
         </div>
       </div>

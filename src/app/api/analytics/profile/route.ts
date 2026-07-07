@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
           )
         : null;
 
-    const since = new Date(Date.now() - 42 * 86400000);
+    const _since = new Date(Date.now() - 42 * 86400000);
     const dayBuckets = new Map<string, number>();
     for (let i = 5; i >= 0; i--) {
       const d = new Date(Date.now() - i * 7 * 86400000);

@@ -64,7 +64,8 @@ export function SearchPage() {
       setError(trimmed ? 'Enter at least 2 characters.' : '');
       return;
     }
-    offset ? setLoadingMore(true) : setLoading(true);
+    if (offset) setLoadingMore(true);
+    else setLoading(true);
     setError('');
     try {
       const next = await enhancedSearch(trimmed, nextFilters, offset);

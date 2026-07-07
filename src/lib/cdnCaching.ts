@@ -5,7 +5,8 @@
  * and optimization strategies for different media types.
  */
 
-import { getCDNCacheHeaders, cdnConfig, MediaBucket } from './cdn';
+import { createHash } from 'crypto';
+import { cdnConfig, MediaBucket } from './cdn';
 import type { CacheConfig } from './cdn';
 
 interface CacheOptions {
@@ -122,13 +123,11 @@ export class CacheKeyGenerator {
   }
 
   public static generateETag(content: string): string {
-    const crypto = require('crypto');
-    return crypto.createHash('md5').update(content).digest('hex');
+    return createHash('md5').update(content).digest('hex');
   }
 
   public static generateContentHash(fileData: Buffer): string {
-    const crypto = require('crypto');
-    return crypto.createHash('sha256').update(fileData).digest('hex');
+    return createHash('sha256').update(fileData).digest('hex');
   }
 }
 

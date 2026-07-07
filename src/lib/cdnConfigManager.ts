@@ -28,7 +28,7 @@ interface EnvironmentConfig {
 interface ValidationRule {
   key: keyof CDNConfig;
   required: boolean;
-  validator: (value: any) => boolean;
+  validator: (value: unknown) => boolean;
   message: string;
 }
 
@@ -458,7 +458,8 @@ class CDNConfigManager {
       }
     } catch (error) {
       throw new Error(
-        `Failed to import configuration: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to import configuration: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { cause: error }
       );
     }
   }

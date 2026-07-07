@@ -140,3 +140,29 @@ export function formatZodError(error: z.ZodError): Record<string, string> {
 
   return errors;
 }
+
+// ── Subscription schemas ──────────────────────────────────────────────────────
+
+export const SubscriptionTierSchema = z.enum(['free', 'supporter', 'insider', 'patron']);
+export type SubscriptionTierZ = z.infer<typeof SubscriptionTierSchema>;
+
+export const SubscriptionStatusSchema = z.enum([
+  'active',
+  'canceled',
+  'past_due',
+  'incomplete',
+  'incomplete_expired',
+  'trialing',
+  'unpaid',
+]);
+
+export const CreateSubscriptionSchema = z.object({
+  priceId: z.string().min(1, 'Price ID is required'),
+});
+
+export const SubscriptionStatusSchema_Response = z.object({
+  tier: SubscriptionTierSchema.default('free'),
+  status: SubscriptionStatusSchema.default('active'),
+  current_period_end: z.string().nullable().optional(),
+  stripe_subscription_id: z.string().nullable().optional(),
+});

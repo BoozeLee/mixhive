@@ -27,8 +27,8 @@ describe('cleanup cron', () => {
     }
   });
 
-  function createQueryBuilder(response: any = { data: [], error: null }) {
-    const chain: any = {
+  function createQueryBuilder(response: unknown = { data: [], error: null }) {
+    const chain: Record<string, unknown> = {
       eq: jest.fn(() => chain),
       lt: jest.fn(() => chain),
       select: jest.fn(() => chain),

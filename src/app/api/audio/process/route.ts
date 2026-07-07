@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { enqueue_audio_job } from '@/lib/database-queries';
 
 export async function POST(req: NextRequest) {
   try {
@@ -102,7 +101,7 @@ export async function POST(req: NextRequest) {
       }
 
       jobId = jobData;
-    } catch (dbError) {
+    } catch (_dbError) {
       // If RPC fails, try direct insertion
       const { data: jobData, error: insertError } = await supabase
         .from('audio_jobs')

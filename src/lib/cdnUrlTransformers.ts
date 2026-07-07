@@ -5,7 +5,7 @@
  * for different types of content in MixHive.
  */
 
-import { transformCDNUrl, getOptimizedMediaUrl, CDN_OPTIMIZATION_PARAMS, MediaBucket } from './cdn';
+import { getOptimizedMediaUrl, MediaBucket } from './cdn';
 import type { CDNOptimizationParams } from './cdn';
 
 export interface AudioOptimizationParams extends CDNOptimizationParams {
@@ -248,7 +248,7 @@ export const getOptimizedBuzzMediaUrl = async (
   let optimizedUrl: { url: string; source: 'cdn' | 'supabase' };
 
   switch (mediaType) {
-    case 'image':
+    case 'image': {
       const imageOpt: ImageOptimizationParams = {
         format: 'webp',
         quality: 75,
@@ -257,8 +257,9 @@ export const getOptimizedBuzzMediaUrl = async (
       } as ImageOptimizationParams;
       optimizedUrl = await getOptimizedImageUrl(supabaseUrl, 'buzz-media', imageOpt);
       break;
+    }
 
-    case 'audio':
+    case 'audio': {
       const audioOpt: AudioOptimizationParams = {
         format: 'mp3',
         quality: 128,
@@ -267,8 +268,9 @@ export const getOptimizedBuzzMediaUrl = async (
       } as AudioOptimizationParams;
       optimizedUrl = await getOptimizedAudioUrl(supabaseUrl, 'buzz-media', audioOpt);
       break;
+    }
 
-    case 'video':
+    case 'video': {
       const videoOpt: VideoOptimizationParams = {
         format: 'webm',
         quality: 80,
@@ -278,6 +280,7 @@ export const getOptimizedBuzzMediaUrl = async (
       } as VideoOptimizationParams;
       optimizedUrl = await getOptimizedVideoUrl(supabaseUrl, 'buzz-media', videoOpt);
       break;
+    }
 
     default:
       throw new Error(`Unsupported media type for buzz optimization: ${mediaType}`);
@@ -334,8 +337,8 @@ export interface LazyLoadOptions {
 export const createLazyLoader = () => {
   if (typeof window === 'undefined') {
     return {
-      loadImage: (url: string, options?: LazyLoadOptions) => Promise.resolve(url),
-      loadImageElement: (element: HTMLImageElement, options?: LazyLoadOptions) =>
+      loadImage: (url: string, _options?: LazyLoadOptions) => Promise.resolve(url),
+      loadImageElement: (_element: HTMLImageElement, _options?: LazyLoadOptions) =>
         Promise.resolve(true),
     };
   }

@@ -149,9 +149,21 @@ async function hasRetentionRecords(
   }
   if ((txnCount ?? 0) > 0) return true;
 
-  // TODO: When subscription_tiers / user_subscriptions (migration 102) are
-  // applied in production, also check for active paid subscriptions here and
-  // treat them as retention records.
+  // Active paid subscriptions (migration 102) also require retention — the
+  // user's identity must remain for financial/audit records tied to payments.
+  const { data: sub, error: subErr } = await sb
+    .from('user_subscriptions')
+    .select('tier, status')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (subErr) {
+    console.error(`[account-delete] subscription retention error for ${userId}:`, subErr);
+  }
+  if (sub && sub.tier !== 'free' && sub.status !== 'canceled') {
+    return true;
+  }
+
   return false;
 }
 

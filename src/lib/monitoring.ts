@@ -21,7 +21,7 @@ export class PerformanceMonitor {
   async trackAsync<T>(
     name: string,
     fn: () => Promise<T>,
-    tags: Record<string, any> = {}
+    tags: Record<string, unknown> = {}
   ): Promise<T> {
     const startTime = performance.now();
 
@@ -61,7 +61,7 @@ export class PerformanceMonitor {
   }
 
   // Track synchronous function execution time
-  trackSync<T>(name: string, fn: () => T, tags: Record<string, any> = {}): T {
+  trackSync<T>(name: string, fn: () => T, tags: Record<string, unknown> = {}): T {
     const startTime = performance.now();
 
     try {
@@ -99,7 +99,7 @@ export class PerformanceMonitor {
     }
   }
 
-  private recordMetric(name: string, duration: number, isError = false): void {
+  private recordMetric(name: string, duration: number, _isError = false): void {
     if (!this.metrics[name]) {
       this.metrics[name] = {
         count: 0,
@@ -148,7 +148,7 @@ export class ResourceMonitor {
   // Monitor memory usage
   trackMemoryUsage(): void {
     if ('memory' in performance) {
-      const memory = (performance as any).memory;
+      const memory = (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
       this.tracker.trackUIInteraction('resource', 'memory', {
         used: memory.usedJSHeapSize,
         total: memory.totalJSHeapSize,
@@ -234,8 +234,8 @@ export class ErrorMonitor {
 
   trackError(
     type: 'javascript' | 'promise' | 'network' | 'api' | 'ui',
-    error: Error | any,
-    context?: Record<string, any>
+    error: unknown,
+    context?: Record<string, unknown>
   ): void {
     const errorData = {
       type,
@@ -256,7 +256,7 @@ export class ErrorMonitor {
   }
 
   // API error handling
-  trackApiError(endpoint: string, method: string, status: number, error?: any): void {
+  trackApiError(endpoint: string, method: string, status: number, error?: unknown): void {
     this.trackError('api', error, {
       endpoint,
       method,
@@ -504,7 +504,7 @@ if (typeof window !== 'undefined') {
           healthy: response.ok,
           message: response.ok ? 'API is healthy' : 'API is unhealthy',
         };
-      } catch (error) {
+      } catch (_error) {
         return {
           healthy: false,
           message: 'API connection failed',
@@ -521,7 +521,7 @@ if (typeof window !== 'undefined') {
           healthy: response.ok,
           message: response.ok ? 'Database is healthy' : 'Database is unhealthy',
         };
-      } catch (error) {
+      } catch (_error) {
         return {
           healthy: false,
           message: 'Database connection failed',

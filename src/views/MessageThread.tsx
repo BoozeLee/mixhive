@@ -24,7 +24,7 @@ export function MessageThreadPage() {
   const [otherProfile, setOtherProfile] = useState<Profile | null>(null);
   const [nextCursor, setNextCursor] = useState<string | undefined>();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const channelRef = useRef<any>(null);
+  const channelRef = useRef<unknown>(null);
 
   const loadHistory = useCallback(
     async (before?: string) => {
@@ -50,7 +50,7 @@ export function MessageThreadPage() {
         .select('profile_id, profile:profiles(*)')
         .eq('conversation_id', conversationId);
 
-      const other = (members as any[])?.find(m => m.profile_id !== user!.id);
+      const other = (members as { profile_id: string }[])?.find(m => m.profile_id !== user!.id);
       if (other?.profile) setOtherProfile(other.profile);
 
       if (other) {

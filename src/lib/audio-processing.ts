@@ -79,7 +79,7 @@ export class AudioProcessingWorker {
   /**
    * Process audio based on job type
    */
-  private async processAudioJob(job: any): Promise<AudioJobResult> {
+  private async processAudioJob(job: Record<string, unknown>): Promise<AudioJobResult> {
     const { mix_id: mixId, job_type: jobType } = job;
 
     // Get mix details including audio URL
@@ -135,7 +135,7 @@ export class AudioProcessingWorker {
    * Download audio file to temporary location
    */
   private async downloadAudioFile(audioUrl: string, mixId: string): Promise<string> {
-    const supabase = createServerClient();
+    const _supabase = createServerClient();
 
     // Create temp directory if it doesn't exist
     await fs.mkdir(this.config.tempDir, { recursive: true });

@@ -44,6 +44,7 @@ const DISCIPLINES = ['dj', 'producer', 'visual_artist', 'business'];
 
 export function AgentMarketplace() {
   const t = useTranslations('agentMarket');
+  const tGear = useTranslations('gear');
   const [packages, setPackages] = useState<AgentPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -54,6 +55,7 @@ export function AgentMarketplace() {
   const [buying, setBuying] = useState<string | null>(null);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
   const [creatorBadges, setCreatorBadges] = useState<Record<string, VerificationBadge[]>>({});
+  const [payoutsEnabled, setPayoutsEnabled] = useState<boolean | null>(null);
   const location = useLocation();
 
   const fetchPackages = async (cat: string, disc: string, free: boolean) => {
@@ -91,6 +93,27 @@ export function AgentMarketplace() {
     }
   }, [location.search]);
 
+  // Surface Stripe Connect payout status so creators can sell paid agents.
+  useEffect(() => {
+    (async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) return;
+      try {
+        const res = await fetch('/api/stripe/connect/status', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPayoutsEnabled(Boolean(data.payouts_enabled));
+        }
+      } catch {
+        // status check is best-effort; the sell/publish flow still gates server-side
+      }
+    })();
+  }, []);
+
   const handleBuy = async (pkg: AgentPackage) => {
     if (buying) return;
     setBuying(pkg.id);
@@ -108,7 +131,7 @@ export function AgentMarketplace() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Purchase failed');
-      window.location.href = data.checkout_url;
+      window.location.assign(data.checkout_url);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Purchase failed');
       setBuying(null);
@@ -160,6 +183,25 @@ export function AgentMarketplace() {
         </h1>
         <p style={{ color: colors.text.muted, margin: '4px 0 0', fontSize: 14 }}>{t('subtitle')}</p>
       </div>
+
+      {payoutsEnabled === false && (
+        <div
+          style={{
+            background: colors.surfaceMuted,
+            border: `1px solid ${colors.accentMuted}`,
+            color: colors.text.secondary,
+            padding: 14,
+            borderRadius: 8,
+            marginBottom: 24,
+            fontSize: 14,
+          }}
+        >
+          Connect a payout account to sell agents —{' '}
+          <Link to="/earnings" style={{ color: 'var(--hive-gold)', fontWeight: 700 }}>
+            {tGear('setupPayouts')}
+          </Link>
+        </div>
+      )}
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>

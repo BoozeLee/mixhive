@@ -81,5 +81,7 @@ export async function unsubscribeFromPush(
       },
       body: JSON.stringify({ endpoint }),
     });
-  } catch {}
+  } catch {
+    // best-effort unsubscribe; ignore network/permission errors
+  }
 }

@@ -3,19 +3,19 @@ import { isSupabaseConfigured } from './supabase';
 
 export interface RealtimeEvent {
   type: 'mix_upload' | 'like' | 'comment' | 'follow' | 'repost' | 'notification';
-  payload: any;
+  payload: unknown;
   timestamp: string;
 }
 
 export interface FeedUpdate {
   type: 'new_mix' | 'update_mix' | 'new_comment' | 'like_update';
-  data: any;
+  data: unknown;
   mixId?: string;
   userId?: string;
 }
 
 export class RealtimeFeedManager {
-  private supabase: any;
+  private supabase: ReturnType<typeof createClient>;
   private channels: Map<string, RealtimeChannel> = new Map();
   private subscriptions: Map<string, ((event: RealtimeEvent) => void)[]> = new Map();
 
@@ -131,7 +131,7 @@ export class RealtimeFeedManager {
   /**
    * Broadcast a new mix upload to relevant users
    */
-  async broadcastMixUpload(mixData: any): Promise<void> {
+  async broadcastMixUpload(mixData: unknown): Promise<void> {
     if (!this.supabase) return;
 
     // Broadcast to followers
@@ -161,7 +161,7 @@ export class RealtimeFeedManager {
   /**
    * Broadcast a new comment
    */
-  async broadcastComment(commentData: any): Promise<void> {
+  async broadcastComment(commentData: unknown): Promise<void> {
     if (!this.supabase) return;
 
     await this.supabase.channel('mix_comments').send({
@@ -178,7 +178,7 @@ export class RealtimeFeedManager {
   /**
    * Broadcast a notification
    */
-  async broadcastNotification(notificationData: any): Promise<void> {
+  async broadcastNotification(notificationData: unknown): Promise<void> {
     if (!this.supabase) return;
 
     await this.supabase.channel('user_notifications').send({
@@ -232,9 +232,9 @@ export const realtimeManager = new RealtimeFeedManager();
  * Hook for using real-time updates in React components
  */
 export function useRealtimeFeed(userId: string) {
-  const [mixUpdates, setMixUpdates] = useState<any[]>([]);
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [comments, setComments] = useState<any[]>([]);
+  const [mixUpdates, setMixUpdates] = useState<unknown[]>([]);
+  const [notifications, setNotifications] = useState<unknown[]>([]);
+  const [comments, setComments] = useState<unknown[]>([]);
 
   useEffect(() => {
     if (!userId || !realtimeManager.getConnectionStatus().connected) return;

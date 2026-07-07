@@ -229,7 +229,7 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         });
 
-      case 'increment':
+      case 'increment': {
         if (!key) {
           return NextResponse.json({ error: 'Key required' }, { status: 400 });
         }
@@ -241,8 +241,9 @@ export async function POST(request: NextRequest) {
           newValue,
           timestamp: new Date().toISOString(),
         });
+      }
 
-      case 'decrement':
+      case 'decrement': {
         if (!key) {
           return NextResponse.json({ error: 'Key required' }, { status: 400 });
         }
@@ -254,6 +255,7 @@ export async function POST(request: NextRequest) {
           newValue: decrValue,
           timestamp: new Date().toISOString(),
         });
+      }
 
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

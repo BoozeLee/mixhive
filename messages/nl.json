@@ -91,6 +91,20 @@
     "loadMore": "Meer laden",
     "seeAll": "Alles bekijken"
   },
+  "privacy": {
+    "title": "Privacybeleid",
+    "lastUpdated": "Laatst bijgewerkt 2026-06-09 · Beleidsversie v1",
+    "whoWeAreHeading": "Wie we zijn",
+    "whoWeAreBody": "MixHive is een sociaal platform voor DJ's, producers en underground muziekmakers. Dit beleid legt uit welke persoonsgegevens we verwerken en wat uw rechten zijn onder de AVG (en gelijkwaardige wetten zoals LGPD, APPI en PIPA).",
+    "dataHeading": "Gegevens die we verwerken",
+    "dataBody": "Accountgegevens (e-mail, profiel, links), inhoud die u uploadt (mixes, afspeellijsten, reacties), sociale grafiek (volgers, berichten) en beperkte technische gegevens (toestemmingsregistraties, basislogs). Analytics worden alleen verzameld als u opt-in via de cookiebanner.",
+    "legalHeading": "Rechtsgrondslagen",
+    "legalBody": "We vertrouwen op overeenkomst (om de dienst te leveren), toestemming (voor optionele analytics/marketing) en gerechtvaardigd belang (beveiliging en misbruikpreventie).",
+    "rightsHeading": "Uw rechten",
+    "rightsBody": "U kunt uw gegevens inzien en exporteren, en verwijdering aanvragen via Instellingen → Privacy & Gegevens. Verwijdering wordt verwerkt binnen een termijn van 30 dagen. U kunt uw analytics-toestemming op elk moment intrekken via de cookiebanner.",
+    "contactHeading": "Contact",
+    "contactBody": "Voor privacyverzoeken kunt u contact opnemen met het MixHive-team via uw accountinstellingen. Gelokaliseerde (DE/ES/etc.) versies van dit beleid worden bij regionale lanceringen geleverd."
+  },
   "upload": {
     "title": "Nectar Upload",
     "dropTitle": "Drop je mix",

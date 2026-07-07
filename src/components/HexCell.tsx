@@ -1,5 +1,5 @@
 import React from 'react';
-import { colors, radius, fontSize, fontWeight, transition } from '@/styles/tokens';
+import { colors, fontSize, fontWeight, transition } from '@/styles/tokens';
 import { getGenreColor } from '@/styles/tokens';
 import { BpmChip } from '@/components/BpmChip';
 import { WaveformAccent } from '@/components/WaveformAccent';
@@ -271,7 +271,7 @@ export function HexCell({
 
   if (disabled) {
     return (
-      <div style={hexStyle} aria-disabled="true" role="presentation">
+      <div style={hexStyle} role="presentation">
         {innerContent}
       </div>
     );

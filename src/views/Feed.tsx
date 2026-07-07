@@ -12,6 +12,7 @@ import { BuzzComposer } from '../components/BuzzComposer';
 import { RecommendedDJs } from '../components/RecommendedDJs';
 import { SkeletonFeed } from '../components/Skeleton';
 import { EmptyState } from '../components/EmptyState';
+import { Icon } from '../components/ui/Icon';
 import {
   colors,
   fontSize,
@@ -200,25 +201,40 @@ function TrendingNowPanel({ mixes }: { mixes: FeedMix[] }) {
   );
 }
 
+interface TabConfig {
+  id: Tab;
+  label: string;
+  icon: 'feed' | 'discover' | 'zap';
+}
+
 export function Feed() {
   const t = useTranslations('feed');
   const { user, profile } = useAuth();
-  const [tab, setTab] = useState<Tab>('trending');
+  const [tab, setTab] = useState<Tab>(user ? 'feed' : 'trending');
   const [mixedFeed, setMixedFeed] = useState<MixedTabState>(emptyMixedTab());
   const [latestMixed, setLatestMixed] = useState<MixedTabState>(emptyMixedTab());
   const [trendingTab, setTrendingTab] = useState<MixTabState>(emptyMixTab());
-  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
-  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [realtimeUpdates, setRealtimeUpdates] = useState<FeedItem[]>([]);
   const loadingMoreRef = useRef(false);
   const initializedRef = useRef(false);
   const [newCount, setNewCount] = useState(0);
 
-  const { mixUpdates, notifications, isConnected } = useRealtime(user?.id, {
+  const { mixUpdates } = useRealtime(user?.id ?? null, {
     enableMixUpdates: true,
     enableNotifications: true,
   });
+
+  const tabs: TabConfig[] = user
+    ? [
+        { id: 'feed', label: t('tabFollowing'), icon: 'feed' },
+        { id: 'trending', label: t('tabTrending'), icon: 'zap' },
+        { id: 'latest', label: t('tabLatest'), icon: 'discover' },
+      ]
+    : [
+        { id: 'trending', label: t('tabTrending'), icon: 'zap' },
+        { id: 'latest', label: t('tabLatest'), icon: 'discover' },
+        { id: 'feed', label: t('tabFollowing'), icon: 'feed' },
+      ];
 
   const fetchFollowingFeed = useCallback(
     async (mixCursor?: FeedCursor, buzzCursor?: FeedCursor): Promise<MixedFeedResult> => {
@@ -228,8 +244,13 @@ export function Feed() {
     [user]
   );
 
+  // TODO(phase16): this loadFeed path (via feedService.getFeed) coexists with the
+  // mixed-feed effect below (getMixedFollowingFeed / getLatestMixed / getTrending) and
+  // casts EnhancedFeedItem[]/string|null into FeedMix[]/*Cursor with incompatible shapes.
+  // The two loaders are coupled through initializedRef; reconcile to a single canonical
+  // path per the discover-feed-v1.5 spec before shipping the redesigned feed to prod.
   const loadFeed = useCallback(async () => {
-    if (!user || loading) return;
+    if (loading) return;
     setLoading(true);
     try {
       let result;
@@ -255,6 +276,7 @@ export function Feed() {
           break;
         case 'feed':
         default:
+          if (!user) break;
           result = await feedService.getFeed({ type: 'following', userId: user.id, limit: 20 });
           setMixedFeed({
             data: result.items as FeedItem[],
@@ -283,13 +305,6 @@ export function Feed() {
 
   useEffect(() => {
     if (!user || !mixUpdates.length) return;
-    const newItems = mixUpdates.map(update => ({
-      type: 'mix' as const,
-      data: update.data,
-      id: update.mixId || update.data.id,
-      created_at: update.timestamp,
-    }));
-    setFeedItems(prev => [...newItems, ...prev].slice(0, 100));
     setNewCount(prev => prev + mixUpdates.length);
   }, [mixUpdates, user]);
 
@@ -362,6 +377,15 @@ export function Feed() {
     return () => {
       supabase.removeChannel(channel);
     };
+  }, [user]);
+
+  // Keep default tab in sync if auth state changes
+  useEffect(() => {
+    setTab(prev => {
+      if (user && prev === 'trending') return 'feed';
+      if (!user && prev === 'feed') return 'trending';
+      return prev;
+    });
   }, [user]);
 
   const handleShowNew = async () => {
@@ -534,11 +558,44 @@ export function Feed() {
         ? latestMixed.hasMore
         : trendingTab.hasMore;
 
-  const tabLabels: Record<Tab, string> = {
-    trending: 'Trending',
-    latest: 'Latest',
-    feed: 'Following',
-  };
+  function emptyStateForTab(tabId: Tab): {
+    iconKey: 'feed' | 'discover' | 'zap';
+    title: string;
+    body: string;
+    actionLabel: string;
+    actionTo?: string;
+    onAction?: () => void;
+  } {
+    switch (tabId) {
+      case 'feed':
+        return {
+          iconKey: 'feed',
+          title: t('emptyFollowingTitle'),
+          body: t('emptyFollowingBody'),
+          actionLabel: t('emptyFollowingAction'),
+          actionTo: '/discover',
+        };
+      case 'latest':
+        return {
+          iconKey: 'discover',
+          title: t('emptyLatestTitle'),
+          body: t('emptyLatestBody'),
+          actionLabel: t('emptyLatestAction'),
+          actionTo: '/upload',
+        };
+      case 'trending':
+      default:
+        return {
+          iconKey: 'zap',
+          title: t('emptyTrendingTitle'),
+          body: t('emptyTrendingBody'),
+          actionLabel: t('emptyTrendingAction'),
+          onAction: () => handleRetry('trending'),
+        };
+    }
+  }
+
+  const emptyState = emptyStateForTab(tab);
 
   return (
     <>
@@ -590,7 +647,7 @@ export function Feed() {
             className="hive-button"
             style={{ fontSize: 13, padding: '0 22px', flexShrink: 0, textDecoration: 'none' }}
           >
-            + Upload Mix
+            + {t('uploadMix')}
           </Link>
         )}
       </div>
@@ -619,7 +676,7 @@ export function Feed() {
                 boxShadow: `0 4px 14px rgba(240,192,64,0.35)`,
               }}
             >
-              ↑ {newCount} new
+              ↑ {t('newItems', { count: newCount })}
             </button>
           )}
 
@@ -637,27 +694,32 @@ export function Feed() {
               border: `1px solid ${colors.border}`,
             }}
           >
-            {(['trending', 'latest', 'feed'] as Tab[]).map(t => (
+            {tabs.map(({ id, label, icon }) => (
               <button
-                key={t}
+                key={id}
                 role="tab"
-                aria-selected={tab === t}
-                onClick={() => setTab(t)}
+                aria-selected={tab === id}
+                onClick={() => setTab(id)}
                 style={{
                   flex: 1,
-                  padding: `${space[4]}px ${space[6]}px`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: space[3],
+                  padding: `${space[4]}px ${space[5]}px`,
                   borderRadius: radius.md,
                   border: 'none',
-                  background: tab === t ? colors.accent : 'transparent',
-                  color: tab === t ? colors.bg : colors.text.muted,
-                  fontWeight: tab === t ? fontWeight.bold : fontWeight.normal,
+                  background: tab === id ? colors.accent : 'transparent',
+                  color: tab === id ? colors.bg : colors.text.muted,
+                  fontWeight: tab === id ? fontWeight.bold : fontWeight.normal,
                   cursor: 'pointer',
                   fontSize: fontSize.sm,
                   transition: transition.fast,
                   whiteSpace: 'nowrap',
                 }}
               >
-                {tabLabels[t]}
+                <Icon name={icon} size={14} color="currentColor" />
+                {label}
               </button>
             ))}
           </div>
@@ -687,16 +749,12 @@ export function Feed() {
             <SkeletonFeed />
           ) : currentData.length === 0 && !currentLoading ? (
             <EmptyState
-              iconKey="feed"
-              title={tab === 'feed' ? 'Nothing from your network yet' : 'No mixes yet'}
-              body={
-                tab === 'feed'
-                  ? 'Follow some DJs to see their mixes and buzzes here.'
-                  : 'Check back soon — the hive is buzzing.'
-              }
-              actionLabel={tab === 'feed' ? 'Explore DJs' : 'Retry'}
-              actionTo={tab === 'feed' ? '/discover' : undefined}
-              onAction={tab !== 'feed' ? () => handleRetry(tab) : undefined}
+              iconKey={emptyState.iconKey}
+              title={emptyState.title}
+              body={emptyState.body}
+              actionLabel={emptyState.actionLabel}
+              actionTo={emptyState.actionTo}
+              onAction={emptyState.onAction}
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -724,7 +782,7 @@ export function Feed() {
                     transition: transition.fast,
                   }}
                 >
-                  {currentLoading ? 'Loading…' : 'Load more'}
+                  {currentLoading ? t('loadingMore') : t('loadMore')}
                 </button>
               )}
             </div>

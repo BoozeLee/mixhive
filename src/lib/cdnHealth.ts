@@ -5,8 +5,8 @@
  * and performance tracking for CDN services.
  */
 
-import { checkCDNHealth, getOptimizedMediaUrl, cdnConfig } from './cdn';
-import type { CDNHealthStatus, MediaBucket } from './cdn';
+import { cdnConfig } from './cdn';
+import type { CDNHealthStatus } from './cdn';
 
 interface HealthCheckConfig {
   interval: number; // Check interval in milliseconds
@@ -147,7 +147,7 @@ class CDNHealthMonitor {
 
   // Check health of a specific endpoint
   private async checkEndpointHealth(endpoint: string): Promise<void> {
-    const provider = this.getProviderForEndpoint(endpoint);
+    const _provider = this.getProviderForEndpoint(endpoint);
     const url = this.buildHealthCheckUrl(endpoint);
 
     for (let attempt = 0; attempt < this.config.retries; attempt++) {
@@ -196,7 +196,7 @@ class CDNHealthMonitor {
 
   // Record successful health check
   private recordSuccess(endpoint: string, latency: number): void {
-    const currentStatus = this.healthStatus.get(endpoint) || {
+    const _currentStatus = this.healthStatus.get(endpoint) || {
       status: 'healthy',
       latency: 0,
       lastCheck: new Date(),
@@ -366,7 +366,7 @@ class CDNHealthMonitor {
   }
 
   // Calculate uptime for endpoint
-  private calculateUptime(endpoint: string): number {
+  private calculateUptime(_endpoint: string): number {
     // Mock uptime calculation based on recent health checks
     // In real implementation, track historical data
     return 98; // Assume 98% uptime

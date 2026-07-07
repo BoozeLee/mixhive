@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { supabase } from './supabase';
 
 interface SupabaseContextType {
-  supabase: any;
+  supabase: unknown;
   session: Session | null;
   user: User | null;
   loading: boolean;

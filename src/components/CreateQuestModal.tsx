@@ -132,10 +132,14 @@ export function CreateQuestModal({ onClose, onCreated }: Props) {
 
         {selectedTemplate && (
           <div style={{ marginBottom: space[6] }}>
-            <label style={{ display: 'block', fontSize: fontSize.sm, marginBottom: 4 }}>
+            <label
+              htmlFor="quest-custom-title"
+              style={{ display: 'block', fontSize: fontSize.sm, marginBottom: 4 }}
+            >
               Custom title (optional)
             </label>
             <input
+              id="quest-custom-title"
               type="text"
               value={customTitle}
               onChange={e => setCustomTitle(e.target.value)}

@@ -16,7 +16,7 @@ export interface FeedOptions {
 export interface EnhancedFeedItem {
   id: string;
   type: 'mix' | 'buzz';
-  data: any;
+  data: unknown;
   timestamp: string;
   score?: number;
   metadata?: {
@@ -65,7 +65,7 @@ class FeedService {
     }
 
     // Fetch fresh data
-    let freshData: unknown[] = [];
+    let freshData: unknown[];
     let newCursor: string | null = null;
     let hasMore = false;
 

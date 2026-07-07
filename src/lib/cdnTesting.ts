@@ -694,7 +694,7 @@ export const createTestFile = (size: number = 1024): File => {
 };
 
 export const simulateNetworkConditions = (type: 'slow' | 'fast' | 'offline'): void => {
-  if (typeof window !== 'undefined' && (window as any).navigator) {
+  if (typeof window !== 'undefined' && window.navigator) {
     // Mock network conditions for testing
     console.log(`Simulating network conditions: ${type}`);
   }

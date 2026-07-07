@@ -403,12 +403,13 @@ export const CDNPlaylist: React.FC<{
           <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('playlist')}</h3>
           <div className="space-y-2">
             {tracks.map((track, index) => (
-              <div
+              <button
+                type="button"
                 key={index}
-                className={`flex items-center space-x-3 p-2 rounded cursor-pointer transition-colors ${
+                className={`w-full text-left appearance-none flex items-center space-x-3 p-2 rounded cursor-pointer transition-colors ${
                   index === currentTrackIndex
                     ? 'bg-green-50 border border-green-200'
-                    : 'hover:bg-gray-50'
+                    : 'bg-transparent border-0 hover:bg-gray-50'
                 }`}
                 onClick={() => handleTrackClick(index)}
               >
@@ -439,7 +440,7 @@ export const CDNPlaylist: React.FC<{
                 {index === currentTrackIndex && isPlaying && (
                   <div className="text-green-500">▶</div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
         </div>

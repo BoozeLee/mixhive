@@ -180,10 +180,14 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               />
             </div>
             <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
+              <label
+                htmlFor="graph-seed-venue"
+                style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}
+              >
                 Venue / Event
               </label>
               <input
+                id="graph-seed-venue"
                 value={gigForm.venue}
                 onChange={e => setGigForm({ ...gigForm, venue: e.target.value })}
                 placeholder={t('fuseKioskRadioEtc')}

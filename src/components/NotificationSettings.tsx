@@ -153,6 +153,7 @@ export function NotificationSettings() {
       {CATEGORIES.map(category => (
         <label
           key={category.key}
+          aria-label={category.label}
           style={{ display: 'flex', alignItems: 'flex-start', gap: space[4], cursor: 'pointer' }}
         >
           <input

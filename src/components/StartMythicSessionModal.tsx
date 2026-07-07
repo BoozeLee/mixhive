@@ -82,6 +82,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Pointer backdrop dismissal only; keyboard users dismiss via the explicit Close control.
     <div
       style={{
         position: 'fixed',
@@ -93,7 +94,9 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
         justifyContent: 'center',
         padding: 20,
       }}
-      onClick={onClose}
+      onClick={e => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
         style={{
@@ -107,7 +110,6 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
           display: 'flex',
           flexDirection: 'column',
         }}
-        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div
@@ -150,6 +152,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
             <div style={{ padding: 24 }}>
               <div style={{ marginBottom: 20 }}>
                 <label
+                  htmlFor="mythic-session-title"
                   style={{
                     display: 'block',
                     marginBottom: 6,
@@ -160,6 +163,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
                   Session Title *
                 </label>
                 <input
+                  id="mythic-session-title"
                   type="text"
                   value={form.title}
                   onChange={e => setForm({ ...form, title: e.target.value })}
@@ -178,6 +182,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
 
               <div style={{ marginBottom: 20 }}>
                 <label
+                  htmlFor="mythic-session-description"
                   style={{
                     display: 'block',
                     marginBottom: 6,
@@ -188,6 +193,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
                   Description (optional)
                 </label>
                 <textarea
+                  id="mythic-session-description"
                   value={form.description}
                   onChange={e => setForm({ ...form, description: e.target.value })}
                   placeholder="Working on a new track for the upcoming show at Fuse..."

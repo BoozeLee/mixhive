@@ -1,5 +1,4 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
 import * as Sentry from '@sentry/nextjs';
 import { colors } from '../styles/tokens';
 

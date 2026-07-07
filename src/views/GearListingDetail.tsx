@@ -5,6 +5,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { ReportButton } from '../components/ReportButton';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
+import { Button } from '../components/ui/Button';
 import type { GearListing, GearTransaction } from '../lib/types';
 
 const CONDITIONS: Record<string, string> = {
@@ -13,18 +14,6 @@ const CONDITIONS: Record<string, string> = {
   used_good: 'Used – Good',
   used_fair: 'Used – Fair',
   for_parts: 'For Parts',
-};
-
-const actionButtonStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 0',
-  borderRadius: 8,
-  border: 'none',
-  background: colors.accent,
-  color: colors.white,
-  fontWeight: 600,
-  fontSize: 14,
-  cursor: 'pointer',
 };
 
 export function GearListingDetail() {
@@ -66,7 +55,10 @@ export function GearListingDetail() {
     fetchData();
   }, [id]);
 
-  const handleAction = async (action: 'ship' | 'deliver' | 'confirm' | 'dispute', body?: any) => {
+  const handleAction = async (
+    action: 'ship' | 'deliver' | 'confirm' | 'dispute',
+    body?: Record<string, unknown>
+  ) => {
     if (actionLoading) return;
     setActionLoading(true);
     try {
@@ -78,7 +70,7 @@ export function GearListingDetail() {
           Authorization: `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
-        body: body ? JSON.stringify(body) : undefined,
+        ...(body ? { body: JSON.stringify(body) } : {}),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Action failed');
@@ -201,6 +193,7 @@ export function GearListingDetail() {
               {listing.photos.map((url, i) => (
                 <button
                   key={i}
+                  aria-label={`View photo ${i + 1}`}
                   onClick={() => setSelectedPhoto(i)}
                   style={{
                     width: 64,
@@ -378,27 +371,31 @@ export function GearListingDetail() {
 
               {/* Seller Controls */}
               {userId === listing.seller_profile_id && (
-                <div style={{ marginTop: 16 }}>
+                <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {transaction.transaction_state === 'paid_escrow' && (
-                    <button
+                    <Button
+                      fullWidth
+                      size="lg"
+                      variant="primary"
+                      loading={actionLoading}
                       onClick={() => {
                         const track = prompt('Enter tracking number (optional):');
                         handleAction('ship', { tracking_number: track });
                       }}
-                      disabled={actionLoading}
-                      style={actionButtonStyle}
                     >
-                      {actionLoading ? '...' : t('markAsShipped')}
-                    </button>
+                      {t('markAsShipped')}
+                    </Button>
                   )}
                   {transaction.transaction_state === 'shipped' && (
-                    <button
+                    <Button
+                      fullWidth
+                      size="lg"
+                      variant="primary"
+                      loading={actionLoading}
                       onClick={() => handleAction('deliver')}
-                      disabled={actionLoading}
-                      style={actionButtonStyle}
                     >
-                      {actionLoading ? '...' : t('markAsDelivered')}
-                    </button>
+                      {t('markAsDelivered')}
+                    </Button>
                   )}
                 </div>
               )}
@@ -407,34 +404,40 @@ export function GearListingDetail() {
               {userId === transaction.buyer_profile_id && (
                 <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {['paid_escrow', 'shipped', 'delivered'].includes(transaction.transaction_state) && (
-                    <button
+                    <Button
+                      fullWidth
+                      size="lg"
+                      variant="success"
+                      loading={actionLoading}
                       onClick={() => handleAction('confirm')}
-                      disabled={actionLoading}
-                      style={{ ...actionButtonStyle, background: 'var(--hive-gold)', color: colors.black }}
                     >
-                      {actionLoading ? '...' : t('confirmReceipt')}
-                    </button>
+                      {t('confirmReceipt')}
+                    </Button>
                   )}
                   {transaction.transaction_state === 'shipped' && (
-                    <button
+                    <Button
+                      fullWidth
+                      size="lg"
+                      variant="primary"
+                      loading={actionLoading}
                       onClick={() => handleAction('deliver')}
-                      disabled={actionLoading}
-                      style={actionButtonStyle}
                     >
-                      {actionLoading ? '...' : t('markAsDelivered')}
-                    </button>
+                      {t('markAsDelivered')}
+                    </Button>
                   )}
                   {['paid_escrow', 'shipped', 'delivered'].includes(transaction.transaction_state) && (
-                    <button
+                    <Button
+                      fullWidth
+                      size="lg"
+                      variant="danger"
+                      loading={actionLoading}
                       onClick={() => {
                         const notes = prompt('Please explain the reason for the dispute:');
                         if (notes) handleAction('dispute', { notes });
                       }}
-                      disabled={actionLoading}
-                      style={{ ...actionButtonStyle, background: 'transparent', border: `1px solid ${colors.dangerStrong}`, color: colors.dangerStrong }}
                     >
-                      {actionLoading ? '...' : t('openDispute')}
-                    </button>
+                      {t('openDispute')}
+                    </Button>
                   )}
                 </div>
               )}

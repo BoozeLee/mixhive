@@ -41,8 +41,8 @@ describe('account-delete cron', () => {
     }
   });
 
-  function createQueryBuilder(response: any = { data: null, error: null }) {
-    const chain: any = {
+  function createQueryBuilder(response: unknown = { data: null, error: null }) {
+    const chain: Record<string, unknown> = {
       select: jest.fn(() => chain),
       eq: jest.fn(() => chain),
       or: jest.fn(() => chain),
@@ -53,6 +53,7 @@ describe('account-delete cron', () => {
       delete: jest.fn(() => chain),
       update: jest.fn(() => chain),
       insert: jest.fn(() => chain),
+      maybeSingle: jest.fn(() => Promise.resolve(response)),
       then: jest.fn(cb => Promise.resolve(cb(response))),
     };
     // Make `.select(...)` return the chain so `await` works.
@@ -60,8 +61,8 @@ describe('account-delete cron', () => {
     return chain;
   }
 
-  function createStorageBuilder(response: any = { data: [], error: null }) {
-    const chain: any = {
+  function createStorageBuilder(response: unknown = { data: [], error: null }) {
+    const chain: Record<string, unknown> = {
       list: jest.fn(() => Promise.resolve(response)),
       remove: jest.fn(() => Promise.resolve({ data: null, error: null })),
     };

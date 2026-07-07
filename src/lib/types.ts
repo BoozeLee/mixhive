@@ -235,7 +235,7 @@ export interface Mix {
   /** True when the track has AI-agent co-producer credits ("AI band"). */
   ai_band?: boolean;
   published_from?: 'beehive' | null;
-  beehive_metadata?: Record<string, any>;
+  beehive_metadata?: Record<string, unknown>;
 }
 
 /** An AI agent-artist (a followable "AI band member" with a public career). */
@@ -802,4 +802,28 @@ export interface MixTrack {
   confidence: number | null;
   source: string;
   created_at: string;
+}
+
+// ── Subscriptions ─────────────────────────────────────────────────────────────
+
+export type SubscriptionTier = 'free' | 'supporter' | 'insider' | 'patron';
+
+export type SubscriptionStatus =
+  | 'active'
+  | 'canceled'
+  | 'past_due'
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'trialing'
+  | 'unpaid';
+
+export interface UserSubscription {
+  id: string;
+  user_id: string;
+  tier: SubscriptionTier;
+  stripe_subscription_id: string | null;
+  status: SubscriptionStatus;
+  current_period_end: string | null;
+  created_at: string;
+  updated_at: string;
 }

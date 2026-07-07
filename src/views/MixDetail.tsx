@@ -32,7 +32,6 @@ import { MixAudioIntelligence } from '../components/MixAudioIntelligence';
 import { NotFoundState } from '../components/EmptyState';
 import { StartMythicSessionModal } from '../components/StartMythicSessionModal';
 import { NftMintModal } from '../components/NftMintModal';
-import { HiveButton } from '../components/hive/HiveButton';
 import { SimilarMixesPanel } from '../components/SimilarMixesPanel';
 import { AiBandBadge } from '../components/AiBandBadge';
 import { AgentBandCredits } from '../components/AgentBandCredits';

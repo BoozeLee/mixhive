@@ -969,6 +969,20 @@
     "rejectNonEssential": "Reject non-essential",
     "cookieConsent": "Cookie consent"
   },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated 2026-06-09 · Policy version v1",
+    "whoWeAreHeading": "Who we are",
+    "whoWeAreBody": "MixHive is a social platform for DJs, producers and underground music creators. This policy explains what personal data we process and your rights under the GDPR (and equivalent laws such as LGPD, APPI and PIPA).",
+    "dataHeading": "Data we process",
+    "dataBody": "Account data (email, profile, links), content you upload (mixes, playlists, comments), social graph (follows, messages), and limited technical data (consent records, basic logs). Analytics are only collected if you opt in via the cookie banner.",
+    "legalHeading": "Legal bases",
+    "legalBody": "We rely on contract (to provide the service), consent (for optional analytics/marketing), and legitimate interest (security and abuse prevention).",
+    "rightsHeading": "Your rights",
+    "rightsBody": "You can access and export your data, and request deletion, from Settings → Privacy & Data. Deletion is processed within a 30-day window. You may withdraw analytics consent at any time via the cookie banner.",
+    "contactHeading": "Contact",
+    "contactBody": "For privacy requests, contact the MixHive team via your account settings. Localized (DE/ES/etc.) versions of this policy will accompany regional launches."
+  },
   "cDNOptimizedAudio": {
     "cdn": "CDN",
     "loadingAudio": "Loading audio...",

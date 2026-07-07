@@ -12,7 +12,6 @@ const SearchRequestSchema = z.object({
 });
 
 type RankedRow = { item: Record<string, unknown>; relevance: number; total_count: number };
-type SearchType = z.infer<typeof SearchRequestSchema>['type'];
 
 function emptySection() {
   return { items: [] as Record<string, unknown>[], total: 0, hasMore: false };

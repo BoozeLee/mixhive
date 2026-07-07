@@ -23,9 +23,16 @@
 - [x] **Discovery Badge:** Added the "BEEHIVE" zap badge to `MixCard.tsx` for track discovery.
 
 ## In Progress / Next
-- [ ] **Agent Marketplace Tiers:** Audit and verify payout UI for creators (ensure Connect status is visible).
-- [ ] **Mobile Polish:** Thumb-friendly pass for the new transaction buttons.
-- [ ] **Push Notifications:** Wiring `quest_complete` to PWA push delivery.
+- [x] **Agent Marketplace Tiers:** Payout UI for creators — `AgentMarketplace.tsx` now surfaces a
+  "Connect a payout account to sell agents" banner when `GET /api/stripe/connect/status` reports
+  `payouts_enabled: false`, linking to `/earnings` (mirrors the gear-side gate in `NewGearListing.tsx`).
+- [x] **Mobile Polish:** Ship/Deliver/Confirm/Dispute in `GearListingDetail.tsx` migrated from raw
+  `<button>` to the shared `ui/Button` at `size="lg"` (guaranteed 44px thumb targets, real spinner,
+  `whiteSpace:nowrap` for 320px stability). Verified via browser smoke at 4 viewports, 0 warnings.
+- [x] **Push Notifications:** `quest_complete` now has a dedicated case in `notificationPresentation.ts`
+  — branded title ("Quest complete") + `/collab-quests/:id` deep link. The push-sender cron already
+  delivered these generically; this replaces the generic "New notification from MixHive" fallback.
+  Covered by two new unit tests.
 
 ## Notes for Kiliaan
 - **Migration 109** is critical: It fixes the notification constraint which would otherwise cause crashes when quests complete or Beehive tracks are published.

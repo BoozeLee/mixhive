@@ -6,6 +6,7 @@ import {
   mark_mythic_graph_job_failed,
 } from './database-queries';
 import { computeCollabEdgeSignature } from './collabSignature';
+import type { Json } from './database.types';
 
 // ============================================================================
 // Mythic Graph Processing Worker
@@ -43,7 +44,7 @@ export class MythicGraphProcessingWorker {
 
       const result = await this.executeJob(job);
 
-      await mark_mythic_graph_job_complete(jobId, result);
+      await mark_mythic_graph_job_complete(jobId, result as Json);
     } catch (error) {
       console.error(`Mythic graph job ${jobId} failed:`, error);
 
@@ -63,7 +64,10 @@ export class MythicGraphProcessingWorker {
   /**
    * Route to the correct handler based on job_type
    */
-  private async executeJob(job: any): Promise<any> {
+  private async executeJob(job: {
+    job_type: string;
+    scope: Record<string, unknown>;
+  }): Promise<unknown> {
     const { job_type: jobType, scope } = job;
 
     switch (jobType) {
@@ -97,7 +101,7 @@ export class MythicGraphProcessingWorker {
   // Job Handlers
   // --------------------------------------------------------------------------
 
-  private async handleCreateMixNode(scope: any): Promise<any> {
+  private async handleCreateMixNode(scope: Record<string, unknown>): Promise<unknown> {
     const { mix_id } = scope;
     if (!mix_id) throw new Error('mix_id is required for create_mix_node');
 
@@ -115,7 +119,7 @@ export class MythicGraphProcessingWorker {
     };
   }
 
-  private async handleCreateSubmittedToEdge(scope: any): Promise<any> {
+  private async handleCreateSubmittedToEdge(scope: Record<string, unknown>): Promise<unknown> {
     const { user_id, opportunity_id, status } = scope;
     if (!user_id || !opportunity_id) {
       throw new Error('user_id and opportunity_id are required');
@@ -131,7 +135,7 @@ export class MythicGraphProcessingWorker {
     return { message: 'submitted_to edge created or updated' };
   }
 
-  private async handleDeriveSimilarityEdges(scope: any): Promise<any> {
+  private async handleDeriveSimilarityEdges(scope: Record<string, unknown>): Promise<unknown> {
     const { user_id } = scope;
     if (!user_id) {
       throw new Error('user_id is required for derive_similarity_edges');
@@ -162,7 +166,7 @@ export class MythicGraphProcessingWorker {
       }
     );
 
-    const created: any[] = [];
+    const created: unknown[] = [];
 
     if (overlappingArtists && overlappingArtists.length > 0) {
       for (const candidate of overlappingArtists) {
@@ -211,7 +215,7 @@ export class MythicGraphProcessingWorker {
     };
   }
 
-  private async handleGenerateNodeEmbeddings(scope: any): Promise<any> {
+  private async handleGenerateNodeEmbeddings(scope: Record<string, unknown>): Promise<unknown> {
     const { node_ids } = scope;
     if (!node_ids || !Array.isArray(node_ids)) {
       throw new Error('node_ids array is required');
@@ -280,7 +284,7 @@ export class MythicGraphProcessingWorker {
     return data.data[0].embedding;
   }
 
-  private async handleRecalculateQuestMomentum(scope: any): Promise<any> {
+  private async handleRecalculateQuestMomentum(scope: Record<string, unknown>): Promise<unknown> {
     const { quest_id } = scope;
     if (!quest_id) throw new Error('quest_id is required');
 
@@ -305,7 +309,7 @@ export class MythicGraphProcessingWorker {
     return { quest_id, new_momentum: momentum };
   }
 
-  private async handleCollabSessionPostProcess(scope: any): Promise<any> {
+  private async handleCollabSessionPostProcess(scope: Record<string, unknown>): Promise<unknown> {
     const { session_id } = scope;
     if (!session_id) throw new Error('session_id is required for collab_session_post_process');
 
@@ -332,7 +336,7 @@ export class MythicGraphProcessingWorker {
     }
 
     const profileIds = participants.map(p => p.profile_id);
-    const created: any[] = [];
+    const created: unknown[] = [];
 
     // Sign the (DB-authoritative) participant set so each collab_with edge carries a
     // server-minted attestation. mythic_edges has no client write policy, so a present
@@ -344,7 +348,7 @@ export class MythicGraphProcessingWorker {
       : null;
 
     // 2.5 Inspired_by from stems (if any were added during session)
-    const stems = (session as any).metadata?.stems || [];
+    const stems = (session as { metadata?: { stems?: unknown[] } }).metadata?.stems || [];
     if (stems.length > 0) {
       // Create inspired_by edges from owner to a representative "stem activity" node or just log as activity
       // For simplicity, create an inspired_by edge type for the session activity
@@ -481,7 +485,7 @@ export class MythicGraphProcessingWorker {
     };
   }
 
-  private async handleBackfillUserGraph(scope: any): Promise<any> {
+  private async handleBackfillUserGraph(scope: Record<string, unknown>): Promise<unknown> {
     const { user_id } = scope;
     if (!user_id) throw new Error('user_id is required for backfill');
 
@@ -621,8 +625,8 @@ export class MythicGraphProcessingWorker {
       await enqueue_mythic_graph_job({ user_id }, 'generate_node_embeddings', {
         node_ids: [user_id],
       });
-    } catch (e: any) {
-      errors.push(`enqueue follow-up: ${e.message}`);
+    } catch (e) {
+      errors.push(`enqueue follow-up: ${e instanceof Error ? e.message : String(e)}`);
     }
 
     return {
@@ -633,7 +637,11 @@ export class MythicGraphProcessingWorker {
     };
   }
 
-  private async ensureMixNode(supabase: any, mix: any, userId: string): Promise<string | null> {
+  private async ensureMixNode(
+    supabase: ReturnType<typeof createServerClient>,
+    mix: Record<string, unknown>,
+    userId: string
+  ): Promise<string | null> {
     const { data: existing } = await supabase
       .from('mythic_nodes')
       .select('id')
@@ -683,7 +691,7 @@ export class MythicGraphProcessingWorker {
     return node.id;
   }
 
-  private async ensureOpportunityNode(supabase: any, oppId: string): Promise<string | null> {
+  private async ensureOpportunityNode(supabase: ReturnType<typeof createServerClient>, oppId: string): Promise<string | null> {
     const { data: existing } = await supabase
       .from('mythic_nodes')
       .select('id')
@@ -720,7 +728,7 @@ export class MythicGraphProcessingWorker {
     return error ? null : node?.id || null;
   }
 
-  private async getArtistNodeId(supabase: any, profileId: string): Promise<string | null> {
+  private async getArtistNodeId(supabase: ReturnType<typeof createServerClient>, profileId: string): Promise<string | null> {
     const { data } = await supabase
       .from('mythic_nodes')
       .select('id')

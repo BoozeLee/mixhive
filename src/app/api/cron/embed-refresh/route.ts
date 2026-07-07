@@ -11,14 +11,6 @@ const STALE_DAYS = 7;
 const BATCH_LIMIT = 200;
 const SNAPSHOT_TRIGGER_MIXES = 3;
 
-interface MixRow {
-  entity_id: string;
-  owner_id: string | null;
-}
-interface ProfileRow {
-  entity_id: string;
-  owner_id: string | null;
-}
 
 function buildMixText(mix: Record<string, unknown>): string {
   const parts: string[] = [];

@@ -32,7 +32,6 @@ import type {
   ArtistGoals,
   Buzz,
   Conversation,
-  ConversationMember,
   ConversationSummary,
   DirectMessage,
   MythicQuest,
@@ -1035,7 +1034,7 @@ export async function listConversations(): Promise<ConversationSummary[]> {
 
   const summaries: ConversationSummary[] = [];
 
-  for (const row of data as any[]) {
+  for (const row of data as unknown[]) {
     const conversation: Conversation = row.conversation;
     const members: { profile_id: string; profile: Profile }[] = row.conversation?.members ?? [];
     const otherMember = members.find(m => m.profile_id !== userId)?.profile;
@@ -1088,7 +1087,7 @@ export async function getMessages(
     return { messages: [] };
   }
 
-  const messages = (data as any[]).reverse();
+  const messages = (data as unknown[]).reverse();
   const nextCursor =
     data.length === limit ? (data[data.length - 1] as DirectMessage).created_at : undefined;
 
@@ -1835,7 +1834,7 @@ export async function getQuestDetail(questId: string): Promise<QuestWithMileston
 
   return {
     ...(quest as MythicQuest),
-    milestones: (milestones || []) as any[],
+    milestones: (milestones || []) as unknown[],
   } as QuestWithMilestones;
 }
 

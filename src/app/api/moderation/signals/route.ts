@@ -106,7 +106,7 @@ export async function GET(req: NextRequest) {
     const source_table = searchParams.get('source_table');
     const source_id = searchParams.get('source_id');
     const severity = searchParams.get('severity');
-    const status = searchParams.get('status'); // Note: we don't have a status column, but we can use action_taken or create a computed status
+    const _status = searchParams.get('status'); // Note: we don't have a status column, but we can use action_taken or create a computed status
     const limit = parseInt(searchParams.get('limit') || '10');
     const offset = parseInt(searchParams.get('offset') || '0');
 

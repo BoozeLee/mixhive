@@ -2,7 +2,7 @@
 
 const mockMaybeSingle = jest.fn();
 const mockSingle = jest.fn();
-const mockSelectChain = { eq: jest.fn(), maybeSingle: mockMaybeSingle };
+const _mockSelectChain = { eq: jest.fn(), maybeSingle: mockMaybeSingle };
 const mockInsertChain = { select: jest.fn(() => ({ single: mockSingle })) };
 const mockEdgeInsert = jest.fn();
 
@@ -55,7 +55,7 @@ describe('mythic.node.find_or_create', () => {
     expect(result).toBe('existing-uuid');
     // insert should NOT have been called
     const profileCalls = mockFrom.mock.calls.filter(([t]) => t === 'mythic_nodes');
-    const insertCalls = profileCalls.filter((_, i) => {
+    const _insertCalls = profileCalls.filter((_, i) => {
       const returnVal = mockFrom.mock.results[i]?.value;
       return typeof returnVal?.insert === 'function';
     });

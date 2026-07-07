@@ -130,7 +130,6 @@ export function LoadingSpinner({
 
 // Page level loading component
 export function PageLoading({ message }: { message?: string }) {
-  const t = useTranslations('loadingSpinner');
   return (
     <div
       style={{

@@ -104,7 +104,15 @@ export function CreateQuestModal({ onClose, onCreated }: Props) {
           {QUEST_TEMPLATES.map(t => (
             <div
               key={t.id}
+              role="button"
+              tabIndex={0}
               onClick={() => setSelectedTemplate(t.id)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedTemplate(t.id);
+                }
+              }}
               style={{
                 padding: 14,
                 borderRadius: radius.md,

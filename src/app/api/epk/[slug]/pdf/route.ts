@@ -26,7 +26,7 @@ export async function GET(
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
-    const content = kit.content as any;
+    const content = kit.content as unknown as Record<string, unknown>;
     const stream = await renderToStream(
       React.createElement(EpkPdfDocument, {
         title: kit.title || `${content.artist_name} EPK`,
@@ -42,7 +42,7 @@ export async function GET(
       })
     );
 
-    return new NextResponse(stream as any, {
+    return new NextResponse(stream as unknown as BodyInit, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${slug}.pdf"`,

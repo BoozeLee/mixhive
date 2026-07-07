@@ -5,7 +5,6 @@
  * quality selection, format optimization, and bandwidth monitoring.
  */
 
-import { cdnConfig, CDNConfig } from './cdn';
 import type { CDNOptimizationParams } from './cdn';
 
 interface CostOptimizationConfig {
@@ -230,7 +229,7 @@ class CDNCostOptimizer {
     }
 
     return {
-      format: preferredFormat as any,
+      format: preferredFormat as unknown as never,
     };
   }
 
@@ -409,7 +408,7 @@ class CDNCostOptimizer {
 
     const params: CDNOptimizationParams = {
       quality: preset.quality,
-      format: preset.format as any,
+      format: preset.format as unknown as never,
       maxSize: preset.maxSize,
     };
 
@@ -456,9 +455,9 @@ class CDNCostOptimizer {
     const width = window.innerWidth;
     const height = window.innerHeight;
     const connection =
-      (navigator as any).connection ||
-      (navigator as any).mozConnection ||
-      (navigator as any).webkitConnection;
+      (navigator as Navigator & { connection?: unknown; mozConnection?: unknown; webkitConnection?: unknown }).connection ||
+      (navigator as Navigator & { connection?: unknown; mozConnection?: unknown; webkitConnection?: unknown }).mozConnection ||
+      (navigator as Navigator & { connection?: unknown; mozConnection?: unknown; webkitConnection?: unknown }).webkitConnection;
 
     let networkType: QualitySelectionConfig['networkType'] = 'wifi';
 

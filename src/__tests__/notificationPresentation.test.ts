@@ -52,6 +52,27 @@ describe('notificationPresentation', () => {
     });
   });
 
+  it('maps quest_complete to an immediate branded push with a collab-quest deep link', () => {
+    const result = notificationPresentation(
+      notification({
+        type: 'quest_complete',
+        data: { quest_id: 'quest-1', body: 'Quest "Night Ride" is complete! You earned 50 XP.' },
+      })
+    );
+    expect(result).toMatchObject({
+      category: 'social',
+      urgency: 'immediate',
+      title: 'Quest complete',
+      body: 'Quest "Night Ride" is complete! You earned 50 XP.',
+      url: '/collab-quests/quest-1',
+    });
+  });
+
+  it('falls back to /notifications for quest_complete without a quest id', () => {
+    const result = notificationPresentation(notification({ type: 'quest_complete', data: {} }));
+    expect(result).toMatchObject({ title: 'Quest complete', url: '/notifications' });
+  });
+
   it('rejects external and protocol-relative links', () => {
     expect(safeNotificationPath('https://evil.example/x')).toBe('/notifications');
     expect(safeNotificationPath('//evil.example/x')).toBe('/notifications');

@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/Button';
 import { Icon } from '../components/ui/Icon';
-import { colors, space, fontSize, fontWeight, radius } from '../styles/tokens';
+import { colors, space, fontSize, radius } from '../styles/tokens';
 import { useNavigate } from 'react-router-dom';
 
 const TIERS = [
@@ -82,7 +82,7 @@ export function PricingPage() {
 
     if (!res.ok) return;
     const { url } = await res.json();
-    if (url) window.location.href = url;
+    if (url) window.location.assign(url);
   };
 
   return (
@@ -164,7 +164,7 @@ export function PricingPage() {
                 textTransform: 'capitalize',
               }}
             >
-              {t(tier.id as any)}
+              {t(tier.id as never)}
             </h2>
 
             <div>

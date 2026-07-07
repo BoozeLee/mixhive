@@ -1,5 +1,4 @@
 import { supabase } from './storage';
-import type { Database } from './mixhive-database.types';
 
 // Analytics event types
 export type AnalyticsEventType =
@@ -30,7 +29,7 @@ export type AnalyticsEventType =
 // Analytics event data
 export interface AnalyticsEvent {
   event_type: AnalyticsEventType;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   profile_id?: string;
   session_id?: string;
   page_url?: string;
@@ -105,7 +104,7 @@ export class AnalyticsTracker {
     target: 'profile' | 'comment' | 'buzz',
     action: 'view' | 'follow' | 'unfollow' | 'create' | 'delete' | 'like' | 'share',
     targetId: string,
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   ): Promise<void> {
     await this.trackEvent({
       event_type: `${target}_${action}` as AnalyticsEventType,
@@ -200,7 +199,7 @@ export class AnalyticsTracker {
   async trackUIInteraction(
     element: string,
     action: 'click' | 'hover' | 'input',
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   ): Promise<void> {
     await this.trackEvent({
       event_type: 'ui_interaction',
@@ -258,7 +257,7 @@ export class AnalyticsAPI {
 
   // Get trending mixes
   async getTrendingMixes(days: number = 7) {
-    const endDate = new Date();
+    const _endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
@@ -282,7 +281,7 @@ export class AnalyticsAPI {
   }
 
   // Process analytics data
-  private processAnalyticsData(events: any[]) {
+  private processAnalyticsData(events: unknown[]) {
     const totalEvents = events.length;
     const uniqueSessions = new Set(events.map(e => e.session_id)).size;
     const uniqueUsers = new Set(events.map(e => e.profile_id)).size;
@@ -318,7 +317,7 @@ export class AnalyticsAPI {
   }
 
   // Process mix analytics data
-  private processMixAnalyticsData(events: any[]) {
+  private processMixAnalyticsData(events: unknown[]) {
     const totalPlays = events.length;
     const uniqueListeners = new Set(events.map(e => e.profile_id)).size;
     const avgCompletion =
@@ -354,7 +353,7 @@ if (typeof window !== 'undefined') {
   const originalPushState = history.pushState;
   const originalReplaceState = history.replaceState;
 
-  history.pushState = function (...args: any[]) {
+  history.pushState = function (...args: unknown[]) {
     originalPushState.apply(this, args);
     const newPage = window.location.pathname;
     if (newPage !== currentPage) {
@@ -363,7 +362,7 @@ if (typeof window !== 'undefined') {
     }
   };
 
-  history.replaceState = function (...args: any[]) {
+  history.replaceState = function (...args: unknown[]) {
     originalReplaceState.apply(this, args);
     const newPage = window.location.pathname;
     if (newPage !== currentPage) {

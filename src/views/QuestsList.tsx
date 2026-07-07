@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
+import { colors, fontSize, fontWeight, space } from '../styles/tokens';
 import { HiveCard } from '../components/hive/HiveCard';
 import { HiveButton } from '../components/hive/HiveButton';
 import { EmptyState } from '../components/EmptyState';
@@ -215,7 +215,7 @@ export function QuestsList() {
       {showCreateModal && (
         <CreateQuestModal
           onClose={() => setShowCreateModal(false)}
-          onCreated={newQuest => {
+          onCreated={_newQuest => {
             // Refresh the list after creation
             getActiveQuests(user!.id).then(data => {
               const formatted = data.map((q: MythicQuest) => ({

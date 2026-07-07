@@ -68,7 +68,6 @@ export const CDNImage: React.FC<CDNImageProps> = ({
   lazy = true,
   optimization,
   fallback,
-  sizesConfig,
 }) => {
   const [cdnUrl, setCdnUrl] = useState<string>(src);
   const [isLoading, setIsLoading] = useState(true);
@@ -242,7 +241,7 @@ export const CDNResponsiveImage: React.FC<ResponsiveImageProps> = ({
           case 'artwork':
             result = await getOptimizedArtworkUrl(src, currentSize, optimization);
             break;
-          default:
+          default: {
             const bucket = determineBucketFromUrl(src);
             const sizeOpt = {
               ...optimization,
@@ -250,6 +249,7 @@ export const CDNResponsiveImage: React.FC<ResponsiveImageProps> = ({
               height: getSizeHeight(currentSize),
             };
             result = await getOptimizedImageUrl(src, bucket, sizeOpt);
+          }
         }
 
         setCdnUrl(result.url);

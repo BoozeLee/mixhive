@@ -294,6 +294,8 @@ export function NewGearListing() {
               {t('photosMin1')}
             </p>
             <div
+              role="button"
+              tabIndex={0}
               style={{
                 border: `2px dashed ${colors.borderStrong}`,
                 borderRadius: 12,
@@ -303,6 +305,12 @@ export function NewGearListing() {
                 color: colors.text.faintest,
               }}
               onClick={() => fileRef.current?.click()}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  fileRef.current?.click();
+                }
+              }}
             >
               {uploading ? t('uploading') : t('clickToUploadPhotos')}
               <input

@@ -24,7 +24,7 @@ const navItems: NavItem[] = [
 ];
 
 // Logo item for mobile navigation
-const logoItem = {
+const _logoItem = {
   path: '/',
   label: 'MixHive',
   ariaLabel: 'MixHive Home',

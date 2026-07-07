@@ -149,7 +149,15 @@ export function SceneDetail() {
             {listings.map(a => (
               <li
                 key={a.user_id}
+                role="button"
+                tabIndex={0}
                 onClick={() => a.username && navigate(`/u/${a.username}`)}
+                onKeyDown={e => {
+                  if ((e.key === 'Enter' || e.key === ' ') && a.username) {
+                    e.preventDefault();
+                    navigate(`/u/${a.username}`);
+                  }
+                }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',

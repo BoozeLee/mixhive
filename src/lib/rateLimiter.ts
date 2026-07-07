@@ -1,9 +1,21 @@
 import { redisCache } from './redis';
 
+// Minimal request/response shapes for the optional Express-style middleware below.
+interface RateLimitRequest {
+  user?: { id?: string };
+  path?: string;
+  ip?: string;
+  headers?: { get(name: string): string | null };
+}
+interface RateLimitResponse {
+  set(header: string, value: string): void;
+  status(code: number): { json(body: unknown): unknown };
+}
+
 export interface RateLimitConfig {
   window: number; // in seconds
   limit: number;
-  keyGenerator?: (req: any) => string;
+  keyGenerator?: (req: RateLimitRequest) => string;
 }
 
 export interface RateLimitResult {
@@ -20,7 +32,7 @@ class RateLimiter {
     limit: 100, // 100 requests per minute default
     keyGenerator: req => {
       // Default IP-based rate limiting
-      return req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+      return req.headers?.get('x-forwarded-for') || req.headers?.get('x-real-ip') || 'unknown';
     },
   };
 
@@ -88,9 +100,9 @@ export const rateLimiter = new RateLimiter();
 // Express/Next.js middleware for API routes
 export function withRateLimit(
   config: Partial<RateLimitConfig> = {},
-  customKeyGenerator?: (req: any) => string
+  customKeyGenerator?: (req: RateLimitRequest) => string
 ) {
-  return async (req: any, res: any, next: any) => {
+  return async (req: RateLimitRequest, res: RateLimitResponse, next: () => void) => {
     try {
       const identifier = customKeyGenerator
         ? customKeyGenerator(req)

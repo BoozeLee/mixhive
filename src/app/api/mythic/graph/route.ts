@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
     }
 
     // If depth > 1, fetch second hop
-    let deeperEdges: any[] = [];
+    let deeperEdges: unknown[] = [];
     if (depth >= 2) {
       const neighborIds = Array.from(nodeIds).filter(id => id !== artistNode.id);
 

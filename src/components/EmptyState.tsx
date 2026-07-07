@@ -40,7 +40,6 @@ export function EmptyState({
   actionTo,
   onAction,
 }: Props) {
-  const t = useTranslations('emptyState');
   return (
     <div
       role="status"

@@ -134,7 +134,9 @@ export function ContentPerformance({ mixes, genres }: Props) {
                       <th
                         key={col.key}
                         scope="col"
-                        aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+                        aria-sort={
+                          active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'
+                        }
                         style={headerCellStyle}
                       >
                         <button
@@ -157,7 +159,10 @@ export function ContentPerformance({ mixes, genres }: Props) {
                           }}
                         >
                           {col.label}
-                          <span aria-hidden="true" style={{ fontSize: 9, opacity: active ? 1 : 0.3 }}>
+                          <span
+                            aria-hidden="true"
+                            style={{ fontSize: 9, opacity: active ? 1 : 0.3 }}
+                          >
                             {active ? (sort.dir === 'asc' ? '▲' : '▼') : '▼'}
                           </span>
                         </button>
@@ -245,7 +250,8 @@ export function ContentPerformance({ mixes, genres }: Props) {
             </h3>
             <div style={{ display: 'grid', gap: space[5] }}>
               {sortedGenres.map(genre => {
-                const pct = totalGenreCount > 0 ? Math.round((genre.count / totalGenreCount) * 100) : 0;
+                const pct =
+                  totalGenreCount > 0 ? Math.round((genre.count / totalGenreCount) * 100) : 0;
                 const barPct = topGenreCount > 0 ? (genre.count / topGenreCount) * 100 : 0;
                 return (
                   <div key={genre.name}>

@@ -121,6 +121,48 @@ export async function getXpLeaderboard(limit = 50): Promise<LeaderboardEntry[]> 
   return (data as LeaderboardEntry[] | null) ?? [];
 }
 
+/** A member of the First-50 founding cohort, for the ritual showcase. */
+export interface FoundingMember {
+  id: string;
+  username: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  level: number;
+}
+
+/** The First-50 cap on founding-member spots. */
+export const FOUNDING_CAP = 50;
+
+/**
+ * How many founding members have claimed a spot. Public read (profiles are
+ * world-readable under RLS); mirrors the `count: 'exact', head: true` pattern
+ * used elsewhere in this module.
+ */
+export async function getFoundingMemberCount(): Promise<number> {
+  if (!isSupabaseConfigured) return 0;
+  const { count } = await supabase
+    .from('profiles')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_founding_member', true);
+  return count ?? 0;
+}
+
+/**
+ * The founding-member cohort for the First-50 showcase. Ordered by XP desc —
+ * `invite_redemptions` (which holds claim order) is owner-only under RLS, so we
+ * rank by a world-readable profile field instead. Public read.
+ */
+export async function getFoundingMembers(limit = FOUNDING_CAP): Promise<FoundingMember[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, avatar_url, level')
+    .eq('is_founding_member', true)
+    .order('xp', { ascending: false })
+    .limit(limit);
+  return (data as FoundingMember[] | null) ?? [];
+}
+
 export async function getProfileBadges(profileId: string): Promise<VerificationBadge[]> {
   if (!isSupabaseConfigured) return [];
   const { data } = await supabase

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { colors, fontSize } from '../styles/tokens';
 
 const wrap = {
@@ -18,27 +19,21 @@ const h2 = {
 const p = { fontSize: fontSize.sm, lineHeight: 1.6, marginTop: 8 } as const;
 
 export function CookiePolicy() {
+  const t = useTranslations('cookies');
+
   return (
     <div style={wrap}>
-      <h1 style={h1}>Cookie Policy</h1>
-      <p style={{ ...p, color: colors.text.dim }}>Last updated 2026-06-09</p>
+      <h1 style={h1}>{t('title')}</h1>
+      <p style={{ ...p, color: colors.text.dim }}>{t('lastUpdated')}</p>
 
-      <h2 style={h2}>Necessary</h2>
-      <p style={p}>
-        Required to sign you in, keep your session, and run core features. These are always on.
-      </p>
+      <h2 style={h2}>{t('necessaryHeading')}</h2>
+      <p style={p}>{t('necessaryBody')}</p>
 
-      <h2 style={h2}>Analytics (optional)</h2>
-      <p style={p}>
-        If you accept analytics, we use privacy-respecting product analytics to understand usage and
-        improve MixHive. These are only loaded after you opt in via the consent banner.
-      </p>
+      <h2 style={h2}>{t('analyticsHeading')}</h2>
+      <p style={p}>{t('analyticsBody')}</p>
 
-      <h2 style={h2}>Managing your choice</h2>
-      <p style={p}>
-        Your consent is stored on this device and recorded against your account if you are signed
-        in. Clearing site data resets the banner so you can choose again.
-      </p>
+      <h2 style={h2}>{t('managingHeading')}</h2>
+      <p style={p}>{t('managingBody')}</p>
     </div>
   );
 }

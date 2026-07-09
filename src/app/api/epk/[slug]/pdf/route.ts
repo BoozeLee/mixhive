@@ -39,6 +39,7 @@ export async function GET(
         bookingPitch: content.booking_pitch || '',
         technicalNotes: content.technical_notes || [],
         avatarUrl: content.avatar_url,
+        customSections: content.custom_sections || [],
       })
     );
 

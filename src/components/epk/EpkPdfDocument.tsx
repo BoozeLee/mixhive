@@ -18,6 +18,11 @@ interface Mix {
   url_path: string;
 }
 
+interface CustomSection {
+  heading: string;
+  body: string;
+}
+
 interface Props {
   title: string;
   artistName: string;
@@ -29,6 +34,7 @@ interface Props {
   bookingPitch: string;
   technicalNotes: string[];
   avatarUrl?: string | null;
+  customSections?: CustomSection[];
 }
 
 export function EpkPdfDocument({
@@ -42,6 +48,7 @@ export function EpkPdfDocument({
   bookingPitch,
   technicalNotes,
   avatarUrl,
+  customSections,
 }: Props) {
   return (
     <Document title={title} author={artistName}>
@@ -91,6 +98,13 @@ export function EpkPdfDocument({
             ))}
           </View>
         )}
+
+        {customSections && customSections.length > 0 && customSections.map((section, i) => (
+          <View style={styles.section} key={i}>
+            <Text style={styles.sectionTitle}>{section.heading}</Text>
+            <Text>{section.body}</Text>
+          </View>
+        ))}
 
         {website && (
           <View style={styles.section}>

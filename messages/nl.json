@@ -22,7 +22,10 @@
     "growth": "Groei",
     "radar": "Radar",
     "dms": "PB",
-    "cell": "Cel"
+    "cell": "Cel",
+    "privacy": "Privacy",
+    "terms": "Voorwaarden",
+    "cookies": "Cookies"
   },
   "feed": {
     "liveFeed": "Livefeed",
@@ -105,6 +108,28 @@
     "contactHeading": "Contact",
     "contactBody": "Voor privacyverzoeken kunt u contact opnemen met het MixHive-team via uw accountinstellingen. Gelokaliseerde (DE/ES/etc.) versies van dit beleid worden bij regionale lanceringen geleverd."
   },
+  "terms": {
+    "title": "Gebruiksvoorwaarden",
+    "lastUpdated": "Laatst bijgewerkt 2026-06-09",
+    "acceptableUseHeading": "Aanvaardbaar gebruik",
+    "acceptableUseBody": "U stemt ermee in dat u alleen inhoud uploadt waarvan u de rechten heeft, dat u andere makers respecteert en de communityrichtlijnen volgt. Misbruik, intimidatie en inbreuk kunnen leiden tot verwijdering of accountsuspensie.",
+    "yourContentHeading": "Uw inhoud",
+    "yourContentBody": "U behoudt het eigendom van de mixes en het materiaal dat u publiceert. U verleent MixHive een beperkte licentie om uw inhoud te hosten en weer te geven, zodat het platform kan functioneren.",
+    "marketplaceHeading": "Marktplaats & betalingen",
+    "marketplaceBody": "Transacties op de marktplaats voor gear en agents worden verwerkt via Stripe; escrow- en uitbetalingsvoorwaarden worden getoond op het verkooppunt.",
+    "changesHeading": "Wijzigingen",
+    "changesBody": "We kunnen deze voorwaarden bijwerken; materiële wijzigingen worden in de app gecommuniceerd."
+  },
+  "cookies": {
+    "title": "Cookiebeleid",
+    "lastUpdated": "Laatst bijgewerkt 2026-06-09",
+    "necessaryHeading": "Noodzakelijk",
+    "necessaryBody": "Vereist om in te loggen, uw sessie te behouden en kernfunctionaliteit uit te voeren. Deze zijn altijd ingeschakeld.",
+    "analyticsHeading": "Analytics (optioneel)",
+    "analyticsBody": "Als u analytics accepteert, gebruiken we privacy-respecterende productanalyses om het gebruik te begrijpen en MixHive te verbeteren. Deze worden alleen geladen nadat u opt-in via de cookiebanner.",
+    "managingHeading": "Uw keuze beheren",
+    "managingBody": "Uw toestemming wordt op dit apparaat opgeslagen en vastgelegd tegen uw account als u bent ingelogd. Het wissen van sitedata reset de banner zodat u opnieuw kunt kiezen."
+  },
   "upload": {
     "title": "Nectar Upload",
     "dropTitle": "Drop je mix",
@@ -123,5 +148,15 @@
     "explicit": "Markeer als expliciete inhoud",
     "trackTitle": "Tracktitel",
     "startSec": "Start (sec)"
+  },
+  "pressKitStudio": {
+    "customSections": "Eigen secties",
+    "customSectionsHelp": "Voeg eigen secties toe om specifieke prestaties, eerdere optredens, perscitaten of andere informatie te belichten die promoters moeten weten.",
+    "addSection": "Sectie toevoegen",
+    "saveSections": "Secties opslaan",
+    "saving": "Opslaan…",
+    "sectionHeadingPlaceholder": "Sectiekop (bijv. \"Eerdere optredens\")",
+    "sectionBodyPlaceholder": "Schrijf hier de inhoud van je sectie…",
+    "remove": "Verwijderen"
   }
 }

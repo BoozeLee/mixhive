@@ -32,7 +32,8 @@ JOBS = {
   '/api/cron/payouts-auto-release'     => Integer(ENV.fetch('IV_PAYOUTS', 21_600)),    # 6h
   '/api/cron/account-delete'           => Integer(ENV.fetch('IV_ACCOUNT_DELETE', 86_400)), # daily
   '/api/cleanup'                       => Integer(ENV.fetch('IV_CLEANUP', 86_400)),    # daily
-  '/api/analytics/daily'               => Integer(ENV.fetch('IV_ANALYTICS', 86_400))   # daily
+  '/api/analytics/daily'               => Integer(ENV.fetch('IV_ANALYTICS', 86_400)),   # daily
+  '/api/cron/monthly-recap'            => Integer(ENV.fetch('IV_MONTHLY_RECAP', 2_592_000)) # ~30d
 }.freeze
 
 POST_JOBS = Set.new([

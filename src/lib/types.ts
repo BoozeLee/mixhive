@@ -725,6 +725,11 @@ export interface OpportunityMatch {
   rationale: string;
 }
 
+export interface PressKitSection {
+  heading: string;
+  body: string;
+}
+
 export interface PressKitContent {
   artist_name: string;
   location: string | null;
@@ -743,6 +748,7 @@ export interface PressKitContent {
   booking_pitch: string;
   technical_notes: string[];
   generated_from: string[];
+  custom_sections?: PressKitSection[];
 }
 
 export interface PressKit {

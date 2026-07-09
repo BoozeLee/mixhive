@@ -4,7 +4,7 @@ import { Icon } from '../components/ui/Icon';
 import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
-import type { PressKit } from '../lib/types';
+import type { PressKit, PressKitSection } from '../lib/types';
 import { useAuth } from '../hooks/useAuth';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 
@@ -28,6 +28,16 @@ export function PressKitStudio() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [customSections, setCustomSections] = useState<PressKitSection[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (active?.content.custom_sections) {
+      setCustomSections(active.content.custom_sections);
+    } else if (!active) {
+      setCustomSections([]);
+    }
+  }, [active]);
 
   useEffect(() => {
     let alive = true;
@@ -65,7 +75,7 @@ export function PressKitStudio() {
       const response = await fetch('/api/epk', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ publish: true }),
+        body: JSON.stringify({ publish: true, custom_sections: customSections }),
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || 'EPK generation failed');
@@ -263,6 +273,176 @@ export function PressKitStudio() {
           />
         </section>
       )}
+
+      {active && (
+        <section
+          style={{
+            marginTop: space[10],
+            border: `1px solid ${colors.border}`,
+            borderRadius: radius.xl,
+            padding: space[8],
+            background: 'rgba(7,7,5,0.78)',
+          }}
+        >
+          <h2
+            style={{
+              margin: `0 0 ${space[6]}px`,
+              color: colors.text.primary,
+              fontSize: fontSize.lg,
+              fontWeight: fontWeight.bold,
+            }}
+          >
+            {t('customSections')}
+          </h2>
+          <p
+            style={{
+              margin: `0 0 ${space[6]}px`,
+              color: colors.text.muted,
+              fontSize: fontSize.sm,
+            }}
+          >
+            {t('customSectionsHelp')}
+          </p>
+
+          {customSections.map((section, i) => (
+            <div
+              key={i}
+              style={{
+                border: `1px solid ${colors.border}`,
+                borderRadius: radius.md,
+                padding: space[5],
+                marginBottom: space[5],
+                background: colors.surface,
+              }}
+            >
+              <div style={{ display: 'flex', gap: space[4], marginBottom: space[3] }}>
+                <input
+                  type="text"
+                  value={section.heading}
+                  onChange={e => {
+                    const next = [...customSections];
+                    next[i] = { ...next[i], heading: e.target.value };
+                    setCustomSections(next);
+                  }}
+                  placeholder={t('sectionHeadingPlaceholder')}
+                  style={{
+                    flex: 1,
+                    background: colors.bg,
+                    border: `1px solid ${colors.border}`,
+                    borderRadius: radius.md,
+                    color: colors.text.primary,
+                    padding: `${space[3]}px ${space[4]}px`,
+                    fontSize: fontSize.base,
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = customSections.filter((_, idx) => idx !== i);
+                    setCustomSections(next);
+                  }}
+                  style={{
+                    border: `1px solid ${colors.danger}`,
+                    borderRadius: radius.md,
+                    background: 'transparent',
+                    color: colors.danger,
+                    padding: `${space[3]}px ${space[5]}px`,
+                    cursor: 'pointer',
+                    fontWeight: fontWeight.bold,
+                  }}
+                >
+                  {t('remove')}
+                </button>
+              </div>
+              <textarea
+                value={section.body}
+                onChange={e => {
+                  const next = [...customSections];
+                  next[i] = { ...next[i], body: e.target.value };
+                  setCustomSections(next);
+                }}
+                placeholder={t('sectionBodyPlaceholder')}
+                rows={4}
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  background: colors.bg,
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: radius.md,
+                  color: colors.text.primary,
+                  padding: `${space[3]}px ${space[4]}px`,
+                  fontSize: fontSize.base,
+                  resize: 'vertical',
+                  fontFamily: 'inherit',
+                }}
+              />
+            </div>
+          ))}
+
+          <div style={{ display: 'flex', gap: space[4] }}>
+            <button
+              type="button"
+              onClick={() => setCustomSections(prev => [...prev, { heading: '', body: '' }])}
+              style={{
+                border: `1px solid ${colors.accent}`,
+                borderRadius: radius.md,
+                background: 'transparent',
+                color: colors.accent,
+                padding: `${space[3]}px ${space[6]}px`,
+                cursor: 'pointer',
+                fontWeight: fontWeight.bold,
+              }}
+            >
+              {t('addSection')}
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                setSaving(true);
+                setError(null);
+                try {
+                  const headers = await authHeaders();
+                  if (!headers) throw new Error('Sign in again');
+                  const response = await fetch('/api/epk', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                      publish: active.is_public,
+                      custom_sections: customSections,
+                    }),
+                  });
+                  const body = await response.json();
+                  if (!response.ok) throw new Error(body.error || 'Save failed');
+                  const nextKit = body.press_kit as PressKit;
+                  setActive(nextKit);
+                  setKits(prev => [nextKit, ...prev.filter(k => k.id !== nextKit.id)]);
+                } catch (err) {
+                  setError(
+                    err instanceof Error ? err.message : 'Failed to save custom sections'
+                  );
+                } finally {
+                  setSaving(false);
+                }
+              }}
+              disabled={saving}
+              style={{
+                border: `1px solid ${colors.accent}`,
+                borderRadius: radius.md,
+                background: saving
+                  ? colors.border
+                  : `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent})`,
+                color: saving ? colors.text.faint : colors.bg,
+                padding: `${space[3]}px ${space[6]}px`,
+                cursor: saving ? 'default' : 'pointer',
+                fontWeight: fontWeight.bold,
+                minHeight: 40,
+              }}
+            >
+              {saving ? t('saving') : t('saveSections')}
+            </button>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
@@ -366,6 +546,16 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
               ))}
             </ul>
           </section>
+        )}
+        {content.custom_sections && content.custom_sections.length > 0 && (
+          content.custom_sections.map((section, i) => (
+            section.heading && section.body ? (
+              <section key={i}>
+                <h3 style={sectionTitleStyle}>{section.heading}</h3>
+                <p style={bodyStyle}>{section.body}</p>
+              </section>
+            ) : null
+          ))
         )}
       </div>
     </article>

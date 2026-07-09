@@ -561,8 +561,17 @@
   "pressKitStudio": {
     "pressKitAgent": "Press Kit Agent",
     "generateYourBookingReady": "Generate your booking-ready EPK.",
+    "pressKitDescription": "Your electronic press kit is built from your profile, published mixes, and social links. Generate it once, then customise with your own sections.",
     "loadingPressKitWorkspace": "Loading press kit workspace...",
     "noEpkGeneratedYet": "No EPK generated yet",
+    "noEpkDescription": "Generate your first EPK to get a shareable, booking-ready press kit built from your profile, top mixes, and social links.",
+    "generateEpk": "Generate EPK",
+    "regenerateEpk": "Regenerate",
+    "generating": "Generating…",
+    "versionPublic": "v{v} — {visibility} — {views} views",
+    "public": "Public",
+    "private": "Private",
+    "savedVersions": "{count} saved version(s)",
     "openPublicEpk": "Open public EPK",
     "downloadPdf": "Download PDF",
     "useWithOpportunities": "Use with opportunities",
@@ -571,7 +580,16 @@
     "bio": "Bio",
     "featuredMixes": "Featured mixes",
     "noPublishedMixesYet": "No published mixes yet.",
-    "technicalNotes": "Technical notes"
+    "technicalNotes": "Technical notes",
+    "addMoreProfileDetails": "Add more profile details to strengthen your pitch.",
+    "plays": "plays",
+    "customSections": "Custom sections",
+    "customSectionsHelp": "Add your own sections to highlight specific achievements, past performances, press quotes, or anything else promoters should know.",
+    "addSection": "Add section",
+    "saveSections": "Save sections",
+    "saving": "Saving…",
+    "sectionHeadingPlaceholder": "Section heading (e.g. \"Past performances\")",
+    "sectionBodyPlaceholder": "Write your section content here…"
   },
   "sceneRadar": {
     "signInToSee": "Sign in to see your scene radar.",
@@ -982,6 +1000,28 @@
     "rightsBody": "You can access and export your data, and request deletion, from Settings → Privacy & Data. Deletion is processed within a 30-day window. You may withdraw analytics consent at any time via the cookie banner.",
     "contactHeading": "Contact",
     "contactBody": "For privacy requests, contact the MixHive team via your account settings. Localized (DE/ES/etc.) versions of this policy will accompany regional launches."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated 2026-06-09",
+    "acceptableUseHeading": "Acceptable use",
+    "acceptableUseBody": "You agree to upload only content you have the rights to share, to respect other creators, and to follow the community guidelines. Abuse, harassment, and infringement may result in removal or account suspension.",
+    "yourContentHeading": "Your content",
+    "yourContentBody": "You retain ownership of the mixes and material you publish. You grant MixHive a limited licence to host and display your content so the platform can function.",
+    "marketplaceHeading": "Marketplace & payments",
+    "marketplaceBody": "Gear and agent marketplace transactions are processed via Stripe; escrow and payout terms are shown at the point of sale.",
+    "changesHeading": "Changes",
+    "changesBody": "We may update these terms; material changes will be communicated in-app."
+  },
+  "cookies": {
+    "title": "Cookie Policy",
+    "lastUpdated": "Last updated 2026-06-09",
+    "necessaryHeading": "Necessary",
+    "necessaryBody": "Required to sign you in, keep your session, and run core features. These are always on.",
+    "analyticsHeading": "Analytics (optional)",
+    "analyticsBody": "If you accept analytics, we use privacy-respecting product analytics to understand usage and improve MixHive. These are only loaded after you opt in via the consent banner.",
+    "managingHeading": "Managing your choice",
+    "managingBody": "Your consent is stored on this device and recorded against your account if you are signed in. Clearing site data resets the banner so you can choose again."
   },
   "cDNOptimizedAudio": {
     "cdn": "CDN",

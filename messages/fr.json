@@ -22,7 +22,10 @@
     "growth": "Croissance",
     "radar": "Radar",
     "dms": "MP",
-    "cell": "Cellule"
+    "cell": "Cellule",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies"
   },
   "feed": {
     "liveFeed": "Fil en direct",
@@ -105,6 +108,28 @@
     "contactHeading": "Contact",
     "contactBody": "Pour les demandes de confidentialité, contactez l'équipe MixHive via vos paramètres de compte. Des versions localisées (DE/ES/etc.) de cette politique accompagneront les lancements régionaux."
   },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "lastUpdated": "Dernière mise à jour 2026-06-09",
+    "acceptableUseHeading": "Utilisation acceptable",
+    "acceptableUseBody": "Vous acceptez de téléverser uniquement du contenu dont vous avez les droits, de respecter les autres créateurs et de suivre les directives de la communauté. Les abus, le harcèlement et les infractions peuvent entraîner la suppression ou la suspension du compte.",
+    "yourContentHeading": "Votre contenu",
+    "yourContentBody": "Vous conservez la propriété des mixes et du matériel que vous publiez. Vous accordez à MixHive une licence limitée pour héberger et afficher votre contenu afin que la plateforme puisse fonctionner.",
+    "marketplaceHeading": "Marché & paiements",
+    "marketplaceBody": "Les transactions sur le marché du matériel et des agents sont traitées via Stripe ; les conditions de dépôt et de paiement sont indiquées au point de vente.",
+    "changesHeading": "Modifications",
+    "changesBody": "Nous pouvons mettre à jour ces conditions ; les modifications importantes seront communiquées dans l'application."
+  },
+  "cookies": {
+    "title": "Politique de cookies",
+    "lastUpdated": "Dernière mise à jour 2026-06-09",
+    "necessaryHeading": "Nécessaires",
+    "necessaryBody": "Nécessaires pour vous connecter, maintenir votre session et exécuter les fonctionnalités de base. Ceux-ci sont toujours activés.",
+    "analyticsHeading": "Analytique (optionnel)",
+    "analyticsBody": "Si vous acceptez les analytics, nous utilisons des outils d'analyse respectueux de la vie privée pour comprendre l'utilisation et améliorer MixHive. Ceux-ci ne sont chargés qu'après votre consentement via la bannière de cookies.",
+    "managingHeading": "Gérer votre choix",
+    "managingBody": "Votre consentement est stocké sur cet appareil et enregistré sur votre compte si vous êtes connecté. Effacer les données du site réinitialise la bannière afin que vous puissiez choisir à nouveau."
+  },
   "upload": {
     "title": "Nectar - Téléversement",
     "dropTitle": "Déposez votre mix",
@@ -123,5 +148,15 @@
     "explicit": "Marquer comme contenu explicite",
     "trackTitle": "Titre du morceau",
     "startSec": "Début (sec)"
+  },
+  "pressKitStudio": {
+    "customSections": "Sections personnalisées",
+    "customSectionsHelp": "Ajoutez vos propres sections pour mettre en avant des réalisations spécifiques, des performances passées, des citations de presse ou toute information que les promoteurs devraient connaître.",
+    "addSection": "Ajouter une section",
+    "saveSections": "Enregistrer les sections",
+    "saving": "Enregistrement…",
+    "sectionHeadingPlaceholder": "Titre de section (ex. \"Performances passées\")",
+    "sectionBodyPlaceholder": "Écrivez le contenu de votre section ici…",
+    "remove": "Retirer"
   }
 }

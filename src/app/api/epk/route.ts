@@ -58,7 +58,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: ctx.error ?? 'Not authenticated' }, { status: 401 });
   }
 
-  const body = (await req.json().catch(() => ({}))) as { publish?: boolean };
+  const body = (await req.json().catch(() => ({}))) as {
+    publish?: boolean;
+    custom_sections?: Array<{ heading: string; body: string }>;
+  };
   const authHeader = req.headers.get('authorization')!;
   const jwt = authHeader.slice(7);
   const sb = createClient(
@@ -129,6 +132,7 @@ export async function POST(req: NextRequest) {
         : null,
     ]),
     generated_from: ['profile', 'published_mixes', 'social_links'],
+    custom_sections: body.custom_sections?.filter(s => s.heading.trim() && s.body.trim()) || [],
   };
 
   const baseSlug = slugify(profile.username || artistName);

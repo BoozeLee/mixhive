@@ -9,6 +9,7 @@ import { SkeletonFeed } from '../components/Skeleton';
 import { ProfileCoachPanel } from '../components/ProfileCoachPanel';
 import { CreatorRecap } from '../components/CreatorRecap';
 import { YieldForensicsPanel } from '../components/YieldForensicsPanel';
+import { ContentPerformance } from '../components/ContentPerformance';
 import type { ActivityEvent, Mix, ProfileAnalytics } from '../lib/types';
 import { colors, radius, space } from '../styles/tokens';
 
@@ -192,6 +193,8 @@ export function Dashboard() {
       <section style={{ marginBottom: space[10] }}>
         <ProfileCoachPanel compact />
       </section>
+
+      <ContentPerformance mixes={mixes} genres={analytics?.genreDistribution ?? []} />
 
       <section
         style={{

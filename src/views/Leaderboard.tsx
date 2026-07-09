@@ -48,6 +48,19 @@ export function Leaderboard() {
         <p style={{ color: colors.text.dim, fontSize: 13, margin: '6px 0 0' }}>
           Top builders ranked by XP earned from completed collab quests.
         </p>
+        <Link
+          to="/founding"
+          style={{
+            display: 'inline-block',
+            marginTop: 10,
+            fontSize: 13,
+            fontWeight: fontWeight.semibold,
+            color: colors.accent,
+            textDecoration: 'none',
+          }}
+        >
+          ⬡ Meet the Founding 50 →
+        </Link>
       </header>
 
       <div

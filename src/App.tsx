@@ -116,6 +116,9 @@ const Leaderboard = lazy(() =>
 const AgentTracks = lazy(() =>
   import('./views/AgentTracks').then(m => ({ default: m.AgentTracks }))
 );
+const FoundingMembers = lazy(() =>
+  import('./views/FoundingMembers').then(m => ({ default: m.FoundingMembers }))
+);
 const CollabQuests = lazy(() =>
   import('./views/CollabQuests').then(m => ({ default: m.CollabQuests }))
 );
@@ -391,6 +394,7 @@ function AnimatedRoutes() {
         />
         {/* Phase 15 — Collab Quests */}
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/founding" element={<FoundingMembers />} />
         <Route path="/ai-band/agent/:slug" element={<AgentTracks />} />
         <Route path="/collab-quests" element={<CollabQuests />} />
         <Route path="/collab-quests/:id" element={<CollabQuestDetail />} />

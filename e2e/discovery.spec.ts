@@ -20,6 +20,14 @@ test.describe('Public discovery pages', () => {
     ).toBeVisible({ timeout: 8_000 });
   });
 
+  test('founding page renders scarcity meter', async ({ page }) => {
+    await gotoShell(page, '/founding');
+    await expect(page.getByRole('heading', { name: /founding 50/i })).toBeVisible({
+      timeout: 8_000,
+    });
+    await expect(page.getByRole('progressbar')).toBeVisible({ timeout: 8_000 });
+  });
+
   test('search page renders input', async ({ page }) => {
     await gotoShell(page, '/search');
     await expect(

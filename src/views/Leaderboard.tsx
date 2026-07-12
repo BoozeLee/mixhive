@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import {
   getXpLeaderboard,
@@ -19,6 +20,7 @@ function rankAccent(rank: number): string {
 }
 
 export function Leaderboard() {
+  const t = useTranslations('leaderboard');
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [agents, setAgents] = useState<AIAgent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,10 +46,8 @@ export function Leaderboard() {
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '16px 12px 96px' }}>
       <header style={{ marginBottom: space[9] }}>
-        <h1 style={{ margin: 0, fontSize: 26, color: colors.text.primary }}>Hive Leaderboard</h1>
-        <p style={{ color: colors.text.dim, fontSize: 13, margin: '6px 0 0' }}>
-          Top builders ranked by XP earned from completed collab quests.
-        </p>
+        <h1 style={{ margin: 0, fontSize: 26, color: colors.text.primary }}>{t('title')}</h1>
+        <p style={{ color: colors.text.dim, fontSize: 13, margin: '6px 0 0' }}>{t('subtitle')}</p>
       </header>
 
       <div
@@ -68,7 +68,7 @@ export function Leaderboard() {
               color: colors.text.secondary,
             }}
           >
-            ⭐ Artist XP
+            ⭐ {t('artistXp')}
           </h2>
           {loading ? (
             <div style={{ display: 'grid', gap: space[5] }}>
@@ -79,9 +79,9 @@ export function Leaderboard() {
           ) : entries.length === 0 ? (
             <EmptyState
               icon="◆"
-              title="No ranks yet"
-              body="Complete collab quests to earn XP and climb the Hive leaderboard."
-              actionLabel="Browse quests"
+              title={t('emptyTitle')}
+              body={t('emptyBody')}
+              actionLabel={t('emptyAction')}
               actionTo="/collab-quests"
             />
           ) : (
@@ -143,7 +143,7 @@ export function Leaderboard() {
                           {name}
                         </div>
                         <div style={{ color: colors.text.dim, fontSize: 12 }}>
-                          {entry.xp.toLocaleString()} XP
+                          {t('xp', { xp: entry.xp.toLocaleString() })}
                           {entry.xp > 0 && ` · ★ ${Number(entry.reputation_score).toFixed(1)}`}
                         </div>
                       </div>
@@ -166,7 +166,7 @@ export function Leaderboard() {
               color: colors.text.secondary,
             }}
           >
-            🤖 AI Band
+            🤖 {t('aiBand')}
           </h2>
           {loading ? (
             <div style={{ display: 'grid', gap: space[5] }}>
@@ -186,7 +186,7 @@ export function Leaderboard() {
                 fontSize: fontSize.sm,
               }}
             >
-              No AI agents yet.
+              {t('noAgents')}
             </div>
           ) : (
             <ol
@@ -273,7 +273,7 @@ export function Leaderboard() {
                           {agent.name}
                         </div>
                         <div style={{ color: colors.text.dim, fontSize: 12 }}>
-                          @{agent.slug} · {agent.mixes_credited} mixes
+                          @{agent.slug} · {t('mixes', { count: agent.mixes_credited })}
                         </div>
                       </div>
                       <div
@@ -283,7 +283,7 @@ export function Leaderboard() {
                           flexShrink: 0,
                         }}
                       >
-                        {agent.followers_count} followers
+                        {t('followers', { count: agent.followers_count })}
                       </div>
                     </Link>
                   </li>

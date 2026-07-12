@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from './ui/Button';
 import { followAIAgent, unfollowAIAgent, isFollowingAIAgent, type AIAgent } from '../lib/api';
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function AIAgentCard({ agent, currentUserId, onFollowToggle }: Props) {
+  const t = useTranslations('aiBand');
   const navigate = useNavigate();
   const [following, setFollowing] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -183,14 +185,14 @@ export function AIAgentCard({ agent, currentUserId, onFollowToggle }: Props) {
               <span style={{ fontWeight: fontWeight.semibold, color: colors.text.secondary }}>
                 {localFollowers}
               </span>{' '}
-              followers
+              {t('followers')}
             </span>
             {agent.mixes_credited > 0 && (
               <span style={{ fontSize: fontSize.sm, color: colors.text.dim }}>
                 <span style={{ fontWeight: fontWeight.semibold, color: colors.text.secondary }}>
                   {agent.mixes_credited}
                 </span>{' '}
-                mixes
+                {t('mixes')}
               </span>
             )}
           </div>
@@ -201,7 +203,7 @@ export function AIAgentCard({ agent, currentUserId, onFollowToggle }: Props) {
             onClick={handleFollow}
             loading={busy}
           >
-            {following ? 'Following' : 'Follow'}
+            {following ? t('following') : t('follow')}
           </Button>
         </div>
       </div>

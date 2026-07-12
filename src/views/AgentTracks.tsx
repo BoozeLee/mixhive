@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams } from 'react-router-dom';
 import { getAgent, getMixesByAgent } from '../lib/api';
 import type { AiAgent, Mix } from '../lib/types';
@@ -10,6 +11,7 @@ import { colors, gradient, radius, shadow, space } from '../styles/tokens';
 
 // AI agent-artist page: a followable "AI bandmate" with stats + discography.
 export function AgentTracks() {
+  const t = useTranslations('aiBand');
   const { slug } = useParams<{ slug: string }>();
   const [agent, setAgent] = useState<AiAgent | null>(null);
   const [mixes, setMixes] = useState<Mix[]>([]);
@@ -40,9 +42,9 @@ export function AgentTracks() {
   const followers = (agent?.follower_count || 0) + followDelta;
 
   const stats: Array<[string, string]> = [
-    [followers.toLocaleString(), followers === 1 ? 'follower' : 'followers'],
-    [String(mixes.length), mixes.length === 1 ? 'track' : 'tracks'],
-    [totalPlays.toLocaleString(), 'plays'],
+    [followers.toLocaleString(), followers === 1 ? t('follower') : t('followers')],
+    [String(mixes.length), mixes.length === 1 ? t('track') : t('tracks')],
+    [totalPlays.toLocaleString(), t('plays')],
   ];
 
   return (
@@ -88,9 +90,9 @@ export function AgentTracks() {
               border: `1px solid ${colors.accentMuted}`,
               color: colors.accent,
             }}
-            title="An AI bandmate — a credited collaborator, always tied to its human producers"
+            title={t('bandmateTooltip')}
           >
-            ✦ AI bandmate
+            ✦ {t('bandmate')}
           </span>
           <h1 style={{ margin: '6px 0 0', fontSize: 26, color: colors.text.primary }}>{name}</h1>
           <div style={{ display: 'flex', gap: space[8], marginTop: space[5], flexWrap: 'wrap' }}>
@@ -112,7 +114,7 @@ export function AgentTracks() {
           marginBottom: space[6],
         }}
       >
-        Discography
+        {t('discography')}
       </h2>
 
       {loading ? (
@@ -124,8 +126,8 @@ export function AgentTracks() {
       ) : mixes.length === 0 ? (
         <EmptyState
           icon="✦"
-          title="No tracks yet"
-          body={`No published tracks credit ${name} as an AI band member yet.`}
+          title={t('noTracksTitle')}
+          body={t('noTracksBody', { name })}
         />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { listAIAgents, type AIAgent } from '../lib/api';
 import { AIAgentCard } from '../components/AIAgentCard';
@@ -9,6 +10,7 @@ import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 type Sort = 'followers' | 'mixes';
 
 export function AIBandIndex() {
+  const t = useTranslations('aiBand');
   const { user } = useAuth();
   const [agents, setAgents] = useState<AIAgent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,17 +56,17 @@ export function AIBandIndex() {
               margin: 0,
             }}
           >
-            AI Band
+            {t('title')}
           </h1>
           <p style={{ fontSize: fontSize.md, color: colors.text.muted, marginTop: 6 }}>
-            The autonomous artists of the Hive
+            {t('subtitle')}
           </p>
         </div>
 
         {/* Sort toggle */}
         <div
           role="group"
-          aria-label="Sort AI Band"
+          aria-label={t('sortLabel')}
           style={{
             display: 'flex',
             gap: 2,
@@ -91,7 +93,7 @@ export function AIBandIndex() {
                 cursor: 'pointer',
               }}
             >
-              {value === 'followers' ? 'Top followers' : 'Most mixes'}
+              {value === 'followers' ? t('sortFollowers') : t('sortMixes')}
             </button>
           ))}
         </div>
@@ -102,10 +104,7 @@ export function AIBandIndex() {
           <LoadingSpinner />
         </div>
       ) : sorted.length === 0 ? (
-        <EmptyState
-          title="No AI agents yet"
-          description="AI-Band members will appear here once they're active in the Hive."
-        />
+        <EmptyState title={t('emptyTitle')} body={t('emptyBody')} />
       ) : (
         <div
           style={{

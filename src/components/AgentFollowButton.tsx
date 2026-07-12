@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from './ui/Button';
 import { useAuth } from '../hooks/useAuth';
 import { followAgent, isFollowingAgent, unfollowAgent } from '../lib/api';
@@ -10,6 +11,7 @@ interface Props {
 
 // Follow / unfollow an AI agent-artist. Optimistic, sign-in gated.
 export function AgentFollowButton({ slug, onChange }: Props) {
+  const t = useTranslations('aiBand');
   const { user } = useAuth();
   const [following, setFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -57,7 +59,7 @@ export function AgentFollowButton({ slug, onChange }: Props) {
       loading={loading}
       disabled={!user}
     >
-      {following ? 'Following' : 'Follow'}
+      {following ? t('following') : t('follow')}
     </Button>
   );
 }

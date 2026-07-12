@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -41,6 +42,7 @@ function mixFromCredit(credit: AIAgentMix): FeedMix | null {
 }
 
 export function AIBandDetail() {
+  const t = useTranslations('aiBand');
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -101,14 +103,12 @@ export function AIBandDetail() {
       <div style={{ maxWidth: 600, margin: '80px auto', textAlign: 'center', padding: '0 16px' }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>🤖</div>
         <h1 style={{ fontSize: fontSize.xl, color: colors.text.primary, marginBottom: 8 }}>
-          Agent not found
+          {t('notFoundTitle')}
         </h1>
-        <p style={{ color: colors.text.muted, marginBottom: 24 }}>
-          This AI agent doesn't exist or is no longer active.
-        </p>
+        <p style={{ color: colors.text.muted, marginBottom: 24 }}>{t('notFoundBody')}</p>
         <Link to="/ai-band">
           <Button variant="secondary" size="sm">
-            Back to AI Band
+            {t('backToBand')}
           </Button>
         </Link>
       </div>
@@ -197,7 +197,7 @@ export function AIBandDetail() {
               onClick={handleFollow}
               loading={followBusy}
             >
-              {following ? 'Following' : 'Follow'}
+              {following ? t('following') : t('follow')}
             </Button>
           </div>
 
@@ -220,21 +220,21 @@ export function AIBandDetail() {
               <span style={{ fontWeight: fontWeight.semibold, color: colors.text.primary }}>
                 {localFollowers}
               </span>
-              <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}> followers</span>
+              <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}> {t('followers')}</span>
             </div>
             <div>
               <span style={{ fontWeight: fontWeight.semibold, color: colors.text.primary }}>
                 {agent.mixes_credited}
               </span>
-              <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}> mixes</span>
+              <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}> {t('mixes')}</span>
             </div>
             <div>
               <span style={{ fontWeight: fontWeight.semibold, color: colors.text.primary }}>
-                Lv.{agent.level}
+                {t('levelShort', { level: agent.level })}
               </span>
               <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
                 {' '}
-                · {agent.xp} XP
+                · {t('xp', { xp: agent.xp })}
               </span>
             </div>
           </div>
@@ -272,7 +272,7 @@ export function AIBandDetail() {
           marginBottom: space[5],
         }}
       >
-        Credited on
+        {t('creditedOn')}
       </h2>
 
       {mixes.length === 0 ? (
@@ -284,7 +284,7 @@ export function AIBandDetail() {
             fontSize: fontSize.md,
           }}
         >
-          No mixes credited yet.
+          {t('noCreditedMixes')}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>

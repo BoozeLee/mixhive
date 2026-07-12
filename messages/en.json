@@ -180,7 +180,76 @@
     "topSignal": "Top signal",
     "recentActivity": "Recent fan activity",
     "nextActions": "Next best actions",
-    "automationBees": "Automation bees"
+    "automationBees": "Automation bees",
+    "creatorFallback": "Creator",
+    "commandCell": "{name} command cell",
+    "subtitle": "Track your sound, activate the swarm, and turn listeners into collaborators.",
+    "stats": {
+      "plays": "plays",
+      "likes": "likes",
+      "comments": "comments",
+      "followers": "followers"
+    },
+    "topMixStats": "{plays} plays / {likes} likes / {comments} comments",
+    "topMixEmpty": "No top mix yet. Upload your first mix to start collecting signal.",
+    "recentActivityEmpty": "Activity will appear here as listeners play, like, follow, and comment.",
+    "activity": {
+      "uploaded": "Uploaded {title}",
+      "liked": "Liked {title}",
+      "followed": "Followed {name}",
+      "aMix": "a mix",
+      "aCreator": "a creator"
+    },
+    "time": {
+      "justNow": "just now",
+      "minutes": "{n}m ago",
+      "hours": "{n}h ago",
+      "days": "{n}d ago",
+      "months": "{n}mo ago"
+    },
+    "actions": {
+      "upload": {
+        "title": "Drop fresh nectar",
+        "bodyEmpty": "Publish your first mix and seed the hive.",
+        "bodyActive": "Keep your cell active with a new upload.",
+        "cta": "Upload mix"
+      },
+      "profile": {
+        "title": "Tune your profile cell",
+        "bodyWithBio": "Refresh your story, links, genres, and visuals.",
+        "bodyNoBio": "Add a bio, genres, links, and visuals so fans know your sound.",
+        "cta": "Open profile"
+      },
+      "epk": {
+        "title": "Build your EPK",
+        "body": "Generate a booking-ready press kit from your profile and published mixes.",
+        "cta": "Open EPK studio"
+      },
+      "opportunities": {
+        "title": "Find your next opening",
+        "body": "Review Belgian pilot gigs, grants, radio calls, and club slots ranked for your profile.",
+        "cta": "Open opportunities"
+      }
+    },
+    "automation": {
+      "bodyEmpty": "Fork a starter agent to welcome followers, watch comments, and surface fan signals.",
+      "bodyActive": "{active} active / {total} total agents watching your hive.",
+      "ctaFork": "Fork starter agent",
+      "ctaManage": "Manage agents"
+    }
+  },
+  "contentPerformance": {
+    "heading": "Content performance",
+    "subtitle": "Which of your drops actually work — ranked by the signal they pull.",
+    "empty": "Publish a mix to see how each one performs.",
+    "catalogByGenre": "Catalog by genre",
+    "columns": {
+      "mix": "Mix",
+      "plays": "Plays",
+      "likes": "Likes",
+      "comments": "Comments",
+      "engagement": "Engagement"
+    }
   },
   "discover": {
     "eyebrow": "Music Discovery",

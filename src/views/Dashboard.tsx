@@ -13,27 +13,32 @@ import { ContentPerformance } from '../components/ContentPerformance';
 import type { ActivityEvent, Mix, ProfileAnalytics } from '../lib/types';
 import { colors, radius, space } from '../styles/tokens';
 
-function timeAgo(dateStr: string): string {
-  const now = Date.now();
-  const then = new Date(dateStr).getTime();
-  const diff = Math.floor((now - then) / 1000);
-  if (!Number.isFinite(diff)) return '';
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 2592000) return `${Math.floor(diff / 86400)}d ago`;
-  return `${Math.floor(diff / 2592000)}mo ago`;
-}
-
-function activityLabel(event: ActivityEvent) {
-  if (event.activity_type === 'upload') return `Uploaded ${event.mix_title || 'a mix'}`;
-  if (event.activity_type === 'like') return `Liked ${event.mix_title || 'a mix'}`;
-  return `Followed ${event.target_display_name || event.target_username || 'a creator'}`;
-}
-
 export function Dashboard() {
   const t = useTranslations('dashboard');
   const { user, profile } = useAuth();
+
+  function timeAgo(dateStr: string): string {
+    const now = Date.now();
+    const then = new Date(dateStr).getTime();
+    const diff = Math.floor((now - then) / 1000);
+    if (!Number.isFinite(diff)) return '';
+    if (diff < 60) return t('time.justNow');
+    if (diff < 3600) return t('time.minutes', { n: Math.floor(diff / 60) });
+    if (diff < 86400) return t('time.hours', { n: Math.floor(diff / 3600) });
+    if (diff < 2592000) return t('time.days', { n: Math.floor(diff / 86400) });
+    return t('time.months', { n: Math.floor(diff / 2592000) });
+  }
+
+  function activityLabel(event: ActivityEvent) {
+    if (event.activity_type === 'upload')
+      return t('activity.uploaded', { title: event.mix_title || t('activity.aMix') });
+    if (event.activity_type === 'like')
+      return t('activity.liked', { title: event.mix_title || t('activity.aMix') });
+    return t('activity.followed', {
+      name: event.target_display_name || event.target_username || t('activity.aCreator'),
+    });
+  }
+
   const [mixes, setMixes] = useState<Mix[]>([]);
   const [analytics, setAnalytics] = useState<ProfileAnalytics | null>(null);
   const [activity, setActivity] = useState<ActivityEvent[]>([]);
@@ -72,37 +77,35 @@ export function Dashboard() {
   const nextActions = useMemo(() => {
     const actions = [
       {
-        title: 'Drop fresh nectar',
+        title: t('actions.upload.title'),
         body:
           mixes.length === 0
-            ? 'Publish your first mix and seed the hive.'
-            : 'Keep your cell active with a new upload.',
+            ? t('actions.upload.bodyEmpty')
+            : t('actions.upload.bodyActive'),
         to: '/upload',
-        cta: 'Upload mix',
+        cta: t('actions.upload.cta'),
       },
       {
-        title: 'Tune your profile cell',
-        body: profile?.bio
-          ? 'Refresh your story, links, genres, and visuals.'
-          : 'Add a bio, genres, links, and visuals so fans know your sound.',
+        title: t('actions.profile.title'),
+        body: profile?.bio ? t('actions.profile.bodyWithBio') : t('actions.profile.bodyNoBio'),
         to: profile?.username ? `/u/${profile.username}` : '/settings',
-        cta: 'Open profile',
+        cta: t('actions.profile.cta'),
       },
       {
-        title: 'Build your EPK',
-        body: 'Generate a booking-ready press kit from your profile and published mixes.',
+        title: t('actions.epk.title'),
+        body: t('actions.epk.body'),
         to: '/epk',
-        cta: 'Open EPK studio',
+        cta: t('actions.epk.cta'),
       },
       {
-        title: 'Find your next opening',
-        body: 'Review Belgian pilot gigs, grants, radio calls, and club slots ranked for your profile.',
+        title: t('actions.opportunities.title'),
+        body: t('actions.opportunities.body'),
         to: '/opportunities',
-        cta: 'Open opportunities',
+        cta: t('actions.opportunities.cta'),
       },
     ];
     return actions;
-  }, [mixes.length, profile?.bio, profile?.username]);
+  }, [mixes.length, profile?.bio, profile?.username, t]);
 
   const topMix = analytics?.topMixes[0];
   const sparkline = analytics?.weeklyEvents.map(item => item.count) ?? [0, 0, 0, 0, 0, 0];
@@ -149,7 +152,9 @@ export function Dashboard() {
               textTransform: 'uppercase',
             }}
           >
-            {profile?.display_name || profile?.username || 'Creator'} command cell
+            {t('commandCell', {
+              name: profile?.display_name || profile?.username || t('creatorFallback'),
+            })}
           </h1>
           <p
             style={{
@@ -159,7 +164,7 @@ export function Dashboard() {
               lineHeight: 1.7,
             }}
           >
-            Track your sound, activate the swarm, and turn listeners into collaborators.
+            {t('subtitle')}
           </p>
         </div>
       </header>
@@ -173,16 +178,20 @@ export function Dashboard() {
         }}
       >
         <HiveCard>
-          <HiveStat label="plays" value={analytics?.totalPlays ?? 0} sparkline={sparkline} />
+          <HiveStat
+            label={t('stats.plays')}
+            value={analytics?.totalPlays ?? 0}
+            sparkline={sparkline}
+          />
         </HiveCard>
         <HiveCard>
-          <HiveStat label="likes" value={analytics?.totalLikes ?? 0} />
+          <HiveStat label={t('stats.likes')} value={analytics?.totalLikes ?? 0} />
         </HiveCard>
         <HiveCard>
-          <HiveStat label="comments" value={analytics?.totalComments ?? 0} />
+          <HiveStat label={t('stats.comments')} value={analytics?.totalComments ?? 0} />
         </HiveCard>
         <HiveCard>
-          <HiveStat label="followers" value={analytics?.followers ?? 0} />
+          <HiveStat label={t('stats.followers')} value={analytics?.followers ?? 0} />
         </HiveCard>
       </section>
 
@@ -241,8 +250,11 @@ export function Dashboard() {
                     {topMix.title}
                   </Link>
                   <p style={{ margin: '8px 0 0', color: colors.text.muted, fontSize: 13 }}>
-                    {topMix.play_count} plays / {topMix.like_count} likes / {topMix.comment_count}{' '}
-                    comments
+                    {t('topMixStats', {
+                      plays: topMix.play_count ?? 0,
+                      likes: topMix.like_count ?? 0,
+                      comments: topMix.comment_count ?? 0,
+                    })}
                   </p>
                   <div style={{ marginTop: 12 }}>
                     <WaveBar
@@ -254,9 +266,7 @@ export function Dashboard() {
                 </div>
               </div>
             ) : (
-              <p style={{ margin: 0, color: colors.text.muted }}>
-                No top mix yet. Upload your first mix to start collecting signal.
-              </p>
+              <p style={{ margin: 0, color: colors.text.muted }}>{t('topMixEmpty')}</p>
             )}
           </HiveCard>
 
@@ -265,9 +275,7 @@ export function Dashboard() {
               {t('recentActivity')}
             </h2>
             {activity.length === 0 ? (
-              <p style={{ margin: 0, color: colors.text.muted }}>
-                Activity will appear here as listeners play, like, follow, and comment.
-              </p>
+              <p style={{ margin: 0, color: colors.text.muted }}>{t('recentActivityEmpty')}</p>
             ) : (
               <div style={{ display: 'grid', gap: space[4] }}>
                 {activity.slice(0, 8).map((event, index) => (
@@ -363,8 +371,11 @@ export function Dashboard() {
               }}
             >
               {agents.length === 0
-                ? 'Fork a starter agent to welcome followers, watch comments, and surface fan signals.'
-                : `${agents.filter(agent => agent.enabled).length} active / ${agents.length} total agents watching your hive.`}
+                ? t('automation.bodyEmpty')
+                : t('automation.bodyActive', {
+                    active: agents.filter(agent => agent.enabled).length,
+                    total: agents.length,
+                  })}
             </p>
             <Link
               to={agents.length === 0 ? '/agents/gallery' : '/agents'}
@@ -376,7 +387,7 @@ export function Dashboard() {
                 textDecoration: 'none',
               }}
             >
-              {agents.length === 0 ? 'Fork starter agent' : 'Manage agents'}
+              {agents.length === 0 ? t('automation.ctaFork') : t('automation.ctaManage')}
             </Link>
           </HiveCard>
         </aside>

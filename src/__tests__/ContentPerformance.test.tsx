@@ -10,6 +10,12 @@ jest.mock('../components/hive', () => ({
   HiveCard: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
+// Mirror the repo pattern: t(key) returns the key. Column keys ('columns.plays'…)
+// still contain the human word, so the sort-button `name` regexes keep matching.
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => key,
+}));
+
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -39,7 +45,7 @@ function mixOrder(): string[] {
 describe('ContentPerformance', () => {
   it('renders a row per mix with engagement % (— when no plays)', () => {
     render(<ContentPerformance mixes={MIXES} genres={GENRES} />);
-    expect(screen.getByText('Content performance')).toBeInTheDocument();
+    expect(screen.getByText('heading')).toBeInTheDocument();
     expect(screen.getByText('Midnight Drive')).toBeInTheDocument();
     expect(screen.getByText('20%')).toBeInTheDocument(); // A: 20/100
     expect(screen.getByText('5%')).toBeInTheDocument(); // B: 10/200
@@ -72,6 +78,6 @@ describe('ContentPerformance', () => {
 
   it('shows an empty state when there are no mixes', () => {
     render(<ContentPerformance mixes={[]} genres={[]} />);
-    expect(screen.getByText(/Publish a mix to see how each one performs/i)).toBeInTheDocument();
+    expect(screen.getByText('empty')).toBeInTheDocument();
   });
 });

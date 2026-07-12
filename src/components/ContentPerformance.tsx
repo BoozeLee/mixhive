@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { HiveCard } from './hive';
 import type { Mix } from '../lib/types';
@@ -16,6 +17,8 @@ interface Props {
   mixes: Mix[];
   genres: Genre[];
 }
+
+const SORT_KEYS: SortKey[] = ['plays', 'likes', 'comments', 'engagement'];
 
 /** Engagement rate = (likes + comments) / plays. Null when there are no plays. */
 function engagementRate(mix: Mix): number | null {
@@ -37,13 +40,6 @@ function sortValue(mix: Mix, key: SortKey): number {
   }
 }
 
-const COLUMNS: { key: SortKey; label: string }[] = [
-  { key: 'plays', label: 'Plays' },
-  { key: 'likes', label: 'Likes' },
-  { key: 'comments', label: 'Comments' },
-  { key: 'engagement', label: 'Engagement' },
-];
-
 /**
  * Content-performance breakdown for the creator Dashboard: a sortable per-mix
  * table plus a share-of-catalog genre distribution. Reads only data already
@@ -51,6 +47,7 @@ const COLUMNS: { key: SortKey; label: string }[] = [
  * new fetches. Answers "which of my drops actually work?".
  */
 export function ContentPerformance({ mixes, genres }: Props) {
+  const t = useTranslations('contentPerformance');
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({
     key: 'plays',
     dir: 'desc',
@@ -92,16 +89,14 @@ export function ContentPerformance({ mixes, genres }: Props) {
     <section style={{ marginBottom: space[10] }}>
       <HiveCard>
         <h2 style={{ margin: '0 0 4px', color: colors.text.primary, fontSize: 20 }}>
-          Content performance
+          {t('heading')}
         </h2>
         <p style={{ margin: '0 0 18px', color: colors.text.muted, fontSize: 13 }}>
-          Which of your drops actually work — ranked by the signal they pull.
+          {t('subtitle')}
         </p>
 
         {mixes.length === 0 ? (
-          <p style={{ margin: 0, color: colors.text.muted }}>
-            Publish a mix to see how each one performs.
-          </p>
+          <p style={{ margin: 0, color: colors.text.muted }}>{t('empty')}</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table
@@ -126,13 +121,13 @@ export function ContentPerformance({ mixes, genres }: Props) {
                       letterSpacing: '0.06em',
                     }}
                   >
-                    Mix
+                    {t('columns.mix')}
                   </th>
-                  {COLUMNS.map(col => {
-                    const active = sort.key === col.key;
+                  {SORT_KEYS.map(key => {
+                    const active = sort.key === key;
                     return (
                       <th
-                        key={col.key}
+                        key={key}
                         scope="col"
                         aria-sort={
                           active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'
@@ -141,7 +136,7 @@ export function ContentPerformance({ mixes, genres }: Props) {
                       >
                         <button
                           type="button"
-                          onClick={() => toggleSort(col.key)}
+                          onClick={() => toggleSort(key)}
                           style={{
                             background: 'none',
                             border: 'none',
@@ -158,7 +153,7 @@ export function ContentPerformance({ mixes, genres }: Props) {
                             gap: 4,
                           }}
                         >
-                          {col.label}
+                          {t(`columns.${key}`)}
                           <span
                             aria-hidden="true"
                             style={{ fontSize: 9, opacity: active ? 1 : 0.3 }}
@@ -246,7 +241,7 @@ export function ContentPerformance({ mixes, genres }: Props) {
                 letterSpacing: '0.06em',
               }}
             >
-              Catalog by genre
+              {t('catalogByGenre')}
             </h3>
             <div style={{ display: 'grid', gap: space[5] }}>
               {sortedGenres.map(genre => {

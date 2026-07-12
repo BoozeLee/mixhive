@@ -1,0 +1,34 @@
+[
+  {
+    "class": "agent-notif",
+    "target": "agent:notif-prioritizer",
+    "targetMeta": {
+      "id": "agent:notif-prioritizer",
+      "kind": "agent",
+      "class": "agent-notif",
+      "path": "/api/cron/notification-prioritizer",
+      "oracle": "agent-notif-prioritizer",
+      "method": "POST"
+    },
+    "dims": {
+      "auth": "anon"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "agent-notif",
+    "target": "agent:notif-prioritizer",
+    "targetMeta": {
+      "id": "agent:notif-prioritizer",
+      "kind": "agent",
+      "class": "agent-notif",
+      "path": "/api/cron/notification-prioritizer",
+      "oracle": "agent-notif-prioritizer",
+      "method": "POST"
+    },
+    "dims": {
+      "auth": "completed"
+    },
+    "pinned": {}
+  }
+]

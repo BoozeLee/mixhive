@@ -1,0 +1,15 @@
+[
+  {
+    "class": "agent-aiband",
+    "target": "agent:ai-band-bridge",
+    "targetMeta": {
+      "id": "agent:ai-band-bridge",
+      "kind": "agent",
+      "class": "agent-aiband",
+      "path": "scripts/provenance_publish_demo.mjs",
+      "oracle": "agent-ai-band-bridge"
+    },
+    "dims": {},
+    "pinned": {}
+  }
+]

@@ -1,0 +1,2192 @@
+[
+  {
+    "class": "authed-ui",
+    "target": "route:/setup",
+    "targetMeta": {
+      "id": "route:/setup",
+      "kind": "ui",
+      "path": "/setup",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/setup",
+    "targetMeta": {
+      "id": "route:/setup",
+      "kind": "ui",
+      "path": "/setup",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "new-incomplete",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/dashboard",
+    "targetMeta": {
+      "id": "route:/dashboard",
+      "kind": "ui",
+      "path": "/dashboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/dashboard",
+    "targetMeta": {
+      "id": "route:/dashboard",
+      "kind": "ui",
+      "path": "/dashboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/settings",
+    "targetMeta": {
+      "id": "route:/settings",
+      "kind": "ui",
+      "path": "/settings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/upload",
+    "targetMeta": {
+      "id": "route:/upload",
+      "kind": "ui",
+      "path": "/upload",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "new-incomplete",
+      "data": "error",
+      "viewport": "390",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/mix/:id/edit",
+    "targetMeta": {
+      "id": "route:/mix/:id/edit",
+      "kind": "ui",
+      "path": "/mix/:id/edit",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "empty",
+      "viewport": "768",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents",
+    "targetMeta": {
+      "id": "route:/agents",
+      "kind": "ui",
+      "path": "/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "error",
+      "viewport": "1440",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents/inbox",
+    "targetMeta": {
+      "id": "route:/agents/inbox",
+      "kind": "ui",
+      "path": "/agents/inbox",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "390",
+      "locale": "de",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/settings",
+    "targetMeta": {
+      "id": "route:/settings",
+      "kind": "ui",
+      "path": "/settings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "populated",
+      "viewport": "1440",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/upload",
+    "targetMeta": {
+      "id": "route:/upload",
+      "kind": "ui",
+      "path": "/upload",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "new-incomplete",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "nl",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents",
+    "targetMeta": {
+      "id": "route:/agents",
+      "kind": "ui",
+      "path": "/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "populated",
+      "viewport": "768",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/scene-radar",
+    "targetMeta": {
+      "id": "route:/scene-radar",
+      "kind": "ui",
+      "path": "/scene-radar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "320",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/scene-radar",
+    "targetMeta": {
+      "id": "route:/scene-radar",
+      "kind": "ui",
+      "path": "/scene-radar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "empty",
+      "viewport": "390",
+      "locale": "nl",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/setup",
+    "targetMeta": {
+      "id": "route:/setup",
+      "kind": "ui",
+      "path": "/setup",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "new-incomplete",
+      "data": "error",
+      "viewport": "768",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/mix/:id/edit",
+    "targetMeta": {
+      "id": "route:/mix/:id/edit",
+      "kind": "ui",
+      "path": "/mix/:id/edit",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "populated",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/opportunities",
+    "targetMeta": {
+      "id": "route:/opportunities",
+      "kind": "ui",
+      "path": "/opportunities",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/dashboard",
+    "targetMeta": {
+      "id": "route:/dashboard",
+      "kind": "ui",
+      "path": "/dashboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "new-incomplete",
+      "data": "empty",
+      "viewport": "390",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents/inbox",
+    "targetMeta": {
+      "id": "route:/agents/inbox",
+      "kind": "ui",
+      "path": "/agents/inbox",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "768",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/opportunities",
+    "targetMeta": {
+      "id": "route:/opportunities",
+      "kind": "ui",
+      "path": "/opportunities",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "320",
+      "locale": "de",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests",
+    "targetMeta": {
+      "id": "route:/quests",
+      "kind": "ui",
+      "path": "/quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests",
+    "targetMeta": {
+      "id": "route:/quests",
+      "kind": "ui",
+      "path": "/quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests/:id",
+    "targetMeta": {
+      "id": "route:/quests/:id",
+      "kind": "ui",
+      "path": "/quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests/:id",
+    "targetMeta": {
+      "id": "route:/quests/:id",
+      "kind": "ui",
+      "path": "/quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/collab-quests/new",
+    "targetMeta": {
+      "id": "route:/collab-quests/new",
+      "kind": "ui",
+      "path": "/collab-quests/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/collab-quests/new",
+    "targetMeta": {
+      "id": "route:/collab-quests/new",
+      "kind": "ui",
+      "path": "/collab-quests/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/studio/avatar",
+    "targetMeta": {
+      "id": "route:/studio/avatar",
+      "kind": "ui",
+      "path": "/studio/avatar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/studio/avatar",
+    "targetMeta": {
+      "id": "route:/studio/avatar",
+      "kind": "ui",
+      "path": "/studio/avatar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/epk",
+    "targetMeta": {
+      "id": "route:/epk",
+      "kind": "ui",
+      "path": "/epk",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/epk",
+    "targetMeta": {
+      "id": "route:/epk",
+      "kind": "ui",
+      "path": "/epk",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/composer",
+    "targetMeta": {
+      "id": "route:/composer",
+      "kind": "ui",
+      "path": "/composer",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/composer",
+    "targetMeta": {
+      "id": "route:/composer",
+      "kind": "ui",
+      "path": "/composer",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/marketplace/gear/new",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/new",
+      "kind": "ui",
+      "path": "/marketplace/gear/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/marketplace/gear/new",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/new",
+      "kind": "ui",
+      "path": "/marketplace/gear/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/earnings",
+    "targetMeta": {
+      "id": "route:/earnings",
+      "kind": "ui",
+      "path": "/earnings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/earnings",
+    "targetMeta": {
+      "id": "route:/earnings",
+      "kind": "ui",
+      "path": "/earnings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages",
+    "targetMeta": {
+      "id": "route:/messages",
+      "kind": "ui",
+      "path": "/messages",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages",
+    "targetMeta": {
+      "id": "route:/messages",
+      "kind": "ui",
+      "path": "/messages",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages/:conversationId",
+    "targetMeta": {
+      "id": "route:/messages/:conversationId",
+      "kind": "ui",
+      "path": "/messages/:conversationId",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "conversationId": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages/:conversationId",
+    "targetMeta": {
+      "id": "route:/messages/:conversationId",
+      "kind": "ui",
+      "path": "/messages/:conversationId",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "conversationId": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id",
+    "targetMeta": {
+      "id": "route:/session/:id",
+      "kind": "ui",
+      "path": "/session/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id",
+    "targetMeta": {
+      "id": "route:/session/:id",
+      "kind": "ui",
+      "path": "/session/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id/replay",
+    "targetMeta": {
+      "id": "route:/session/:id/replay",
+      "kind": "ui",
+      "path": "/session/:id/replay",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id/replay",
+    "targetMeta": {
+      "id": "route:/session/:id/replay",
+      "kind": "ui",
+      "path": "/session/:id/replay",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/upload",
+    "targetMeta": {
+      "id": "route:/upload",
+      "kind": "ui",
+      "path": "/upload",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "populated",
+      "viewport": "768",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/setup",
+    "targetMeta": {
+      "id": "route:/setup",
+      "kind": "ui",
+      "path": "/setup",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "new-incomplete",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/settings",
+    "targetMeta": {
+      "id": "route:/settings",
+      "kind": "ui",
+      "path": "/settings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "390",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/upload",
+    "targetMeta": {
+      "id": "route:/upload",
+      "kind": "ui",
+      "path": "/upload",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/mix/:id/edit",
+    "targetMeta": {
+      "id": "route:/mix/:id/edit",
+      "kind": "ui",
+      "path": "/mix/:id/edit",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "390",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents",
+    "targetMeta": {
+      "id": "route:/agents",
+      "kind": "ui",
+      "path": "/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents/inbox",
+    "targetMeta": {
+      "id": "route:/agents/inbox",
+      "kind": "ui",
+      "path": "/agents/inbox",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "320",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/scene-radar",
+    "targetMeta": {
+      "id": "route:/scene-radar",
+      "kind": "ui",
+      "path": "/scene-radar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "populated",
+      "viewport": "768",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/opportunities",
+    "targetMeta": {
+      "id": "route:/opportunities",
+      "kind": "ui",
+      "path": "/opportunities",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "390",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests",
+    "targetMeta": {
+      "id": "route:/quests",
+      "kind": "ui",
+      "path": "/quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests/:id",
+    "targetMeta": {
+      "id": "route:/quests/:id",
+      "kind": "ui",
+      "path": "/quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/collab-quests/new",
+    "targetMeta": {
+      "id": "route:/collab-quests/new",
+      "kind": "ui",
+      "path": "/collab-quests/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/studio/avatar",
+    "targetMeta": {
+      "id": "route:/studio/avatar",
+      "kind": "ui",
+      "path": "/studio/avatar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/epk",
+    "targetMeta": {
+      "id": "route:/epk",
+      "kind": "ui",
+      "path": "/epk",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/composer",
+    "targetMeta": {
+      "id": "route:/composer",
+      "kind": "ui",
+      "path": "/composer",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/marketplace/gear/new",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/new",
+      "kind": "ui",
+      "path": "/marketplace/gear/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/earnings",
+    "targetMeta": {
+      "id": "route:/earnings",
+      "kind": "ui",
+      "path": "/earnings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages",
+    "targetMeta": {
+      "id": "route:/messages",
+      "kind": "ui",
+      "path": "/messages",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages/:conversationId",
+    "targetMeta": {
+      "id": "route:/messages/:conversationId",
+      "kind": "ui",
+      "path": "/messages/:conversationId",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "conversationId": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id",
+    "targetMeta": {
+      "id": "route:/session/:id",
+      "kind": "ui",
+      "path": "/session/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id/replay",
+    "targetMeta": {
+      "id": "route:/session/:id/replay",
+      "kind": "ui",
+      "path": "/session/:id/replay",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/setup",
+    "targetMeta": {
+      "id": "route:/setup",
+      "kind": "ui",
+      "path": "/setup",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/dashboard",
+    "targetMeta": {
+      "id": "route:/dashboard",
+      "kind": "ui",
+      "path": "/dashboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/settings",
+    "targetMeta": {
+      "id": "route:/settings",
+      "kind": "ui",
+      "path": "/settings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "768",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/mix/:id/edit",
+    "targetMeta": {
+      "id": "route:/mix/:id/edit",
+      "kind": "ui",
+      "path": "/mix/:id/edit",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents",
+    "targetMeta": {
+      "id": "route:/agents",
+      "kind": "ui",
+      "path": "/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "390",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents/inbox",
+    "targetMeta": {
+      "id": "route:/agents/inbox",
+      "kind": "ui",
+      "path": "/agents/inbox",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/scene-radar",
+    "targetMeta": {
+      "id": "route:/scene-radar",
+      "kind": "ui",
+      "path": "/scene-radar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/opportunities",
+    "targetMeta": {
+      "id": "route:/opportunities",
+      "kind": "ui",
+      "path": "/opportunities",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests",
+    "targetMeta": {
+      "id": "route:/quests",
+      "kind": "ui",
+      "path": "/quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests/:id",
+    "targetMeta": {
+      "id": "route:/quests/:id",
+      "kind": "ui",
+      "path": "/quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/collab-quests/new",
+    "targetMeta": {
+      "id": "route:/collab-quests/new",
+      "kind": "ui",
+      "path": "/collab-quests/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/studio/avatar",
+    "targetMeta": {
+      "id": "route:/studio/avatar",
+      "kind": "ui",
+      "path": "/studio/avatar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/epk",
+    "targetMeta": {
+      "id": "route:/epk",
+      "kind": "ui",
+      "path": "/epk",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/composer",
+    "targetMeta": {
+      "id": "route:/composer",
+      "kind": "ui",
+      "path": "/composer",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/marketplace/gear/new",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/new",
+      "kind": "ui",
+      "path": "/marketplace/gear/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/earnings",
+    "targetMeta": {
+      "id": "route:/earnings",
+      "kind": "ui",
+      "path": "/earnings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages",
+    "targetMeta": {
+      "id": "route:/messages",
+      "kind": "ui",
+      "path": "/messages",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages/:conversationId",
+    "targetMeta": {
+      "id": "route:/messages/:conversationId",
+      "kind": "ui",
+      "path": "/messages/:conversationId",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "conversationId": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id",
+    "targetMeta": {
+      "id": "route:/session/:id",
+      "kind": "ui",
+      "path": "/session/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id/replay",
+    "targetMeta": {
+      "id": "route:/session/:id/replay",
+      "kind": "ui",
+      "path": "/session/:id/replay",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/dashboard",
+    "targetMeta": {
+      "id": "route:/dashboard",
+      "kind": "ui",
+      "path": "/dashboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/settings",
+    "targetMeta": {
+      "id": "route:/settings",
+      "kind": "ui",
+      "path": "/settings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/upload",
+    "targetMeta": {
+      "id": "route:/upload",
+      "kind": "ui",
+      "path": "/upload",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/mix/:id/edit",
+    "targetMeta": {
+      "id": "route:/mix/:id/edit",
+      "kind": "ui",
+      "path": "/mix/:id/edit",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents",
+    "targetMeta": {
+      "id": "route:/agents",
+      "kind": "ui",
+      "path": "/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/agents/inbox",
+    "targetMeta": {
+      "id": "route:/agents/inbox",
+      "kind": "ui",
+      "path": "/agents/inbox",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/scene-radar",
+    "targetMeta": {
+      "id": "route:/scene-radar",
+      "kind": "ui",
+      "path": "/scene-radar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/opportunities",
+    "targetMeta": {
+      "id": "route:/opportunities",
+      "kind": "ui",
+      "path": "/opportunities",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests",
+    "targetMeta": {
+      "id": "route:/quests",
+      "kind": "ui",
+      "path": "/quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/quests/:id",
+    "targetMeta": {
+      "id": "route:/quests/:id",
+      "kind": "ui",
+      "path": "/quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/collab-quests/new",
+    "targetMeta": {
+      "id": "route:/collab-quests/new",
+      "kind": "ui",
+      "path": "/collab-quests/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/studio/avatar",
+    "targetMeta": {
+      "id": "route:/studio/avatar",
+      "kind": "ui",
+      "path": "/studio/avatar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/epk",
+    "targetMeta": {
+      "id": "route:/epk",
+      "kind": "ui",
+      "path": "/epk",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/composer",
+    "targetMeta": {
+      "id": "route:/composer",
+      "kind": "ui",
+      "path": "/composer",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/marketplace/gear/new",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/new",
+      "kind": "ui",
+      "path": "/marketplace/gear/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/earnings",
+    "targetMeta": {
+      "id": "route:/earnings",
+      "kind": "ui",
+      "path": "/earnings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages",
+    "targetMeta": {
+      "id": "route:/messages",
+      "kind": "ui",
+      "path": "/messages",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/messages/:conversationId",
+    "targetMeta": {
+      "id": "route:/messages/:conversationId",
+      "kind": "ui",
+      "path": "/messages/:conversationId",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "conversationId": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id",
+    "targetMeta": {
+      "id": "route:/session/:id",
+      "kind": "ui",
+      "path": "/session/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-ui",
+    "target": "route:/session/:id/replay",
+    "targetMeta": {
+      "id": "route:/session/:id/replay",
+      "kind": "ui",
+      "path": "/session/:id/replay",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {}
+  }
+]

@@ -314,6 +314,9 @@
     "notFoundWhat": "help article",
     "backToCenter": "Back to Help Center"
   },
+  "avatarStudio": {
+    "backToSettings": "Back to settings"
+  },
   "discover": {
     "eyebrow": "Music Discovery",
     "title": "Discover",

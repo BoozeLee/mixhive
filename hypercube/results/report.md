@@ -1,6 +1,6 @@
 # MixHive Hypercube Verification Report
 
-**Verdict: FAIL**  ·  executed 252 cells → ✅ 248 pass · ❌ 4 fail · ⛔ 0 blocked(expected-gate)
+**Verdict: FAIL**  ·  executed 261 cells → ✅ 252 pass · ❌ 4 fail · ⛔ 5 blocked(expected-gate)
 
 Model: t=2 pairwise covering array, **overall ρ = 1.0000** across 399 planned cells (see `generated/coverage.json`).
 
@@ -33,13 +33,21 @@ Model: t=2 pairwise covering array, **overall ρ = 1.0000** across 399 planned c
 
 ## Blocked (expected gates / missing creds)
 
-_None._
+- **no-credential** (4 cells, 4 targets): api:POST /api/cron/strategic-agents, api:POST /api/cron/notification-prioritizer, agent:session-spirit, agent:ai-band-bridge
+- **no-sample** (1 cells, 1 targets): agent:audio-worker
 
 ## Executed by class
 
 | class | pass | fail | blocked |
 |---|---|---|---|
+| agent-aiband | 0 | 0 | 1 |
+| agent-audio | 0 | 0 | 1 |
+| agent-lua | 1 | 0 | 0 |
+| agent-notif | 1 | 0 | 1 |
+| agent-session-spirit | 0 | 0 | 1 |
+| agent-strategic | 1 | 0 | 1 |
+| agent-wasmoon | 1 | 0 | 0 |
 | authed-ui | 73 | 0 | 0 |
 | public-ui | 175 | 4 | 0 |
 
-_Generated 2026-07-12T17:31:59.914Z from hypercube/results/cells.jsonl_
+_Generated 2026-07-12T17:33:56.559Z from hypercube/results/cells.jsonl_

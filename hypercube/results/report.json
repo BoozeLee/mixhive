@@ -1,10 +1,10 @@
 {
   "verdict": "FAIL",
   "totals": {
-    "pass": 248,
+    "pass": 252,
     "fail": 4,
-    "blocked": 0,
-    "executed": 252
+    "blocked": 5,
+    "executed": 261
   },
   "coverage": {
     "overallRho": 1,
@@ -183,5 +183,46 @@
       "repro": "npx playwright test --config hypercube/hypercube.config.ts -g \"route:/register · a=anon d=empty v=320 l=en m=no-preference\""
     }
   ],
-  "blocked": []
+  "blocked": [
+    {
+      "target": "api:POST /api/cron/strategic-agents",
+      "env": "prod",
+      "dims": {
+        "auth": "completed"
+      },
+      "reason": "no-credential"
+    },
+    {
+      "target": "api:POST /api/cron/notification-prioritizer",
+      "env": "prod",
+      "dims": {
+        "auth": "completed"
+      },
+      "reason": "no-credential"
+    },
+    {
+      "target": "agent:session-spirit",
+      "env": "prod",
+      "dims": {
+        "probe": "cooldown"
+      },
+      "reason": "no-credential"
+    },
+    {
+      "target": "agent:audio-worker",
+      "env": "prod",
+      "dims": {
+        "probe": "selftest"
+      },
+      "reason": "no-sample"
+    },
+    {
+      "target": "agent:ai-band-bridge",
+      "env": "prod",
+      "dims": {
+        "probe": "publish"
+      },
+      "reason": "no-credential"
+    }
+  ]
 }

@@ -205,7 +205,7 @@ export function AgentMarketplace() {
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
-        <select value={category} onChange={e => setCategory(e.target.value)} style={selectStyle}>
+        <select value={category} onChange={e => setCategory(e.target.value)} style={selectStyle} aria-label="Filter by category">
           {CATEGORIES.map(c => (
             <option key={c.value} value={c.value}>
               {c.label}
@@ -216,6 +216,7 @@ export function AgentMarketplace() {
           value={discipline}
           onChange={e => setDiscipline(e.target.value)}
           style={selectStyle}
+          aria-label="Filter by discipline"
         >
           <option value="">{t('allDisciplines')}</option>
           {DISCIPLINES.map(d => (

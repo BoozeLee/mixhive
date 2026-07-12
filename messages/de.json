@@ -1,1 +1,144 @@
-{}
+{
+  "dashboard": {
+    "title": "Hive Growth OS",
+    "topSignal": "Top-Signal",
+    "recentActivity": "Neueste Fan-Aktivität",
+    "nextActions": "Nächste beste Aktionen",
+    "automationBees": "Automatisierungsbienen",
+    "creatorFallback": "Creator",
+    "commandCell": "Kommandozelle von {name}",
+    "subtitle": "Verfolge deinen Sound, aktiviere den Schwarm und mach aus Hörern Mitwirkende.",
+    "stats": {
+      "plays": "Wiedergaben",
+      "likes": "Likes",
+      "comments": "Kommentare",
+      "followers": "Follower"
+    },
+    "topMixStats": "{plays} Wiedergaben / {likes} Likes / {comments} Kommentare",
+    "topMixEmpty": "Noch kein Top-Mix. Lade deinen ersten Mix hoch, um Signal zu sammeln.",
+    "recentActivityEmpty": "Aktivität erscheint hier, sobald Hörer abspielen, liken, folgen und kommentieren.",
+    "activity": {
+      "uploaded": "{title} hochgeladen",
+      "liked": "{title} geliked",
+      "followed": "{name} gefolgt",
+      "aMix": "einen Mix",
+      "aCreator": "einem Creator"
+    },
+    "time": {
+      "justNow": "gerade eben",
+      "minutes": "vor {n} Min.",
+      "hours": "vor {n} Std.",
+      "days": "vor {n} T.",
+      "months": "vor {n} Mon."
+    },
+    "actions": {
+      "upload": {
+        "title": "Frischen Nektar abwerfen",
+        "bodyEmpty": "Veröffentliche deinen ersten Mix und belebe den Bienenstock.",
+        "bodyActive": "Halte deine Zelle mit einem neuen Upload aktiv.",
+        "cta": "Mix hochladen"
+      },
+      "profile": {
+        "title": "Stimme deine Profilzelle ab",
+        "bodyWithBio": "Aktualisiere deine Story, Links, Genres und Visuals.",
+        "bodyNoBio": "Füge Bio, Genres, Links und Visuals hinzu, damit Fans deinen Sound kennen.",
+        "cta": "Profil öffnen"
+      },
+      "epk": {
+        "title": "Erstelle dein EPK",
+        "body": "Erzeuge aus deinem Profil und veröffentlichten Mixes ein buchungsfertiges Pressekit.",
+        "cta": "EPK-Studio öffnen"
+      },
+      "opportunities": {
+        "title": "Finde deinen nächsten Auftritt",
+        "body": "Sieh dir belgische Pilot-Gigs, Förderungen, Radioaufrufe und Club-Slots an, sortiert nach deinem Profil.",
+        "cta": "Chancen öffnen"
+      }
+    },
+    "automation": {
+      "bodyEmpty": "Forke einen Starter-Agenten, um Follower zu begrüßen, Kommentare zu beobachten und Fan-Signale sichtbar zu machen.",
+      "bodyActive": "{active} aktiv / {total} Agenten insgesamt bewachen deinen Bienenstock.",
+      "ctaFork": "Starter-Agent forken",
+      "ctaManage": "Agenten verwalten"
+    }
+  },
+  "contentPerformance": {
+    "heading": "Content-Performance",
+    "subtitle": "Welche deiner Drops wirklich funktionieren — sortiert nach dem Signal, das sie erzeugen.",
+    "empty": "Veröffentliche einen Mix, um zu sehen, wie jeder abschneidet.",
+    "catalogByGenre": "Katalog nach Genre",
+    "columns": {
+      "mix": "Mix",
+      "plays": "Wiedergaben",
+      "likes": "Likes",
+      "comments": "Kommentare",
+      "engagement": "Engagement"
+    }
+  },
+  "leaderboard": {
+    "title": "Hive-Bestenliste",
+    "subtitle": "Top-Builder sortiert nach XP aus abgeschlossenen Collab-Quests.",
+    "artistXp": "Künstler-XP",
+    "aiBand": "AI Band",
+    "emptyTitle": "Noch keine Platzierungen",
+    "emptyBody": "Schließe Collab-Quests ab, um XP zu verdienen und in der Hive-Bestenliste aufzusteigen.",
+    "emptyAction": "Quests durchsuchen",
+    "noAgents": "Noch keine KI-Agenten.",
+    "xp": "{xp} XP",
+    "mixes": "{count} Mixes",
+    "followers": "{count} Follower"
+  },
+  "aiBand": {
+    "title": "AI Band",
+    "subtitle": "Die autonomen Künstler der Hive",
+    "sortLabel": "AI Band sortieren",
+    "sortFollowers": "Meiste Follower",
+    "sortMixes": "Meiste Mixes",
+    "emptyTitle": "Noch keine KI-Agenten",
+    "emptyBody": "AI-Band-Mitglieder erscheinen hier, sobald sie in der Hive aktiv sind.",
+    "follow": "Folgen",
+    "following": "Gefolgt",
+    "followers": "Follower",
+    "mixes": "Mixes",
+    "notFoundTitle": "Agent nicht gefunden",
+    "notFoundBody": "Dieser KI-Agent existiert nicht oder ist nicht mehr aktiv.",
+    "backToBand": "Zurück zur AI Band",
+    "levelShort": "Lv. {level}",
+    "xp": "{xp} XP",
+    "creditedOn": "Mitgewirkt bei",
+    "noCreditedMixes": "Noch keine Mixes vermerkt.",
+    "bandmate": "KI-Bandmitglied",
+    "bandmateTooltip": "Ein KI-Bandmitglied — ein genannter Mitwirkender, stets mit seinen menschlichen Produzenten verbunden",
+    "follower": "Follower",
+    "track": "Track",
+    "tracks": "Tracks",
+    "plays": "Wiedergaben",
+    "discography": "Diskografie",
+    "noTracksTitle": "Noch keine Tracks",
+    "noTracksBody": "Noch keine veröffentlichten Tracks nennen {name} als AI-Band-Mitglied."
+  },
+  "ritualReplay": {
+    "unavailable": "Wiederholung nicht verfügbar",
+    "loading": "Ritual wird rekonstruiert…",
+    "backToSession": "Session",
+    "titleSuffix": "{title} · Wiederholung",
+    "subtitle": "Eine Herkunfts-Zeitleiste von Entscheidungen, Signalen und Session-Spirit-Eingriffen.",
+    "empty": "Noch keine aufgezeichneten Momente."
+  },
+  "help": {
+    "eyebrow": "Hilfecenter",
+    "title": "Wie können wir helfen?",
+    "subtitle": "Anleitungen für den Einstieg, das Hochladen von Mixes, das Bauen von KI-Agenten, Quests, den Marktplatz und dein Konto.",
+    "searchPlaceholder": "Hilfeartikel suchen…",
+    "searchLabel": "Hilfeartikel suchen",
+    "resultOne": "{count} Ergebnis",
+    "resultOther": "{count} Ergebnisse",
+    "noMatch": "Keine Artikel passen zu „{query}“. Versuche einen anderen Begriff.",
+    "backLink": "Hilfecenter",
+    "notFoundWhat": "Hilfeartikel",
+    "backToCenter": "Zurück zum Hilfecenter"
+  },
+  "avatarStudio": {
+    "backToSettings": "Zurück zu den Einstellungen"
+  }
+}

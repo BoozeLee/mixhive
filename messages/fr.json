@@ -158,5 +158,147 @@
     "sectionHeadingPlaceholder": "Titre de section (ex. \"Performances passées\")",
     "sectionBodyPlaceholder": "Écrivez le contenu de votre section ici…",
     "remove": "Retirer"
+  },
+  "dashboard": {
+    "title": "Hive Growth OS",
+    "topSignal": "Signal principal",
+    "recentActivity": "Activité récente des fans",
+    "nextActions": "Prochaines actions clés",
+    "automationBees": "Abeilles d'automatisation",
+    "creatorFallback": "Créateur",
+    "commandCell": "Cellule de commande de {name}",
+    "subtitle": "Suivez votre son, activez l'essaim et transformez vos auditeurs en collaborateurs.",
+    "stats": {
+      "plays": "écoutes",
+      "likes": "j'aime",
+      "comments": "commentaires",
+      "followers": "abonnés"
+    },
+    "topMixStats": "{plays} écoutes / {likes} j'aime / {comments} commentaires",
+    "topMixEmpty": "Pas encore de mix phare. Téléversez votre premier mix pour commencer à capter du signal.",
+    "recentActivityEmpty": "L'activité apparaîtra ici au fil des écoutes, j'aime, abonnements et commentaires.",
+    "activity": {
+      "uploaded": "A publié {title}",
+      "liked": "A aimé {title}",
+      "followed": "A suivi {name}",
+      "aMix": "un mix",
+      "aCreator": "un créateur"
+    },
+    "time": {
+      "justNow": "à l'instant",
+      "minutes": "il y a {n} min",
+      "hours": "il y a {n} h",
+      "days": "il y a {n} j",
+      "months": "il y a {n} mois"
+    },
+    "actions": {
+      "upload": {
+        "title": "Déposez du nectar frais",
+        "bodyEmpty": "Publiez votre premier mix et ensemencez la ruche.",
+        "bodyActive": "Gardez votre cellule active avec un nouveau téléversement.",
+        "cta": "Téléverser un mix"
+      },
+      "profile": {
+        "title": "Peaufinez votre cellule de profil",
+        "bodyWithBio": "Actualisez votre histoire, vos liens, genres et visuels.",
+        "bodyNoBio": "Ajoutez une bio, des genres, des liens et des visuels pour que les fans connaissent votre son.",
+        "cta": "Ouvrir le profil"
+      },
+      "epk": {
+        "title": "Créez votre EPK",
+        "body": "Générez un dossier de presse prêt pour le booking à partir de votre profil et de vos mix publiés.",
+        "cta": "Ouvrir le studio EPK"
+      },
+      "opportunities": {
+        "title": "Trouvez votre prochaine opportunité",
+        "body": "Découvrez les concerts pilotes belges, subventions, appels radio et créneaux en club classés selon votre profil.",
+        "cta": "Ouvrir les opportunités"
+      }
+    },
+    "automation": {
+      "bodyEmpty": "Dupliquez un agent de départ pour accueillir les abonnés, surveiller les commentaires et faire ressortir les signaux des fans.",
+      "bodyActive": "{active} actifs / {total} agents au total veillent sur votre ruche.",
+      "ctaFork": "Dupliquer un agent",
+      "ctaManage": "Gérer les agents"
+    }
+  },
+  "contentPerformance": {
+    "heading": "Performance du contenu",
+    "subtitle": "Quels de vos titres fonctionnent vraiment — classés selon le signal qu'ils génèrent.",
+    "empty": "Publiez un mix pour voir comment chacun performe.",
+    "catalogByGenre": "Catalogue par genre",
+    "columns": {
+      "mix": "Mix",
+      "plays": "Écoutes",
+      "likes": "J'aime",
+      "comments": "Commentaires",
+      "engagement": "Engagement"
+    }
+  },
+  "leaderboard": {
+    "title": "Classement Hive",
+    "subtitle": "Les meilleurs bâtisseurs classés selon les XP gagnés lors des quêtes de collaboration terminées.",
+    "artistXp": "XP d'artiste",
+    "aiBand": "AI Band",
+    "emptyTitle": "Pas encore de classement",
+    "emptyBody": "Terminez des quêtes de collaboration pour gagner des XP et grimper dans le classement Hive.",
+    "emptyAction": "Parcourir les quêtes",
+    "noAgents": "Pas encore d'agents IA.",
+    "xp": "{xp} XP",
+    "mixes": "{count} mix",
+    "followers": "{count} abonnés"
+  },
+  "aiBand": {
+    "title": "AI Band",
+    "subtitle": "Les artistes autonomes de la Hive",
+    "sortLabel": "Trier l'AI Band",
+    "sortFollowers": "Plus d'abonnés",
+    "sortMixes": "Plus de mix",
+    "emptyTitle": "Pas encore d'agents IA",
+    "emptyBody": "Les membres de l'AI Band apparaîtront ici dès qu'ils seront actifs dans la Hive.",
+    "follow": "Suivre",
+    "following": "Abonné",
+    "followers": "abonnés",
+    "mixes": "mix",
+    "notFoundTitle": "Agent introuvable",
+    "notFoundBody": "Cet agent IA n'existe pas ou n'est plus actif.",
+    "backToBand": "Retour à l'AI Band",
+    "levelShort": "Niv. {level}",
+    "xp": "{xp} XP",
+    "creditedOn": "Crédité sur",
+    "noCreditedMixes": "Aucun mix crédité pour l'instant.",
+    "bandmate": "coéquipier IA",
+    "bandmateTooltip": "Un coéquipier IA — un collaborateur crédité, toujours lié à ses producteurs humains",
+    "follower": "abonné",
+    "track": "titre",
+    "tracks": "titres",
+    "plays": "écoutes",
+    "discography": "Discographie",
+    "noTracksTitle": "Pas encore de titres",
+    "noTracksBody": "Aucun titre publié ne crédite encore {name} comme membre IA du groupe."
+  },
+  "ritualReplay": {
+    "unavailable": "Relecture indisponible",
+    "loading": "Reconstruction du rituel…",
+    "backToSession": "Session",
+    "titleSuffix": "{title} · Relecture",
+    "subtitle": "Une chronologie de provenance des décisions, signaux et interventions du Session Spirit.",
+    "empty": "Aucun moment enregistré pour l'instant."
+  },
+  "help": {
+    "eyebrow": "Centre d'aide",
+    "title": "Comment pouvons-nous vous aider ?",
+    "subtitle": "Des guides pour débuter, téléverser des mix, créer des agents IA, les quêtes, la marketplace et votre compte.",
+    "searchPlaceholder": "Rechercher des articles d'aide…",
+    "searchLabel": "Rechercher des articles d'aide",
+    "resultOne": "{count} résultat",
+    "resultOther": "{count} résultats",
+    "noMatch": "Aucun article ne correspond à « {query} ». Essayez un autre terme.",
+    "backLink": "Centre d'aide",
+    "notFoundWhat": "article d'aide",
+    "backToCenter": "Retour au centre d'aide"
+  },
+  "avatarStudio": {
+    "backToSettings": "Retour aux paramètres"
   }
 }

@@ -1,1 +1,144 @@
-{}
+{
+  "dashboard": {
+    "title": "Hive Growth OS",
+    "topSignal": "Señal principal",
+    "recentActivity": "Actividad reciente de fans",
+    "nextActions": "Próximas mejores acciones",
+    "automationBees": "Abejas de automatización",
+    "creatorFallback": "Creador",
+    "commandCell": "Celda de mando de {name}",
+    "subtitle": "Sigue tu sonido, activa el enjambre y convierte a los oyentes en colaboradores.",
+    "stats": {
+      "plays": "reproducciones",
+      "likes": "me gusta",
+      "comments": "comentarios",
+      "followers": "seguidores"
+    },
+    "topMixStats": "{plays} reproducciones / {likes} me gusta / {comments} comentarios",
+    "topMixEmpty": "Aún no hay mix destacado. Sube tu primer mix para empezar a captar señal.",
+    "recentActivityEmpty": "La actividad aparecerá aquí a medida que los oyentes reproduzcan, den me gusta, sigan y comenten.",
+    "activity": {
+      "uploaded": "Subió {title}",
+      "liked": "Le gustó {title}",
+      "followed": "Siguió a {name}",
+      "aMix": "un mix",
+      "aCreator": "un creador"
+    },
+    "time": {
+      "justNow": "ahora mismo",
+      "minutes": "hace {n} min",
+      "hours": "hace {n} h",
+      "days": "hace {n} d",
+      "months": "hace {n} mes"
+    },
+    "actions": {
+      "upload": {
+        "title": "Suelta néctar fresco",
+        "bodyEmpty": "Publica tu primer mix y siembra la colmena.",
+        "bodyActive": "Mantén tu celda activa con una nueva subida.",
+        "cta": "Subir mix"
+      },
+      "profile": {
+        "title": "Afina tu celda de perfil",
+        "bodyWithBio": "Actualiza tu historia, enlaces, géneros y visuales.",
+        "bodyNoBio": "Añade una bio, géneros, enlaces y visuales para que los fans conozcan tu sonido.",
+        "cta": "Abrir perfil"
+      },
+      "epk": {
+        "title": "Crea tu EPK",
+        "body": "Genera un press kit listo para contrataciones a partir de tu perfil y mixes publicados.",
+        "cta": "Abrir estudio EPK"
+      },
+      "opportunities": {
+        "title": "Encuentra tu próxima oportunidad",
+        "body": "Revisa conciertos piloto belgas, subvenciones, convocatorias de radio y espacios en clubes clasificados según tu perfil.",
+        "cta": "Abrir oportunidades"
+      }
+    },
+    "automation": {
+      "bodyEmpty": "Bifurca un agente inicial para dar la bienvenida a seguidores, vigilar comentarios y revelar señales de los fans.",
+      "bodyActive": "{active} activos / {total} agentes en total vigilan tu colmena.",
+      "ctaFork": "Bifurcar agente inicial",
+      "ctaManage": "Gestionar agentes"
+    }
+  },
+  "contentPerformance": {
+    "heading": "Rendimiento del contenido",
+    "subtitle": "Cuáles de tus lanzamientos funcionan de verdad — clasificados por la señal que generan.",
+    "empty": "Publica un mix para ver cómo rinde cada uno.",
+    "catalogByGenre": "Catálogo por género",
+    "columns": {
+      "mix": "Mix",
+      "plays": "Reproducciones",
+      "likes": "Me gusta",
+      "comments": "Comentarios",
+      "engagement": "Interacción"
+    }
+  },
+  "leaderboard": {
+    "title": "Clasificación Hive",
+    "subtitle": "Los mejores creadores clasificados por los XP ganados en misiones de colaboración completadas.",
+    "artistXp": "XP de artista",
+    "aiBand": "AI Band",
+    "emptyTitle": "Aún no hay clasificación",
+    "emptyBody": "Completa misiones de colaboración para ganar XP y escalar en la clasificación Hive.",
+    "emptyAction": "Explorar misiones",
+    "noAgents": "Aún no hay agentes de IA.",
+    "xp": "{xp} XP",
+    "mixes": "{count} mixes",
+    "followers": "{count} seguidores"
+  },
+  "aiBand": {
+    "title": "AI Band",
+    "subtitle": "Los artistas autónomos de la Hive",
+    "sortLabel": "Ordenar AI Band",
+    "sortFollowers": "Más seguidores",
+    "sortMixes": "Más mixes",
+    "emptyTitle": "Aún no hay agentes de IA",
+    "emptyBody": "Los miembros de AI Band aparecerán aquí en cuanto estén activos en la Hive.",
+    "follow": "Seguir",
+    "following": "Siguiendo",
+    "followers": "seguidores",
+    "mixes": "mixes",
+    "notFoundTitle": "Agente no encontrado",
+    "notFoundBody": "Este agente de IA no existe o ya no está activo.",
+    "backToBand": "Volver a AI Band",
+    "levelShort": "Nv. {level}",
+    "xp": "{xp} XP",
+    "creditedOn": "Acreditado en",
+    "noCreditedMixes": "Aún no hay mixes acreditados.",
+    "bandmate": "compañero de banda IA",
+    "bandmateTooltip": "Un compañero de banda IA — un colaborador acreditado, siempre ligado a sus productores humanos",
+    "follower": "seguidor",
+    "track": "pista",
+    "tracks": "pistas",
+    "plays": "reproducciones",
+    "discography": "Discografía",
+    "noTracksTitle": "Aún no hay pistas",
+    "noTracksBody": "Aún no hay pistas publicadas que acrediten a {name} como miembro de AI Band."
+  },
+  "ritualReplay": {
+    "unavailable": "Repetición no disponible",
+    "loading": "Reconstruyendo ritual…",
+    "backToSession": "Sesión",
+    "titleSuffix": "{title} · Repetición",
+    "subtitle": "Una línea de tiempo de procedencia de decisiones, señales e intervenciones del Session Spirit.",
+    "empty": "Aún no hay momentos registrados."
+  },
+  "help": {
+    "eyebrow": "Centro de ayuda",
+    "title": "¿Cómo podemos ayudarte?",
+    "subtitle": "Guías para empezar, subir mixes, crear agentes de IA, misiones, el marketplace y tu cuenta.",
+    "searchPlaceholder": "Buscar artículos de ayuda…",
+    "searchLabel": "Buscar artículos de ayuda",
+    "resultOne": "{count} resultado",
+    "resultOther": "{count} resultados",
+    "noMatch": "Ningún artículo coincide con «{query}». Prueba otro término.",
+    "backLink": "Centro de ayuda",
+    "notFoundWhat": "artículo de ayuda",
+    "backToCenter": "Volver al centro de ayuda"
+  },
+  "avatarStudio": {
+    "backToSettings": "Volver a los ajustes"
+  }
+}

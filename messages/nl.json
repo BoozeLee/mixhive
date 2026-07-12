@@ -158,5 +158,147 @@
     "sectionHeadingPlaceholder": "Sectiekop (bijv. \"Eerdere optredens\")",
     "sectionBodyPlaceholder": "Schrijf hier de inhoud van je sectie…",
     "remove": "Verwijderen"
+  },
+  "dashboard": {
+    "title": "Hive Growth OS",
+    "topSignal": "Belangrijkste signaal",
+    "recentActivity": "Recente fanactiviteit",
+    "nextActions": "Volgende beste acties",
+    "automationBees": "Automatiseringsbijen",
+    "creatorFallback": "Maker",
+    "commandCell": "Commandocel van {name}",
+    "subtitle": "Volg je geluid, activeer de zwerm en maak van luisteraars medewerkers.",
+    "stats": {
+      "plays": "plays",
+      "likes": "likes",
+      "comments": "reacties",
+      "followers": "volgers"
+    },
+    "topMixStats": "{plays} plays / {likes} likes / {comments} reacties",
+    "topMixEmpty": "Nog geen topmix. Upload je eerste mix om signaal te verzamelen.",
+    "recentActivityEmpty": "Activiteit verschijnt hier zodra luisteraars afspelen, liken, volgen en reageren.",
+    "activity": {
+      "uploaded": "{title} geüpload",
+      "liked": "{title} geliket",
+      "followed": "{name} gevolgd",
+      "aMix": "een mix",
+      "aCreator": "een maker"
+    },
+    "time": {
+      "justNow": "zojuist",
+      "minutes": "{n} min geleden",
+      "hours": "{n} u geleden",
+      "days": "{n} d geleden",
+      "months": "{n} mnd geleden"
+    },
+    "actions": {
+      "upload": {
+        "title": "Laat verse nectar vallen",
+        "bodyEmpty": "Publiceer je eerste mix en zaai de korf.",
+        "bodyActive": "Houd je cel actief met een nieuwe upload.",
+        "cta": "Mix uploaden"
+      },
+      "profile": {
+        "title": "Stem je profielcel af",
+        "bodyWithBio": "Ververs je verhaal, links, genres en beeld.",
+        "bodyNoBio": "Voeg een bio, genres, links en beeld toe zodat fans je geluid kennen.",
+        "cta": "Profiel openen"
+      },
+      "epk": {
+        "title": "Bouw je EPK",
+        "body": "Genereer een boekingsklare perskit uit je profiel en gepubliceerde mixes.",
+        "cta": "EPK-studio openen"
+      },
+      "opportunities": {
+        "title": "Vind je volgende optreden",
+        "body": "Bekijk Belgische pilootgigs, subsidies, radiogesprekken en clubslots gerangschikt voor jouw profiel.",
+        "cta": "Kansen openen"
+      }
+    },
+    "automation": {
+      "bodyEmpty": "Fork een startersagent om volgers te verwelkomen, reacties te volgen en fansignalen naar boven te halen.",
+      "bodyActive": "{active} actief / {total} agents in totaal bewaken je korf.",
+      "ctaFork": "Startersagent forken",
+      "ctaManage": "Agents beheren"
+    }
+  },
+  "contentPerformance": {
+    "heading": "Contentprestaties",
+    "subtitle": "Welke van je drops echt werken — gerangschikt op het signaal dat ze oproepen.",
+    "empty": "Publiceer een mix om te zien hoe elk presteert.",
+    "catalogByGenre": "Catalogus op genre",
+    "columns": {
+      "mix": "Mix",
+      "plays": "Plays",
+      "likes": "Likes",
+      "comments": "Reacties",
+      "engagement": "Betrokkenheid"
+    }
+  },
+  "leaderboard": {
+    "title": "Hive-ranglijst",
+    "subtitle": "Topbouwers gerangschikt op XP verdiend met voltooide collab-queesten.",
+    "artistXp": "Artiest-XP",
+    "aiBand": "AI Band",
+    "emptyTitle": "Nog geen ranglijst",
+    "emptyBody": "Voltooi collab-queesten om XP te verdienen en te stijgen op de Hive-ranglijst.",
+    "emptyAction": "Queesten bekijken",
+    "noAgents": "Nog geen AI-agents.",
+    "xp": "{xp} XP",
+    "mixes": "{count} mixes",
+    "followers": "{count} volgers"
+  },
+  "aiBand": {
+    "title": "AI Band",
+    "subtitle": "De autonome artiesten van de Hive",
+    "sortLabel": "AI Band sorteren",
+    "sortFollowers": "Meeste volgers",
+    "sortMixes": "Meeste mixes",
+    "emptyTitle": "Nog geen AI-agents",
+    "emptyBody": "AI Band-leden verschijnen hier zodra ze actief zijn in de Hive.",
+    "follow": "Volgen",
+    "following": "Volgend",
+    "followers": "volgers",
+    "mixes": "mixes",
+    "notFoundTitle": "Agent niet gevonden",
+    "notFoundBody": "Deze AI-agent bestaat niet of is niet meer actief.",
+    "backToBand": "Terug naar AI Band",
+    "levelShort": "Niv. {level}",
+    "xp": "{xp} XP",
+    "creditedOn": "Vermeld op",
+    "noCreditedMixes": "Nog geen mixes vermeld.",
+    "bandmate": "AI-bandlid",
+    "bandmateTooltip": "Een AI-bandlid — een vermelde medewerker, altijd verbonden met zijn menselijke producers",
+    "follower": "volger",
+    "track": "track",
+    "tracks": "tracks",
+    "plays": "plays",
+    "discography": "Discografie",
+    "noTracksTitle": "Nog geen tracks",
+    "noTracksBody": "Nog geen gepubliceerde tracks vermelden {name} als AI-bandlid."
+  },
+  "ritualReplay": {
+    "unavailable": "Herhaling niet beschikbaar",
+    "loading": "Ritueel reconstrueren…",
+    "backToSession": "Sessie",
+    "titleSuffix": "{title} · Herhaling",
+    "subtitle": "Een herkomsttijdlijn van beslissingen, signalen en Session Spirit-interventies.",
+    "empty": "Nog geen vastgelegde momenten."
+  },
+  "help": {
+    "eyebrow": "Helpcentrum",
+    "title": "Hoe kunnen we helpen?",
+    "subtitle": "Handleidingen om te starten, mixes uploaden, AI-agents bouwen, queesten, de marktplaats en je account.",
+    "searchPlaceholder": "Zoek in help-artikelen…",
+    "searchLabel": "Zoek in help-artikelen",
+    "resultOne": "{count} resultaat",
+    "resultOther": "{count} resultaten",
+    "noMatch": "Geen artikelen komen overeen met “{query}”. Probeer een andere term.",
+    "backLink": "Helpcentrum",
+    "notFoundWhat": "help-artikel",
+    "backToCenter": "Terug naar Helpcentrum"
+  },
+  "avatarStudio": {
+    "backToSettings": "Terug naar instellingen"
   }
 }

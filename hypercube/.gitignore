@@ -1,2 +1,3 @@
-results/
+results/cells.jsonl
+.pw-artifacts/
 generated/plan.all.json

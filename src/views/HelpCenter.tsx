@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import { HELP_CATEGORIES, HELP_ARTICLES, articlesByCategory } from '../content/help';
 import { SectionHeading } from '../components/ui/SectionHeading';
@@ -7,6 +8,7 @@ import { Icon } from '../components/ui/Icon';
 import { colors, space, radius, fontSize, fontWeight } from '../styles/tokens';
 
 export function HelpCenter() {
+  const t = useTranslations('help');
   const [query, setQuery] = useState('');
 
   const results = useMemo(() => {
@@ -24,9 +26,9 @@ export function HelpCenter() {
     <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 16px 96px' }}>
       <header style={{ marginBottom: space[10] }}>
         <SectionHeading
-          eyebrow="Help Center"
-          title="How can we help?"
-          subtitle="Guides for getting started, uploading mixes, building AI agents, quests, the marketplace, and your account."
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          subtitle={t('subtitle')}
         />
       </header>
 
@@ -49,8 +51,8 @@ export function HelpCenter() {
           type="search"
           value={query}
           onChange={e => setQuery(e.target.value)}
-          placeholder="Search help articles…"
-          aria-label="Search help articles"
+          placeholder={t('searchPlaceholder')}
+          aria-label={t('searchLabel')}
           style={{
             width: '100%',
             padding: '12px 14px 12px 42px',
@@ -75,7 +77,9 @@ export function HelpCenter() {
               marginBottom: space[6],
             }}
           >
-            {results.length} result{results.length !== 1 ? 's' : ''}
+            {results.length === 1
+              ? t('resultOne', { count: results.length })
+              : t('resultOther', { count: results.length })}
           </h2>
           <div style={{ display: 'grid', gap: space[4] }}>
             {results.map((a, i) => (
@@ -84,9 +88,7 @@ export function HelpCenter() {
               </Reveal>
             ))}
             {results.length === 0 && (
-              <p style={{ color: colors.text.dim }}>
-                No articles match "{query}". Try a different term.
-              </p>
+              <p style={{ color: colors.text.dim }}>{t('noMatch', { query })}</p>
             )}
           </div>
         </section>

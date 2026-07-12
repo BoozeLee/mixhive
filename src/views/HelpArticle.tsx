@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { Link, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -184,13 +185,14 @@ const md: Components = {
 };
 
 export function HelpArticle() {
+  const t = useTranslations('help');
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getArticle(slug) : undefined;
 
   if (!article) {
     return (
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
-        <NotFoundState what="help article" backTo="/help" backLabel="Back to Help Center" />
+        <NotFoundState what={t('notFoundWhat')} backTo="/help" backLabel={t('backToCenter')} />
       </div>
     );
   }
@@ -215,7 +217,7 @@ export function HelpArticle() {
           e.currentTarget.style.color = colors.text.muted;
         }}
       >
-        <Icon name="help" size={15} color="currentColor" /> Help Center
+        <Icon name="help" size={15} color="currentColor" /> {t('backLink')}
       </Link>
 
       <header style={{ marginBottom: space[8] }}>

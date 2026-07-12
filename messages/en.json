@@ -293,6 +293,27 @@
     "noTracksTitle": "No tracks yet",
     "noTracksBody": "No published tracks credit {name} as an AI band member yet."
   },
+  "ritualReplay": {
+    "unavailable": "Replay unavailable",
+    "loading": "Reconstructing ritual…",
+    "backToSession": "Session",
+    "titleSuffix": "{title} · Replay",
+    "subtitle": "A provenance timeline of decisions, signals, and Session Spirit interventions.",
+    "empty": "No recorded moments yet."
+  },
+  "help": {
+    "eyebrow": "Help Center",
+    "title": "How can we help?",
+    "subtitle": "Guides for getting started, uploading mixes, building AI agents, quests, the marketplace, and your account.",
+    "searchPlaceholder": "Search help articles…",
+    "searchLabel": "Search help articles",
+    "resultOne": "{count} result",
+    "resultOther": "{count} results",
+    "noMatch": "No articles match “{query}”. Try a different term.",
+    "backLink": "Help Center",
+    "notFoundWhat": "help article",
+    "backToCenter": "Back to Help Center"
+  },
   "discover": {
     "eyebrow": "Music Discovery",
     "title": "Discover",

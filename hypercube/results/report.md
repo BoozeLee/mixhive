@@ -1,6 +1,6 @@
 # MixHive Hypercube Verification Report
 
-**Verdict: FAIL**  ·  executed 261 cells → ✅ 252 pass · ❌ 4 fail · ⛔ 5 blocked(expected-gate)
+**Verdict: PASS-WITH-GATES**  ·  executed 261 cells → ✅ 256 pass · ❌ 0 fail · ⛔ 5 blocked(expected-gate)
 
 Model: t=2 pairwise covering array, **overall ρ = 1.0000** across 399 planned cells (see `generated/coverage.json`).
 
@@ -22,14 +22,9 @@ Model: t=2 pairwise covering array, **overall ρ = 1.0000** across 399 planned c
 | agent-audio | 1 | 1.000 |
 | agent-aiband | 1 | 1.000 |
 
-## Defects (4) — ranked
+## Defects (0) — ranked
 
-| sev | target | env | trigger dims | defect | repro |
-|---|---|---|---|---|---|
-| MEDIUM | `route:/marketplace/agents` | local | data=empty viewport=320 locale=en motion=reduced | axe 1 serious/critical: select-name | `npx playwright test --config hypercube/hypercube.config.ts -g "route:/marketplace/agents ·` |
-| MEDIUM | `route:/agents/gallery` | local | data=empty viewport=320 locale=en motion=reduced | axe 2 serious/critical: color-contrast,scrollable-region-focusable | `npx playwright test --config hypercube/hypercube.config.ts -g "route:/agents/gallery · a=a` |
-| MEDIUM | `route:/marketplace/gear` | local | data=empty viewport=320 locale=en motion=reduced | axe 1 serious/critical: select-name | `npx playwright test --config hypercube/hypercube.config.ts -g "route:/marketplace/gear · a` |
-| MEDIUM | `route:/register` | local | data=empty viewport=320 locale=en motion=full | axe 1 serious/critical: label-title-only | `npx playwright test --config hypercube/hypercube.config.ts -g "route:/register · a=anon d=` |
+_None._
 
 ## Blocked (expected gates / missing creds)
 
@@ -48,6 +43,6 @@ Model: t=2 pairwise covering array, **overall ρ = 1.0000** across 399 planned c
 | agent-strategic | 1 | 0 | 1 |
 | agent-wasmoon | 1 | 0 | 0 |
 | authed-ui | 73 | 0 | 0 |
-| public-ui | 175 | 4 | 0 |
+| public-ui | 179 | 0 | 0 |
 
-_Generated 2026-07-12T17:33:56.559Z from hypercube/results/cells.jsonl_
+_Generated 2026-07-13T17:44:52.629Z from hypercube/results/cells.jsonl_

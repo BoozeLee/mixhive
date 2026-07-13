@@ -1,8 +1,8 @@
 {
-  "verdict": "FAIL",
+  "verdict": "PASS-WITH-GATES",
   "totals": {
-    "pass": 252,
-    "fail": 4,
+    "pass": 256,
+    "fail": 0,
     "blocked": 5,
     "executed": 261
   },
@@ -129,60 +129,7 @@
       }
     ]
   },
-  "defects": [
-    {
-      "severity": "MEDIUM",
-      "target": "route:/marketplace/agents",
-      "env": "local",
-      "dims": {
-        "data": "empty",
-        "viewport": "320",
-        "locale": "en",
-        "motion": "reduced"
-      },
-      "defect": "axe 1 serious/critical: select-name",
-      "repro": "npx playwright test --config hypercube/hypercube.config.ts -g \"route:/marketplace/agents · a=anon d=empty v=320 l=en m=reduce\""
-    },
-    {
-      "severity": "MEDIUM",
-      "target": "route:/agents/gallery",
-      "env": "local",
-      "dims": {
-        "data": "empty",
-        "viewport": "320",
-        "locale": "en",
-        "motion": "reduced"
-      },
-      "defect": "axe 2 serious/critical: color-contrast,scrollable-region-focusable",
-      "repro": "npx playwright test --config hypercube/hypercube.config.ts -g \"route:/agents/gallery · a=anon d=empty v=320 l=en m=reduce\""
-    },
-    {
-      "severity": "MEDIUM",
-      "target": "route:/marketplace/gear",
-      "env": "local",
-      "dims": {
-        "data": "empty",
-        "viewport": "320",
-        "locale": "en",
-        "motion": "reduced"
-      },
-      "defect": "axe 1 serious/critical: select-name",
-      "repro": "npx playwright test --config hypercube/hypercube.config.ts -g \"route:/marketplace/gear · a=anon d=empty v=320 l=en m=reduce\""
-    },
-    {
-      "severity": "MEDIUM",
-      "target": "route:/register",
-      "env": "local",
-      "dims": {
-        "data": "empty",
-        "viewport": "320",
-        "locale": "en",
-        "motion": "full"
-      },
-      "defect": "axe 1 serious/critical: label-title-only",
-      "repro": "npx playwright test --config hypercube/hypercube.config.ts -g \"route:/register · a=anon d=empty v=320 l=en m=no-preference\""
-    }
-  ],
+  "defects": [],
   "blocked": [
     {
       "target": "api:POST /api/cron/strategic-agents",

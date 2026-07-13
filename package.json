@@ -96,7 +96,7 @@
     "react-dom": "^19.2.7",
     "react-hot-toast": "^2.4.1",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.17.0",
+    "react-router-dom": "^7.18.1",
     "redis": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "resend": "^6.16.0",

@@ -51,13 +51,16 @@ export async function GET(req: NextRequest) {
       }
     };
 
-    const [profile, mixes, playlists, comments, follows, consents] = await Promise.all([
+    const [profile, mixes, playlists, comments, follows, consents, agents, notifications, likes] = await Promise.all([
       grabOne('profiles', 'id'),
       grab('mixes', 'dj_id'),
       grab('playlists', 'user_id'),
       grab('comments', 'user_id'),
       grab('follows', 'follower_id'),
       grab('user_consents', 'user_id'),
+      grab('lua_agent_instances', 'owner_profile_id'),
+      grab('notification_preferences', 'user_id'),
+      grab('mix_likes', 'user_id'),
     ]);
 
     const bundle = {
@@ -69,6 +72,9 @@ export async function GET(req: NextRequest) {
       comments,
       follows,
       consents,
+      agents,
+      notification_preferences: notifications,
+      likes,
     };
 
     return new NextResponse(JSON.stringify(bundle, null, 2), {

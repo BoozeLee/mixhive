@@ -1,11 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import { cookies } from 'next/headers';
 import '../index.css';
 import '../styles/global.css';
 import './mixhive.css';
 import { SentryClient } from '@/components/SentryClient';
 import { MixpanelClient } from '@/components/MixpanelClient';
 import { Toaster } from '@/components/ui/Toaster';
+import { LOCALE_COOKIE, DEFAULT_LOCALE, type Locale } from '@/i18n/config';
+
+const LOCALES = ['en', 'fr', 'nl', 'de', 'es'] as readonly string[];
 
 export const metadata: Metadata = {
   title: 'MIXHIVE — The Hive Never Sleeps',
@@ -23,9 +27,17 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+async function getLocale(): Promise<Locale> {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get(LOCALE_COOKIE)?.value;
+  if (raw && LOCALES.includes(raw)) return raw as Locale;
+  return DEFAULT_LOCALE;
+}
+
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const lang = await getLocale();
   return (
-    <html lang="en" className="mixhive-fonts">
+    <html lang={lang} className="mixhive-fonts">
       <body>
         <SentryClient />
         <MixpanelClient />

@@ -13,6 +13,7 @@ import { ProfilePictureUploadSmall } from '../components/ProfilePictureUploadSma
 import { NotificationSettings } from '../components/NotificationSettings';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { WalletConnectModal } from '../components/WalletConnectModal';
+import { BetaGate } from '../components/BetaGate';
 import { ProfileSchema, formatZodError } from '../lib/schemas';
 import {
   hasUserAiKey,
@@ -204,9 +205,9 @@ export function Settings() {
     setGoalsMsg('');
     try {
       await upsertArtistGoals(user.id, goals);
-      setGoalsMsg('Goals saved.');
+      setGoalsMsg(t('goalsSaved'));
     } catch {
-      setGoalsMsg('Could not save goals.');
+      setGoalsMsg(t('goalsError'));
     } finally {
       setGoalsSaving(false);
       setTimeout(() => setGoalsMsg(''), 3000);
@@ -358,7 +359,7 @@ export function Settings() {
           {t('notifications')}
         </h2>
         <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginBottom: space[6] }}>
-          Choose what reaches this browser. System pushes stay quiet while MixHive is focused.
+          {t('notificationsDescription')}
         </p>
         <NotificationSettings />
       </div>
@@ -488,7 +489,7 @@ export function Settings() {
 
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-            DAW / Software
+            {t('dawSoftware')}
           </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {DAW_OPTIONS.map(item => (
@@ -548,7 +549,7 @@ export function Settings() {
         </fieldset>
 
         <Button type="submit" disabled={saving} className="w-full" style={{ marginTop: 8 }}>
-          {saving ? 'Saving...' : 'Save profile'}
+          {saving ? t('saving') : t('saveProfile')}
         </Button>
       </form>
 
@@ -578,7 +579,7 @@ export function Settings() {
             lineHeight: 1.5,
           }}
         >
-          Tell MIXHIVE what you're aiming for — the opportunity graph uses this to score matches.
+          {t('artistGoalsDescription')}
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -665,7 +666,7 @@ export function Settings() {
             loading={goalsSaving}
             style={{ alignSelf: 'flex-start' }}
           >
-            {goalsSaving ? 'Saving…' : 'Save goals'}
+            {goalsSaving ? t('savingEllipsis') : t('saveGoals')}
           </Button>
           {goalsMsg && (
             <p
@@ -1007,7 +1008,7 @@ export function Settings() {
           {t('hiveStory')}
         </h2>
         <p style={{ fontSize: 13, color: colors.text.muted, marginBottom: 16 }}>
-          Share your journey — your milestones, collabs, and sound evolution — on your profile.
+          {t('hiveStoryDescription')}
         </p>
         <label
           style={{
@@ -1183,15 +1184,34 @@ export function Settings() {
             marginBottom: space[4],
           }}
         >
-          Privacy &amp; Data
+          {t('betaAccess')}
+        </h2>
+        <BetaGate>
+          <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginTop: 12 }}>
+            {t('betaAccessDescription')}
+          </p>
+        </BetaGate>
+      </div>
+
+      <div style={{ marginTop: space[8] }}>
+        <h2
+          style={{
+            fontSize: fontSize.lg,
+            fontWeight: 600,
+            color: colors.text.primary,
+            marginBottom: space[4],
+          }}
+        >
+          {t('privacyTitle')}
         </h2>
         <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginBottom: space[4] }}>
-          Export a copy of your data, or request account deletion (processed within 30 days). See
-          our{' '}
-          <a href="/privacy" style={{ color: colors.accent }}>
-            {t('privacyPolicy')}
-          </a>
-          .
+          {t.rich('privacyDescription', {
+            link: (chunks) => (
+              <a href="/privacy" style={{ color: colors.accent }}>
+                {chunks}
+              </a>
+            ),
+          })}
         </p>
         <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap' }}>
           <Button
@@ -1267,7 +1287,7 @@ export function Settings() {
               onClick={async () => {
                 if (
                   !window.confirm(
-                    'Request account deletion? Your account and data will be removed within 30 days, and you will be signed out.'
+                    t('confirmDeletion')
                   )
                 )
                   return;

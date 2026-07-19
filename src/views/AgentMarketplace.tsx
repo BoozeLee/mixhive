@@ -24,6 +24,7 @@ interface AgentPackage {
   rating_count: number;
   official: boolean;
   verified: boolean;
+  featured: boolean;
   creator_profile_id: string;
 }
 
@@ -284,26 +285,67 @@ export function AgentMarketplace() {
           <p style={{ fontSize: 14 }}>{t('tryFilters')}</p>
         </div>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: 16,
-          }}
-        >
-          {packages.map(pkg => (
-            <AgentCard
-              key={pkg.id}
-              pkg={pkg}
-              creatorBadges={creatorBadges[pkg.creator_profile_id] ?? []}
-              installed={installed.has(pkg.id)}
-              installing={installing === pkg.id}
-              buying={buying === pkg.id}
-              onInstall={() => handleInstall(pkg)}
-              onBuy={() => handleBuy(pkg)}
-            />
-          ))}
-        </div>
+        <>
+          {/* Featured agents hero row */}
+          {packages.some(p => p.featured) && (
+            <div style={{ marginBottom: 32 }}>
+              <h3
+                style={{
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: 'var(--hive-gold)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  marginBottom: 12,
+                }}
+              >
+                {t('featuredSection')}
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gap: 16,
+                }}
+              >
+                {packages.filter(p => p.featured).map(pkg => (
+                  <AgentCard
+                    key={pkg.id}
+                    pkg={pkg}
+                    creatorBadges={creatorBadges[pkg.creator_profile_id] ?? []}
+                    installed={installed.has(pkg.id)}
+                    installing={installing === pkg.id}
+                    buying={buying === pkg.id}
+                    onInstall={() => handleInstall(pkg)}
+                    onBuy={() => handleBuy(pkg)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* All agents grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: 16,
+            }}
+          >
+            {packages.filter(p => !p.featured).map(pkg => (
+              <AgentCard
+                key={pkg.id}
+                pkg={pkg}
+                creatorBadges={creatorBadges[pkg.creator_profile_id] ?? []}
+                installed={installed.has(pkg.id)}
+                installing={installing === pkg.id}
+                buying={buying === pkg.id}
+                onInstall={() => handleInstall(pkg)}
+                onBuy={() => handleBuy(pkg)}
+              />
+            ))}
+          </div>
+        </>
       )}
 
       {/* Link to personal agents */}
@@ -375,6 +417,20 @@ function AgentCard({
           {pkg.category.replace('_', ' ')}
         </span>
         <div style={{ display: 'flex', gap: 4 }}>
+          {pkg.featured && (
+            <span
+              style={{
+                background: withAlpha(colors.accentBright, 0.18),
+                color: 'var(--hive-gold)',
+                fontSize: 10,
+                padding: '2px 6px',
+                borderRadius: 4,
+                fontWeight: 700,
+              }}
+            >
+              {t('featured')}
+            </span>
+          )}
           {pkg.official && (
             <span
               style={{

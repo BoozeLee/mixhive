@@ -132,6 +132,7 @@ export function CollabQuests() {
           value={discipline}
           onChange={e => setDiscipline(e.target.value)}
           style={selectStyle}
+          aria-label="Filter by discipline"
         >
           {DISCIPLINES.map(d => (
             <option key={d.value} value={d.value}>

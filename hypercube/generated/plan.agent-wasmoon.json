@@ -1,0 +1,16 @@
+[
+  {
+    "class": "agent-wasmoon",
+    "target": "agent:wasmoon",
+    "targetMeta": {
+      "id": "agent:wasmoon",
+      "kind": "agent",
+      "class": "agent-wasmoon",
+      "path": "/api/agents/wasmoon-test",
+      "oracle": "agent-wasmoon",
+      "method": "GET"
+    },
+    "dims": {},
+    "pinned": {}
+  }
+]

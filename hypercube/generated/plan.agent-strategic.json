@@ -1,0 +1,34 @@
+[
+  {
+    "class": "agent-strategic",
+    "target": "agent:strategic",
+    "targetMeta": {
+      "id": "agent:strategic",
+      "kind": "agent",
+      "class": "agent-strategic",
+      "path": "/api/cron/strategic-agents",
+      "oracle": "agent-strategic",
+      "method": "POST"
+    },
+    "dims": {
+      "auth": "anon"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "agent-strategic",
+    "target": "agent:strategic",
+    "targetMeta": {
+      "id": "agent:strategic",
+      "kind": "agent",
+      "class": "agent-strategic",
+      "path": "/api/cron/strategic-agents",
+      "oracle": "agent-strategic",
+      "method": "POST"
+    },
+    "dims": {
+      "auth": "completed"
+    },
+    "pinned": {}
+  }
+]

@@ -1,0 +1,230 @@
+[
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/subscription/create",
+    "targetMeta": {
+      "id": "api:POST /api/subscription/create",
+      "kind": "api",
+      "path": "/api/subscription/create",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "stripe",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "keys-absent",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+    "targetMeta": {
+      "id": "api:POST /api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+      "kind": "api",
+      "path": "/api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "stripe",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "test-keys",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/ai/generate-image",
+    "targetMeta": {
+      "id": "api:POST /api/ai/generate-image",
+      "kind": "api",
+      "path": "/api/ai/generate-image",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "openai",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "keys-absent",
+      "data": "error"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/composer/suggest",
+    "targetMeta": {
+      "id": "api:POST /api/composer/suggest",
+      "kind": "api",
+      "path": "/api/composer/suggest",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "openai",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "keys-absent",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/subscription/create",
+    "targetMeta": {
+      "id": "api:POST /api/subscription/create",
+      "kind": "api",
+      "path": "/api/subscription/create",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "stripe",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "test-keys",
+      "data": "error"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/ai/generate-image",
+    "targetMeta": {
+      "id": "api:POST /api/ai/generate-image",
+      "kind": "api",
+      "path": "/api/ai/generate-image",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "openai",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "test-keys",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+    "targetMeta": {
+      "id": "api:POST /api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+      "kind": "api",
+      "path": "/api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "stripe",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "keys-absent",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/composer/suggest",
+    "targetMeta": {
+      "id": "api:POST /api/composer/suggest",
+      "kind": "api",
+      "path": "/api/composer/suggest",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "openai",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "test-keys",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/subscription/create",
+    "targetMeta": {
+      "id": "api:POST /api/subscription/create",
+      "kind": "api",
+      "path": "/api/subscription/create",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "stripe",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "keys-absent",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+    "targetMeta": {
+      "id": "api:POST /api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+      "kind": "api",
+      "path": "/api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "stripe",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "keys-absent",
+      "data": "error"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/ai/generate-image",
+    "targetMeta": {
+      "id": "api:POST /api/ai/generate-image",
+      "kind": "api",
+      "path": "/api/ai/generate-image",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "openai",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "keys-absent",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "gated-api",
+    "target": "api:POST /api/composer/suggest",
+    "targetMeta": {
+      "id": "api:POST /api/composer/suggest",
+      "kind": "api",
+      "path": "/api/composer/suggest",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "openai",
+      "class": "gated-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "gate": "keys-absent",
+      "data": "error"
+    },
+    "pinned": {}
+  }
+]

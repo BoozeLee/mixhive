@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import {
   getTrendingMixes,
@@ -9,6 +10,7 @@ import {
   getPopularGenres,
   type AIAgent,
 } from '../lib/api';
+import { supabase } from '../lib/supabase';
 import { MixCard } from '../components/MixCard';
 import { BuzzCard } from '../components/BuzzCard';
 import { AIAgentCard } from '../components/AIAgentCard';
@@ -20,12 +22,22 @@ import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
 import { useAuth } from '../hooks/useAuth';
 import type { FeedMix, Profile, FeedBuzz } from '../lib/types';
-import { colors, radius, space, fontSize } from '../styles/tokens';
+import { colors, radius, space, fontSize, transition } from '../styles/tokens';
 
 interface DiscoverGenre {
   id: string;
   name: string;
   count: number;
+}
+
+interface DiscoverEvent {
+  id: string;
+  title: string;
+  starts_at: string;
+  venue_name: string | null;
+  is_free: boolean;
+  rsvp_counts: { going: number; maybe: number };
+  cover_image_url: string | null;
 }
 
 export function Discover() {
@@ -49,6 +61,9 @@ export function Discover() {
 
   const [genres, setGenres] = useState<DiscoverGenre[]>([]);
   const [genresLoading, setGenresLoading] = useState(true);
+
+  const [events, setEvents] = useState<DiscoverEvent[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -118,6 +133,43 @@ export function Discover() {
       .finally(() => {
         if (!cancelled) setGenresLoading(false);
       });
+
+    // Fetch upcoming events
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('events')
+          .select('id, title, starts_at, venue_name, is_free, cover_image_url')
+          .eq('status', 'published')
+          .gte('starts_at', new Date().toISOString())
+          .order('starts_at', { ascending: true })
+          .limit(8);
+        if (!cancelled && data) {
+          // Get RSVP counts
+          const ids = data.map(e => e.id);
+          const counts: Record<string, { going: number; maybe: number }> = {};
+          if (ids.length > 0) {
+            const { data: rsvps } = await supabase
+              .from('event_rsvps')
+              .select('event_id, status')
+              .in('event_id', ids)
+              .neq('status', 'cancelled');
+            if (rsvps) {
+              for (const r of rsvps) {
+                if (!counts[r.event_id]) counts[r.event_id] = { going: 0, maybe: 0 };
+                if (r.status === 'going') counts[r.event_id].going++;
+                else if (r.status === 'maybe') counts[r.event_id].maybe++;
+              }
+            }
+          }
+          setEvents(data.map(e => ({ ...e, rsvp_counts: counts[e.id] || { going: 0, maybe: 0 } })));
+        }
+      } catch {
+        // Events are optional — don't block discover
+      } finally {
+        if (!cancelled) setEventsLoading(false);
+      }
+    })();
 
     return () => {
       cancelled = true;
@@ -244,6 +296,71 @@ export function Discover() {
         ))}
       </DiscoverLane>
 
+      {/* Upcoming events lane */}
+      <DiscoverLane
+        title={t('upcomingEvents') || 'Upcoming Events'}
+        subtitle={t('upcomingEventsSubtitle') || 'Raves, sessions, and meetups'}
+        href="/events"
+        hrefLabel={t('seeAll')}
+        loading={eventsLoading}
+        skeletonCount={4}
+        skeletonWidth={260}
+      >
+        {events.map(event => (
+          <Link
+            key={event.id}
+            to={`/events/${event.id}`}
+            style={{
+              flexShrink: 0,
+              width: 260,
+              scrollSnapAlign: 'start',
+              background: colors.surface,
+              borderRadius: radius.lg,
+              border: `1px solid ${colors.border}`,
+              textDecoration: 'none',
+              color: colors.text.primary,
+              overflow: 'hidden',
+              transition: transition.base,
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = colors.accent; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = colors.border; }}
+          >
+            <div style={{
+              height: 100,
+              background: event.cover_image_url
+                ? `url(${event.cover_image_url}) center/cover`
+                : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
+              display: 'flex', alignItems: 'flex-end', padding: space[2],
+            }}>
+              <div style={{
+                background: colors.bg, borderRadius: radius.sm,
+                padding: `${space[1]} ${space[2]}`, textAlign: 'center', minWidth: 40,
+              }}>
+                <div style={{ fontSize: fontSize.xs, color: colors.accent, fontWeight: 700, textTransform: 'uppercase' }}>
+                  {new Date(event.starts_at).toLocaleDateString(undefined, { month: 'short' })}
+                </div>
+                <div style={{ fontSize: fontSize.xl, fontWeight: 700, lineHeight: 1 }}>
+                  {new Date(event.starts_at).getDate()}
+                </div>
+              </div>
+            </div>
+            <div style={{ padding: space[3] }}>
+              <h4 style={{ fontSize: fontSize.sm, fontWeight: 700, margin: 0, marginBottom: space[1], lineHeight: 1.3 }}>
+                {event.title}
+              </h4>
+              {event.venue_name && (
+                <p style={{ fontSize: fontSize.xs, color: colors.text.faint, margin: 0 }}>
+                  {event.venue_name}
+                </p>
+              )}
+              <p style={{ fontSize: fontSize.xs, color: colors.text.muted, margin: 0, marginTop: space[1] }}>
+                {event.rsvp_counts.going} going · {event.is_free ? 'Free' : 'Ticket'}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </DiscoverLane>
+
       {/* Empty state when everything fails */}
       {!trendingLoading &&
         !freshLoading &&
@@ -251,12 +368,14 @@ export function Discover() {
         !buzzLoading &&
         !agentsLoading &&
         !genresLoading &&
+        !eventsLoading &&
         trending.length === 0 &&
         fresh.length === 0 &&
         creators.length === 0 &&
         buzzes.length === 0 &&
         agents.length === 0 &&
-        genres.length === 0 && (
+        genres.length === 0 &&
+        events.length === 0 && (
           <div
             style={{
               textAlign: 'center',

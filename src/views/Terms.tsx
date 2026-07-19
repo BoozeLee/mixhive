@@ -26,6 +26,9 @@ export function Terms() {
       <h1 style={h1}>{t('title')}</h1>
       <p style={{ ...p, color: colors.text.dim }}>{t('lastUpdated')}</p>
 
+      <h2 style={h2}>{t('ageHeading')}</h2>
+      <p style={p}>{t('ageBody')}</p>
+
       <h2 style={h2}>{t('acceptableUseHeading')}</h2>
       <p style={p}>{t('acceptableUseBody')}</p>
 
@@ -34,6 +37,15 @@ export function Terms() {
 
       <h2 style={h2}>{t('marketplaceHeading')}</h2>
       <p style={p}>{t('marketplaceBody')}</p>
+
+      <h2 style={h2}>{t('dsaHeading')}</h2>
+      <p style={p}>{t('dsaBody')}</p>
+
+      <h2 style={h2}>{t('liabilityHeading')}</h2>
+      <p style={p}>{t('liabilityBody')}</p>
+
+      <h2 style={h2}>{t('governingLawHeading')}</h2>
+      <p style={p}>{t('governingLawBody')}</p>
 
       <h2 style={h2}>{t('changesHeading')}</h2>
       <p style={p}>{t('changesBody')}</p>

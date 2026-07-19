@@ -1,0 +1,16 @@
+[
+  {
+    "class": "agent-lua",
+    "target": "agent:lua",
+    "targetMeta": {
+      "id": "agent:lua",
+      "kind": "agent",
+      "class": "agent-lua",
+      "path": "/api/lua-agent/run",
+      "oracle": "agent-lua",
+      "method": "GET"
+    },
+    "dims": {},
+    "pinned": {}
+  }
+]

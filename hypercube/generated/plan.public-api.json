@@ -1,0 +1,596 @@
+[
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health",
+    "targetMeta": {
+      "id": "api:GET /api/health",
+      "kind": "api",
+      "path": "/api/health",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health",
+    "targetMeta": {
+      "id": "api:GET /api/health",
+      "kind": "api",
+      "path": "/api/health",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health",
+    "targetMeta": {
+      "id": "api:GET /api/health",
+      "kind": "api",
+      "path": "/api/health",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/database",
+    "targetMeta": {
+      "id": "api:GET /api/health/database",
+      "kind": "api",
+      "path": "/api/health/database",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/database",
+    "targetMeta": {
+      "id": "api:GET /api/health/database",
+      "kind": "api",
+      "path": "/api/health/database",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/database",
+    "targetMeta": {
+      "id": "api:GET /api/health/database",
+      "kind": "api",
+      "path": "/api/health/database",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/storage",
+    "targetMeta": {
+      "id": "api:GET /api/health/storage",
+      "kind": "api",
+      "path": "/api/health/storage",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/storage",
+    "targetMeta": {
+      "id": "api:GET /api/health/storage",
+      "kind": "api",
+      "path": "/api/health/storage",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/storage",
+    "targetMeta": {
+      "id": "api:GET /api/health/storage",
+      "kind": "api",
+      "path": "/api/health/storage",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/worker",
+    "targetMeta": {
+      "id": "api:GET /api/health/worker",
+      "kind": "api",
+      "path": "/api/health/worker",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/worker",
+    "targetMeta": {
+      "id": "api:GET /api/health/worker",
+      "kind": "api",
+      "path": "/api/health/worker",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/health/worker",
+    "targetMeta": {
+      "id": "api:GET /api/health/worker",
+      "kind": "api",
+      "path": "/api/health/worker",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/feed?type=trending",
+    "targetMeta": {
+      "id": "api:GET /api/feed?type=trending",
+      "kind": "api",
+      "path": "/api/feed?type=trending",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/feed?type=trending",
+    "targetMeta": {
+      "id": "api:GET /api/feed?type=trending",
+      "kind": "api",
+      "path": "/api/feed?type=trending",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/feed?type=trending",
+    "targetMeta": {
+      "id": "api:GET /api/feed?type=trending",
+      "kind": "api",
+      "path": "/api/feed?type=trending",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/feed?type=latest",
+    "targetMeta": {
+      "id": "api:GET /api/feed?type=latest",
+      "kind": "api",
+      "path": "/api/feed?type=latest",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/feed?type=latest",
+    "targetMeta": {
+      "id": "api:GET /api/feed?type=latest",
+      "kind": "api",
+      "path": "/api/feed?type=latest",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/feed?type=latest",
+    "targetMeta": {
+      "id": "api:GET /api/feed?type=latest",
+      "kind": "api",
+      "path": "/api/feed?type=latest",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/search?q=techno",
+    "targetMeta": {
+      "id": "api:GET /api/search?q=techno",
+      "kind": "api",
+      "path": "/api/search?q=techno",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/search?q=techno",
+    "targetMeta": {
+      "id": "api:GET /api/search?q=techno",
+      "kind": "api",
+      "path": "/api/search?q=techno",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/search?q=techno",
+    "targetMeta": {
+      "id": "api:GET /api/search?q=techno",
+      "kind": "api",
+      "path": "/api/search?q=techno",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/scenes",
+    "targetMeta": {
+      "id": "api:GET /api/scenes",
+      "kind": "api",
+      "path": "/api/scenes",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/scenes",
+    "targetMeta": {
+      "id": "api:GET /api/scenes",
+      "kind": "api",
+      "path": "/api/scenes",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/scenes",
+    "targetMeta": {
+      "id": "api:GET /api/scenes",
+      "kind": "api",
+      "path": "/api/scenes",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/opportunities",
+    "targetMeta": {
+      "id": "api:GET /api/opportunities",
+      "kind": "api",
+      "path": "/api/opportunities",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/opportunities",
+    "targetMeta": {
+      "id": "api:GET /api/opportunities",
+      "kind": "api",
+      "path": "/api/opportunities",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/opportunities",
+    "targetMeta": {
+      "id": "api:GET /api/opportunities",
+      "kind": "api",
+      "path": "/api/opportunities",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/hive-story",
+    "targetMeta": {
+      "id": "api:GET /api/hive-story",
+      "kind": "api",
+      "path": "/api/hive-story",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/hive-story",
+    "targetMeta": {
+      "id": "api:GET /api/hive-story",
+      "kind": "api",
+      "path": "/api/hive-story",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:GET /api/hive-story",
+    "targetMeta": {
+      "id": "api:GET /api/hive-story",
+      "kind": "api",
+      "path": "/api/hive-story",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:POST /api/upload/validate",
+    "targetMeta": {
+      "id": "api:POST /api/upload/validate",
+      "kind": "api",
+      "path": "/api/upload/validate",
+      "method": "POST",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "empty"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:POST /api/upload/validate",
+    "targetMeta": {
+      "id": "api:POST /api/upload/validate",
+      "kind": "api",
+      "path": "/api/upload/validate",
+      "method": "POST",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "populated"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-api",
+    "target": "api:POST /api/upload/validate",
+    "targetMeta": {
+      "id": "api:POST /api/upload/validate",
+      "kind": "api",
+      "path": "/api/upload/validate",
+      "method": "POST",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    "dims": {
+      "data": "error"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  }
+]

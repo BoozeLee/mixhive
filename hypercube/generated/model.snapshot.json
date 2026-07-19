@@ -1,0 +1,958 @@
+{
+  "DIMENSIONS": {
+    "auth": [
+      "anon",
+      "new-incomplete",
+      "completed",
+      "admin"
+    ],
+    "data": [
+      "empty",
+      "populated",
+      "error"
+    ],
+    "viewport": [
+      "320",
+      "390",
+      "768",
+      "1440"
+    ],
+    "locale": [
+      "en",
+      "fr",
+      "nl",
+      "de",
+      "es"
+    ],
+    "motion": [
+      "reduced",
+      "full"
+    ],
+    "gate": [
+      "keys-absent",
+      "test-keys"
+    ]
+  },
+  "CLASSES": [
+    {
+      "name": "public-ui",
+      "relevantDims": [
+        "data",
+        "viewport",
+        "locale",
+        "motion"
+      ],
+      "pinned": {
+        "auth": "anon"
+      }
+    },
+    {
+      "name": "authed-ui",
+      "relevantDims": [
+        {
+          "name": "auth",
+          "levels": [
+            "anon",
+            "new-incomplete",
+            "completed"
+          ]
+        },
+        "data",
+        "viewport",
+        "locale",
+        "motion"
+      ]
+    },
+    {
+      "name": "admin-ui",
+      "relevantDims": [
+        {
+          "name": "auth",
+          "levels": [
+            "completed",
+            "admin"
+          ]
+        },
+        "viewport",
+        "locale"
+      ],
+      "pinned": {
+        "data": "populated"
+      }
+    },
+    {
+      "name": "public-api",
+      "relevantDims": [
+        "data"
+      ],
+      "pinned": {
+        "auth": "anon"
+      }
+    },
+    {
+      "name": "authed-api",
+      "relevantDims": [
+        {
+          "name": "auth",
+          "levels": [
+            "anon",
+            "completed"
+          ]
+        },
+        "data"
+      ]
+    },
+    {
+      "name": "gated-api",
+      "relevantDims": [
+        {
+          "name": "auth",
+          "levels": [
+            "completed"
+          ]
+        },
+        "gate",
+        "data"
+      ]
+    },
+    {
+      "name": "agent-lua",
+      "relevantDims": []
+    },
+    {
+      "name": "agent-wasmoon",
+      "relevantDims": []
+    },
+    {
+      "name": "agent-strategic",
+      "relevantDims": [
+        {
+          "name": "auth",
+          "levels": [
+            "anon",
+            "completed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "agent-notif",
+      "relevantDims": [
+        {
+          "name": "auth",
+          "levels": [
+            "anon",
+            "completed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "agent-session-spirit",
+      "relevantDims": []
+    },
+    {
+      "name": "agent-audio",
+      "relevantDims": []
+    },
+    {
+      "name": "agent-aiband",
+      "relevantDims": []
+    }
+  ],
+  "TARGETS": [
+    {
+      "id": "route:/",
+      "kind": "ui",
+      "path": "/",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/login",
+      "kind": "ui",
+      "path": "/login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/register",
+      "kind": "ui",
+      "path": "/register",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/dev-login",
+      "kind": "ui",
+      "path": "/dev-login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/auth/forgot-password",
+      "kind": "ui",
+      "path": "/auth/forgot-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/auth/reset-password",
+      "kind": "ui",
+      "path": "/auth/reset-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/feed",
+      "kind": "ui",
+      "path": "/feed",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/trending",
+      "kind": "ui",
+      "path": "/trending",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/discover",
+      "kind": "ui",
+      "path": "/discover",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/search",
+      "kind": "ui",
+      "path": "/search",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/scenes",
+      "kind": "ui",
+      "path": "/scenes",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/scene/:slug",
+      "kind": "ui",
+      "path": "/scene/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-scene"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/u/:username",
+      "kind": "ui",
+      "path": "/u/:username",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "username": "test-user"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/mix/:id",
+      "kind": "ui",
+      "path": "/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/embed/mix/:id",
+      "kind": "ui",
+      "path": "/embed/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/playlist/:id",
+      "kind": "ui",
+      "path": "/playlist/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/buzz/:id",
+      "kind": "ui",
+      "path": "/buzz/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/pricing",
+      "kind": "ui",
+      "path": "/pricing",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/notifications",
+      "kind": "ui",
+      "path": "/notifications",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/agents/gallery",
+      "kind": "ui",
+      "path": "/agents/gallery",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/marketplace/agents",
+      "kind": "ui",
+      "path": "/marketplace/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/ai-band",
+      "kind": "ui",
+      "path": "/ai-band",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/ai-band/:slug",
+      "kind": "ui",
+      "path": "/ai-band/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/ai-band/agent/:slug",
+      "kind": "ui",
+      "path": "/ai-band/agent/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/collab-quests",
+      "kind": "ui",
+      "path": "/collab-quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/collab-quests/:id",
+      "kind": "ui",
+      "path": "/collab-quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/epk/:slug",
+      "kind": "ui",
+      "path": "/epk/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-user"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/rituals",
+      "kind": "ui",
+      "path": "/rituals",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/marketplace/gear",
+      "kind": "ui",
+      "path": "/marketplace/gear",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/marketplace/gear/:id",
+      "kind": "ui",
+      "path": "/marketplace/gear/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/hive-story",
+      "kind": "ui",
+      "path": "/hive-story",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/hive-story/:slug",
+      "kind": "ui",
+      "path": "/hive-story/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "test"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/hub",
+      "kind": "ui",
+      "path": "/hub",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/help",
+      "kind": "ui",
+      "path": "/help",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/help/:slug",
+      "kind": "ui",
+      "path": "/help/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "getting-started"
+      },
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/leaderboard",
+      "kind": "ui",
+      "path": "/leaderboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/privacy",
+      "kind": "ui",
+      "path": "/privacy",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/terms",
+      "kind": "ui",
+      "path": "/terms",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/cookies",
+      "kind": "ui",
+      "path": "/cookies",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/styleguide",
+      "kind": "ui",
+      "path": "/styleguide",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/nonexistent-route-404",
+      "kind": "ui",
+      "path": "/nonexistent-route-404",
+      "oracle": "ui-notfound",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    {
+      "id": "route:/setup",
+      "kind": "ui",
+      "path": "/setup",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/dashboard",
+      "kind": "ui",
+      "path": "/dashboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/settings",
+      "kind": "ui",
+      "path": "/settings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/upload",
+      "kind": "ui",
+      "path": "/upload",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/mix/:id/edit",
+      "kind": "ui",
+      "path": "/mix/:id/edit",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/agents",
+      "kind": "ui",
+      "path": "/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/agents/inbox",
+      "kind": "ui",
+      "path": "/agents/inbox",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/scene-radar",
+      "kind": "ui",
+      "path": "/scene-radar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/opportunities",
+      "kind": "ui",
+      "path": "/opportunities",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/quests",
+      "kind": "ui",
+      "path": "/quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/quests/:id",
+      "kind": "ui",
+      "path": "/quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/collab-quests/new",
+      "kind": "ui",
+      "path": "/collab-quests/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/studio/avatar",
+      "kind": "ui",
+      "path": "/studio/avatar",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/epk",
+      "kind": "ui",
+      "path": "/epk",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/composer",
+      "kind": "ui",
+      "path": "/composer",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/marketplace/gear/new",
+      "kind": "ui",
+      "path": "/marketplace/gear/new",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/earnings",
+      "kind": "ui",
+      "path": "/earnings",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/messages",
+      "kind": "ui",
+      "path": "/messages",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/messages/:conversationId",
+      "kind": "ui",
+      "path": "/messages/:conversationId",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "conversationId": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/session/:id",
+      "kind": "ui",
+      "path": "/session/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/session/:id/replay",
+      "kind": "ui",
+      "path": "/session/:id/replay",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "authed-ui"
+    },
+    {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    {
+      "id": "route:/admin/moderation",
+      "kind": "ui",
+      "path": "/admin/moderation",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    {
+      "id": "api:GET /api/health",
+      "kind": "api",
+      "path": "/api/health",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/health/database",
+      "kind": "api",
+      "path": "/api/health/database",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/health/storage",
+      "kind": "api",
+      "path": "/api/health/storage",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/health/worker",
+      "kind": "api",
+      "path": "/api/health/worker",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/feed?type=trending",
+      "kind": "api",
+      "path": "/api/feed?type=trending",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/feed?type=latest",
+      "kind": "api",
+      "path": "/api/feed?type=latest",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/search?q=techno",
+      "kind": "api",
+      "path": "/api/search?q=techno",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/scenes",
+      "kind": "api",
+      "path": "/api/scenes",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/opportunities",
+      "kind": "api",
+      "path": "/api/opportunities",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/hive-story",
+      "kind": "api",
+      "path": "/api/hive-story",
+      "method": "GET",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:POST /api/upload/validate",
+      "kind": "api",
+      "path": "/api/upload/validate",
+      "method": "POST",
+      "oracle": "api-status",
+      "class": "public-api"
+    },
+    {
+      "id": "api:GET /api/notifications",
+      "kind": "api",
+      "path": "/api/notifications",
+      "method": "GET",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    {
+      "id": "api:POST /api/mixes",
+      "kind": "api",
+      "path": "/api/mixes",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    {
+      "id": "api:POST /api/buzzes",
+      "kind": "api",
+      "path": "/api/buzzes",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    {
+      "id": "api:POST /api/cache/invalidate",
+      "kind": "api",
+      "path": "/api/cache/invalidate",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    {
+      "id": "api:GET /api/admin/agents",
+      "kind": "api",
+      "path": "/api/admin/agents",
+      "method": "GET",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    {
+      "id": "api:POST /api/subscription/create",
+      "kind": "api",
+      "path": "/api/subscription/create",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "stripe",
+      "class": "gated-api"
+    },
+    {
+      "id": "api:POST /api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+      "kind": "api",
+      "path": "/api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "stripe",
+      "class": "gated-api"
+    },
+    {
+      "id": "api:POST /api/ai/generate-image",
+      "kind": "api",
+      "path": "/api/ai/generate-image",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "openai",
+      "class": "gated-api"
+    },
+    {
+      "id": "api:POST /api/composer/suggest",
+      "kind": "api",
+      "path": "/api/composer/suggest",
+      "method": "POST",
+      "oracle": "api-status",
+      "gate": "openai",
+      "class": "gated-api"
+    },
+    {
+      "id": "agent:lua",
+      "kind": "agent",
+      "class": "agent-lua",
+      "path": "/api/lua-agent/run",
+      "oracle": "agent-lua",
+      "method": "GET"
+    },
+    {
+      "id": "agent:wasmoon",
+      "kind": "agent",
+      "class": "agent-wasmoon",
+      "path": "/api/agents/wasmoon-test",
+      "oracle": "agent-wasmoon",
+      "method": "GET"
+    },
+    {
+      "id": "agent:strategic",
+      "kind": "agent",
+      "class": "agent-strategic",
+      "path": "/api/cron/strategic-agents",
+      "oracle": "agent-strategic",
+      "method": "POST"
+    },
+    {
+      "id": "agent:notif-prioritizer",
+      "kind": "agent",
+      "class": "agent-notif",
+      "path": "/api/cron/notification-prioritizer",
+      "oracle": "agent-notif-prioritizer",
+      "method": "POST"
+    },
+    {
+      "id": "agent:session-spirit",
+      "kind": "agent",
+      "class": "agent-session-spirit",
+      "path": "/api/mythic/sessions/:id/agent",
+      "oracle": "agent-session-spirit",
+      "method": "POST"
+    },
+    {
+      "id": "agent:audio-worker",
+      "kind": "agent",
+      "class": "agent-audio",
+      "path": "worker/audio --selftest",
+      "oracle": "agent-audio-worker"
+    },
+    {
+      "id": "agent:ai-band-bridge",
+      "kind": "agent",
+      "class": "agent-aiband",
+      "path": "scripts/provenance_publish_demo.mjs",
+      "oracle": "agent-ai-band-bridge"
+    }
+  ]
+}

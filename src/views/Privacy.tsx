@@ -35,8 +35,23 @@ export function Privacy() {
       <h2 style={h2}>{t('legalHeading')}</h2>
       <p style={p}>{t('legalBody')}</p>
 
+      <h2 style={h2}>{t('retentionHeading')}</h2>
+      <p style={p}>{t('retentionBody')}</p>
+
+      <h2 style={h2}>{t('transfersHeading')}</h2>
+      <p style={p}>{t('transfersBody')}</p>
+
+      <h2 style={h2}>{t('thirdPartiesHeading')}</h2>
+      <p style={p}>{t('thirdPartiesBody')}</p>
+
       <h2 style={h2}>{t('rightsHeading')}</h2>
       <p style={p}>{t('rightsBody')}</p>
+
+      <h2 style={h2}>{t('supervisoryHeading')}</h2>
+      <p style={p}>{t('supervisoryBody')}</p>
+
+      <h2 style={h2}>{t('automatedHeading')}</h2>
+      <p style={p}>{t('automatedBody')}</p>
 
       <h2 style={h2}>{t('contactHeading')}</h2>
       <p style={p}>{t('contactBody')}</p>

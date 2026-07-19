@@ -1,0 +1,4507 @@
+[
+  {
+    "class": "public-ui",
+    "target": "route:/",
+    "targetMeta": {
+      "id": "route:/",
+      "kind": "ui",
+      "path": "/",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/",
+    "targetMeta": {
+      "id": "route:/",
+      "kind": "ui",
+      "path": "/",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/login",
+    "targetMeta": {
+      "id": "route:/login",
+      "kind": "ui",
+      "path": "/login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/feed",
+    "targetMeta": {
+      "id": "route:/feed",
+      "kind": "ui",
+      "path": "/feed",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "768",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/feed",
+    "targetMeta": {
+      "id": "route:/feed",
+      "kind": "ui",
+      "path": "/feed",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/trending",
+    "targetMeta": {
+      "id": "route:/trending",
+      "kind": "ui",
+      "path": "/trending",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "390",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/register",
+    "targetMeta": {
+      "id": "route:/register",
+      "kind": "ui",
+      "path": "/register",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/trending",
+    "targetMeta": {
+      "id": "route:/trending",
+      "kind": "ui",
+      "path": "/trending",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "1440",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/dev-login",
+    "targetMeta": {
+      "id": "route:/dev-login",
+      "kind": "ui",
+      "path": "/dev-login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "de",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/forgot-password",
+    "targetMeta": {
+      "id": "route:/auth/forgot-password",
+      "kind": "ui",
+      "path": "/auth/forgot-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/discover",
+    "targetMeta": {
+      "id": "route:/discover",
+      "kind": "ui",
+      "path": "/discover",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "320",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/discover",
+    "targetMeta": {
+      "id": "route:/discover",
+      "kind": "ui",
+      "path": "/discover",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/search",
+    "targetMeta": {
+      "id": "route:/search",
+      "kind": "ui",
+      "path": "/search",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/search",
+    "targetMeta": {
+      "id": "route:/search",
+      "kind": "ui",
+      "path": "/search",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "768",
+      "locale": "es",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scenes",
+    "targetMeta": {
+      "id": "route:/scenes",
+      "kind": "ui",
+      "path": "/scenes",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "320",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/reset-password",
+    "targetMeta": {
+      "id": "route:/auth/reset-password",
+      "kind": "ui",
+      "path": "/auth/reset-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scenes",
+    "targetMeta": {
+      "id": "route:/scenes",
+      "kind": "ui",
+      "path": "/scenes",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scene/:slug",
+    "targetMeta": {
+      "id": "route:/scene/:slug",
+      "kind": "ui",
+      "path": "/scene/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-scene"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scene/:slug",
+    "targetMeta": {
+      "id": "route:/scene/:slug",
+      "kind": "ui",
+      "path": "/scene/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-scene"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "1440",
+      "locale": "nl",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/u/:username",
+    "targetMeta": {
+      "id": "route:/u/:username",
+      "kind": "ui",
+      "path": "/u/:username",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "username": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/u/:username",
+    "targetMeta": {
+      "id": "route:/u/:username",
+      "kind": "ui",
+      "path": "/u/:username",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "username": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/mix/:id",
+    "targetMeta": {
+      "id": "route:/mix/:id",
+      "kind": "ui",
+      "path": "/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/mix/:id",
+    "targetMeta": {
+      "id": "route:/mix/:id",
+      "kind": "ui",
+      "path": "/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/embed/mix/:id",
+    "targetMeta": {
+      "id": "route:/embed/mix/:id",
+      "kind": "ui",
+      "path": "/embed/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/embed/mix/:id",
+    "targetMeta": {
+      "id": "route:/embed/mix/:id",
+      "kind": "ui",
+      "path": "/embed/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/playlist/:id",
+    "targetMeta": {
+      "id": "route:/playlist/:id",
+      "kind": "ui",
+      "path": "/playlist/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/playlist/:id",
+    "targetMeta": {
+      "id": "route:/playlist/:id",
+      "kind": "ui",
+      "path": "/playlist/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/buzz/:id",
+    "targetMeta": {
+      "id": "route:/buzz/:id",
+      "kind": "ui",
+      "path": "/buzz/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/buzz/:id",
+    "targetMeta": {
+      "id": "route:/buzz/:id",
+      "kind": "ui",
+      "path": "/buzz/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/pricing",
+    "targetMeta": {
+      "id": "route:/pricing",
+      "kind": "ui",
+      "path": "/pricing",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/notifications",
+    "targetMeta": {
+      "id": "route:/notifications",
+      "kind": "ui",
+      "path": "/notifications",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/notifications",
+    "targetMeta": {
+      "id": "route:/notifications",
+      "kind": "ui",
+      "path": "/notifications",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/agents/gallery",
+    "targetMeta": {
+      "id": "route:/agents/gallery",
+      "kind": "ui",
+      "path": "/agents/gallery",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/agents/gallery",
+    "targetMeta": {
+      "id": "route:/agents/gallery",
+      "kind": "ui",
+      "path": "/agents/gallery",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/agents",
+    "targetMeta": {
+      "id": "route:/marketplace/agents",
+      "kind": "ui",
+      "path": "/marketplace/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/agents",
+    "targetMeta": {
+      "id": "route:/marketplace/agents",
+      "kind": "ui",
+      "path": "/marketplace/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band",
+    "targetMeta": {
+      "id": "route:/ai-band",
+      "kind": "ui",
+      "path": "/ai-band",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band",
+    "targetMeta": {
+      "id": "route:/ai-band",
+      "kind": "ui",
+      "path": "/ai-band",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/:slug",
+      "kind": "ui",
+      "path": "/ai-band/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/:slug",
+      "kind": "ui",
+      "path": "/ai-band/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/agent/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/agent/:slug",
+      "kind": "ui",
+      "path": "/ai-band/agent/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/agent/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/agent/:slug",
+      "kind": "ui",
+      "path": "/ai-band/agent/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests",
+    "targetMeta": {
+      "id": "route:/collab-quests",
+      "kind": "ui",
+      "path": "/collab-quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests",
+    "targetMeta": {
+      "id": "route:/collab-quests",
+      "kind": "ui",
+      "path": "/collab-quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests/:id",
+    "targetMeta": {
+      "id": "route:/collab-quests/:id",
+      "kind": "ui",
+      "path": "/collab-quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests/:id",
+    "targetMeta": {
+      "id": "route:/collab-quests/:id",
+      "kind": "ui",
+      "path": "/collab-quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/epk/:slug",
+    "targetMeta": {
+      "id": "route:/epk/:slug",
+      "kind": "ui",
+      "path": "/epk/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/epk/:slug",
+    "targetMeta": {
+      "id": "route:/epk/:slug",
+      "kind": "ui",
+      "path": "/epk/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/rituals",
+    "targetMeta": {
+      "id": "route:/rituals",
+      "kind": "ui",
+      "path": "/rituals",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/rituals",
+    "targetMeta": {
+      "id": "route:/rituals",
+      "kind": "ui",
+      "path": "/rituals",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear",
+    "targetMeta": {
+      "id": "route:/marketplace/gear",
+      "kind": "ui",
+      "path": "/marketplace/gear",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear",
+    "targetMeta": {
+      "id": "route:/marketplace/gear",
+      "kind": "ui",
+      "path": "/marketplace/gear",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear/:id",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/:id",
+      "kind": "ui",
+      "path": "/marketplace/gear/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear/:id",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/:id",
+      "kind": "ui",
+      "path": "/marketplace/gear/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story",
+    "targetMeta": {
+      "id": "route:/hive-story",
+      "kind": "ui",
+      "path": "/hive-story",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story",
+    "targetMeta": {
+      "id": "route:/hive-story",
+      "kind": "ui",
+      "path": "/hive-story",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story/:slug",
+    "targetMeta": {
+      "id": "route:/hive-story/:slug",
+      "kind": "ui",
+      "path": "/hive-story/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "test"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hub",
+    "targetMeta": {
+      "id": "route:/hub",
+      "kind": "ui",
+      "path": "/hub",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help",
+    "targetMeta": {
+      "id": "route:/help",
+      "kind": "ui",
+      "path": "/help",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help/:slug",
+    "targetMeta": {
+      "id": "route:/help/:slug",
+      "kind": "ui",
+      "path": "/help/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "getting-started"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/leaderboard",
+    "targetMeta": {
+      "id": "route:/leaderboard",
+      "kind": "ui",
+      "path": "/leaderboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/leaderboard",
+    "targetMeta": {
+      "id": "route:/leaderboard",
+      "kind": "ui",
+      "path": "/leaderboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/privacy",
+    "targetMeta": {
+      "id": "route:/privacy",
+      "kind": "ui",
+      "path": "/privacy",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/terms",
+    "targetMeta": {
+      "id": "route:/terms",
+      "kind": "ui",
+      "path": "/terms",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/cookies",
+    "targetMeta": {
+      "id": "route:/cookies",
+      "kind": "ui",
+      "path": "/cookies",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/styleguide",
+    "targetMeta": {
+      "id": "route:/styleguide",
+      "kind": "ui",
+      "path": "/styleguide",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/nonexistent-route-404",
+    "targetMeta": {
+      "id": "route:/nonexistent-route-404",
+      "kind": "ui",
+      "path": "/nonexistent-route-404",
+      "oracle": "ui-notfound",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/",
+    "targetMeta": {
+      "id": "route:/",
+      "kind": "ui",
+      "path": "/",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/login",
+    "targetMeta": {
+      "id": "route:/login",
+      "kind": "ui",
+      "path": "/login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/register",
+    "targetMeta": {
+      "id": "route:/register",
+      "kind": "ui",
+      "path": "/register",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/dev-login",
+    "targetMeta": {
+      "id": "route:/dev-login",
+      "kind": "ui",
+      "path": "/dev-login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/forgot-password",
+    "targetMeta": {
+      "id": "route:/auth/forgot-password",
+      "kind": "ui",
+      "path": "/auth/forgot-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/reset-password",
+    "targetMeta": {
+      "id": "route:/auth/reset-password",
+      "kind": "ui",
+      "path": "/auth/reset-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "en",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/feed",
+    "targetMeta": {
+      "id": "route:/feed",
+      "kind": "ui",
+      "path": "/feed",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/trending",
+    "targetMeta": {
+      "id": "route:/trending",
+      "kind": "ui",
+      "path": "/trending",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/discover",
+    "targetMeta": {
+      "id": "route:/discover",
+      "kind": "ui",
+      "path": "/discover",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/search",
+    "targetMeta": {
+      "id": "route:/search",
+      "kind": "ui",
+      "path": "/search",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scenes",
+    "targetMeta": {
+      "id": "route:/scenes",
+      "kind": "ui",
+      "path": "/scenes",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "populated",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scene/:slug",
+    "targetMeta": {
+      "id": "route:/scene/:slug",
+      "kind": "ui",
+      "path": "/scene/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-scene"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "320",
+      "locale": "en",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/u/:username",
+    "targetMeta": {
+      "id": "route:/u/:username",
+      "kind": "ui",
+      "path": "/u/:username",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "username": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/mix/:id",
+    "targetMeta": {
+      "id": "route:/mix/:id",
+      "kind": "ui",
+      "path": "/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/embed/mix/:id",
+    "targetMeta": {
+      "id": "route:/embed/mix/:id",
+      "kind": "ui",
+      "path": "/embed/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/playlist/:id",
+    "targetMeta": {
+      "id": "route:/playlist/:id",
+      "kind": "ui",
+      "path": "/playlist/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/buzz/:id",
+    "targetMeta": {
+      "id": "route:/buzz/:id",
+      "kind": "ui",
+      "path": "/buzz/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/pricing",
+    "targetMeta": {
+      "id": "route:/pricing",
+      "kind": "ui",
+      "path": "/pricing",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/notifications",
+    "targetMeta": {
+      "id": "route:/notifications",
+      "kind": "ui",
+      "path": "/notifications",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/agents/gallery",
+    "targetMeta": {
+      "id": "route:/agents/gallery",
+      "kind": "ui",
+      "path": "/agents/gallery",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/agents",
+    "targetMeta": {
+      "id": "route:/marketplace/agents",
+      "kind": "ui",
+      "path": "/marketplace/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band",
+    "targetMeta": {
+      "id": "route:/ai-band",
+      "kind": "ui",
+      "path": "/ai-band",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/:slug",
+      "kind": "ui",
+      "path": "/ai-band/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/agent/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/agent/:slug",
+      "kind": "ui",
+      "path": "/ai-band/agent/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests",
+    "targetMeta": {
+      "id": "route:/collab-quests",
+      "kind": "ui",
+      "path": "/collab-quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests/:id",
+    "targetMeta": {
+      "id": "route:/collab-quests/:id",
+      "kind": "ui",
+      "path": "/collab-quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/epk/:slug",
+    "targetMeta": {
+      "id": "route:/epk/:slug",
+      "kind": "ui",
+      "path": "/epk/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/rituals",
+    "targetMeta": {
+      "id": "route:/rituals",
+      "kind": "ui",
+      "path": "/rituals",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear",
+    "targetMeta": {
+      "id": "route:/marketplace/gear",
+      "kind": "ui",
+      "path": "/marketplace/gear",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear/:id",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/:id",
+      "kind": "ui",
+      "path": "/marketplace/gear/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story",
+    "targetMeta": {
+      "id": "route:/hive-story",
+      "kind": "ui",
+      "path": "/hive-story",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story/:slug",
+    "targetMeta": {
+      "id": "route:/hive-story/:slug",
+      "kind": "ui",
+      "path": "/hive-story/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "test"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hub",
+    "targetMeta": {
+      "id": "route:/hub",
+      "kind": "ui",
+      "path": "/hub",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help",
+    "targetMeta": {
+      "id": "route:/help",
+      "kind": "ui",
+      "path": "/help",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help/:slug",
+    "targetMeta": {
+      "id": "route:/help/:slug",
+      "kind": "ui",
+      "path": "/help/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "getting-started"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/leaderboard",
+    "targetMeta": {
+      "id": "route:/leaderboard",
+      "kind": "ui",
+      "path": "/leaderboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "error",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/privacy",
+    "targetMeta": {
+      "id": "route:/privacy",
+      "kind": "ui",
+      "path": "/privacy",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/terms",
+    "targetMeta": {
+      "id": "route:/terms",
+      "kind": "ui",
+      "path": "/terms",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/cookies",
+    "targetMeta": {
+      "id": "route:/cookies",
+      "kind": "ui",
+      "path": "/cookies",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/styleguide",
+    "targetMeta": {
+      "id": "route:/styleguide",
+      "kind": "ui",
+      "path": "/styleguide",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/nonexistent-route-404",
+    "targetMeta": {
+      "id": "route:/nonexistent-route-404",
+      "kind": "ui",
+      "path": "/nonexistent-route-404",
+      "oracle": "ui-notfound",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "full"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/",
+    "targetMeta": {
+      "id": "route:/",
+      "kind": "ui",
+      "path": "/",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/login",
+    "targetMeta": {
+      "id": "route:/login",
+      "kind": "ui",
+      "path": "/login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/login",
+    "targetMeta": {
+      "id": "route:/login",
+      "kind": "ui",
+      "path": "/login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/register",
+    "targetMeta": {
+      "id": "route:/register",
+      "kind": "ui",
+      "path": "/register",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/register",
+    "targetMeta": {
+      "id": "route:/register",
+      "kind": "ui",
+      "path": "/register",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/dev-login",
+    "targetMeta": {
+      "id": "route:/dev-login",
+      "kind": "ui",
+      "path": "/dev-login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/dev-login",
+    "targetMeta": {
+      "id": "route:/dev-login",
+      "kind": "ui",
+      "path": "/dev-login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/forgot-password",
+    "targetMeta": {
+      "id": "route:/auth/forgot-password",
+      "kind": "ui",
+      "path": "/auth/forgot-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/forgot-password",
+    "targetMeta": {
+      "id": "route:/auth/forgot-password",
+      "kind": "ui",
+      "path": "/auth/forgot-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/reset-password",
+    "targetMeta": {
+      "id": "route:/auth/reset-password",
+      "kind": "ui",
+      "path": "/auth/reset-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/reset-password",
+    "targetMeta": {
+      "id": "route:/auth/reset-password",
+      "kind": "ui",
+      "path": "/auth/reset-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/feed",
+    "targetMeta": {
+      "id": "route:/feed",
+      "kind": "ui",
+      "path": "/feed",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/trending",
+    "targetMeta": {
+      "id": "route:/trending",
+      "kind": "ui",
+      "path": "/trending",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/discover",
+    "targetMeta": {
+      "id": "route:/discover",
+      "kind": "ui",
+      "path": "/discover",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/search",
+    "targetMeta": {
+      "id": "route:/search",
+      "kind": "ui",
+      "path": "/search",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "fr",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scenes",
+    "targetMeta": {
+      "id": "route:/scenes",
+      "kind": "ui",
+      "path": "/scenes",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scene/:slug",
+    "targetMeta": {
+      "id": "route:/scene/:slug",
+      "kind": "ui",
+      "path": "/scene/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-scene"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "390",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/u/:username",
+    "targetMeta": {
+      "id": "route:/u/:username",
+      "kind": "ui",
+      "path": "/u/:username",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "username": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/mix/:id",
+    "targetMeta": {
+      "id": "route:/mix/:id",
+      "kind": "ui",
+      "path": "/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/embed/mix/:id",
+    "targetMeta": {
+      "id": "route:/embed/mix/:id",
+      "kind": "ui",
+      "path": "/embed/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/playlist/:id",
+    "targetMeta": {
+      "id": "route:/playlist/:id",
+      "kind": "ui",
+      "path": "/playlist/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/buzz/:id",
+    "targetMeta": {
+      "id": "route:/buzz/:id",
+      "kind": "ui",
+      "path": "/buzz/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/pricing",
+    "targetMeta": {
+      "id": "route:/pricing",
+      "kind": "ui",
+      "path": "/pricing",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/pricing",
+    "targetMeta": {
+      "id": "route:/pricing",
+      "kind": "ui",
+      "path": "/pricing",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/notifications",
+    "targetMeta": {
+      "id": "route:/notifications",
+      "kind": "ui",
+      "path": "/notifications",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/agents/gallery",
+    "targetMeta": {
+      "id": "route:/agents/gallery",
+      "kind": "ui",
+      "path": "/agents/gallery",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/agents",
+    "targetMeta": {
+      "id": "route:/marketplace/agents",
+      "kind": "ui",
+      "path": "/marketplace/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band",
+    "targetMeta": {
+      "id": "route:/ai-band",
+      "kind": "ui",
+      "path": "/ai-band",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/:slug",
+      "kind": "ui",
+      "path": "/ai-band/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/agent/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/agent/:slug",
+      "kind": "ui",
+      "path": "/ai-band/agent/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests",
+    "targetMeta": {
+      "id": "route:/collab-quests",
+      "kind": "ui",
+      "path": "/collab-quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests/:id",
+    "targetMeta": {
+      "id": "route:/collab-quests/:id",
+      "kind": "ui",
+      "path": "/collab-quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/epk/:slug",
+    "targetMeta": {
+      "id": "route:/epk/:slug",
+      "kind": "ui",
+      "path": "/epk/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/rituals",
+    "targetMeta": {
+      "id": "route:/rituals",
+      "kind": "ui",
+      "path": "/rituals",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear",
+    "targetMeta": {
+      "id": "route:/marketplace/gear",
+      "kind": "ui",
+      "path": "/marketplace/gear",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear/:id",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/:id",
+      "kind": "ui",
+      "path": "/marketplace/gear/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story",
+    "targetMeta": {
+      "id": "route:/hive-story",
+      "kind": "ui",
+      "path": "/hive-story",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story/:slug",
+    "targetMeta": {
+      "id": "route:/hive-story/:slug",
+      "kind": "ui",
+      "path": "/hive-story/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "test"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story/:slug",
+    "targetMeta": {
+      "id": "route:/hive-story/:slug",
+      "kind": "ui",
+      "path": "/hive-story/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "test"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hub",
+    "targetMeta": {
+      "id": "route:/hub",
+      "kind": "ui",
+      "path": "/hub",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hub",
+    "targetMeta": {
+      "id": "route:/hub",
+      "kind": "ui",
+      "path": "/hub",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help",
+    "targetMeta": {
+      "id": "route:/help",
+      "kind": "ui",
+      "path": "/help",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help",
+    "targetMeta": {
+      "id": "route:/help",
+      "kind": "ui",
+      "path": "/help",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help/:slug",
+    "targetMeta": {
+      "id": "route:/help/:slug",
+      "kind": "ui",
+      "path": "/help/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "getting-started"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help/:slug",
+    "targetMeta": {
+      "id": "route:/help/:slug",
+      "kind": "ui",
+      "path": "/help/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "getting-started"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/leaderboard",
+    "targetMeta": {
+      "id": "route:/leaderboard",
+      "kind": "ui",
+      "path": "/leaderboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/privacy",
+    "targetMeta": {
+      "id": "route:/privacy",
+      "kind": "ui",
+      "path": "/privacy",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/privacy",
+    "targetMeta": {
+      "id": "route:/privacy",
+      "kind": "ui",
+      "path": "/privacy",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/terms",
+    "targetMeta": {
+      "id": "route:/terms",
+      "kind": "ui",
+      "path": "/terms",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/terms",
+    "targetMeta": {
+      "id": "route:/terms",
+      "kind": "ui",
+      "path": "/terms",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/cookies",
+    "targetMeta": {
+      "id": "route:/cookies",
+      "kind": "ui",
+      "path": "/cookies",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/cookies",
+    "targetMeta": {
+      "id": "route:/cookies",
+      "kind": "ui",
+      "path": "/cookies",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/styleguide",
+    "targetMeta": {
+      "id": "route:/styleguide",
+      "kind": "ui",
+      "path": "/styleguide",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/styleguide",
+    "targetMeta": {
+      "id": "route:/styleguide",
+      "kind": "ui",
+      "path": "/styleguide",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/nonexistent-route-404",
+    "targetMeta": {
+      "id": "route:/nonexistent-route-404",
+      "kind": "ui",
+      "path": "/nonexistent-route-404",
+      "oracle": "ui-notfound",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "768",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/nonexistent-route-404",
+    "targetMeta": {
+      "id": "route:/nonexistent-route-404",
+      "kind": "ui",
+      "path": "/nonexistent-route-404",
+      "oracle": "ui-notfound",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "1440",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/",
+    "targetMeta": {
+      "id": "route:/",
+      "kind": "ui",
+      "path": "/",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/login",
+    "targetMeta": {
+      "id": "route:/login",
+      "kind": "ui",
+      "path": "/login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/register",
+    "targetMeta": {
+      "id": "route:/register",
+      "kind": "ui",
+      "path": "/register",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/dev-login",
+    "targetMeta": {
+      "id": "route:/dev-login",
+      "kind": "ui",
+      "path": "/dev-login",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/forgot-password",
+    "targetMeta": {
+      "id": "route:/auth/forgot-password",
+      "kind": "ui",
+      "path": "/auth/forgot-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/auth/reset-password",
+    "targetMeta": {
+      "id": "route:/auth/reset-password",
+      "kind": "ui",
+      "path": "/auth/reset-password",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/feed",
+    "targetMeta": {
+      "id": "route:/feed",
+      "kind": "ui",
+      "path": "/feed",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "onboardingSensitive": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/trending",
+    "targetMeta": {
+      "id": "route:/trending",
+      "kind": "ui",
+      "path": "/trending",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/discover",
+    "targetMeta": {
+      "id": "route:/discover",
+      "kind": "ui",
+      "path": "/discover",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/search",
+    "targetMeta": {
+      "id": "route:/search",
+      "kind": "ui",
+      "path": "/search",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "nl",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scenes",
+    "targetMeta": {
+      "id": "route:/scenes",
+      "kind": "ui",
+      "path": "/scenes",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/scene/:slug",
+    "targetMeta": {
+      "id": "route:/scene/:slug",
+      "kind": "ui",
+      "path": "/scene/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-scene"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/u/:username",
+    "targetMeta": {
+      "id": "route:/u/:username",
+      "kind": "ui",
+      "path": "/u/:username",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "username": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "de",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/mix/:id",
+    "targetMeta": {
+      "id": "route:/mix/:id",
+      "kind": "ui",
+      "path": "/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/embed/mix/:id",
+    "targetMeta": {
+      "id": "route:/embed/mix/:id",
+      "kind": "ui",
+      "path": "/embed/mix/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/playlist/:id",
+    "targetMeta": {
+      "id": "route:/playlist/:id",
+      "kind": "ui",
+      "path": "/playlist/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/buzz/:id",
+    "targetMeta": {
+      "id": "route:/buzz/:id",
+      "kind": "ui",
+      "path": "/buzz/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/pricing",
+    "targetMeta": {
+      "id": "route:/pricing",
+      "kind": "ui",
+      "path": "/pricing",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/notifications",
+    "targetMeta": {
+      "id": "route:/notifications",
+      "kind": "ui",
+      "path": "/notifications",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/agents/gallery",
+    "targetMeta": {
+      "id": "route:/agents/gallery",
+      "kind": "ui",
+      "path": "/agents/gallery",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/agents",
+    "targetMeta": {
+      "id": "route:/marketplace/agents",
+      "kind": "ui",
+      "path": "/marketplace/agents",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band",
+    "targetMeta": {
+      "id": "route:/ai-band",
+      "kind": "ui",
+      "path": "/ai-band",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/:slug",
+      "kind": "ui",
+      "path": "/ai-band/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/ai-band/agent/:slug",
+    "targetMeta": {
+      "id": "route:/ai-band/agent/:slug",
+      "kind": "ui",
+      "path": "/ai-band/agent/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "acid-oracle"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests",
+    "targetMeta": {
+      "id": "route:/collab-quests",
+      "kind": "ui",
+      "path": "/collab-quests",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/collab-quests/:id",
+    "targetMeta": {
+      "id": "route:/collab-quests/:id",
+      "kind": "ui",
+      "path": "/collab-quests/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/epk/:slug",
+    "targetMeta": {
+      "id": "route:/epk/:slug",
+      "kind": "ui",
+      "path": "/epk/:slug",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "slug": "test-user"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/rituals",
+    "targetMeta": {
+      "id": "route:/rituals",
+      "kind": "ui",
+      "path": "/rituals",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear",
+    "targetMeta": {
+      "id": "route:/marketplace/gear",
+      "kind": "ui",
+      "path": "/marketplace/gear",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/marketplace/gear/:id",
+    "targetMeta": {
+      "id": "route:/marketplace/gear/:id",
+      "kind": "ui",
+      "path": "/marketplace/gear/:id",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "params": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story",
+    "targetMeta": {
+      "id": "route:/hive-story",
+      "kind": "ui",
+      "path": "/hive-story",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hive-story/:slug",
+    "targetMeta": {
+      "id": "route:/hive-story/:slug",
+      "kind": "ui",
+      "path": "/hive-story/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "test"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/hub",
+    "targetMeta": {
+      "id": "route:/hub",
+      "kind": "ui",
+      "path": "/hub",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help",
+    "targetMeta": {
+      "id": "route:/help",
+      "kind": "ui",
+      "path": "/help",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/help/:slug",
+    "targetMeta": {
+      "id": "route:/help/:slug",
+      "kind": "ui",
+      "path": "/help/:slug",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "params": {
+        "slug": "getting-started"
+      },
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/leaderboard",
+    "targetMeta": {
+      "id": "route:/leaderboard",
+      "kind": "ui",
+      "path": "/leaderboard",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/privacy",
+    "targetMeta": {
+      "id": "route:/privacy",
+      "kind": "ui",
+      "path": "/privacy",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/terms",
+    "targetMeta": {
+      "id": "route:/terms",
+      "kind": "ui",
+      "path": "/terms",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/cookies",
+    "targetMeta": {
+      "id": "route:/cookies",
+      "kind": "ui",
+      "path": "/cookies",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/styleguide",
+    "targetMeta": {
+      "id": "route:/styleguide",
+      "kind": "ui",
+      "path": "/styleguide",
+      "oracle": "ui-render",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  },
+  {
+    "class": "public-ui",
+    "target": "route:/nonexistent-route-404",
+    "targetMeta": {
+      "id": "route:/nonexistent-route-404",
+      "kind": "ui",
+      "path": "/nonexistent-route-404",
+      "oracle": "ui-notfound",
+      "dataFetching": false,
+      "class": "public-ui"
+    },
+    "dims": {
+      "data": "empty",
+      "viewport": "320",
+      "locale": "es",
+      "motion": "reduced"
+    },
+    "pinned": {
+      "auth": "anon"
+    }
+  }
+]

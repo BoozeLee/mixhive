@@ -130,7 +130,17 @@ export function Footer() {
               {t('terms')}
             </button>
             <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer">
-              {t('cookies')}
+              {t('cookies')}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.removeItem('mixhive_consent_v1');
+                window.location.reload();
+              }}
+              className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer"
+            >
+              {t('cookieSettings')}
             </button>
           </div>
         </div>

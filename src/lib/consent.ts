@@ -11,7 +11,7 @@ export interface ConsentState {
 }
 
 const KEY = 'mixhive_consent_v1';
-const POLICY_VERSION = 'v1';
+const POLICY_VERSION = 'v2';
 export const CONSENT_CHANGED_EVENT = 'mixhive:consent-changed';
 
 export function getConsent(): ConsentState | null {
@@ -25,7 +25,10 @@ export function getConsent(): ConsentState | null {
 }
 
 export function consentDecided(): boolean {
-  return getConsent() !== null;
+  const c = getConsent();
+  if (!c) return false;
+  if (c.policyVersion !== POLICY_VERSION) return false;
+  return true;
 }
 
 export function hasConsent(category: ConsentCategory): boolean {

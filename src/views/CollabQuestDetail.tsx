@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { colors, withAlpha } from '../styles/tokens';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Icon } from '../components/ui/Icon';
 import { Button } from '../components/ui/Button';
@@ -63,6 +63,7 @@ const PHASE_LABELS: Record<string, { label: string; color: string }> = {
 export function CollabQuestDetail() {
   const t = useTranslations('quests');
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [quest, setQuest] = useState<Quest | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -71,6 +72,7 @@ export function CollabQuestDetail() {
   const [applied, setApplied] = useState<Set<string>>(new Set());
   const [applyMessage, setApplyMessage] = useState('');
   const [advancing, setAdvancing] = useState(false);
+  const [creatingRoom, setCreatingRoom] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -117,6 +119,34 @@ export function CollabQuestDetail() {
       setError(e instanceof Error ? e.message : 'Failed to advance phase');
     } finally {
       setAdvancing(false);
+    }
+  };
+
+  const handleCreateLiveRoom = async () => {
+    if (!userId || !quest) return;
+    setCreatingRoom(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session) throw new Error('Sign in required');
+      const res = await fetch('/api/live-rooms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
+        body: JSON.stringify({
+          title: `${quest.title} — Continue Session`,
+          description: `Continuing the collab quest: ${quest.title}`,
+          is_public: true,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to create room');
+      const room = await res.json();
+      navigate(`/live-rooms/${room.id}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to create live room');
+    } finally {
+      setCreatingRoom(false);
     }
   };
 
@@ -494,9 +524,16 @@ export function CollabQuestDetail() {
             textAlign: 'center',
           }}
         >
-          <p style={{ color: colors.successStrong, fontWeight: 700, margin: 0 }}>
+          <p style={{ color: colors.successStrong, fontWeight: 700, margin: '0 0 12px' }}>
             ✓ Quest complete — XP awarded to all collaborators
           </p>
+          <Button
+            onClick={handleCreateLiveRoom}
+            loading={creatingRoom}
+            size="sm"
+          >
+            {t('continueInLiveRoom') || 'Continue in Live Room'}
+          </Button>
         </div>
       )}
 

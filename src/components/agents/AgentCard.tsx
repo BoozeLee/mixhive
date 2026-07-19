@@ -121,8 +121,11 @@ export function AgentCard({ agent, forking, onFork }: AgentCardProps) {
                   padding: '3px 8px',
                   borderRadius: radius.pill,
                   background: `${tagColor}22`,
-                  border: `1px solid ${tagColor}44`,
-                  color: tagColor,
+                  border: `1px solid ${tagColor}66`,
+                  // Category hue stays in the bg/border; text uses a
+                  // high-contrast token so the label passes WCAG AA (axe
+                  // color-contrast) instead of tinted-on-tinted purple.
+                  color: colors.text.primary,
                   textTransform: 'capitalize',
                 }}
               >
@@ -180,7 +183,13 @@ export function AgentCard({ agent, forking, onFork }: AgentCardProps) {
             </button>
           )}
         </div>
-        <pre
+        {/* A scrollable code region must be keyboard-focusable (WCAG 2.1.1 /
+            axe scrollable-region-focusable); jsx-a11y's tabindex rule conflicts
+            with that here, so it is scoped-disabled for this one element. */}
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+        <pre tabIndex={0}
+          role="region"
+          aria-label="Agent code preview"
           style={{
             margin: 0,
             color: colors.text.muted,

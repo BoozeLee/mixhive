@@ -475,7 +475,8 @@
     "betaAccessDescription": "Enter an invite code for early access to new features.",
     "billing": "Billing",
     "billingDescription": "Manage your subscription and payment methods.",
-    "manageBilling": "Manage billing"
+    "manageBilling": "Manage billing",
+    "aiArtStudio": "AI Art Studio"
   },
   "gear": {
     "market": "GEAR MARKET",
@@ -1280,5 +1281,26 @@
   },
   "consent": {
     "manageCookies": "Cookie Settings"
+  },
+  "artStudio": {
+    "title": "AI Art Studio",
+    "heading": "Create art with AI",
+    "subtitle": "Generate stunning artwork from text prompts or blend multiple reference images. Pro only.",
+    "promptLabel": "Describe what you want",
+    "promptPlaceholder": "A neon-lit DJ booth with holographic turntables, cyberpunk atmosphere...",
+    "promptHint": "Use (word:1.3) syntax for prompt weighting. Be specific about style, mood, and composition.",
+    "negativePrompt": "Negative prompt",
+    "negativePlaceholder": "blurry, low quality, text, watermark...",
+    "style": "Style",
+    "aspectRatio": "Aspect ratio",
+    "denoising": "Denoising strength",
+    "closerToRef": "Closer to reference",
+    "moreCreative": "More creative",
+    "qualityBoosters": "Quality boosters",
+    "detail": "Extra detail",
+    "sharpness": "Sharpness boost",
+    "cinematicBoost": "Cinematic lighting",
+    "generate": "Generate Art",
+    "history": "Generation History"
   }
 }

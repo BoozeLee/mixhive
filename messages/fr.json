@@ -475,7 +475,8 @@
     "betaAccessDescription": "Entrez un code d’invitation pour un accès anticipé aux nouvelles fonctionnalités.",
     "billing": "Facturation",
     "billingDescription": "Gérez votre abonnement et vos moyens de paiement.",
-    "manageBilling": "Gérer la facturation"
+    "manageBilling": "Gérer la facturation",
+    "aiArtStudio": "Studio d'Art IA"
   },
   "gear": {
     "market": "MARCHÉ DU MATÉRIEL",
@@ -1280,5 +1281,26 @@
   },
   "consent": {
     "manageCookies": "Paramètres des cookies"
+  },
+  "artStudio": {
+    "title": "Studio d'Art IA",
+    "heading": "Créer de l'art avec l'IA",
+    "subtitle": "Générez des œuvres à partir de textes ou mélangez plusieurs images de référence. Réservé aux Pro.",
+    "promptLabel": "Décrivez ce que vous voulez",
+    "promptPlaceholder": "Un booth DJ néon avec des platines holographiques, atmosphère cyberpunk...",
+    "promptHint": "Utilisez la syntaxe (mot:1.3) pour le poids des prompts. Soyez précis sur le style, l'ambiance et la composition.",
+    "negativePrompt": "Prompt négatif",
+    "negativePlaceholder": "flou, basse qualité, texte, filigrane...",
+    "style": "Style",
+    "aspectRatio": "Format",
+    "denoising": "Force de débruitage",
+    "closerToRef": "Plus proche de la référence",
+    "moreCreative": "Plus créatif",
+    "qualityBoosters": "Améliorations qualité",
+    "detail": "Détail supplémentaire",
+    "sharpness": "Netteté",
+    "cinematicBoost": "Éclairage cinématique",
+    "generate": "Générer l'art",
+    "history": "Historique des générations"
   }
 }

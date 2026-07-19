@@ -475,7 +475,8 @@
     "betaAccessDescription": "Introduce un código de invitación para acceso anticipado a nuevas funciones.",
     "billing": "Facturación",
     "billingDescription": "Gestiona tu suscripción y métodos de pago.",
-    "manageBilling": "Gestionar facturación"
+    "manageBilling": "Gestionar facturación",
+    "aiArtStudio": "Estudio de Arte IA"
   },
   "gear": {
     "market": "MERCADO DE EQUIPO",
@@ -1280,5 +1281,26 @@
   },
   "consent": {
     "manageCookies": "Configuración de cookies"
+  },
+  "artStudio": {
+    "title": "Estudio de Arte IA",
+    "heading": "Crear arte con IA",
+    "subtitle": "Genera obras impresionantes desde texto o mezcla múltiples imágenes de referencia. Solo Pro.",
+    "promptLabel": "Describe lo que quieres",
+    "promptPlaceholder": "Un booth DJ de neón con tornamesas holográficas, atmósfera cyberpunk...",
+    "promptHint": "Usa la sintaxis (palabra:1.3) para el peso del prompt. Sé específico sobre estilo y composición.",
+    "negativePrompt": "Prompt negativo",
+    "negativePlaceholder": "borroso, baja calidad, texto, marca de agua...",
+    "style": "Estilo",
+    "aspectRatio": "Proporción",
+    "denoising": "Fuerza de desnoise",
+    "closerToRef": "Más cercano a la referencia",
+    "moreCreative": "Más creativo",
+    "qualityBoosters": "Mejoras de calidad",
+    "detail": "Detalle extra",
+    "sharpness": "Nitidez",
+    "cinematicBoost": "Iluminación cinematográfica",
+    "generate": "Generar arte",
+    "history": "Historial de generaciones"
   }
 }

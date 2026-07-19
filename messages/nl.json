@@ -475,7 +475,8 @@
     "betaAccessDescription": "Voer een uitnodigingscode in voor vroegtijdige toegang tot nieuwe functies.",
     "billing": "Facturering",
     "billingDescription": "Beheer je abonnement en betalingsmethoden.",
-    "manageBilling": "Facturering beheren"
+    "manageBilling": "Facturering beheren",
+    "aiArtStudio": "AI Kunststudio"
   },
   "gear": {
     "market": "GEARMARKT",
@@ -1280,5 +1281,26 @@
   },
   "consent": {
     "manageCookies": "Cookie-instellingen"
+  },
+  "artStudio": {
+    "title": "AI Kunststudio",
+    "heading": "Kunst maken met AI",
+    "subtitle": "Genereer prachtige kunstwerken uit tekst prompts of meng meerdere referentiebeelden. Alleen Pro.",
+    "promptLabel": "Beschrijf wat je wilt",
+    "promptPlaceholder": "Een neon DJ-booth met holografische draaitafels, cyberpunk sfeer...",
+    "promptHint": "Gebruik (woord:1.3) syntax voor prompt gewicht. Wees specifiek over stijl en compositie.",
+    "negativePrompt": "Negatief prompt",
+    "negativePlaceholder": "onscherp, lage kwaliteit, tekst, watermerk...",
+    "style": "Stijl",
+    "aspectRatio": "Verhouding",
+    "denoising": "Ruisverwijdering",
+    "closerToRef": "Dichter bij referentie",
+    "moreCreative": "Creatiever",
+    "qualityBoosters": "Kwaliteitsboosters",
+    "detail": "Extra detail",
+    "sharpness": "Scherpte",
+    "cinematicBoost": "Cinematische belichting",
+    "generate": "Kunst genereren",
+    "history": "Generatiegeschiedenis"
   }
 }

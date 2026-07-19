@@ -338,6 +338,15 @@ export function Settings() {
         >
           {t('artStudio')}
         </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          size="lg"
+          onClick={() => navigate('/studio/art')}
+          style={{ marginTop: space[5], marginLeft: space[3] }}
+        >
+          {t('aiArtStudio')}
+        </Button>
       </div>
 
       <div

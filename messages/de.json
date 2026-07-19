@@ -475,7 +475,8 @@
     "betaAccessDescription": "Geben Sie einen Einladungscode ein, um vorzeitig auf neue Funktionen zuzugreifen.",
     "billing": "Abrechnung",
     "billingDescription": "Verwalten Sie Ihr Abonnement und Ihre Zahlungsmethoden.",
-    "manageBilling": "Abrechnung verwalten"
+    "manageBilling": "Abrechnung verwalten",
+    "aiArtStudio": "KI-Kunststudio"
   },
   "gear": {
     "market": "GEAR-MARKT",
@@ -1280,5 +1281,26 @@
   },
   "consent": {
     "manageCookies": "Cookie-Einstellungen"
+  },
+  "artStudio": {
+    "title": "KI-Kunststudio",
+    "heading": "Kunst mit KI erstellen",
+    "subtitle": "Erstelle beeindruckende Kunstwerke aus Text-Prompts oder mische mehrere Referenzbilder. Nur für Pro.",
+    "promptLabel": "Beschreibe, was du willst",
+    "promptPlaceholder": "Ein Neon-DJ-Booth mit holografischen Plattenspielern, Cyberpunk-Atmosphäre...",
+    "promptHint": "Verwende (Wort:1.3) Syntax für Prompt-Gewichtung. Sei spezifisch über Stimmung und Komposition.",
+    "negativePrompt": "Negativ-Prompt",
+    "negativePlaceholder": "unscharf, niedrige Qualität, Text, Wasserzeichen...",
+    "style": "Stil",
+    "aspectRatio": "Seitenverhältnis",
+    "denoising": "Entrauschungsstärke",
+    "closerToRef": "Näher zur Referenz",
+    "moreCreative": "Kreativer",
+    "qualityBoosters": "Qualitäts-Booster",
+    "detail": "Extradetails",
+    "sharpness": "Schärfe",
+    "cinematicBoost": "Cinematisches Licht",
+    "generate": "Kunst erstellen",
+    "history": "Generierungsverlauf"
   }
 }

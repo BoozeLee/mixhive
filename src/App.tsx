@@ -165,6 +165,22 @@ const MessagesPage = lazy(() =>
 const MessageThreadPage = lazy(() =>
   import('./views/MessageThread').then(m => ({ default: m.MessageThreadPage }))
 );
+// Phase 17 — Live Rooms & Events
+const LiveRooms = lazy(() =>
+  import('./views/LiveRooms').then(m => ({ default: m.LiveRooms }))
+);
+const LiveRoomView = lazy(() =>
+  import('./views/LiveRoom').then(m => ({ default: m.LiveRoom }))
+);
+const EventsView = lazy(() =>
+  import('./views/Events').then(m => ({ default: m.Events }))
+);
+const EventDetailView = lazy(() =>
+  import('./views/EventDetail').then(m => ({ default: m.EventDetail }))
+);
+const NewEventView = lazy(() =>
+  import('./views/NewEvent').then(m => ({ default: m.NewEvent }))
+);
 // SessionFab is small and always available to authenticated users — not lazy-loaded
 import { SessionFab } from './components/SessionFab';
 
@@ -410,6 +426,26 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <NewCollabQuest />
+            </ProtectedRoute>
+          }
+        />
+        {/* Phase 17 — Live Rooms & Events */}
+        <Route path="/live-rooms" element={<LiveRooms />} />
+        <Route
+          path="/live-rooms/:id"
+          element={
+            <ProtectedRoute>
+              <LiveRoomView />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/events" element={<EventsView />} />
+        <Route path="/events/:id" element={<EventDetailView />} />
+        <Route
+          path="/events/new"
+          element={
+            <ProtectedRoute>
+              <NewEventView />
             </ProtectedRoute>
           }
         />

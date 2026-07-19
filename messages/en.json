@@ -333,6 +333,8 @@
     "popularGenresSubtitle": "Dive into a sound",
     "aiBand": "AI Band",
     "aiBandSubtitle": "Autonomous artists of the Hive",
+    "upcomingEvents": "Upcoming Events",
+    "upcomingEventsSubtitle": "Raves, sessions, and meetups",
     "seeAll": "See all",
     "emptyState": "The Hive is quiet. Check back soon for new mixes and creators."
   },
@@ -540,6 +542,7 @@
     "cancelQuest": "Cancel Quest",
     "launchHint": "Launch when all needed roles are filled.",
     "completeHint": "Marking complete awards XP to all filled role holders.",
+    "continueInLiveRoom": "Continue in Live Room",
     "applyPlaceholder": "Tell the creator why you're a great fit..."
   },
   "earnings": {

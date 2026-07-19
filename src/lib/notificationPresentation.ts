@@ -170,6 +170,86 @@ export function notificationPresentation(notification: NotificationLike): Notifi
         url: safeNotificationPath(questId ? `/collab-quests/${questId}` : '/notifications'),
       };
     }
+    case 'live_room_invite': {
+      const roomId = dataString(data, 'room_id');
+      return {
+        category: 'social',
+        urgency: 'immediate',
+        title: 'Live room invite',
+        body: customBody || `${actor} invited you to a live room`,
+        url: safeNotificationPath(roomId ? `/live-rooms/${roomId}` : '/live-rooms'),
+      };
+    }
+    case 'live_room_started': {
+      const roomId = dataString(data, 'room_id');
+      return {
+        category: 'social',
+        urgency: 'immediate',
+        title: 'Live session started',
+        body: customBody || `${actor} started a live session`,
+        url: safeNotificationPath(roomId ? `/live-rooms/${roomId}` : '/live-rooms'),
+      };
+    }
+    case 'live_room_ended': {
+      const roomId = dataString(data, 'room_id');
+      return {
+        category: 'social',
+        urgency: 'digest',
+        title: 'Live session ended',
+        body: customBody || `A live session has ended`,
+        url: safeNotificationPath(roomId ? `/live-rooms/${roomId}` : '/live-rooms'),
+      };
+    }
+    case 'event_created': {
+      const eventId = dataString(data, 'event_id');
+      return {
+        category: 'social',
+        urgency: 'digest',
+        title: 'New event',
+        body: customBody || `${actor} created a new event`,
+        url: safeNotificationPath(eventId ? `/events/${eventId}` : '/events'),
+      };
+    }
+    case 'event_reminder': {
+      const eventId = dataString(data, 'event_id');
+      return {
+        category: 'social',
+        urgency: 'immediate',
+        title: 'Event starting soon',
+        body: customBody || 'An event you RSVP\'d to is starting soon',
+        url: safeNotificationPath(eventId ? `/events/${eventId}` : '/events'),
+      };
+    }
+    case 'event_update': {
+      const eventId = dataString(data, 'event_id');
+      return {
+        category: 'social',
+        urgency: 'immediate',
+        title: 'Event updated',
+        body: customBody || `${actor} updated an event`,
+        url: safeNotificationPath(eventId ? `/events/${eventId}` : '/events'),
+      };
+    }
+    case 'event_cancelled': {
+      const eventId = dataString(data, 'event_id');
+      return {
+        category: 'social',
+        urgency: 'immediate',
+        title: 'Event cancelled',
+        body: customBody || `An event has been cancelled`,
+        url: safeNotificationPath(eventId ? `/events/${eventId}` : '/events'),
+      };
+    }
+    case 'rsvp_confirmed': {
+      const eventId = dataString(data, 'event_id');
+      return {
+        category: 'social',
+        urgency: 'digest',
+        title: 'RSVP confirmed',
+        body: customBody || `${actor} is going to an event`,
+        url: safeNotificationPath(eventId ? `/events/${eventId}` : '/events'),
+      };
+    }
     default:
       return {
         category: 'social',

@@ -333,6 +333,8 @@
     "popularGenresSubtitle": "Tauche in einen Sound ein",
     "aiBand": "AI Band",
     "aiBandSubtitle": "Autonome Künstler der Hive",
+    "upcomingEvents": "Kommende Events",
+    "upcomingEventsSubtitle": "Raves, Sessions und Treffen",
     "seeAll": "Alle anzeigen",
     "emptyState": "Der Bienenstock ist ruhig. Schau bald wieder vorbei für neue Mixes und Creators."
   },
@@ -540,6 +542,7 @@
     "cancelQuest": "Quest abbrechen",
     "launchHint": "Starten, wenn alle benötigten Rollen besetzt sind.",
     "completeHint": "Als abgeschlossen markieren verleiht XP an alle Rolleninhaber.",
+    "continueInLiveRoom": "Im Live-Raum fortfahren",
     "applyPlaceholder": "Erzähle dem Creator, warum du perfekt passt…"
   },
   "earnings": {

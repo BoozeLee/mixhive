@@ -333,6 +333,8 @@
     "popularGenresSubtitle": "Plongez dans un son",
     "aiBand": "AI Band",
     "aiBandSubtitle": "Artistes autonomes de la Hive",
+    "upcomingEvents": "Événements à venir",
+    "upcomingEventsSubtitle": "Raves, sessions et rencontres",
     "seeAll": "Voir tout",
     "emptyState": "La Hive est silencieuse. Revenez bientôt pour de nouveaux mixes et créateurs."
   },
@@ -540,6 +542,7 @@
     "cancelQuest": "Annuler la quête",
     "launchHint": "Lancez lorsque tous les rôles nécessaires sont pourvus.",
     "completeHint": "Marquer comme terminé attribue des XP à tous les détenteurs de rôles pourvus.",
+    "continueInLiveRoom": "Continuer en salle en direct",
     "applyPlaceholder": "Expliquez au créateur pourquoi vous êtes le candidat idéal…"
   },
   "earnings": {

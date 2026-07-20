@@ -29,6 +29,21 @@ function severity(c) {
 const SEV = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 const ranked = [...fail].sort((a, b) => severity(a) - severity(b));
 
+/**
+ * Escape a value for a markdown table cell.
+ *
+ * Escaping `|` alone is incomplete: a backslash already in the input consumes
+ * the one we add, so `a\|b` still splits the cell. Backslashes must be escaped
+ * first. Also strips newlines, which break table rows outright.
+ */
+function mdCell(value, maxLength) {
+  return String(value ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\|/g, '\\|')
+    .replace(/\r?\n/g, ' ')
+    .slice(0, maxLength);
+}
+
 function reproCmd(c) {
   if (c.class?.startsWith('agent')) return `node hypercube/executors/agents.mjs`;
   if (c.class?.endsWith('-api')) return `node hypercube/executors/api.mjs`;
@@ -83,7 +98,7 @@ else {
       .map(([k, v]) => `${k}=${v}`)
       .join(' ');
     L.push(
-      `| ${SEV[severity(c)]} | \`${c.target}\` | ${c.env} | ${dimStr} | ${String(c.defect).replace(/\|/g, '\\|').slice(0, 120)} | \`${reproCmd(c).replace(/\|/g, '\\|').slice(0, 90)}\` |`
+      `| ${SEV[severity(c)]} | \`${c.target}\` | ${c.env} | ${dimStr} | ${mdCell(c.defect, 120)} | \`${mdCell(reproCmd(c), 90)}\` |`
     );
   }
   L.push('');

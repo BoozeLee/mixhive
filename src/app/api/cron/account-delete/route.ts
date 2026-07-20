@@ -86,9 +86,19 @@ export async function GET(request: NextRequest) {
         errors.push({ userId: req.user_id, error: message });
 
         // Best-effort increment of error_count; column is added by migration 106.
+        // A failed request keeps status 'requested' and is retried on the next
+        // nightly run, so this must accumulate — a row stuck at 1 would hide
+        // exactly the repeatedly-failing requests the column exists to surface.
+        // Read-then-write is safe here: the cron is a single daily runner.
+        const { data: current } = await sb
+          .from('deletion_requests')
+          .select('error_count')
+          .eq('id', req.id)
+          .maybeSingle();
+
         const { error: countErr } = await sb
           .from('deletion_requests')
-          .update({ error_count: 1 })
+          .update({ error_count: (current?.error_count ?? 0) + 1 })
           .eq('id', req.id);
         if (countErr) {
           console.error(

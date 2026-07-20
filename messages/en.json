@@ -1417,5 +1417,73 @@
     "playsOverTime": "Plays over time",
     "topReferrers": "Top referrers",
     "geoDistribution": "Geographic distribution"
+  },
+  "emptyState": {
+    "notFound": "Not found",
+    "notFoundBody": "We couldn't find what you were looking for.",
+    "doesNotExist": "This page doesn't exist.",
+    "backToFeed": "Back to feed"
+  },
+  "errorComponent": {
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try again",
+    "retry": "Retry",
+    "accessDenied": "Access denied",
+    "signIn": "Sign in",
+    "unableToConnect": "Unable to connect"
+  },
+  "globalPlayer": {
+    "play": "Play",
+    "pause": "Pause",
+    "next": "Next",
+    "previous": "Previous",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "volume": "Volume",
+    "seek": "Seek",
+    "queue": "Queue",
+    "expand": "Expand",
+    "minimize": "Minimize",
+    "close": "Close"
+  },
+  "loadingSpinner": {
+    "loading": "Loading…"
+  },
+  "logo": {
+    "altLogo": "MixHive logo",
+    "altIcon": "MixHive icon"
+  },
+  "notificationsBell": {
+    "notifications": "Notifications",
+    "enablePush": "Enable push notifications"
+  },
+  "protectedRoute": {
+    "enteringTheHive": "Entering the hive…",
+    "loadingLabel": "Loading"
+  },
+  "reportButton": {
+    "report": "Report",
+    "reportReason": "Reason for reporting",
+    "reasonPlaceholder": "Tell us what's wrong…",
+    "submitReport": "Submit report",
+    "reporting": "Reporting…",
+    "reportedThanks": "Thanks — we'll take a look.",
+    "couldNotFile": "Couldn't file that report.",
+    "cancel": "Cancel"
+  },
+  "searchAutocomplete": {
+    "search": "Search",
+    "placeholder": "Search mixes, artists, scenes…",
+    "popularSearch": "Popular searches"
+  },
+  "searchBar": {
+    "placeholder": "Search…"
+  },
+  "shareButton": {
+    "share": "Share",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "checkOutThisMix": "Check out this mix",
+    "cancel": "Cancel"
   }
 }

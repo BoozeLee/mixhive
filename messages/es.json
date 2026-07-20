@@ -1417,5 +1417,73 @@
     "playsOverTime": "Reproducciones en el tiempo",
     "topReferrers": "Principales referentes",
     "geoDistribution": "Distribución geográfica"
+  },
+  "emptyState": {
+    "notFound": "No encontrado",
+    "notFoundBody": "No pudimos encontrar lo que buscabas.",
+    "doesNotExist": "Esta página no existe.",
+    "backToFeed": "Volver al feed"
+  },
+  "errorComponent": {
+    "somethingWentWrong": "Algo salió mal",
+    "tryAgain": "Inténtalo de nuevo",
+    "retry": "Reintentar",
+    "accessDenied": "Acceso denegado",
+    "signIn": "Iniciar sesión",
+    "unableToConnect": "No se pudo conectar"
+  },
+  "globalPlayer": {
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "mute": "Silenciar",
+    "unmute": "Activar sonido",
+    "volume": "Volumen",
+    "seek": "Buscar",
+    "queue": "Cola",
+    "expand": "Expandir",
+    "minimize": "Minimizar",
+    "close": "Cerrar"
+  },
+  "loadingSpinner": {
+    "loading": "Cargando…"
+  },
+  "logo": {
+    "altLogo": "Logotipo de MixHive",
+    "altIcon": "Icono de MixHive"
+  },
+  "notificationsBell": {
+    "notifications": "Notificaciones",
+    "enablePush": "Activar notificaciones push"
+  },
+  "protectedRoute": {
+    "enteringTheHive": "Entrando en la colmena…",
+    "loadingLabel": "Cargando"
+  },
+  "reportButton": {
+    "report": "Reportar",
+    "reportReason": "Motivo del reporte",
+    "reasonPlaceholder": "Cuéntanos qué ocurre…",
+    "submitReport": "Enviar reporte",
+    "reporting": "Reportando…",
+    "reportedThanks": "Gracias, lo revisaremos.",
+    "couldNotFile": "No se pudo enviar el reporte.",
+    "cancel": "Cancelar"
+  },
+  "searchAutocomplete": {
+    "search": "Buscar",
+    "placeholder": "Busca mixes, artistas, escenas…",
+    "popularSearch": "Búsquedas populares"
+  },
+  "searchBar": {
+    "placeholder": "Buscar…"
+  },
+  "shareButton": {
+    "share": "Compartir",
+    "copyLink": "Copiar enlace",
+    "copied": "Copiado",
+    "checkOutThisMix": "Escucha este mix",
+    "cancel": "Cancelar"
   }
 }

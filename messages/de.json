@@ -1417,5 +1417,73 @@
     "playsOverTime": "Wiedergaben im Zeitverlauf",
     "topReferrers": "Top-Referrer",
     "geoDistribution": "Geografische Verteilung"
+  },
+  "emptyState": {
+    "notFound": "Nicht gefunden",
+    "notFoundBody": "Wir konnten nicht finden, wonach du gesucht hast.",
+    "doesNotExist": "Diese Seite existiert nicht.",
+    "backToFeed": "Zurück zum Feed"
+  },
+  "errorComponent": {
+    "somethingWentWrong": "Etwas ist schiefgelaufen",
+    "tryAgain": "Erneut versuchen",
+    "retry": "Wiederholen",
+    "accessDenied": "Zugriff verweigert",
+    "signIn": "Anmelden",
+    "unableToConnect": "Verbindung nicht möglich"
+  },
+  "globalPlayer": {
+    "play": "Abspielen",
+    "pause": "Pause",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "mute": "Stummschalten",
+    "unmute": "Stummschaltung aufheben",
+    "volume": "Lautstärke",
+    "seek": "Suchen",
+    "queue": "Warteschlange",
+    "expand": "Erweitern",
+    "minimize": "Minimieren",
+    "close": "Schließen"
+  },
+  "loadingSpinner": {
+    "loading": "Wird geladen…"
+  },
+  "logo": {
+    "altLogo": "MixHive-Logo",
+    "altIcon": "MixHive-Symbol"
+  },
+  "notificationsBell": {
+    "notifications": "Benachrichtigungen",
+    "enablePush": "Push-Benachrichtigungen aktivieren"
+  },
+  "protectedRoute": {
+    "enteringTheHive": "Betrete den Hive…",
+    "loadingLabel": "Lädt"
+  },
+  "reportButton": {
+    "report": "Melden",
+    "reportReason": "Grund der Meldung",
+    "reasonPlaceholder": "Sag uns, was nicht stimmt…",
+    "submitReport": "Meldung senden",
+    "reporting": "Wird gemeldet…",
+    "reportedThanks": "Danke — wir sehen es uns an.",
+    "couldNotFile": "Meldung konnte nicht gesendet werden.",
+    "cancel": "Abbrechen"
+  },
+  "searchAutocomplete": {
+    "search": "Suchen",
+    "placeholder": "Mixes, Künstler, Szenen suchen…",
+    "popularSearch": "Beliebte Suchanfragen"
+  },
+  "searchBar": {
+    "placeholder": "Suchen…"
+  },
+  "shareButton": {
+    "share": "Teilen",
+    "copyLink": "Link kopieren",
+    "copied": "Kopiert",
+    "checkOutThisMix": "Hör dir diesen Mix an",
+    "cancel": "Abbrechen"
   }
 }

@@ -1416,5 +1416,73 @@
     "playsOverTime": "Afspelen in de tijd",
     "topReferrers": "Top verwijzers",
     "geoDistribution": "Geografische spreiding"
+  },
+  "emptyState": {
+    "notFound": "Niet gevonden",
+    "notFoundBody": "We konden niet vinden wat je zocht.",
+    "doesNotExist": "Deze pagina bestaat niet.",
+    "backToFeed": "Terug naar feed"
+  },
+  "errorComponent": {
+    "somethingWentWrong": "Er ging iets mis",
+    "tryAgain": "Probeer opnieuw",
+    "retry": "Opnieuw",
+    "accessDenied": "Toegang geweigerd",
+    "signIn": "Inloggen",
+    "unableToConnect": "Kan geen verbinding maken"
+  },
+  "globalPlayer": {
+    "play": "Afspelen",
+    "pause": "Pauzeren",
+    "next": "Volgende",
+    "previous": "Vorige",
+    "mute": "Dempen",
+    "unmute": "Dempen opheffen",
+    "volume": "Volume",
+    "seek": "Zoeken",
+    "queue": "Wachtrij",
+    "expand": "Uitklappen",
+    "minimize": "Minimaliseren",
+    "close": "Sluiten"
+  },
+  "loadingSpinner": {
+    "loading": "Laden…"
+  },
+  "logo": {
+    "altLogo": "MixHive-logo",
+    "altIcon": "MixHive-pictogram"
+  },
+  "notificationsBell": {
+    "notifications": "Meldingen",
+    "enablePush": "Pushmeldingen inschakelen"
+  },
+  "protectedRoute": {
+    "enteringTheHive": "Je betreedt de hive…",
+    "loadingLabel": "Laden"
+  },
+  "reportButton": {
+    "report": "Rapporteren",
+    "reportReason": "Reden voor melding",
+    "reasonPlaceholder": "Vertel ons wat er mis is…",
+    "submitReport": "Melding versturen",
+    "reporting": "Bezig met melden…",
+    "reportedThanks": "Bedankt — we kijken ernaar.",
+    "couldNotFile": "Kon die melding niet indienen.",
+    "cancel": "Annuleren"
+  },
+  "searchAutocomplete": {
+    "search": "Zoeken",
+    "placeholder": "Zoek mixes, artiesten, scenes…",
+    "popularSearch": "Populaire zoekopdrachten"
+  },
+  "searchBar": {
+    "placeholder": "Zoeken…"
+  },
+  "shareButton": {
+    "share": "Delen",
+    "copyLink": "Link kopiëren",
+    "copied": "Gekopieerd",
+    "checkOutThisMix": "Check deze mix",
+    "cancel": "Annuleren"
   }
 }

@@ -525,6 +525,19 @@ export async function trackAnalyticsEvent(input: {
   });
 }
 
+export async function getMixAnalytics(mixId: string): Promise<MixAnalytics | null> {
+  if (!isSupabaseConfigured) return null;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session?.access_token) return null;
+  const res = await fetch(`/api/analytics/mix/${mixId}`, {
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
 // --- Social ---
 
 export async function follow(followerId: string, followingId: string) {
@@ -2021,72 +2034,143 @@ export interface AIAgentMix {
   } | null;
 }
 
+// AI-Band agents are keyed by `slug` (migrations 103/104); the `ai_agents`
+// table stores only slug + name. Follower and mix counts are DERIVED from
+// `ai_agent_follows` (agent_slug) and `mix_agent_credits` (agent_slug) — the
+// columns the earlier id-based implementation queried (is_active,
+// followers_count, agent_id, follower_id, ai_agent_id) never existed, so those
+// queries errored and `/ai-band`, `/ai-band/:slug` and the leaderboard AI-Band
+// panel rendered empty. `id` mirrors `slug` so callers passing `agent.id`
+// resolve. Richer profile fields (avatar/bio/genres/xp/level) are not in the
+// schema yet and surface as null/neutral placeholders (needs a future migration).
+function slugAgent(slug: string, name: string): AIAgent {
+  return {
+    id: slug,
+    slug,
+    name,
+    description: null,
+    avatar_url: null,
+    bio: null,
+    personality_traits: null,
+    genres: null,
+    style_tags: null,
+    xp: 0,
+    level: 1,
+    followers_count: 0,
+    mixes_credited: 0,
+    is_active: true,
+    created_at: '',
+  };
+}
+
+async function aiAgentCounts(
+  slugs: string[]
+): Promise<{ followers: Map<string, number>; mixes: Map<string, number> }> {
+  const followers = new Map<string, number>();
+  const mixes = new Map<string, number>();
+  if (slugs.length === 0) return { followers, mixes };
+  const [{ data: fRows }, { data: cRows }] = await Promise.all([
+    supabase.from('ai_agent_follows').select('agent_slug').in('agent_slug', slugs),
+    supabase.from('mix_agent_credits').select('agent_slug, mix_id').in('agent_slug', slugs),
+  ]);
+  for (const r of (fRows ?? []) as { agent_slug: string }[]) {
+    followers.set(r.agent_slug, (followers.get(r.agent_slug) ?? 0) + 1);
+  }
+  const seen = new Set<string>();
+  for (const r of (cRows ?? []) as { agent_slug: string; mix_id: string }[]) {
+    const key = `${r.agent_slug}:${r.mix_id}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    mixes.set(r.agent_slug, (mixes.get(r.agent_slug) ?? 0) + 1);
+  }
+  return { followers, mixes };
+}
+
 export async function listAIAgents(limit = 50): Promise<AIAgent[]> {
   if (!isSupabaseConfigured) return [];
-  const { data, error } = await supabase
-    .from('ai_agents')
-    .select('*')
-    .eq('is_active', true)
-    .order('followers_count', { ascending: false })
-    .limit(limit);
+  const { data, error } = await supabase.from('ai_agents').select('slug, name');
   if (error) {
     console.error('listAIAgents', error);
     return [];
   }
-  return (data ?? []) as AIAgent[];
+  const rows = (data ?? []) as { slug: string; name: string }[];
+  const { followers, mixes } = await aiAgentCounts(rows.map(r => r.slug));
+  return rows
+    .map(r => ({
+      ...slugAgent(r.slug, r.name),
+      followers_count: followers.get(r.slug) ?? 0,
+      mixes_credited: mixes.get(r.slug) ?? 0,
+    }))
+    .sort((a, b) => b.followers_count - a.followers_count || b.mixes_credited - a.mixes_credited)
+    .slice(0, limit);
 }
 
 export async function getAIAgent(slug: string): Promise<AIAgent | null> {
   if (!isSupabaseConfigured) return null;
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('ai_agents')
-    .select('*')
+    .select('slug, name')
     .eq('slug', slug)
-    .eq('is_active', true)
-    .single();
-  return data as AIAgent | null;
+    .maybeSingle();
+  if (error || !data) {
+    if (error) console.error('getAIAgent', error);
+    return null;
+  }
+  const row = data as { slug: string; name: string };
+  const { followers, mixes } = await aiAgentCounts([slug]);
+  return {
+    ...slugAgent(row.slug, row.name),
+    followers_count: followers.get(slug) ?? 0,
+    mixes_credited: mixes.get(slug) ?? 0,
+  };
 }
 
-export async function getAIAgentMixes(agentId: string, limit = 20): Promise<AIAgentMix[]> {
+export async function getAIAgentMixes(agentSlug: string, limit = 20): Promise<AIAgentMix[]> {
   if (!isSupabaseConfigured) return [];
   const { data, error } = await supabase
     .from('mix_agent_credits')
     .select(
-      `mix_id, role, credit_label, mixes(id, title, artwork_url, audio_url, play_count, like_count, duration_seconds, created_at, profiles(username, display_name, avatar_url))`
+      `mix_id, agent_role, contribution, mixes(id, title, artwork_url, audio_url, play_count, like_count, duration_seconds, created_at, profiles(username, display_name, avatar_url))`
     )
-    .eq('agent_id', agentId)
+    .eq('agent_slug', agentSlug)
+    .order('ord', { ascending: true })
     .limit(limit);
   if (error) {
     console.error('getAIAgentMixes', error);
     return [];
   }
-  return (data ?? []) as AIAgentMix[];
+  return ((data ?? []) as Record<string, unknown>[]).map(r => ({
+    mix_id: r.mix_id as string,
+    role: (r.agent_role as string | null) ?? '',
+    credit_label: (r.contribution as string | null) ?? (r.agent_role as string | null),
+    mixes: r.mixes as AIAgentMix['mixes'],
+  }));
 }
 
-export async function isFollowingAIAgent(userId: string, agentId: string): Promise<boolean> {
-  if (!isSupabaseConfigured) return false;
+export async function isFollowingAIAgent(userId: string, agentSlug: string): Promise<boolean> {
+  if (!isSupabaseConfigured || !agentSlug) return false;
   const { data } = await supabase
     .from('ai_agent_follows')
-    .select('ai_agent_id')
-    .eq('follower_id', userId)
-    .eq('ai_agent_id', agentId)
+    .select('agent_slug')
+    .eq('agent_slug', agentSlug)
+    .eq('follower_profile_id', userId)
     .maybeSingle();
   return data !== null;
 }
 
-export async function followAIAgent(userId: string, agentId: string): Promise<void> {
+export async function followAIAgent(userId: string, agentSlug: string): Promise<void> {
   const { error } = await supabase
     .from('ai_agent_follows')
-    .insert({ follower_id: userId, ai_agent_id: agentId });
+    .insert({ agent_slug: agentSlug, follower_profile_id: userId });
   if (error) throw error;
 }
 
-export async function unfollowAIAgent(userId: string, agentId: string): Promise<void> {
+export async function unfollowAIAgent(userId: string, agentSlug: string): Promise<void> {
   const { error } = await supabase
     .from('ai_agent_follows')
     .delete()
-    .eq('follower_id', userId)
-    .eq('ai_agent_id', agentId);
+    .eq('agent_slug', agentSlug)
+    .eq('follower_profile_id', userId);
   if (error) throw error;
 }
 

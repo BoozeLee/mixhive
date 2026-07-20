@@ -1,0 +1,15 @@
+[
+  {
+    "class": "agent-audio",
+    "target": "agent:audio-worker",
+    "targetMeta": {
+      "id": "agent:audio-worker",
+      "kind": "agent",
+      "class": "agent-audio",
+      "path": "worker/audio --selftest",
+      "oracle": "agent-audio-worker"
+    },
+    "dims": {},
+    "pinned": {}
+  }
+]

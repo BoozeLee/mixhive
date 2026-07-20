@@ -1,0 +1,16 @@
+[
+  {
+    "class": "agent-session-spirit",
+    "target": "agent:session-spirit",
+    "targetMeta": {
+      "id": "agent:session-spirit",
+      "kind": "agent",
+      "class": "agent-session-spirit",
+      "path": "/api/mythic/sessions/:id/agent",
+      "oracle": "agent-session-spirit",
+      "method": "POST"
+    },
+    "dims": {},
+    "pinned": {}
+  }
+]

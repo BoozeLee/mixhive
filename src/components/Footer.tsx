@@ -19,15 +19,24 @@ export function Footer() {
               artists, and underground culture creators.
             </p>
             <div className="flex space-x-4">
-              <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
+              <button
+                type="button"
+                className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer"
+              >
                 <span className="sr-only">{t('twitter')}</span>
                 <Icon name="external" size={18} />
               </button>
-              <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
+              <button
+                type="button"
+                className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer"
+              >
                 <span className="sr-only">{t('instagram')}</span>
                 <Icon name="camera" size={18} />
               </button>
-              <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
+              <button
+                type="button"
+                className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer"
+              >
                 <span className="sr-only">{t('youtube')}</span>
                 <Icon name="video" size={18} />
               </button>
@@ -97,22 +106,34 @@ export function Footer() {
             <h3 className="text-lg font-semibold text-white mb-4">{t('community')}</h3>
             <ul className="space-y-2">
               <li>
-                <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
+                <button
+                  type="button"
+                  className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer"
+                >
                   {t('guidelines')}
                 </button>
               </li>
               <li>
-                <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
+                <button
+                  type="button"
+                  className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer"
+                >
                   {t('faq')}
                 </button>
               </li>
               <li>
-                <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
+                <button
+                  type="button"
+                  className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer"
+                >
                   {t('support')}
                 </button>
               </li>
               <li>
-                <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer">
+                <button
+                  type="button"
+                  className="text-gray-400 hover:text-yellow-400 transition-colors bg-transparent border-0 p-0 cursor-pointer"
+                >
                   {t('blog')}
                 </button>
               </li>
@@ -123,14 +144,33 @@ export function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">© 2026 MixHive. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
-            <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer">
+            <button
+              type="button"
+              className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer"
+            >
               {t('privacy')}
             </button>
-            <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer">
+            <button
+              type="button"
+              className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer"
+            >
               {t('terms')}
             </button>
-            <button type="button" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer">
-              {t('cookies')}
+            <button
+              type="button"
+              className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer"
+            >
+              {t('cookies')}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.removeItem('mixhive_consent_v1');
+                window.location.reload();
+              }}
+              className="text-gray-400 hover:text-yellow-400 transition-colors text-sm bg-transparent border-0 p-0 cursor-pointer"
+            >
+              {t('cookieSettings')}
             </button>
           </div>
         </div>

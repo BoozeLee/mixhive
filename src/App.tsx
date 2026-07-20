@@ -59,6 +59,9 @@ const NotificationsPage = lazy(() =>
 const SearchPage = lazy(() => import('./views/Search').then(m => ({ default: m.SearchPage })));
 const EmbedMix = lazy(() => import('./views/EmbedMix').then(m => ({ default: m.EmbedMix })));
 const EditMix = lazy(() => import('./views/EditMix').then(m => ({ default: m.EditMix })));
+const MixAnalyticsView = lazy(() =>
+  import('./views/MixAnalytics').then(m => ({ default: m.MixAnalytics }))
+);
 const PlaylistDetail = lazy(() =>
   import('./views/PlaylistDetail').then(m => ({ default: m.PlaylistDetail }))
 );
@@ -98,6 +101,7 @@ const QuestsList = lazy(() => import('./views/QuestsList').then(m => ({ default:
 const AvatarStudio = lazy(() =>
   import('./views/AvatarStudio').then(m => ({ default: m.AvatarStudio }))
 );
+const ArtStudio = lazy(() => import('./views/ArtStudio').then(m => ({ default: m.ArtStudio })));
 const GearMarketplace = lazy(() =>
   import('./views/GearMarketplace').then(m => ({ default: m.GearMarketplace }))
 );
@@ -162,6 +166,15 @@ const MessagesPage = lazy(() =>
 const MessageThreadPage = lazy(() =>
   import('./views/MessageThread').then(m => ({ default: m.MessageThreadPage }))
 );
+// Phase 17 — Live Rooms & Events
+const LiveRooms = lazy(() => import('./views/LiveRooms').then(m => ({ default: m.LiveRooms })));
+const LiveRoomView = lazy(() => import('./views/LiveRoom').then(m => ({ default: m.LiveRoom })));
+const EventsView = lazy(() => import('./views/Events').then(m => ({ default: m.Events })));
+const EventDetailView = lazy(() =>
+  import('./views/EventDetail').then(m => ({ default: m.EventDetail }))
+);
+const NewEventView = lazy(() => import('./views/NewEvent').then(m => ({ default: m.NewEvent })));
+const EditEventView = lazy(() => import('./views/EditEvent').then(m => ({ default: m.EditEvent })));
 // SessionFab is small and always available to authenticated users — not lazy-loaded
 import { SessionFab } from './components/SessionFab';
 
@@ -202,6 +215,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <EditMix />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mix/:id/analytics"
+          element={
+            <ProtectedRoute>
+              <MixAnalyticsView />
             </ProtectedRoute>
           }
         />
@@ -297,6 +318,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <AvatarStudio />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/studio/art"
+          element={
+            <ProtectedRoute>
+              <ArtStudio />
             </ProtectedRoute>
           }
         />
@@ -399,6 +428,34 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <NewCollabQuest />
+            </ProtectedRoute>
+          }
+        />
+        {/* Phase 17 — Live Rooms & Events */}
+        <Route path="/live-rooms" element={<LiveRooms />} />
+        <Route
+          path="/live-rooms/:id"
+          element={
+            <ProtectedRoute>
+              <LiveRoomView />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/events" element={<EventsView />} />
+        <Route path="/events/:id" element={<EventDetailView />} />
+        <Route
+          path="/events/new"
+          element={
+            <ProtectedRoute>
+              <NewEventView />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditEventView />
             </ProtectedRoute>
           }
         />

@@ -87,7 +87,7 @@ as $$
       rb.avatar_url      as rb_avatar_url
     from public.feed_events fe
     join public.follows f
-      on f.followed_id = fe.actor_id
+      on f.following_id = fe.actor_id
      and f.follower_id = p_user_id
     join public.profiles rb on rb.id = fe.actor_id
     join public.mixes m on m.id = fe.mix_id

@@ -1,0 +1,272 @@
+[
+  {
+    "class": "authed-api",
+    "target": "api:GET /api/notifications",
+    "targetMeta": {
+      "id": "api:GET /api/notifications",
+      "kind": "api",
+      "path": "/api/notifications",
+      "method": "GET",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:GET /api/notifications",
+    "targetMeta": {
+      "id": "api:GET /api/notifications",
+      "kind": "api",
+      "path": "/api/notifications",
+      "method": "GET",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/mixes",
+    "targetMeta": {
+      "id": "api:POST /api/mixes",
+      "kind": "api",
+      "path": "/api/mixes",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/mixes",
+    "targetMeta": {
+      "id": "api:POST /api/mixes",
+      "kind": "api",
+      "path": "/api/mixes",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/buzzes",
+    "targetMeta": {
+      "id": "api:POST /api/buzzes",
+      "kind": "api",
+      "path": "/api/buzzes",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/cache/invalidate",
+    "targetMeta": {
+      "id": "api:POST /api/cache/invalidate",
+      "kind": "api",
+      "path": "/api/cache/invalidate",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "error"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/buzzes",
+    "targetMeta": {
+      "id": "api:POST /api/buzzes",
+      "kind": "api",
+      "path": "/api/buzzes",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/cache/invalidate",
+    "targetMeta": {
+      "id": "api:POST /api/cache/invalidate",
+      "kind": "api",
+      "path": "/api/cache/invalidate",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:GET /api/admin/agents",
+    "targetMeta": {
+      "id": "api:GET /api/admin/agents",
+      "kind": "api",
+      "path": "/api/admin/agents",
+      "method": "GET",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "empty"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:GET /api/admin/agents",
+    "targetMeta": {
+      "id": "api:GET /api/admin/agents",
+      "kind": "api",
+      "path": "/api/admin/agents",
+      "method": "GET",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "completed",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:GET /api/notifications",
+    "targetMeta": {
+      "id": "api:GET /api/notifications",
+      "kind": "api",
+      "path": "/api/notifications",
+      "method": "GET",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/mixes",
+    "targetMeta": {
+      "id": "api:POST /api/mixes",
+      "kind": "api",
+      "path": "/api/mixes",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/buzzes",
+    "targetMeta": {
+      "id": "api:POST /api/buzzes",
+      "kind": "api",
+      "path": "/api/buzzes",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:POST /api/cache/invalidate",
+    "targetMeta": {
+      "id": "api:POST /api/cache/invalidate",
+      "kind": "api",
+      "path": "/api/cache/invalidate",
+      "method": "POST",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "populated"
+    },
+    "pinned": {}
+  },
+  {
+    "class": "authed-api",
+    "target": "api:GET /api/admin/agents",
+    "targetMeta": {
+      "id": "api:GET /api/admin/agents",
+      "kind": "api",
+      "path": "/api/admin/agents",
+      "method": "GET",
+      "oracle": "api-status",
+      "note": "must-401-anon",
+      "class": "authed-api"
+    },
+    "dims": {
+      "auth": "anon",
+      "data": "error"
+    },
+    "pinned": {}
+  }
+]

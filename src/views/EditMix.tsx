@@ -21,6 +21,9 @@ export function EditMix() {
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [archiving, setArchiving] = useState(false);
+  const [unpublishing, setUnpublishing] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState('');
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -31,6 +34,9 @@ export function EditMix() {
   const [isExplicit, setIsExplicit] = useState(false);
   const [platformLinks, setPlatformLinks] = useState<Record<string, string>>({});
   const [tracklist, setTracklist] = useState<TrackItem[]>([]);
+  const [requiredTier, setRequiredTier] = useState<'free' | 'supporter' | 'insider' | 'patron'>(
+    'free'
+  );
 
   useEffect(() => {
     if (!id) return;
@@ -55,6 +61,8 @@ export function EditMix() {
         setIsExplicit(m.is_explicit);
         setPlatformLinks(m.platform_links || {});
         setTracklist(m.tracklist || []);
+        setRequiredTier(m.required_tier || 'free');
+        setScheduleDate(m.scheduled_at ? new Date(m.scheduled_at).toISOString().slice(0, 16) : '');
         setLoading(false);
       })
       .catch(() => {
@@ -105,6 +113,7 @@ export function EditMix() {
         is_explicit: isExplicit,
         artwork_url: artworkUrl,
         audio_url: audioUrl,
+        required_tier: requiredTier,
       };
 
       if (tracklist.length > 0) {
@@ -134,6 +143,88 @@ export function EditMix() {
       navigate('/feed');
     } catch {
       setError('Failed to delete mix');
+    }
+  }
+
+  async function handleArchive() {
+    if (!id) return;
+    setArchiving(true);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Not authenticated');
+      await fetch(`/api/mixes/${id}/archive`, {
+        method: mix?.archived ? 'DELETE' : 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      setMix(prev => (prev ? { ...prev, archived: !prev.archived } : prev));
+    } catch {
+      setError('Failed to update archive status');
+    } finally {
+      setArchiving(false);
+    }
+  }
+
+  async function handleUnpublish() {
+    if (!id) return;
+    if (!window.confirm('Unpublish this mix? It will no longer be visible to the public.')) return;
+    setUnpublishing(true);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Not authenticated');
+      await fetch(`/api/mixes/${id}/unpublish`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      setMix(prev => (prev ? { ...prev, published: false, published_at: null } : prev));
+    } catch {
+      setError('Failed to unpublish mix');
+    } finally {
+      setUnpublishing(false);
+    }
+  }
+
+  async function handleSchedule() {
+    if (!id || !scheduleDate) return;
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Not authenticated');
+      await fetch(`/api/mixes/${id}/schedule`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ scheduled_at: new Date(scheduleDate).toISOString() }),
+      });
+      setMix(prev =>
+        prev ? { ...prev, scheduled_at: new Date(scheduleDate).toISOString() } : prev
+      );
+    } catch {
+      setError('Failed to schedule mix');
+    }
+  }
+
+  async function handleUnschedule() {
+    if (!id) return;
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Not authenticated');
+      await fetch(`/api/mixes/${id}/schedule`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      setMix(prev => (prev ? { ...prev, scheduled_at: null } : prev));
+      setScheduleDate('');
+    } catch {
+      setError('Failed to cancel schedule');
     }
   }
 
@@ -362,18 +453,102 @@ export function EditMix() {
           )}
         </div>
 
-        <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
+        <div>
+          <label
+            style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8, display: 'block' }}
+          >
+            {t('requiredTier')}
+          </label>
+          <Select
+            hideLabel
+            label={t('requiredTier')}
+            value={requiredTier}
+            onChange={e => setRequiredTier(e.target.value as typeof requiredTier)}
+          >
+            <option value="free">Free</option>
+            <option value="supporter">Supporter</option>
+            <option value="insider">Insider</option>
+            <option value="patron">Patron</option>
+          </Select>
+        </div>
+
+        <div>
+          <label
+            style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8, display: 'block' }}
+          >
+            {t('scheduleFor')}
+          </label>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Input
+              hideLabel
+              label={t('scheduleFor')}
+              type="datetime-local"
+              value={scheduleDate}
+              onChange={e => setScheduleDate(e.target.value)}
+              style={{ flex: 1 }}
+            />
+            {mix?.scheduled_at ? (
+              <Button type="button" variant="secondary" size="sm" onClick={handleUnschedule}>
+                {t('unschedule')}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={handleSchedule}
+                disabled={!scheduleDate}
+              >
+                {t('schedule')}
+              </Button>
+            )}
+          </div>
+          {mix?.scheduled_at && (
+            <div style={{ fontSize: 12, color: colors.text.muted, marginTop: 4 }}>
+              Scheduled for {new Date(mix.scheduled_at).toLocaleString()}
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginTop: 24, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Button
             type="button"
-            variant="danger"
-            fullWidth
-            onClick={handleDelete}
-            disabled={uploading}
-            loading={uploading}
+            variant="secondary"
+            onClick={handleArchive}
+            disabled={archiving}
+            loading={archiving}
             style={{ flex: 1 }}
           >
-            {uploading ? 'Deleting...' : 'Delete Mix'}
+            {mix?.archived ? t('unarchive') : t('archive')}
           </Button>
+          {mix?.published && (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleUnpublish}
+              disabled={unpublishing}
+              loading={unpublishing}
+              style={{ flex: 1 }}
+            >
+              {t('unpublish')}
+            </Button>
+          )}
+          {mix?.archived && (
+            <Button
+              type="button"
+              variant="danger"
+              fullWidth
+              onClick={handleDelete}
+              disabled={uploading}
+              loading={uploading}
+              style={{ flex: 1 }}
+            >
+              {uploading ? 'Deleting...' : 'Delete Mix'}
+            </Button>
+          )}
+        </div>
+
+        <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
           <Button
             type="button"
             fullWidth

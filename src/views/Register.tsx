@@ -308,6 +308,8 @@ export function Register() {
             <Input
               type="text"
               autoComplete="username"
+              label={t('username')}
+              hideLabel
               placeholder={t('username')}
               value={formData.username}
               onChange={e => change('username', e.target.value)}
@@ -317,6 +319,8 @@ export function Register() {
             <Input
               type="email"
               autoComplete="email"
+              label={t('email')}
+              hideLabel
               placeholder={t('email')}
               value={formData.email}
               onChange={e => change('email', e.target.value)}
@@ -325,6 +329,8 @@ export function Register() {
             <Input
               type="password"
               autoComplete="new-password"
+              label={t('password')}
+              hideLabel
               placeholder={t('password')}
               value={formData.password}
               onChange={e => change('password', e.target.value)}
@@ -334,6 +340,8 @@ export function Register() {
             <Input
               type="text"
               autoComplete="name"
+              label={t('displayName')}
+              hideLabel
               placeholder={t('displayName')}
               value={formData.display_name}
               onChange={e => change('display_name', e.target.value)}

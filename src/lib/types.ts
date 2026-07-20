@@ -36,7 +36,12 @@ export type AnalyticsEventType =
   | 'like'
   | 'comment'
   | 'share'
-  | 'verification';
+  | 'verification'
+  | 'mix_play'
+  | 'mix_like'
+  | 'comment_create'
+  | 'mix_share'
+  | 'profile_follow';
 
 /** MythicNode / Quest Types (Phase 6) */
 export interface MythicQuest {
@@ -218,6 +223,10 @@ export interface Mix {
   like_count: number;
   comment_count: number;
   published: boolean;
+  archived: boolean;
+  scheduled_at: string | null;
+  published_at: string | null;
+  required_tier: 'free' | 'supporter' | 'insider' | 'patron';
   status: 'processing' | 'ready' | 'error';
   upload_status?: 'uploaded' | 'processing' | 'ready' | 'failed';
   processing_started_at?: string | null;
@@ -236,6 +245,19 @@ export interface Mix {
   ai_band?: boolean;
   published_from?: 'beehive' | null;
   beehive_metadata?: Record<string, unknown>;
+}
+
+export interface MixAnalytics {
+  mixId: string;
+  totalPlays: number;
+  totalLikes: number;
+  totalComments: number;
+  totalShares: number;
+  engagementRate: number;
+  completionRate: number;
+  playsByDay: Array<{ date: string; count: number }>;
+  topReferrers: Array<{ source: string; count: number }>;
+  geoDistribution: Array<{ country: string; count: number }>;
 }
 
 /** An AI agent-artist (a followable "AI band member" with a public career). */

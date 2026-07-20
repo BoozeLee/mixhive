@@ -1,0 +1,124 @@
+{
+  "results": [
+    {
+      "class": "public-ui",
+      "rows": 205,
+      "coverable": 615,
+      "covered": 615,
+      "rho": 1,
+      "targets": 41,
+      "missingTargets": []
+    },
+    {
+      "class": "authed-ui",
+      "rows": 105,
+      "coverable": 452,
+      "covered": 452,
+      "rho": 1,
+      "targets": 21,
+      "missingTargets": []
+    },
+    {
+      "class": "admin-ui",
+      "rows": 20,
+      "coverable": 60,
+      "covered": 60,
+      "rho": 1,
+      "targets": 2,
+      "missingTargets": []
+    },
+    {
+      "class": "public-api",
+      "rows": 33,
+      "coverable": 33,
+      "covered": 33,
+      "rho": 1,
+      "targets": 11,
+      "missingTargets": []
+    },
+    {
+      "class": "authed-api",
+      "rows": 15,
+      "coverable": 31,
+      "covered": 31,
+      "rho": 1,
+      "targets": 5,
+      "missingTargets": []
+    },
+    {
+      "class": "gated-api",
+      "rows": 12,
+      "coverable": 35,
+      "covered": 35,
+      "rho": 1,
+      "targets": 4,
+      "missingTargets": []
+    },
+    {
+      "class": "agent-lua",
+      "rows": 1,
+      "coverable": 0,
+      "covered": 0,
+      "rho": 1,
+      "targets": 1,
+      "missingTargets": []
+    },
+    {
+      "class": "agent-wasmoon",
+      "rows": 1,
+      "coverable": 0,
+      "covered": 0,
+      "rho": 1,
+      "targets": 1,
+      "missingTargets": []
+    },
+    {
+      "class": "agent-strategic",
+      "rows": 2,
+      "coverable": 2,
+      "covered": 2,
+      "rho": 1,
+      "targets": 1,
+      "missingTargets": []
+    },
+    {
+      "class": "agent-notif",
+      "rows": 2,
+      "coverable": 2,
+      "covered": 2,
+      "rho": 1,
+      "targets": 1,
+      "missingTargets": []
+    },
+    {
+      "class": "agent-session-spirit",
+      "rows": 1,
+      "coverable": 0,
+      "covered": 0,
+      "rho": 1,
+      "targets": 1,
+      "missingTargets": []
+    },
+    {
+      "class": "agent-audio",
+      "rows": 1,
+      "coverable": 0,
+      "covered": 0,
+      "rho": 1,
+      "targets": 1,
+      "missingTargets": []
+    },
+    {
+      "class": "agent-aiband",
+      "rows": 1,
+      "coverable": 0,
+      "covered": 0,
+      "rho": 1,
+      "targets": 1,
+      "missingTargets": []
+    }
+  ],
+  "overallRho": 1,
+  "rows": 399,
+  "ok": true
+}

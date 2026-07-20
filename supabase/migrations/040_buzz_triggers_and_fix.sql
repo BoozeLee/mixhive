@@ -70,7 +70,10 @@ execute function public.handle_repost_notification();
 -- The original had a bug referencing parent_comment_id which doesn't exist
 -- It should reference parent_id (the actual column name)
 
-drop function if exists public.handle_reply_notification();
+-- cascade: on_reply_notification depends on this function and is not dropped
+-- until further down, so a bare drop fails with 2BP01. The trigger is recreated
+-- immediately below, so dropping it here costs nothing.
+drop function if exists public.handle_reply_notification() cascade;
 create or replace function public.handle_reply_notification()
 returns trigger as $$
 declare

@@ -1,0 +1,402 @@
+[
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "320",
+      "locale": "en"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "admin",
+      "viewport": "390",
+      "locale": "fr"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/moderation",
+    "targetMeta": {
+      "id": "route:/admin/moderation",
+      "kind": "ui",
+      "path": "/admin/moderation",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "390",
+      "locale": "nl"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/moderation",
+    "targetMeta": {
+      "id": "route:/admin/moderation",
+      "kind": "ui",
+      "path": "/admin/moderation",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "admin",
+      "viewport": "320",
+      "locale": "de"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "768",
+      "locale": "de"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "1440",
+      "locale": "es"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/moderation",
+    "targetMeta": {
+      "id": "route:/admin/moderation",
+      "kind": "ui",
+      "path": "/admin/moderation",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "admin",
+      "viewport": "768",
+      "locale": "en"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "admin",
+      "viewport": "1440",
+      "locale": "nl"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/moderation",
+    "targetMeta": {
+      "id": "route:/admin/moderation",
+      "kind": "ui",
+      "path": "/admin/moderation",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "1440",
+      "locale": "fr"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/moderation",
+    "targetMeta": {
+      "id": "route:/admin/moderation",
+      "kind": "ui",
+      "path": "/admin/moderation",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "admin",
+      "viewport": "320",
+      "locale": "es"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "320",
+      "locale": "fr"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "320",
+      "locale": "nl"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "390",
+      "locale": "en"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "390",
+      "locale": "de"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "390",
+      "locale": "es"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "768",
+      "locale": "fr"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "768",
+      "locale": "nl"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "768",
+      "locale": "es"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "1440",
+      "locale": "en"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  },
+  {
+    "class": "admin-ui",
+    "target": "route:/admin/verification",
+    "targetMeta": {
+      "id": "route:/admin/verification",
+      "kind": "ui",
+      "path": "/admin/verification",
+      "oracle": "ui-render",
+      "dataFetching": true,
+      "class": "admin-ui"
+    },
+    "dims": {
+      "auth": "completed",
+      "viewport": "1440",
+      "locale": "de"
+    },
+    "pinned": {
+      "data": "populated"
+    }
+  }
+]

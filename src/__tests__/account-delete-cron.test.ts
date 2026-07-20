@@ -224,4 +224,43 @@ describe('account-delete cron', () => {
     expect(body.errors).toHaveLength(1);
     expect(body.errors[0].userId).toBe(userId);
   });
+
+  it('increments error_count on repeated failures instead of resetting it to 1', async () => {
+    process.env.CRON_SECRET = 'cron-secret';
+
+    const userId = 'user-fail-again';
+    const requestsQb = createQueryBuilder({
+      data: [{ id: 'req-fail', user_id: userId }],
+      error: null,
+    });
+    // The row has already failed twice on previous nightly runs.
+    const errorCountQb = createQueryBuilder({
+      data: { error_count: 2 },
+      error: null,
+    });
+
+    let deletionRequestsCalls = 0;
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'deletion_requests') {
+        deletionRequestsCalls += 1;
+        // 1st call fetches the due requests; later calls handle the failure path.
+        return deletionRequestsCalls === 1 ? requestsQb : errorCountQb;
+      }
+      if (table === 'equipment_transactions') {
+        return createQueryBuilder({ data: null, error: null, count: 0 });
+      }
+      if (table === 'user_subscriptions') {
+        return createQueryBuilder({ data: null, error: null, count: 0 });
+      }
+      return createQueryBuilder();
+    });
+
+    mockDeleteUser.mockResolvedValue({ error: new Error('boom') });
+    mockStorageFrom.mockReturnValue(createStorageBuilder({ data: [], error: null }));
+
+    const res = await GET(req());
+
+    expect(res.status).toBe(200);
+    expect(errorCountQb.update).toHaveBeenCalledWith({ error_count: 3 });
+  });
 });

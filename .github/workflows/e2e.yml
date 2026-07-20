@@ -15,8 +15,11 @@ jobs:
       group: e2e-${{ github.ref }}
       cancel-in-progress: true
     env:
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.E2E_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+      # Real credentials when configured; otherwise the local Supabase stack
+      # started below fills them in. The previous fallback was
+      # https://placeholder.supabase.co, which meant every data-touching test
+      # ran against a backend that does not exist — they failed on every PR and
+      # the suite had stopped carrying information.
       E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
       E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
 
@@ -27,6 +30,30 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v2
+        with:
+          version: latest
+
+      - name: Start local Supabase and apply the migration chain
+        # Viable because the chain now applies from a clean checkout; see
+        # migrations.yml, which guards exactly that property.
+        run: supabase start
+
+      - name: Export Supabase connection for build and tests
+        # Prefer real secrets if the repo has them; fall back to the local stack
+        # rather than to a placeholder host.
+        run: |
+          eval "$(supabase status -o env | sed 's/^/export /')"
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=${E2E_URL:-http://127.0.0.1:54321}"
+            echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${E2E_ANON:-$ANON_KEY}"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+          } >> "$GITHUB_ENV"
+        env:
+          E2E_URL: ${{ secrets.E2E_SUPABASE_URL }}
+          E2E_ANON: ${{ secrets.E2E_SUPABASE_ANON_KEY }}
 
       - name: Install dependencies
         run: npm ci
@@ -39,6 +66,10 @@ jobs:
 
       - name: Run E2E tests against checked-out application
         run: npx playwright test --project='Desktop Chrome' --project='Mobile Chrome'
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup || true
 
       - name: Upload Playwright report on failure
         uses: actions/upload-artifact@v7

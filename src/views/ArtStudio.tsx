@@ -6,7 +6,10 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { colors, fontSize, fontWeight, radius, space, withAlpha } from '../styles/tokens';
-import { ReferenceImageDropzone, type ReferenceImage } from '../components/ArtStudio/ReferenceImageDropzone';
+import {
+  ReferenceImageDropzone,
+  type ReferenceImage,
+} from '../components/ArtStudio/ReferenceImageDropzone';
 import { PromptEditor, type ArtPromptState } from '../components/ArtStudio/PromptEditor';
 import { ArtResultGrid, type ArtResult } from '../components/ArtStudio/ArtResultGrid';
 import { ArtHistory } from '../components/ArtStudio/ArtHistory';
@@ -129,7 +132,11 @@ export function ArtStudio() {
 
       if (data.url) {
         setResults(prev => [
-          { url: data.url, prompt: data.prompt || buildPrompt(), style: data.style || promptState.style },
+          {
+            url: data.url,
+            prompt: data.prompt || buildPrompt(),
+            style: data.style || promptState.style,
+          },
           ...prev,
         ]);
 
@@ -221,9 +228,7 @@ export function ArtStudio() {
         >
           {t('heading')}
         </h1>
-        <p style={{ margin: '8px 0 0', fontSize: 13, color: colors.text.muted }}>
-          {t('subtitle')}
-        </p>
+        <p style={{ margin: '8px 0 0', fontSize: 13, color: colors.text.muted }}>{t('subtitle')}</p>
       </div>
 
       {/* Pro badge or upgrade prompt */}
@@ -292,7 +297,15 @@ export function ArtStudio() {
       )}
 
       {/* Generate button */}
-      <div style={{ display: 'flex', gap: space[5], alignItems: 'center', flexWrap: 'wrap', marginBottom: space[8] }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: space[5],
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          marginBottom: space[8],
+        }}
+      >
         <button
           type="button"
           onClick={generate}

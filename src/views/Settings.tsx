@@ -1215,7 +1215,7 @@ export function Settings() {
         </h2>
         <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginBottom: space[4] }}>
           {t.rich('privacyDescription', {
-            link: (chunks) => (
+            link: chunks => (
               <a href="/privacy" style={{ color: colors.accent }}>
                 {chunks}
               </a>
@@ -1294,12 +1294,7 @@ export function Settings() {
               variant="danger"
               size="sm"
               onClick={async () => {
-                if (
-                  !window.confirm(
-                    t('confirmDeletion')
-                  )
-                )
-                  return;
+                if (!window.confirm(t('confirmDeletion'))) return;
                 const {
                   data: { session },
                 } = await supabase.auth.getSession();

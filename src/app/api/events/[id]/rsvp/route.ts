@@ -17,10 +17,7 @@ const RsvpSchema = z.object({
   status: z.enum(['going', 'maybe', 'cancelled']),
 });
 
-export async function POST(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const authHeader = req.headers.get('authorization');
@@ -28,7 +25,10 @@ export async function POST(
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     // Check event exists and is published
@@ -76,10 +76,7 @@ export async function POST(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const authHeader = req.headers.get('authorization');
@@ -87,7 +84,10 @@ export async function DELETE(
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     const { error: delErr } = await sb

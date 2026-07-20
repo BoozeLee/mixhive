@@ -34,10 +34,7 @@ function makeClient(jwt?: string) {
   });
 }
 
-export async function GET(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
 
@@ -53,7 +50,9 @@ export async function GET(
 
     const { data: event, error } = await sb
       .from('events')
-      .select('*, organizer:profiles!events_organizer_id_fkey(id, username, display_name, avatar_url), scene:scenes(id, name)')
+      .select(
+        '*, organizer:profiles!events_organizer_id_fkey(id, username, display_name, avatar_url), scene:scenes(id, name)'
+      )
       .eq('id', id)
       .maybeSingle();
 
@@ -63,7 +62,9 @@ export async function GET(
     // Get RSVP counts
     const { data: rsvps } = await sb
       .from('event_rsvps')
-      .select('status, user:profiles!event_rsvps_user_id_fkey(id, username, display_name, avatar_url)')
+      .select(
+        'status, user:profiles!event_rsvps_user_id_fkey(id, username, display_name, avatar_url)'
+      )
       .eq('event_id', id)
       .neq('status', 'cancelled');
 
@@ -80,10 +81,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const authHeader = req.headers.get('authorization');
@@ -91,7 +89,10 @@ export async function PATCH(
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     const { data: existing } = await sb
@@ -101,7 +102,8 @@ export async function PATCH(
       .maybeSingle();
 
     if (!existing) return notFound('Event not found');
-    if (existing.organizer_id !== user.id) return forbidden('Only the organizer can update this event');
+    if (existing.organizer_id !== user.id)
+      return forbidden('Only the organizer can update this event');
 
     const body = await req.json();
     const parsed = UpdateEventSchema.safeParse(body);
@@ -134,10 +136,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const authHeader = _req.headers.get('authorization');
@@ -145,7 +144,10 @@ export async function DELETE(
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     const { data: existing } = await sb
@@ -155,12 +157,10 @@ export async function DELETE(
       .maybeSingle();
 
     if (!existing) return notFound('Event not found');
-    if (existing.organizer_id !== user.id) return forbidden('Only the organizer can cancel this event');
+    if (existing.organizer_id !== user.id)
+      return forbidden('Only the organizer can cancel this event');
 
-    const { error: updErr } = await sb
-      .from('events')
-      .update({ status: 'cancelled' })
-      .eq('id', id);
+    const { error: updErr } = await sb.from('events').update({ status: 'cancelled' }).eq('id', id);
 
     if (updErr) throw updErr;
     return NextResponse.json({ success: true });

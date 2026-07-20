@@ -761,7 +761,14 @@ export function Upload() {
               </div>
             </div>
             <div style={{ marginTop: 12 }}>
-              <label style={{ color: colors.text.muted, fontSize: 13, marginBottom: 6, display: 'block' }}>
+              <label
+                style={{
+                  color: colors.text.muted,
+                  fontSize: 13,
+                  marginBottom: 6,
+                  display: 'block',
+                }}
+              >
                 {t('scheduleFor')}
               </label>
               <Input

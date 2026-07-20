@@ -226,11 +226,19 @@ export function EditEvent() {
         </p>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: space[5] }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: 'flex', flexDirection: 'column', gap: space[5] }}
+      >
         <div>
           <label
             htmlFor="event-title"
-            style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}
+            style={{
+              fontSize: fontSize.sm,
+              color: colors.text.muted,
+              display: 'block',
+              marginBottom: space[2],
+            }}
           >
             {t('eventTitle')} *
           </label>
@@ -248,7 +256,12 @@ export function EditEvent() {
         <div>
           <label
             htmlFor="event-description"
-            style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}
+            style={{
+              fontSize: fontSize.sm,
+              color: colors.text.muted,
+              display: 'block',
+              marginBottom: space[2],
+            }}
           >
             {t('description')}
           </label>
@@ -267,7 +280,12 @@ export function EditEvent() {
           <div>
             <label
               htmlFor="event-venue-name"
-              style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
             >
               {t('venueName')}
             </label>
@@ -283,7 +301,12 @@ export function EditEvent() {
           <div>
             <label
               htmlFor="event-venue-address"
-              style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
             >
               {t('venueAddress')}
             </label>
@@ -302,7 +325,12 @@ export function EditEvent() {
           <div>
             <label
               htmlFor="event-starts-at"
-              style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
             >
               {t('startDate')} *
             </label>
@@ -318,7 +346,12 @@ export function EditEvent() {
           <div>
             <label
               htmlFor="event-ends-at"
-              style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
             >
               {t('endDate')}
             </label>
@@ -335,7 +368,12 @@ export function EditEvent() {
         <div>
           <label
             htmlFor="event-status"
-            style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}
+            style={{
+              fontSize: fontSize.sm,
+              color: colors.text.muted,
+              display: 'block',
+              marginBottom: space[2],
+            }}
           >
             {t('statusLabel')}
           </label>
@@ -375,7 +413,12 @@ export function EditEvent() {
           <div>
             <label
               htmlFor="event-ticket-url"
-              style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
             >
               {t('ticketUrl')}
             </label>

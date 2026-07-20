@@ -322,21 +322,41 @@ export function Discover() {
               overflow: 'hidden',
               transition: transition.base,
             }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = colors.accent; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = colors.border; }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = colors.accent;
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = colors.border;
+            }}
           >
-            <div style={{
-              height: 100,
-              background: event.cover_image_url
-                ? `url(${event.cover_image_url}) center/cover`
-                : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
-              display: 'flex', alignItems: 'flex-end', padding: space[2],
-            }}>
-              <div style={{
-                background: colors.bg, borderRadius: radius.sm,
-                padding: `${space[1]} ${space[2]}`, textAlign: 'center', minWidth: 40,
-              }}>
-                <div style={{ fontSize: fontSize.xs, color: colors.accent, fontWeight: 700, textTransform: 'uppercase' }}>
+            <div
+              style={{
+                height: 100,
+                background: event.cover_image_url
+                  ? `url(${event.cover_image_url}) center/cover`
+                  : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
+                display: 'flex',
+                alignItems: 'flex-end',
+                padding: space[2],
+              }}
+            >
+              <div
+                style={{
+                  background: colors.bg,
+                  borderRadius: radius.sm,
+                  padding: `${space[1]} ${space[2]}`,
+                  textAlign: 'center',
+                  minWidth: 40,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: fontSize.xs,
+                    color: colors.accent,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                  }}
+                >
                   {new Date(event.starts_at).toLocaleDateString(undefined, { month: 'short' })}
                 </div>
                 <div style={{ fontSize: fontSize.xl, fontWeight: 700, lineHeight: 1 }}>
@@ -345,7 +365,15 @@ export function Discover() {
               </div>
             </div>
             <div style={{ padding: space[3] }}>
-              <h4 style={{ fontSize: fontSize.sm, fontWeight: 700, margin: 0, marginBottom: space[1], lineHeight: 1.3 }}>
+              <h4
+                style={{
+                  fontSize: fontSize.sm,
+                  fontWeight: 700,
+                  margin: 0,
+                  marginBottom: space[1],
+                  lineHeight: 1.3,
+                }}
+              >
                 {event.title}
               </h4>
               {event.venue_name && (
@@ -353,7 +381,14 @@ export function Discover() {
                   {event.venue_name}
                 </p>
               )}
-              <p style={{ fontSize: fontSize.xs, color: colors.text.muted, margin: 0, marginTop: space[1] }}>
+              <p
+                style={{
+                  fontSize: fontSize.xs,
+                  color: colors.text.muted,
+                  margin: 0,
+                  marginTop: space[1],
+                }}
+              >
                 {event.rsvp_counts.going} going · {event.is_free ? 'Free' : 'Ticket'}
               </p>
             </div>

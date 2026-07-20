@@ -96,9 +96,13 @@ export function MixDetail() {
           if (!user) {
             setCanAccess(false);
           } else {
-            const { data: { session } } = await supabase.auth.getSession();
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
             if (session?.access_token) {
-              const res = await fetch('/api/subscription/status', { headers: { Authorization: `Bearer ${session.access_token}` } });
+              const res = await fetch('/api/subscription/status', {
+                headers: { Authorization: `Bearer ${session.access_token}` },
+              });
               if (res.ok) {
                 const sub = await res.json();
                 setCanAccess(meetsTier(sub.tier || 'free', m.required_tier));
@@ -217,7 +221,15 @@ export function MixDetail() {
 
       <div style={{ marginBottom: 20 }}>
         <h1
-          style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}
+          style={{
+            fontSize: 22,
+            fontWeight: 700,
+            color: colors.text.primary,
+            margin: '0 0 4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
         >
           {mix.title}
           {mix.required_tier && mix.required_tier !== 'free' && (

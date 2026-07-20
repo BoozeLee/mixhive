@@ -87,7 +87,14 @@ export function BetaGate({ children }: { children: React.ReactNode }) {
             maxWidth: 400,
           }}
         >
-          <p style={{ fontSize: fontSize.sm, fontWeight: 600, color: colors.text.primary, marginBottom: 8 }}>
+          <p
+            style={{
+              fontSize: fontSize.sm,
+              fontWeight: 600,
+              color: colors.text.primary,
+              marginBottom: 8,
+            }}
+          >
             {t('joinTitle')}
           </p>
           <p style={{ fontSize: fontSize.xs, color: colors.text.dim, marginBottom: 12 }}>

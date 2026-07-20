@@ -206,7 +206,12 @@ export function AgentMarketplace() {
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
-        <select value={category} onChange={e => setCategory(e.target.value)} style={selectStyle} aria-label="Filter by category">
+        <select
+          value={category}
+          onChange={e => setCategory(e.target.value)}
+          style={selectStyle}
+          aria-label="Filter by category"
+        >
           {CATEGORIES.map(c => (
             <option key={c.value} value={c.value}>
               {c.label}
@@ -308,18 +313,20 @@ export function AgentMarketplace() {
                   gap: 16,
                 }}
               >
-                {packages.filter(p => p.featured).map(pkg => (
-                  <AgentCard
-                    key={pkg.id}
-                    pkg={pkg}
-                    creatorBadges={creatorBadges[pkg.creator_profile_id] ?? []}
-                    installed={installed.has(pkg.id)}
-                    installing={installing === pkg.id}
-                    buying={buying === pkg.id}
-                    onInstall={() => handleInstall(pkg)}
-                    onBuy={() => handleBuy(pkg)}
-                  />
-                ))}
+                {packages
+                  .filter(p => p.featured)
+                  .map(pkg => (
+                    <AgentCard
+                      key={pkg.id}
+                      pkg={pkg}
+                      creatorBadges={creatorBadges[pkg.creator_profile_id] ?? []}
+                      installed={installed.has(pkg.id)}
+                      installing={installing === pkg.id}
+                      buying={buying === pkg.id}
+                      onInstall={() => handleInstall(pkg)}
+                      onBuy={() => handleBuy(pkg)}
+                    />
+                  ))}
               </div>
             </div>
           )}
@@ -332,18 +339,20 @@ export function AgentMarketplace() {
               gap: 16,
             }}
           >
-            {packages.filter(p => !p.featured).map(pkg => (
-              <AgentCard
-                key={pkg.id}
-                pkg={pkg}
-                creatorBadges={creatorBadges[pkg.creator_profile_id] ?? []}
-                installed={installed.has(pkg.id)}
-                installing={installing === pkg.id}
-                buying={buying === pkg.id}
-                onInstall={() => handleInstall(pkg)}
-                onBuy={() => handleBuy(pkg)}
-              />
-            ))}
+            {packages
+              .filter(p => !p.featured)
+              .map(pkg => (
+                <AgentCard
+                  key={pkg.id}
+                  pkg={pkg}
+                  creatorBadges={creatorBadges[pkg.creator_profile_id] ?? []}
+                  installed={installed.has(pkg.id)}
+                  installing={installing === pkg.id}
+                  buying={buying === pkg.id}
+                  onInstall={() => handleInstall(pkg)}
+                  onBuy={() => handleBuy(pkg)}
+                />
+              ))}
           </div>
         </>
       )}

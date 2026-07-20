@@ -17,10 +17,7 @@ const SendMessageSchema = z.object({
   content: z.string().min(1).max(2000),
 });
 
-export async function GET(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const { searchParams } = new URL(req.url);
@@ -31,7 +28,9 @@ export async function GET(
 
     let query = sb
       .from('live_room_messages')
-      .select('*, user:profiles!live_room_messages_user_id_fkey(id, username, display_name, avatar_url)')
+      .select(
+        '*, user:profiles!live_room_messages_user_id_fkey(id, username, display_name, avatar_url)'
+      )
       .eq('room_id', id)
       .order('created_at', { ascending: false })
       .limit(limit);
@@ -49,10 +48,7 @@ export async function GET(
   }
 }
 
-export async function POST(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const authHeader = req.headers.get('authorization');
@@ -60,7 +56,10 @@ export async function POST(
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     // Verify user is an active participant
@@ -87,7 +86,9 @@ export async function POST(
         user_id: user.id,
         content: parsed.data.content,
       })
-      .select('*, user:profiles!live_room_messages_user_id_fkey(id, username, display_name, avatar_url)')
+      .select(
+        '*, user:profiles!live_room_messages_user_id_fkey(id, username, display_name, avatar_url)'
+      )
       .single();
 
     if (insErr) throw insErr;

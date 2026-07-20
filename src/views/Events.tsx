@@ -21,7 +21,12 @@ interface Event {
   is_free: boolean;
   ticket_url: string | null;
   rsvp_counts: { going: number; maybe: number };
-  organizer: { id: string; username: string; display_name: string | null; avatar_url: string | null } | null;
+  organizer: {
+    id: string;
+    username: string;
+    display_name: string | null;
+    avatar_url: string | null;
+  } | null;
 }
 
 export function Events() {
@@ -46,7 +51,9 @@ export function Events() {
       if (!cancelled) setLoading(false);
     }
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [filter]);
 
   const cardStyle: React.CSSProperties = {
@@ -62,7 +69,11 @@ export function Events() {
   };
 
   function formatDate(d: string) {
-    return new Date(d).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+    return new Date(d).toLocaleDateString(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
   }
   function formatTime(d: string) {
     return new Date(d).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
@@ -70,12 +81,15 @@ export function Events() {
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 16px 96px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: space[8] }}>
-        <SectionHeading
-          eyebrow="EVENTS"
-          title={t('title')}
-          subtitle={t('subtitle')}
-        />
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: space[8],
+        }}
+      >
+        <SectionHeading eyebrow="EVENTS" title={t('title')} subtitle={t('subtitle')} />
         {user && (
           <Button onClick={() => navigate('/events/new')} size="sm">
             {t('createEvent')}
@@ -117,11 +131,13 @@ export function Events() {
           <p style={{ fontSize: fontSize.base }}>{t('noEventsDescription')}</p>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: space[5],
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: space[5],
+          }}
+        >
           {events.map(event => (
             <Link
               key={event.id}
@@ -137,40 +153,71 @@ export function Events() {
               }}
             >
               {/* Cover image */}
-              <div style={{
-                height: 160,
-                background: event.cover_image_url
-                  ? `url(${event.cover_image_url}) center/cover`
-                  : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
-                display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
-                padding: space[3],
-              }}>
-                <div style={{
-                  background: colors.bg,
-                  borderRadius: radius.md,
-                  padding: `${space[2]} ${space[3]}`,
-                  textAlign: 'center',
-                  minWidth: 52,
-                }}>
-                  <div style={{ fontSize: fontSize.xs, color: colors.accent, fontWeight: 700, textTransform: 'uppercase' }}>
+              <div
+                style={{
+                  height: 160,
+                  background: event.cover_image_url
+                    ? `url(${event.cover_image_url}) center/cover`
+                    : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  justifyContent: 'space-between',
+                  padding: space[3],
+                }}
+              >
+                <div
+                  style={{
+                    background: colors.bg,
+                    borderRadius: radius.md,
+                    padding: `${space[2]} ${space[3]}`,
+                    textAlign: 'center',
+                    minWidth: 52,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: fontSize.xs,
+                      color: colors.accent,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                    }}
+                  >
                     {new Date(event.starts_at).toLocaleDateString(undefined, { month: 'short' })}
                   </div>
-                  <div style={{ fontSize: fontSize['2xl'], fontWeight: 700, color: colors.text.primary, lineHeight: 1 }}>
+                  <div
+                    style={{
+                      fontSize: fontSize['2xl'],
+                      fontWeight: 700,
+                      color: colors.text.primary,
+                      lineHeight: 1,
+                    }}
+                  >
                     {new Date(event.starts_at).getDate()}
                   </div>
                 </div>
-                <span style={{
-                  fontSize: fontSize.xs, fontWeight: 700,
-                  color: event.is_free ? colors.successStrong : colors.warning,
-                  background: event.is_free ? colors.successBg : colors.accentFaint,
-                  padding: `${space[1]} ${space[3]}`,
-                  borderRadius: radius.pill,
-                }}>
+                <span
+                  style={{
+                    fontSize: fontSize.xs,
+                    fontWeight: 700,
+                    color: event.is_free ? colors.successStrong : colors.warning,
+                    background: event.is_free ? colors.successBg : colors.accentFaint,
+                    padding: `${space[1]} ${space[3]}`,
+                    borderRadius: radius.pill,
+                  }}
+                >
                   {event.is_free ? t('free') : t('ticketRequired')}
                 </span>
               </div>
 
-              <div style={{ padding: space[4], flex: 1, display: 'flex', flexDirection: 'column', gap: space[2] }}>
+              <div
+                style={{
+                  padding: space[4],
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: space[2],
+                }}
+              >
                 <h3 style={{ fontSize: fontSize.lg, fontWeight: 700, margin: 0, lineHeight: 1.3 }}>
                   {event.title}
                 </h3>
@@ -183,7 +230,14 @@ export function Events() {
                     📍 {event.venue_name}
                   </p>
                 )}
-                <div style={{ display: 'flex', gap: space[4], marginTop: 'auto', paddingTop: space[3] }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: space[4],
+                    marginTop: 'auto',
+                    paddingTop: space[3],
+                  }}
+                >
                   <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
                     {event.rsvp_counts.going} {t('going')}
                   </span>

@@ -15,10 +15,7 @@ function makeClient(jwt?: string) {
   });
 }
 
-export async function POST(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const authHeader = _req.headers.get('authorization');
@@ -26,7 +23,10 @@ export async function POST(
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     // Check room exists and is joinable

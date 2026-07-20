@@ -150,14 +150,24 @@ export function GearMarketplace() {
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
-        <select value={category} onChange={e => setCategory(e.target.value)} style={selectStyle} aria-label="Filter by category">
+        <select
+          value={category}
+          onChange={e => setCategory(e.target.value)}
+          style={selectStyle}
+          aria-label="Filter by category"
+        >
           {CATEGORIES.map(c => (
             <option key={c.value} value={c.value}>
               {c.label}
             </option>
           ))}
         </select>
-        <select value={condition} onChange={e => setCondition(e.target.value)} style={selectStyle} aria-label="Filter by condition">
+        <select
+          value={condition}
+          onChange={e => setCondition(e.target.value)}
+          style={selectStyle}
+          aria-label="Filter by condition"
+        >
           <option value="">{t('anyCondition')}</option>
           {Object.entries(CONDITIONS).map(([v, l]) => (
             <option key={v} value={v}>
@@ -265,7 +275,11 @@ export function GearMarketplace() {
       {/* Load more */}
       {!loading && listings.length > 0 && offset + limit < total && (
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <Button variant="ghost" onClick={handleLoadMore} style={{ border: `1px solid ${colors.borderStrong}` }}>
+          <Button
+            variant="ghost"
+            onClick={handleLoadMore}
+            style={{ border: `1px solid ${colors.borderStrong}` }}
+          >
             {tc('loadMore')}
           </Button>
         </div>

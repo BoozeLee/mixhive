@@ -352,7 +352,12 @@ export function CollabQuestDetail() {
                 >
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <span style={{ display: 'inline-flex', color: `var(--hive-gold, ${colors.accent})` }}>
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          color: `var(--hive-gold, ${colors.accent})`,
+                        }}
+                      >
                         <Icon
                           name={ROLE_ICONS[role.role_type] ?? 'sparkles'}
                           size={18}
@@ -527,11 +532,7 @@ export function CollabQuestDetail() {
           <p style={{ color: colors.successStrong, fontWeight: 700, margin: '0 0 12px' }}>
             ✓ Quest complete — XP awarded to all collaborators
           </p>
-          <Button
-            onClick={handleCreateLiveRoom}
-            loading={creatingRoom}
-            size="sm"
-          >
+          <Button onClick={handleCreateLiveRoom} loading={creatingRoom} size="sm">
             {t('continueInLiveRoom') || 'Continue in Live Room'}
           </Button>
         </div>

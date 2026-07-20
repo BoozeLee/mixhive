@@ -8,7 +8,9 @@ export const dynamic = 'force-dynamic';
 export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const sb = createServerClient();
-    const { data: { user } } = await sb.auth.getUser();
+    const {
+      data: { user },
+    } = await sb.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
 
     const { data: mix } = await sb.from('mixes').select('dj_id').eq('id', params.id).single();
@@ -17,5 +19,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
 
     await sb.from('mixes').update({ published: false, published_at: null }).eq('id', params.id);
     return NextResponse.json({ ok: true });
-  } catch (e) { return handleApiError(e); }
+  } catch (e) {
+    return handleApiError(e);
+  }
 }

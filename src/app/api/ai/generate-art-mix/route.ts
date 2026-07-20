@@ -65,7 +65,10 @@ export async function POST(req: NextRequest) {
 
   const refs = body.references || [];
   if (refs.length === 0) {
-    return NextResponse.json({ error: 'At least one reference image is required' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'At least one reference image is required' },
+      { status: 400 }
+    );
   }
   if (refs.length > 4) {
     return NextResponse.json({ error: 'Maximum 4 reference images allowed' }, { status: 400 });
@@ -81,9 +84,7 @@ export async function POST(req: NextRequest) {
 
   const negativeDefault =
     'blurry, lowres, deformed, ugly, mutated hands, extra limbs, bad anatomy, watermark, text, logo, overexposed, underexposed, 3d render, plastic skin, artifacts, noise';
-  const fullNegative = negativePrompt
-    ? `${negativeDefault}, ${negativePrompt}`
-    : negativeDefault;
+  const fullNegative = negativePrompt ? `${negativeDefault}, ${negativePrompt}` : negativeDefault;
 
   const size = ASPECT_MAP[body.aspectRatio || '1:1'] || '1024x1024';
   const denoising = Math.min(1, Math.max(0.3, body.denoisingStrength ?? 0.75));
@@ -105,9 +106,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const finalPrompt = promptParts.length > 0
-    ? `${prompt}, blend ${promptParts.join(' and ')} harmoniously`
-    : prompt;
+  const finalPrompt =
+    promptParts.length > 0 ? `${prompt}, blend ${promptParts.join(' and ')} harmoniously` : prompt;
 
   const payload: Record<string, unknown> = {
     inputs: finalPrompt,

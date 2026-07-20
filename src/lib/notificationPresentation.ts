@@ -216,7 +216,7 @@ export function notificationPresentation(notification: NotificationLike): Notifi
         category: 'social',
         urgency: 'immediate',
         title: 'Event starting soon',
-        body: customBody || 'An event you RSVP\'d to is starting soon',
+        body: customBody || "An event you RSVP'd to is starting soon",
         url: safeNotificationPath(eventId ? `/events/${eventId}` : '/events'),
       };
     }

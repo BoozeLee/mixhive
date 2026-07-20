@@ -36,10 +36,34 @@ export function CookiePolicy() {
   const t = useTranslations('cookies');
 
   const rows = [
-    { name: t('mhLocaleName'), provider: t('mhLocaleProvider'), purpose: t('mhLocalePurpose'), duration: t('mhLocaleDuration'), type: t('functionalType') },
-    { name: t('supabaseAuthName'), provider: t('supabaseAuthProvider'), purpose: t('supabaseAuthPurpose'), duration: t('supabaseAuthDuration'), type: t('necessaryType') },
-    { name: t('consentRecordName'), provider: t('consentRecordProvider'), purpose: t('consentRecordPurpose'), duration: t('consentRecordDuration'), type: t('functionalType') },
-    { name: t('vercelAnalyticsName'), provider: t('vercelAnalyticsProvider'), purpose: t('vercelAnalyticsPurpose'), duration: t('vercelAnalyticsDuration'), type: t('analyticsType') },
+    {
+      name: t('mhLocaleName'),
+      provider: t('mhLocaleProvider'),
+      purpose: t('mhLocalePurpose'),
+      duration: t('mhLocaleDuration'),
+      type: t('functionalType'),
+    },
+    {
+      name: t('supabaseAuthName'),
+      provider: t('supabaseAuthProvider'),
+      purpose: t('supabaseAuthPurpose'),
+      duration: t('supabaseAuthDuration'),
+      type: t('necessaryType'),
+    },
+    {
+      name: t('consentRecordName'),
+      provider: t('consentRecordProvider'),
+      purpose: t('consentRecordPurpose'),
+      duration: t('consentRecordDuration'),
+      type: t('functionalType'),
+    },
+    {
+      name: t('vercelAnalyticsName'),
+      provider: t('vercelAnalyticsProvider'),
+      purpose: t('vercelAnalyticsPurpose'),
+      duration: t('vercelAnalyticsDuration'),
+      type: t('analyticsType'),
+    },
   ];
 
   return (
@@ -70,7 +94,7 @@ export function CookiePolicy() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {rows.map(row => (
               <tr key={row.name}>
                 <td style={td}>{row.name}</td>
                 <td style={td}>{row.provider}</td>

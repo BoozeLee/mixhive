@@ -9,17 +9,26 @@ export const dynamic = 'force-dynamic';
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const sb = createServerClient();
-    const { data: { user } } = await sb.auth.getUser();
+    const {
+      data: { user },
+    } = await sb.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
 
-    const { data: mix } = await sb.from('mixes').select('dj_id, duration_seconds').eq('id', params.id).single();
+    const { data: mix } = await sb
+      .from('mixes')
+      .select('dj_id, duration_seconds')
+      .eq('id', params.id)
+      .single();
     if (!mix) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     if (mix.dj_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+    const supabaseKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
     const userClient = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: { Authorization: `Bearer ${_req.headers.get('authorization')?.slice(7) || ''}` } },
+      global: {
+        headers: { Authorization: `Bearer ${_req.headers.get('authorization')?.slice(7) || ''}` },
+      },
       auth: { persistSession: false },
     });
 
@@ -39,10 +48,18 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     const events = eventsResult.data || [];
     const playHistory = playHistoryResult.data || [];
 
-    const totalPlays = events.filter(e => e.event_type === 'mix_play' || e.event_type === 'play').length;
-    const totalLikes = events.filter(e => e.event_type === 'mix_like' || e.event_type === 'like').length;
-    const totalComments = events.filter(e => e.event_type === 'comment_create' || e.event_type === 'comment').length;
-    const totalShares = events.filter(e => e.event_type === 'mix_share' || e.event_type === 'share').length;
+    const totalPlays = events.filter(
+      e => e.event_type === 'mix_play' || e.event_type === 'play'
+    ).length;
+    const totalLikes = events.filter(
+      e => e.event_type === 'mix_like' || e.event_type === 'like'
+    ).length;
+    const totalComments = events.filter(
+      e => e.event_type === 'comment_create' || e.event_type === 'comment'
+    ).length;
+    const totalShares = events.filter(
+      e => e.event_type === 'mix_share' || e.event_type === 'share'
+    ).length;
 
     const playsByDay: Record<string, number> = {};
     events.forEach(e => {
@@ -72,7 +89,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       p => mix.duration_seconds && (p.duration_seconds || 0) >= mix.duration_seconds * 0.9
     ).length;
     const completionRate = playHistory.length > 0 ? completedPlays / playHistory.length : 0;
-    const engagementRate = totalPlays > 0 ? (totalLikes + totalComments + totalShares) / totalPlays : 0;
+    const engagementRate =
+      totalPlays > 0 ? (totalLikes + totalComments + totalShares) / totalPlays : 0;
 
     return NextResponse.json({
       mixId: params.id,
@@ -92,5 +110,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
         .map(([country, count]) => ({ country, count }))
         .sort((a, b) => b.count - a.count),
     });
-  } catch (e) { return handleApiError(e); }
+  } catch (e) {
+    return handleApiError(e);
+  }
 }

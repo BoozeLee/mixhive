@@ -39,7 +39,10 @@ export async function GET(req: NextRequest) {
 
     let query = sb
       .from('events')
-      .select('*, organizer:profiles!events_organizer_id_fkey(id, username, display_name, avatar_url)', { count: 'exact' })
+      .select(
+        '*, organizer:profiles!events_organizer_id_fkey(id, username, display_name, avatar_url)',
+        { count: 'exact' }
+      )
       .eq('status', 'published')
       .order('starts_at', { ascending: true })
       .range(offset, offset + limit - 1);
@@ -90,7 +93,10 @@ export async function POST(req: NextRequest) {
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     const body = await req.json();

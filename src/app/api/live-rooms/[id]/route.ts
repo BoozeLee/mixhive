@@ -12,10 +12,7 @@ function makeClient(jwt?: string) {
   });
 }
 
-export async function GET(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const sb = makeClient();
@@ -32,7 +29,9 @@ export async function GET(
     // Get participants
     const { data: participants } = await sb
       .from('live_room_participants')
-      .select('*, user:profiles!live_room_participants_user_id_fkey(id, username, display_name, avatar_url)')
+      .select(
+        '*, user:profiles!live_room_participants_user_id_fkey(id, username, display_name, avatar_url)'
+      )
       .eq('room_id', id)
       .is('left_at', null)
       .order('joined_at', { ascending: true });
@@ -47,10 +46,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const authHeader = req.headers.get('authorization');
@@ -58,7 +54,10 @@ export async function PATCH(
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     // Check ownership
@@ -106,10 +105,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
     const authHeader = _req.headers.get('authorization');
@@ -117,7 +113,10 @@ export async function DELETE(
     const jwt = authHeader.slice(7);
 
     const sb = makeClient(jwt);
-    const { data: { user }, error: authErr } = await sb.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await sb.auth.getUser();
     if (authErr || !user) return unauthorized();
 
     const { data: existing } = await sb

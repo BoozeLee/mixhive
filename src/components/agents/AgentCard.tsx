@@ -186,8 +186,11 @@ export function AgentCard({ agent, forking, onFork }: AgentCardProps) {
         {/* A scrollable code region must be keyboard-focusable (WCAG 2.1.1 /
             axe scrollable-region-focusable); jsx-a11y's tabindex rule conflicts
             with that here, so it is scoped-disabled for this one element. */}
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
-        <pre tabIndex={0}
+        {/* Block form rather than disable-next-line: Prettier moves tabIndex onto
+            its own line, which shifts it out of a next-line directive's scope. */}
+        {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
+        <pre
+          tabIndex={0}
           role="region"
           aria-label="Agent code preview"
           style={{
@@ -203,6 +206,7 @@ export function AgentCard({ agent, forking, onFork }: AgentCardProps) {
         >
           {expanded ? code : `${code.slice(0, codePreviewLength)}${hasMore ? '…' : ''}`}
         </pre>
+        {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
       </div>
 
       {forkError && (

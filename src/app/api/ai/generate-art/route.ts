@@ -72,9 +72,7 @@ export async function POST(req: NextRequest) {
 
   const negativeDefault =
     'blurry, lowres, deformed, ugly, mutated hands, extra limbs, bad anatomy, watermark, text, logo, overexposed, underexposed, 3d render, plastic skin, artifacts, noise';
-  const fullNegative = negativePrompt
-    ? `${negativeDefault}, ${negativePrompt}`
-    : negativeDefault;
+  const fullNegative = negativePrompt ? `${negativeDefault}, ${negativePrompt}` : negativeDefault;
 
   const size = ASPECT_MAP[body.aspectRatio || '1:1'] || '1024x1024';
   const denoising = Math.min(1, Math.max(0.3, body.denoisingStrength ?? 0.75));
@@ -133,7 +131,10 @@ export async function POST(req: NextRequest) {
     }
     if (json.estimated_time) {
       return NextResponse.json(
-        { error: 'Model is loading, please retry in a moment', estimated_time: json.estimated_time },
+        {
+          error: 'Model is loading, please retry in a moment',
+          estimated_time: json.estimated_time,
+        },
         { status: 503 }
       );
     }

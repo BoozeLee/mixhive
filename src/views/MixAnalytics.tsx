@@ -20,16 +20,30 @@ export function MixAnalytics() {
     if (!id) return;
     setLoading(true);
     Promise.all([getMix(id), getMixAnalytics(id)]).then(([m, a]) => {
-      if (!m) { setError('Mix not found'); setLoading(false); return; }
-      if (!user || m.dj_id !== user.id) { setError('Unauthorized'); setLoading(false); return; }
+      if (!m) {
+        setError('Mix not found');
+        setLoading(false);
+        return;
+      }
+      if (!user || m.dj_id !== user.id) {
+        setError('Unauthorized');
+        setLoading(false);
+        return;
+      }
       setMix(m);
       setAnalytics(a);
       setLoading(false);
     });
   }, [id, user]);
 
-  if (loading) return <div style={{ textAlign: 'center', padding: 40 }}><LoadingSpinner size="lg" /></div>;
-  if (error) return <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>{error}</div>;
+  if (loading)
+    return (
+      <div style={{ textAlign: 'center', padding: 40 }}>
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  if (error)
+    return <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>{error}</div>;
   if (!mix || !analytics) return null;
 
   return (
@@ -61,14 +75,19 @@ export function MixAnalytics() {
           <h1 style={{ fontSize: 20, fontWeight: 700, color: colors.text.primary, margin: 0 }}>
             {mix.title}
           </h1>
-          <p style={{ fontSize: 13, color: colors.text.muted, margin: '4px 0 0' }}>
-            {t('title')}
-          </p>
+          <p style={{ fontSize: 13, color: colors.text.muted, margin: '4px 0 0' }}>{t('title')}</p>
         </div>
       </div>
 
       {/* Summary cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 12,
+          marginBottom: 24,
+        }}
+      >
         {[
           { label: t('plays'), value: analytics.totalPlays },
           { label: t('likes'), value: analytics.totalLikes },
@@ -112,7 +131,15 @@ export function MixAnalytics() {
             No play data yet
           </p>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 100, padding: '0 4px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: 4,
+              height: 100,
+              padding: '0 4px',
+            }}
+          >
             {analytics.playsByDay.slice(-14).map(day => {
               const max = Math.max(...analytics.playsByDay.map(d => d.count), 1);
               const height = (day.count / max) * 100;
@@ -134,7 +161,9 @@ export function MixAnalytics() {
           </div>
         )}
         {analytics.playsByDay.length > 0 && (
-          <div style={{ fontSize: 10, color: colors.text.faintest, textAlign: 'center', marginTop: 8 }}>
+          <div
+            style={{ fontSize: 10, color: colors.text.faintest, textAlign: 'center', marginTop: 8 }}
+          >
             Last {Math.min(analytics.playsByDay.length, 14)} days
           </div>
         )}
@@ -159,9 +188,19 @@ export function MixAnalytics() {
           </p>
         ) : (
           analytics.topReferrers.slice(0, 5).map(ref => (
-            <div key={ref.source} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${colors.borderSubtle}` }}>
+            <div
+              key={ref.source}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '6px 0',
+                borderBottom: `1px solid ${colors.borderSubtle}`,
+              }}
+            >
               <span style={{ color: colors.text.secondary, fontSize: 13 }}>{ref.source}</span>
-              <span style={{ color: colors.accent, fontWeight: 600, fontSize: 13 }}>{ref.count}</span>
+              <span style={{ color: colors.accent, fontWeight: 600, fontSize: 13 }}>
+                {ref.count}
+              </span>
             </div>
           ))
         )}
@@ -185,9 +224,19 @@ export function MixAnalytics() {
           </p>
         ) : (
           analytics.geoDistribution.slice(0, 5).map(geo => (
-            <div key={geo.country} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${colors.borderSubtle}` }}>
+            <div
+              key={geo.country}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '6px 0',
+                borderBottom: `1px solid ${colors.borderSubtle}`,
+              }}
+            >
               <span style={{ color: colors.text.secondary, fontSize: 13 }}>{geo.country}</span>
-              <span style={{ color: colors.accent, fontWeight: 600, fontSize: 13 }}>{geo.count}</span>
+              <span style={{ color: colors.accent, fontWeight: 600, fontSize: 13 }}>
+                {geo.count}
+              </span>
             </div>
           ))
         )}

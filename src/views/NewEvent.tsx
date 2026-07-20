@@ -85,15 +85,38 @@ export function NewEvent() {
 
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: '32px 16px 96px' }}>
-      <Link to="/events" style={{ color: colors.text.muted, fontSize: fontSize.sm, textDecoration: 'none', marginBottom: space[5], display: 'block' }}>
+      <Link
+        to="/events"
+        style={{
+          color: colors.text.muted,
+          fontSize: fontSize.sm,
+          textDecoration: 'none',
+          marginBottom: space[5],
+          display: 'block',
+        }}
+      >
         ← {t('backToEvents')}
       </Link>
 
-      <h1 style={{ fontSize: fontSize['2xl'], fontWeight: 700, marginBottom: space[6] }}>{t('createEvent')}</h1>
+      <h1 style={{ fontSize: fontSize['2xl'], fontWeight: 700, marginBottom: space[6] }}>
+        {t('createEvent')}
+      </h1>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: space[5] }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: 'flex', flexDirection: 'column', gap: space[5] }}
+      >
         <div>
-          <label style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}>{t('eventTitle')} *</label>
+          <label
+            style={{
+              fontSize: fontSize.sm,
+              color: colors.text.muted,
+              display: 'block',
+              marginBottom: space[2],
+            }}
+          >
+            {t('eventTitle')} *
+          </label>
           <Input
             value={title}
             onChange={e => setTitle(e.target.value)}
@@ -105,7 +128,16 @@ export function NewEvent() {
         </div>
 
         <div>
-          <label style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}>{t('description')}</label>
+          <label
+            style={{
+              fontSize: fontSize.sm,
+              color: colors.text.muted,
+              display: 'block',
+              marginBottom: space[2],
+            }}
+          >
+            {t('description')}
+          </label>
           <Textarea
             value={description}
             onChange={e => setDescription(e.target.value)}
@@ -118,7 +150,16 @@ export function NewEvent() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: space[4] }}>
           <div>
-            <label style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}>{t('venueName')}</label>
+            <label
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
+            >
+              {t('venueName')}
+            </label>
             <Input
               value={venueName}
               onChange={e => setVenueName(e.target.value)}
@@ -128,7 +169,16 @@ export function NewEvent() {
             />
           </div>
           <div>
-            <label style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}>{t('venueAddress')}</label>
+            <label
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
+            >
+              {t('venueAddress')}
+            </label>
             <Input
               value={venueAddress}
               onChange={e => setVenueAddress(e.target.value)}
@@ -141,7 +191,16 @@ export function NewEvent() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: space[4] }}>
           <div>
-            <label style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}>{t('startDate')} *</label>
+            <label
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
+            >
+              {t('startDate')} *
+            </label>
             <input
               type="datetime-local"
               value={startsAt}
@@ -151,7 +210,16 @@ export function NewEvent() {
             />
           </div>
           <div>
-            <label style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}>{t('endDate')}</label>
+            <label
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
+            >
+              {t('endDate')}
+            </label>
             <input
               type="datetime-local"
               value={endsAt}
@@ -162,7 +230,16 @@ export function NewEvent() {
         </div>
 
         <div style={{ display: 'flex', gap: space[4], alignItems: 'center' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: space[2], cursor: 'pointer', color: colors.text.secondary, fontSize: fontSize.sm }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: space[2],
+              cursor: 'pointer',
+              color: colors.text.secondary,
+              fontSize: fontSize.sm,
+            }}
+          >
             <input
               type="checkbox"
               checked={isFree}
@@ -171,7 +248,16 @@ export function NewEvent() {
             />
             {t('freeEvent')}
           </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: space[2], cursor: 'pointer', color: colors.text.secondary, fontSize: fontSize.sm }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: space[2],
+              cursor: 'pointer',
+              color: colors.text.secondary,
+              fontSize: fontSize.sm,
+            }}
+          >
             <input
               type="checkbox"
               checked={publish}
@@ -184,7 +270,16 @@ export function NewEvent() {
 
         {!isFree && (
           <div>
-            <label style={{ fontSize: fontSize.sm, color: colors.text.muted, display: 'block', marginBottom: space[2] }}>{t('ticketUrl')}</label>
+            <label
+              style={{
+                fontSize: fontSize.sm,
+                color: colors.text.muted,
+                display: 'block',
+                marginBottom: space[2],
+              }}
+            >
+              {t('ticketUrl')}
+            </label>
             <Input
               value={ticketUrl}
               onChange={e => setTicketUrl(e.target.value)}
@@ -195,8 +290,17 @@ export function NewEvent() {
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: space[3], justifyContent: 'flex-end', marginTop: space[4] }}>
-          <Button type="button" variant="ghost" onClick={() => navigate('/events')}>{t('cancel')}</Button>
+        <div
+          style={{
+            display: 'flex',
+            gap: space[3],
+            justifyContent: 'flex-end',
+            marginTop: space[4],
+          }}
+        >
+          <Button type="button" variant="ghost" onClick={() => navigate('/events')}>
+            {t('cancel')}
+          </Button>
           <Button type="submit" loading={submitting} disabled={!title.trim() || !startsAt}>
             {publish ? t('publishEvent') : t('saveDraft')}
           </Button>

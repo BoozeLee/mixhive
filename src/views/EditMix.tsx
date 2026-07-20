@@ -34,7 +34,9 @@ export function EditMix() {
   const [isExplicit, setIsExplicit] = useState(false);
   const [platformLinks, setPlatformLinks] = useState<Record<string, string>>({});
   const [tracklist, setTracklist] = useState<TrackItem[]>([]);
-  const [requiredTier, setRequiredTier] = useState<'free' | 'supporter' | 'insider' | 'patron'>('free');
+  const [requiredTier, setRequiredTier] = useState<'free' | 'supporter' | 'insider' | 'patron'>(
+    'free'
+  );
 
   useEffect(() => {
     if (!id) return;
@@ -148,13 +150,15 @@ export function EditMix() {
     if (!id) return;
     setArchiving(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error('Not authenticated');
       await fetch(`/api/mixes/${id}/archive`, {
         method: mix?.archived ? 'DELETE' : 'POST',
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
-      setMix(prev => prev ? { ...prev, archived: !prev.archived } : prev);
+      setMix(prev => (prev ? { ...prev, archived: !prev.archived } : prev));
     } catch {
       setError('Failed to update archive status');
     } finally {
@@ -167,13 +171,15 @@ export function EditMix() {
     if (!window.confirm('Unpublish this mix? It will no longer be visible to the public.')) return;
     setUnpublishing(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error('Not authenticated');
       await fetch(`/api/mixes/${id}/unpublish`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
-      setMix(prev => prev ? { ...prev, published: false, published_at: null } : prev);
+      setMix(prev => (prev ? { ...prev, published: false, published_at: null } : prev));
     } catch {
       setError('Failed to unpublish mix');
     } finally {
@@ -184,14 +190,21 @@ export function EditMix() {
   async function handleSchedule() {
     if (!id || !scheduleDate) return;
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error('Not authenticated');
       await fetch(`/api/mixes/${id}/schedule`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ scheduled_at: new Date(scheduleDate).toISOString() }),
       });
-      setMix(prev => prev ? { ...prev, scheduled_at: new Date(scheduleDate).toISOString() } : prev);
+      setMix(prev =>
+        prev ? { ...prev, scheduled_at: new Date(scheduleDate).toISOString() } : prev
+      );
     } catch {
       setError('Failed to schedule mix');
     }
@@ -200,13 +213,15 @@ export function EditMix() {
   async function handleUnschedule() {
     if (!id) return;
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error('Not authenticated');
       await fetch(`/api/mixes/${id}/schedule`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
-      setMix(prev => prev ? { ...prev, scheduled_at: null } : prev);
+      setMix(prev => (prev ? { ...prev, scheduled_at: null } : prev));
       setScheduleDate('');
     } catch {
       setError('Failed to cancel schedule');
@@ -439,7 +454,9 @@ export function EditMix() {
         </div>
 
         <div>
-          <label style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8, display: 'block' }}>
+          <label
+            style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8, display: 'block' }}
+          >
             {t('requiredTier')}
           </label>
           <Select
@@ -456,7 +473,9 @@ export function EditMix() {
         </div>
 
         <div>
-          <label style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8, display: 'block' }}>
+          <label
+            style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8, display: 'block' }}
+          >
             {t('scheduleFor')}
           </label>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -473,7 +492,13 @@ export function EditMix() {
                 {t('unschedule')}
               </Button>
             ) : (
-              <Button type="button" variant="secondary" size="sm" onClick={handleSchedule} disabled={!scheduleDate}>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={handleSchedule}
+                disabled={!scheduleDate}
+              >
                 {t('schedule')}
               </Button>
             )}
@@ -485,7 +510,7 @@ export function EditMix() {
           )}
         </div>
 
-        <div style={{ marginTop: 24, display: 'flex', gap: 12, flexWrap: 'wrap' }}>          
+        <div style={{ marginTop: 24, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Button
             type="button"
             variant="secondary"

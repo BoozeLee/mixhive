@@ -527,7 +527,9 @@ export async function trackAnalyticsEvent(input: {
 
 export async function getMixAnalytics(mixId: string): Promise<MixAnalytics | null> {
   if (!isSupabaseConfigured) return null;
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (!session?.access_token) return null;
   const res = await fetch(`/api/analytics/mix/${mixId}`, {
     headers: { Authorization: `Bearer ${session.access_token}` },

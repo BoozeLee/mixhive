@@ -94,30 +94,76 @@ jobs:
           PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: supabase link --project-ref "$PROJECT_REF"
 
-      - name: Show what is pending
+      - name: Show remote ledger and what would be pushed
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        run: supabase migration list --linked
+        run: |
+          echo "::group::Remote migration ledger"
+          supabase migration list --linked
+          echo "::endgroup::"
+          echo "::group::What db push would apply"
+          supabase db push --linked --include-all --dry-run
+          echo "::endgroup::"
+
+      - name: Warn if an expected migration is already recorded as applied
+        # db push decides purely from the remote history table. This project has
+        # falsified that table before: 071's header records 004 and 023 being
+        # marked applied via `repair --status applied` without their SQL running.
+        # If any of these are recorded-but-not-run, push will skip them and this
+        # job would report success while changing nothing — the exact failure we
+        # are trying to end. Surface it loudly instead.
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          # Versions known (2026-07-20) to be missing from production by schema
+          # introspection, regardless of what the ledger claims.
+          EXPECTED="102 106 108 109 110 111 112 113 114 115"
+          list=$(supabase migration list --linked 2>/dev/null || true)
+          suspect=
+          for v in $EXPECTED; do
+            # A row showing the version on both local and remote sides means the
+            # ledger already claims it is applied.
+            if echo "$list" | grep -E "^\s*\|?\s*$v\b" | grep -qE "$v.*$v"; then
+              suspect="$suspect $v"
+            fi
+          done
+          if [ -n "$suspect" ]; then
+            echo "::warning::Ledger already claims these are applied, yet schema introspection said they are missing:$suspect"
+            echo "::warning::db push will SKIP them. Reconcile first with: supabase migration repair --status reverted <version>"
+          else
+            echo "No conflict between the ledger and the known-missing set."
+          fi
 
       - name: Apply
         if: ${{ inputs.dry_run == false }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        # --include-all is required, not incidental: production applied 103-105
+        # but not 102, so a plain push would skip the older pending migration.
         run: supabase db push --linked --include-all
 
       - name: Dry run notice
         if: ${{ inputs.dry_run == true }}
         run: |
-          echo "::notice::Dry run — nothing was applied. The list above is what would be pushed."
+          echo "::notice::Dry run — nothing was applied. Read the 'What db push would apply' group above: if it is empty, the ledger already claims these migrations are applied and a real run would change nothing."
 
-      - name: Confirm post-state
+      - name: Confirm post-state and that the expected versions landed
         if: ${{ inputs.dry_run == false }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        run: supabase migration list --linked
+        run: |
+          supabase migration list --linked
+          remaining=$(supabase db push --linked --include-all --dry-run 2>&1 || true)
+          if echo "$remaining" | grep -qE "^\s*[0-9]{3}_"; then
+            echo "::error::Migrations are still pending after the push:"
+            echo "$remaining"
+            exit 1
+          fi
+          echo "Nothing pending after push."
 
       - name: Restore held-back migrations
         if: always()

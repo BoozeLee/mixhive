@@ -1,4 +1,11 @@
--- Migration 040: Audio Jobs Table and Processing Pipeline
+-- Migration 022: Audio Jobs Table and Processing Pipeline
+--
+-- Renumbered from 040. Two files shared the 040 prefix (this and
+-- 040_buzz_triggers_and_fix.sql), which the migration runner rejects outright —
+-- schema_migrations keys on the numeric prefix, so the chain could never apply.
+-- Buzz keeps 040 because 041 states "Run after 040_buzz_triggers_and_fix.sql".
+-- This file only depends on public.mixes (001) and must stay before 042, which
+-- extends it, so 022 was the nearest free slot satisfying both.
 --
 -- Adds audio job tracking table and updates mixes table with waveform support.
 -- Enables proper audio processing workflow with job queuing and status tracking.

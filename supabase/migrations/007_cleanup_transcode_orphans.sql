@@ -21,8 +21,22 @@ drop policy if exists "DJs can delete own mixes-original files" on storage.objec
 
 -- ===== Drop mixes-original storage bucket =====
 -- Delete any leftover objects first (defensive — bucket should be empty).
-delete from storage.objects where bucket_id = 'mixes-original';
-delete from storage.buckets where id = 'mixes-original';
+do $$
+begin
+  delete from storage.objects where bucket_id = 'mixes-original';
+exception when others then
+  -- Newer Supabase storage forbids direct DML on storage.*; the
+  -- bucket teardown is best-effort cleanup, not schema.
+  raise notice 'skipping storage cleanup: %', sqlerrm;
+end $$;
+do $$
+begin
+  delete from storage.buckets where id = 'mixes-original';
+exception when others then
+  -- Newer Supabase storage forbids direct DML on storage.*; the
+  -- bucket teardown is best-effort cleanup, not schema.
+  raise notice 'skipping storage cleanup: %', sqlerrm;
+end $$;
 
 -- ===== Drop transcode_jobs table (RLS policies cascade) =====
 drop table if exists public.transcode_jobs cascade;

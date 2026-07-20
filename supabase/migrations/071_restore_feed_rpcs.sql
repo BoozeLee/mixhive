@@ -20,6 +20,39 @@
 
 begin;
 
+-- Earlier migrations defined several of these functions with different OUT row
+-- types, and `create or replace` cannot change a function's return type
+-- (42P13). Drop every existing overload by signature first; the definitions
+-- below are authoritative.
+do $$
+declare
+  r record;
+  fn text;
+begin
+  foreach fn in array array[
+    'get_discovery',
+    'get_fans_also_liked',
+    'get_feed_cursor',
+    'get_hive_stats',
+    'get_latest_cursor',
+    'get_trending_cursor',
+    'handle_mix_publish_feed',
+    'refresh_mix_scores',
+    'update_mix_score_on_like',
+    'update_mix_score_on_play',
+    'update_mix_score_on_unlike'
+  ] loop
+    for r in
+      select oid::regprocedure as sig
+      from pg_proc
+      where proname = fn
+        and pronamespace = 'public'::regnamespace
+    loop
+      execute format('drop function if exists %s cascade', r.sig);
+    end loop;
+  end loop;
+end$$;
+
 -- ── 1. mix_scores ────────────────────────────────────────────────────────────
 
 create table if not exists public.mix_scores (

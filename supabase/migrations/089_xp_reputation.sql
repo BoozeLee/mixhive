@@ -70,7 +70,9 @@ create trigger tr_sync_xp_on_review
 update public.profiles p
 set 
   xp = sub.total_xp,
-  level = public.calculate_level(sub.total_xp),
+  -- sum(integer) yields bigint, and calculate_level takes integer; Postgres
+  -- will not implicitly narrow it for function resolution (42883).
+  level = public.calculate_level(sub.total_xp::int),
   reputation_score = sub.avg_rep
 from (
   select 

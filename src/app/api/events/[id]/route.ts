@@ -35,12 +35,21 @@ function makeClient(jwt?: string) {
 }
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await context.params;
-    const sb = makeClient();
+
+    // Pass the caller's JWT through when present. Building the client
+    // anonymously made drafts unreadable by everyone including their own
+    // organizer — the "Organizers can see own draft events" RLS policy keys off
+    // auth.uid(), which is null without a token. That broke the whole draft
+    // lifecycle: create a draft, get redirected to it, see "Event not found".
+    // Anonymous callers still work and still only see published events.
+    const authHeader = req.headers.get('authorization');
+    const jwt = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined;
+    const sb = makeClient(jwt);
 
     const { data: event, error } = await sb
       .from('events')

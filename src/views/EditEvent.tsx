@@ -58,7 +58,13 @@ export function EditEvent() {
 
     async function load() {
       try {
-        const res = await fetch(`/api/events/${id}`);
+        // Authenticated: a draft is only visible to its organizer, and editing
+        // a draft is the main reason to be on this screen.
+        const { data: session } = await supabase.auth.getSession();
+        const token = session?.session?.access_token;
+        const res = await fetch(`/api/events/${id}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
         if (cancelled) return;
 
         if (!res.ok) {

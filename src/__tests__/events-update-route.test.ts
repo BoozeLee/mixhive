@@ -2,14 +2,16 @@
  * @jest-environment node
  */
 import { NextRequest } from 'next/server';
-import { PATCH } from '../app/api/events/[id]/route';
+import { GET, PATCH } from '../app/api/events/[id]/route';
 
 let mockUser: { id: string } | null = { id: 'organizer-1' };
 let existingEvent: { organizer_id: string } | null = { organizer_id: 'organizer-1' };
 let capturedUpdates: Record<string, unknown> | null = null;
+let capturedClientOptions: { global?: { headers?: Record<string, string> } } | null = null;
 
 jest.mock('@supabase/supabase-js', () => ({
-  createClient: () => ({
+  createClient: (_url: string, _key: string, options: unknown) => ({
+    __options: (capturedClientOptions = options as typeof capturedClientOptions),
     auth: {
       getUser: async () => ({
         data: { user: mockUser },
@@ -18,9 +20,11 @@ jest.mock('@supabase/supabase-js', () => ({
     },
     from: () => ({
       // Ownership lookup: .select('organizer_id').eq('id', id).maybeSingle()
+      // GET also uses .select(...).eq(...).neq(...) for the RSVP roll-up.
       select: () => ({
         eq: () => ({
           maybeSingle: async () => ({ data: existingEvent, error: null }),
+          neq: async () => ({ data: [], error: null }),
         }),
       }),
       // Update path: .update(updates).eq('id', id).select().single()
@@ -139,5 +143,32 @@ describe('PATCH /api/events/[id]', () => {
 
     expect(res.status).toBe(200);
     expect(capturedUpdates).toEqual({ status: 'cancelled' });
+  });
+});
+
+describe('GET /api/events/[id]', () => {
+  function getReq(opts: { auth?: boolean } = {}) {
+    const headers: Record<string, string> = {};
+    if (opts.auth !== false) headers['authorization'] = 'Bearer caller-jwt';
+    return new NextRequest('https://mixhive.test/api/events/event-1', { headers });
+  }
+
+  // Regression guard. GET used to build its Supabase client with no JWT, so the
+  // "Organizers can see own draft events" RLS policy — which keys off
+  // auth.uid() — could never match. Drafts were unreadable by everyone,
+  // including their organizer, which broke create-draft -> view -> edit end to
+  // end. Caught by running the real app against a real Postgres, not by mocks.
+  it('forwards the caller bearer token to Supabase so RLS sees auth.uid()', async () => {
+    capturedClientOptions = null;
+    await GET(getReq(), ctx);
+
+    expect(capturedClientOptions?.global?.headers?.Authorization).toBe('Bearer caller-jwt');
+  });
+
+  it('stays anonymous when no bearer token is supplied', async () => {
+    capturedClientOptions = null;
+    await GET(getReq({ auth: false }), ctx);
+
+    expect(capturedClientOptions?.global).toBeUndefined();
   });
 });

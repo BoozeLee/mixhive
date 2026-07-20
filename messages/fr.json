@@ -1385,6 +1385,17 @@
     "maybeLabel": "peut-être",
     "noEvents": "Aucun événement à venir",
     "noEventsDescription": "Organisez une rave et faites savoir à la ruche.",
-    "maxAttendees": "{count} places restantes"
+    "maxAttendees": "{count} places restantes",
+    "saveChanges": "Enregistrer les modifications",
+    "eventUpdated": "Événement mis à jour",
+    "updateFailed": "Échec de la mise à jour de l'événement",
+    "loadFailed": "Échec du chargement de l'événement",
+    "notYourEvent": "Seul l'organisateur peut modifier cet événement",
+    "statusLabel": "Statut",
+    "statusDraft": "Brouillon",
+    "statusPublished": "Publié",
+    "cancelEvent": "Annuler l'événement",
+    "cancelEventConfirm": "Annuler cet événement ? Les participants le verront comme annulé.",
+    "eventCancelled": "Événement annulé"
   }
 }

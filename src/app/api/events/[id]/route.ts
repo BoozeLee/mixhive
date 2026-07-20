@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { handleApiError, unauthorized, notFound, forbidden } from '@/lib/api-errors';
+import { z } from 'zod';
+import { handleApiError, unauthorized, notFound, forbidden, badRequest } from '@/lib/api-errors';
+
+// Mirrors CreateEventSchema in ../route.ts, but every field is optional since a
+// PATCH is a partial update. `status` additionally allows 'cancelled' — the
+// DELETE handler below reaches the same state by a different route.
+//
+// Without this the handler wrote any non-undefined value straight through to the
+// DB, so a bad status surfaced as a Postgres CHECK violation rather than a 400.
+const UpdateEventSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  description: z.string().max(5000).nullable().optional(),
+  scene_id: z.string().uuid().nullable().optional(),
+  venue_name: z.string().max(200).nullable().optional(),
+  venue_address: z.string().max(500).nullable().optional(),
+  cover_image_url: z.string().url().nullable().optional(),
+  starts_at: z.string().datetime().optional(),
+  ends_at: z.string().datetime().nullable().optional(),
+  max_attendees: z.number().int().positive().nullable().optional(),
+  is_free: z.boolean().optional(),
+  ticket_url: z.string().url().nullable().optional(),
+  status: z.enum(['draft', 'published', 'cancelled']).optional(),
+});
 
 function makeClient(jwt?: string) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -73,11 +95,16 @@ export async function PATCH(
     if (existing.organizer_id !== user.id) return forbidden('Only the organizer can update this event');
 
     const body = await req.json();
-    const allowed = ['title', 'description', 'scene_id', 'venue_name', 'venue_address',
-      'cover_image_url', 'starts_at', 'ends_at', 'max_attendees', 'is_free', 'ticket_url', 'status'];
+    const parsed = UpdateEventSchema.safeParse(body);
+    if (!parsed.success) {
+      return badRequest('Invalid event data', parsed.error.flatten().fieldErrors);
+    }
+
+    // safeParse strips unknown keys, so the parsed object is already the
+    // allow-list; only drop the keys the caller omitted entirely.
     const updates: Record<string, unknown> = {};
-    for (const key of allowed) {
-      if (body[key] !== undefined) updates[key] = body[key];
+    for (const [key, value] of Object.entries(parsed.data)) {
+      if (value !== undefined) updates[key] = value;
     }
 
     if (Object.keys(updates).length === 0) {

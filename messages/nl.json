@@ -1385,6 +1385,17 @@
     "maybeLabel": "misschien",
     "noEvents": "Geen aankomende evenementen",
     "noEventsDescription": "Organiseer een rave en laat de bijenkorf het weten.",
-    "maxAttendees": "{count} plaatsen over"
+    "maxAttendees": "{count} plaatsen over",
+    "saveChanges": "Wijzigingen opslaan",
+    "eventUpdated": "Evenement bijgewerkt",
+    "updateFailed": "Bijwerken van evenement mislukt",
+    "loadFailed": "Laden van evenement mislukt",
+    "notYourEvent": "Alleen de organisator kan dit evenement bewerken",
+    "statusLabel": "Status",
+    "statusDraft": "Concept",
+    "statusPublished": "Gepubliceerd",
+    "cancelEvent": "Evenement annuleren",
+    "cancelEventConfirm": "Dit evenement annuleren? Deelnemers zien het als geannuleerd.",
+    "eventCancelled": "Evenement geannuleerd"
   }
 }

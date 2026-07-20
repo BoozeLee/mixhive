@@ -181,6 +181,9 @@ const EventDetailView = lazy(() =>
 const NewEventView = lazy(() =>
   import('./views/NewEvent').then(m => ({ default: m.NewEvent }))
 );
+const EditEventView = lazy(() =>
+  import('./views/EditEvent').then(m => ({ default: m.EditEvent }))
+);
 // SessionFab is small and always available to authenticated users — not lazy-loaded
 import { SessionFab } from './components/SessionFab';
 
@@ -446,6 +449,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <NewEventView />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditEventView />
             </ProtectedRoute>
           }
         />

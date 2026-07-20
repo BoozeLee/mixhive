@@ -1385,6 +1385,17 @@
     "maybeLabel": "vielleicht",
     "noEvents": "Keine kommenden Events",
     "noEventsDescription": "Organisieren Sie eine Rave und lassen Sie den Stock wissen.",
-    "maxAttendees": "{count} Plätze übrig"
+    "maxAttendees": "{count} Plätze übrig",
+    "saveChanges": "Änderungen speichern",
+    "eventUpdated": "Event aktualisiert",
+    "updateFailed": "Event konnte nicht aktualisiert werden",
+    "loadFailed": "Event konnte nicht geladen werden",
+    "notYourEvent": "Nur der Veranstalter kann dieses Event bearbeiten",
+    "statusLabel": "Status",
+    "statusDraft": "Entwurf",
+    "statusPublished": "Veröffentlicht",
+    "cancelEvent": "Event absagen",
+    "cancelEventConfirm": "Dieses Event absagen? Teilnehmer sehen es als abgesagt.",
+    "eventCancelled": "Event abgesagt"
   }
 }

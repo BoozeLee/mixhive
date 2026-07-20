@@ -160,6 +160,13 @@ export function EventDetail() {
         </div>
 
         <div style={{ display: 'flex', gap: space[2] }}>
+          {/* Outside the status chain below so the organizer can still reach the
+              editor for a cancelled or past event. */}
+          {user && event.organizer?.id === user.id && (
+            <Link to={`/events/${event.id}/edit`} style={{ textDecoration: 'none' }}>
+              <Button variant="ghost" size="sm">{t('editEvent')}</Button>
+            </Link>
+          )}
           {event.status === 'cancelled' ? (
             <span style={{ color: colors.dangerStrong, fontWeight: 600 }}>{t('cancelled')}</span>
           ) : isPast ? (

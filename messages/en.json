@@ -1385,6 +1385,17 @@
     "maybeLabel": "maybe",
     "noEvents": "No upcoming events",
     "noEventsDescription": "Organize a rave and let the hive know.",
-    "maxAttendees": "{count} spots left"
+    "maxAttendees": "{count} spots left",
+    "saveChanges": "Save changes",
+    "eventUpdated": "Event updated",
+    "updateFailed": "Failed to update event",
+    "loadFailed": "Failed to load event",
+    "notYourEvent": "Only the organizer can edit this event",
+    "statusLabel": "Status",
+    "statusDraft": "Draft",
+    "statusPublished": "Published",
+    "cancelEvent": "Cancel event",
+    "cancelEventConfirm": "Cancel this event? Attendees will see it as cancelled.",
+    "eventCancelled": "Event cancelled"
   }
 }

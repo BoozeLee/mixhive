@@ -1385,6 +1385,17 @@
     "maybeLabel": "tal vez",
     "noEvents": "No hay eventos próximos",
     "noEventsDescription": "Organiza una rave y hazlo saber a la colmena.",
-    "maxAttendees": "{count} plazas disponibles"
+    "maxAttendees": "{count} plazas disponibles",
+    "saveChanges": "Guardar cambios",
+    "eventUpdated": "Evento actualizado",
+    "updateFailed": "No se pudo actualizar el evento",
+    "loadFailed": "No se pudo cargar el evento",
+    "notYourEvent": "Solo el organizador puede editar este evento",
+    "statusLabel": "Estado",
+    "statusDraft": "Borrador",
+    "statusPublished": "Publicado",
+    "cancelEvent": "Cancelar evento",
+    "cancelEventConfirm": "¿Cancelar este evento? Los asistentes lo verán como cancelado.",
+    "eventCancelled": "Evento cancelado"
   }
 }

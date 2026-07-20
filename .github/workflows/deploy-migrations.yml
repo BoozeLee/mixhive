@@ -1,5 +1,30 @@
 name: Deploy migrations to production
 
+# ⚠️ DO NOT RUN AS WRITTEN — see the safety note below.
+#
+# Verified against production on 2026-07-20 via the Management API:
+# supabase_migrations.schema_migrations DOES NOT EXIST on the linked project.
+# There is no migration ledger; the schema was assembled by other means.
+#
+# `db push --include-all` means "apply everything absent from the remote history
+# table". With no history table that is ALL 113 migrations, replayed against a
+# database that already holds 112 tables. Not all of them are idempotent, so this
+# would be destructive.
+#
+# The earlier "lying ledger" guard in this file anticipated the wrong failure: it
+# assumed the ledger might falsely claim migrations were applied. In fact there is
+# no ledger to lie.
+#
+# Before this workflow can be used, one of:
+#   a) bootstrap supabase_migrations.schema_migrations to reflect what is really
+#      deployed, then push only what is genuinely pending; or
+#   b) apply the explicit missing set (102, 106, 108-115; NOT 116) directly, each
+#      inside BEGIN/ROLLBACK first to prove it applies cleanly. Direct Postgres is
+#      firewalled from the dev machine, but the Management API endpoint
+#      /v1/projects/{ref}/database/query runs SQL over HTTPS and works.
+#
+# Until then the job below hard-stops.
+
 # Applies pending migrations to the linked Supabase project.
 #
 # Why this exists: nothing applied migrations to production. schema-drift.yml
@@ -43,6 +68,13 @@ jobs:
     timeout-minutes: 20
     environment: production
     steps:
+      - name: Refuse to run until the ledger question is settled
+        run: |
+          echo "::error::Production has no supabase_migrations.schema_migrations table."
+          echo "::error::'db push --include-all' would replay all 113 migrations against a populated database."
+          echo "::error::See the safety note at the top of this workflow. Remove this step only once the ledger is bootstrapped."
+          exit 1
+
       - uses: actions/checkout@v6
 
       - name: Install Supabase CLI

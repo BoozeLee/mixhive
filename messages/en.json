@@ -123,7 +123,8 @@
     "stepError": "Please fix the errors above before continuing.",
     "audioRequired": "Audio file is required",
     "titleRequired": "Title is required",
-    "genreRequired": "Genre is required"
+    "genreRequired": "Genre is required",
+    "scheduleFor": "Schedule for later"
   },
   "notifications": {
     "eyebrow": "Activity",
@@ -578,7 +579,14 @@
     "startSec": "Start (sec)",
     "removeTrack": "Remove track",
     "audioFile": "Audio File (leave empty to keep current)",
-    "artworkImage": "Artwork Image (leave empty to keep current)"
+    "artworkImage": "Artwork Image (leave empty to keep current)",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "unpublish": "Unpublish",
+    "schedule": "Schedule",
+    "unschedule": "Unschedule",
+    "scheduleFor": "Schedule for later",
+    "requiredTier": "Required subscription tier"
   },
   "opportunities": {
     "graph": "Opportunity Graph",
@@ -1397,5 +1405,17 @@
     "cancelEvent": "Cancel event",
     "cancelEventConfirm": "Cancel this event? Attendees will see it as cancelled.",
     "eventCancelled": "Event cancelled"
+  },
+  "mixAnalytics": {
+    "title": "Mix Analytics",
+    "plays": "Plays",
+    "likes": "Likes",
+    "comments": "Comments",
+    "shares": "Shares",
+    "engagementRate": "Engagement",
+    "completionRate": "Completion",
+    "playsOverTime": "Plays over time",
+    "topReferrers": "Top referrers",
+    "geoDistribution": "Geographic distribution"
   }
 }

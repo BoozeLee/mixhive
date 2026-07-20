@@ -56,6 +56,7 @@ export function Upload() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
   const [publishedMix, setPublishedMix] = useState<{ id: string; title: string } | null>(null);
+  const [scheduleDate, setScheduleDate] = useState('');
   const abortRef = useRef<(() => void) | null>(null);
 
   const steps = [
@@ -274,7 +275,8 @@ export function Upload() {
         waveform_url: waveformUrl || null,
         status: 'ready',
         upload_status: 'uploaded',
-        published: publish,
+        published: publish && !scheduleDate,
+        scheduled_at: scheduleDate ? new Date(scheduleDate).toISOString() : null,
       };
 
       if (tracklist.length > 0) {
@@ -758,7 +760,19 @@ export function Upload() {
                 {formData.tags && ` · ${formData.tags}`}
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <div style={{ marginTop: 12 }}>
+              <label style={{ color: colors.text.muted, fontSize: 13, marginBottom: 6, display: 'block' }}>
+                {t('scheduleFor')}
+              </label>
+              <Input
+                hideLabel
+                label={t('scheduleFor')}
+                type="datetime-local"
+                value={scheduleDate}
+                onChange={e => setScheduleDate(e.target.value)}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 16 }}>
               <Button
                 type="button"
                 disabled={uploading}

@@ -123,7 +123,8 @@
     "stepError": "Por favor corrige los errores anteriores antes de continuar.",
     "audioRequired": "Se requiere un archivo de audio",
     "titleRequired": "El título es obligatorio",
-    "genreRequired": "El género es obligatorio"
+    "genreRequired": "El género es obligatorio",
+    "scheduleFor": "Programar para más tarde"
   },
   "notifications": {
     "eyebrow": "Actividad",
@@ -578,7 +579,14 @@
     "startSec": "Inicio (seg)",
     "removeTrack": "Quitar pista",
     "audioFile": "Archivo de audio (dejar vacío para mantener el actual)",
-    "artworkImage": "Imagen del arte (dejar vacío para mantener el actual)"
+    "artworkImage": "Imagen de portada (dejar vacío para mantener la actual)",
+    "archive": "Archivar",
+    "unarchive": "Desarchivar",
+    "unpublish": "Despublicar",
+    "schedule": "Programar",
+    "unschedule": "Cancelar programación",
+    "scheduleFor": "Programar para más tarde",
+    "requiredTier": "Nivel de suscripción requerido"
   },
   "opportunities": {
     "graph": "Grafo de oportunidades",
@@ -1397,5 +1405,17 @@
     "cancelEvent": "Cancelar evento",
     "cancelEventConfirm": "¿Cancelar este evento? Los asistentes lo verán como cancelado.",
     "eventCancelled": "Evento cancelado"
+  },
+  "mixAnalytics": {
+    "title": "Analíticas del mix",
+    "plays": "Reproducciones",
+    "likes": "Me gusta",
+    "comments": "Comentarios",
+    "shares": "Compartidos",
+    "engagementRate": "Participación",
+    "completionRate": "Finalización",
+    "playsOverTime": "Reproducciones en el tiempo",
+    "topReferrers": "Principales referentes",
+    "geoDistribution": "Distribución geográfica"
   }
 }

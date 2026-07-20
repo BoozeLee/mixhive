@@ -59,6 +59,7 @@ const NotificationsPage = lazy(() =>
 const SearchPage = lazy(() => import('./views/Search').then(m => ({ default: m.SearchPage })));
 const EmbedMix = lazy(() => import('./views/EmbedMix').then(m => ({ default: m.EmbedMix })));
 const EditMix = lazy(() => import('./views/EditMix').then(m => ({ default: m.EditMix })));
+const MixAnalyticsView = lazy(() => import('./views/MixAnalytics').then(m => ({ default: m.MixAnalytics })));
 const PlaylistDetail = lazy(() =>
   import('./views/PlaylistDetail').then(m => ({ default: m.PlaylistDetail }))
 );
@@ -224,6 +225,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <EditMix />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mix/:id/analytics"
+          element={
+            <ProtectedRoute>
+              <MixAnalyticsView />
             </ProtectedRoute>
           }
         />

@@ -123,7 +123,8 @@
     "stepError": "Veuillez corriger les erreurs ci-dessus avant de continuer.",
     "audioRequired": "Le fichier audio est obligatoire",
     "titleRequired": "Le titre est obligatoire",
-    "genreRequired": "Le genre est obligatoire"
+    "genreRequired": "Le genre est obligatoire",
+    "scheduleFor": "Planifier pour plus tard"
   },
   "notifications": {
     "eyebrow": "Activité",
@@ -578,7 +579,14 @@
     "startSec": "Début (sec)",
     "removeTrack": "Retirer le morceau",
     "audioFile": "Fichier audio (laissez vide pour conserver l'actuel)",
-    "artworkImage": "Image de pochette (laissez vide pour conserver l'actuelle)"
+    "artworkImage": "Image de pochette (laissez vide pour conserver l'actuelle)",
+    "archive": "Archiver",
+    "unarchive": "Désarchiver",
+    "unpublish": "Dépublier",
+    "schedule": "Planifier",
+    "unschedule": "Annuler la planification",
+    "scheduleFor": "Planifier pour plus tard",
+    "requiredTier": "Niveau d'abonnement requis"
   },
   "opportunities": {
     "graph": "Graphe des opportunités",
@@ -1397,5 +1405,17 @@
     "cancelEvent": "Annuler l'événement",
     "cancelEventConfirm": "Annuler cet événement ? Les participants le verront comme annulé.",
     "eventCancelled": "Événement annulé"
+  },
+  "mixAnalytics": {
+    "title": "Analytiques du mix",
+    "plays": "Lectures",
+    "likes": "J'aime",
+    "comments": "Commentaires",
+    "shares": "Partages",
+    "engagementRate": "Engagement",
+    "completionRate": "Complétion",
+    "playsOverTime": "Lectures dans le temps",
+    "topReferrers": "Meilleurs référents",
+    "geoDistribution": "Distribution géographique"
   }
 }

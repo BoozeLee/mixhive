@@ -35,6 +35,7 @@ import { NftMintModal } from '../components/NftMintModal';
 import { SimilarMixesPanel } from '../components/SimilarMixesPanel';
 import { AiBandBadge } from '../components/AiBandBadge';
 import { AgentBandCredits } from '../components/AgentBandCredits';
+import { meetsTier } from '../lib/subscription';
 import type { Mix, Comment as CommentType, FeedMix } from '../lib/types';
 
 const WEB3_ENABLED = process.env.NEXT_PUBLIC_WEB3_EXPERIMENTS_ENABLED === 'true';
@@ -68,6 +69,7 @@ export function MixDetail() {
   const [showAddToPlaylist, setShowAddToPlaylist] = useState(false);
   const [showMythicSession, setShowMythicSession] = useState(false);
   const [showMintModal, setShowMintModal] = useState(false);
+  const [canAccess, setCanAccess] = useState(true);
   const { play, addToQueue } = usePlayer();
   const [fansAlsoLiked, setFansAlsoLiked] = useState<FeedMix[]>([]);
 
@@ -88,6 +90,26 @@ export function MixDetail() {
         setFansAlsoLiked(f);
         if (typeof liked === 'boolean') setLiked(liked);
         if (typeof rp === 'boolean') setReposted(rp);
+
+        // Check premium access
+        if (m.required_tier && m.required_tier !== 'free' && m.dj_id !== user?.id) {
+          if (!user) {
+            setCanAccess(false);
+          } else {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.access_token) {
+              const res = await fetch('/api/subscription/status', { headers: { Authorization: `Bearer ${session.access_token}` } });
+              if (res.ok) {
+                const sub = await res.json();
+                setCanAccess(meetsTier(sub.tier || 'free', m.required_tier));
+              } else {
+                setCanAccess(false);
+              }
+            } else {
+              setCanAccess(false);
+            }
+          }
+        }
       }
       setLoading(false);
     });
@@ -195,9 +217,25 @@ export function MixDetail() {
 
       <div style={{ marginBottom: 20 }}>
         <h1
-          style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, margin: '0 0 4px' }}
+          style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}
         >
           {mix.title}
+          {mix.required_tier && mix.required_tier !== 'free' && (
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                padding: '3px 8px',
+                borderRadius: 6,
+                background: colors.accent,
+                color: colors.black,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              {mix.required_tier}
+            </span>
+          )}
         </h1>
         {mix.ai_band && (
           <div style={{ margin: '0 0 6px' }}>
@@ -227,7 +265,43 @@ export function MixDetail() {
         )}
       </div>
 
-      <WaveformPlayer src={mix.audio_url} waveformUrl={mix.waveform_url} onPlay={handlePlay} />
+      {!canAccess && mix.required_tier && mix.required_tier !== 'free' ? (
+        <div
+          style={{
+            padding: 24,
+            textAlign: 'center',
+            background: `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
+            border: `1px solid ${colors.accent}33`,
+            borderRadius: 12,
+            marginTop: 20,
+          }}
+        >
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🔒</div>
+          <p style={{ color: colors.text.primary, fontWeight: 600, margin: '0 0 4px' }}>
+            Premium Mix
+          </p>
+          <p style={{ color: colors.text.muted, fontSize: 13, margin: '0 0 16px' }}>
+            This mix requires a {mix.required_tier} subscription
+          </p>
+          <Link
+            to="/pricing"
+            style={{
+              display: 'inline-block',
+              background: colors.accent,
+              color: colors.black,
+              padding: '10px 24px',
+              borderRadius: 8,
+              textDecoration: 'none',
+              fontWeight: 600,
+              fontSize: 14,
+            }}
+          >
+            Unlock with {mix.required_tier}
+          </Link>
+        </div>
+      ) : (
+        <WaveformPlayer src={mix.audio_url} waveformUrl={mix.waveform_url} onPlay={handlePlay} />
+      )}
 
       <div style={{ display: 'flex', gap: 16, marginTop: 16, alignItems: 'center' }}>
         <button
@@ -372,6 +446,23 @@ export function MixDetail() {
           >
             <Icon name="edit" size={13} color="currentColor" />
             {t('edit')}
+          </Link>
+        )}
+        {user && mix.dj_id === user.id && (
+          <Link
+            to={`/mix/${mix.id}/analytics`}
+            style={{
+              textDecoration: 'none',
+              background: 'transparent',
+              border: `1px solid ${colors.accent}44`,
+              color: colors.accent,
+              padding: '6px 14px',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontSize: 12,
+            }}
+          >
+            📊 Analytics
           </Link>
         )}
         {WEB3_ENABLED && user && mix.dj_id === user.id && (

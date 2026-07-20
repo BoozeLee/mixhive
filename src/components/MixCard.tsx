@@ -336,6 +336,21 @@ export function MixCard({ mix }: Props) {
                   </span>
                 )}
                 {mix.ai_band && <AiBandBadge />}
+                {mix.required_tier && mix.required_tier !== 'free' && (
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: fontWeight.bold,
+                      padding: '2px 7px',
+                      borderRadius: radius.pill,
+                      background: colors.accent,
+                      color: colors.black,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {mix.required_tier}
+                  </span>
+                )}
                 {mix.genre_name && (
                   <span
                     title={mix.genre_name}

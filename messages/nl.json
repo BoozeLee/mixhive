@@ -578,7 +578,14 @@
     "startSec": "Start (sec)",
     "removeTrack": "Track verwijderen",
     "audioFile": "Audiobestand (leeg laten om huidige te behouden)",
-    "artworkImage": "Illustratie (leeg laten om huidige te behouden)"
+    "artworkImage": "Artwork-afbeelding (leeg laten om huidige te behouden)",
+    "archive": "Archiveren",
+    "unarchive": "Dearchiveren",
+    "unpublish": "Publicatie intrekken",
+    "schedule": "Plannen",
+    "unschedule": "Planning annuleren",
+    "scheduleFor": "Plannen voor later",
+    "requiredTier": "Vereist abonnementsniveau"
   },
   "opportunities": {
     "graph": "Kansengrafiek",
@@ -1397,5 +1404,17 @@
     "cancelEvent": "Evenement annuleren",
     "cancelEventConfirm": "Dit evenement annuleren? Deelnemers zien het als geannuleerd.",
     "eventCancelled": "Evenement geannuleerd"
+  },
+  "mixAnalytics": {
+    "title": "Mix Analytics",
+    "plays": "Afspelen",
+    "likes": "Vind-ik-leuks",
+    "comments": "Reacties",
+    "shares": "Delen",
+    "engagementRate": "Betrokkenheid",
+    "completionRate": "Voltooiing",
+    "playsOverTime": "Afspelen in de tijd",
+    "topReferrers": "Top verwijzers",
+    "geoDistribution": "Geografische spreiding"
   }
 }

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { colors, fontSize, fontWeight, radius, space } from '../../styles/tokens';
-import { Input } from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 
 export const ART_STYLES = [
@@ -32,15 +31,7 @@ export interface ArtPromptState {
   qualityCinematic: boolean;
 }
 
-function Chip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
+function Chip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
       type="button"

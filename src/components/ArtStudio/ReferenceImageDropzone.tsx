@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { colors, fontSize, radius, space } from '../../styles/tokens';
-import { IconButton } from '../ui/IconButton';
 
 export interface ReferenceImage {
   id: string;

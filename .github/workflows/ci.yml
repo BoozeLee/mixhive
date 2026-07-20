@@ -68,6 +68,13 @@ jobs:
 
       # Design-system ratchet (P1): raw hex colors must not exceed the budget.
       # Lower the --max in package.json (lint:hex) as src/app/* migrates onto tokens.
+      - name: Check i18n catalogs (ICU validity + namespace coverage)
+        # next-intl prints the key when a namespace is missing, so the app can
+        # render raw strings like "searchAutocomplete.search" with nothing
+        # throwing. This guard existed but was never wired to anything.
+        if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
+        run: npm run lint:i18n
+
       - name: Check raw-hex budget (no-raw-hex ratchet)
         if: github.event_name != 'pull_request' || steps.changes.outputs.maintenance_only != 'true'
         run: npm run lint:hex

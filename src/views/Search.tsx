@@ -45,17 +45,24 @@ export function SearchPage() {
   const [allAgents, setAllAgents] = useState<AIAgent[]>([]);
 
   useEffect(() => {
-    listAIAgents(50).then(setAllAgents).catch((err: unknown) => console.error('Failed to load agents:', err));
+    listAIAgents(50)
+      .then(setAllAgents)
+      .catch((err: unknown) => console.error('Failed to load agents:', err));
   }, []);
 
-  const filteredAgents = query.trim().length >= 2
-    ? allAgents.filter(a => {
-        const q = query.toLowerCase();
-        return a.name.toLowerCase().includes(q) ||
-          a.slug.toLowerCase().includes(q) ||
-          (a.bio ?? '').toLowerCase().includes(q);
-      }).slice(0, 4)
-    : [];
+  const filteredAgents =
+    query.trim().length >= 2
+      ? allAgents
+          .filter(a => {
+            const q = query.toLowerCase();
+            return (
+              a.name.toLowerCase().includes(q) ||
+              a.slug.toLowerCase().includes(q) ||
+              (a.bio ?? '').toLowerCase().includes(q)
+            );
+          })
+          .slice(0, 4)
+      : [];
 
   async function performSearch(searchQuery: string, nextFilters: SearchFiltersValue, offset = 0) {
     const trimmed = searchQuery.trim();
@@ -310,7 +317,9 @@ function GroupedResults({
           >
             <h2 style={{ margin: 0, color: colors.text.primary, fontSize: fontSize.lg }}>
               {t('aiBand')}{' '}
-              <span style={{ color: colors.text.dim, fontSize: fontSize.sm }}>({agents.length})</span>
+              <span style={{ color: colors.text.dim, fontSize: fontSize.sm }}>
+                ({agents.length})
+              </span>
             </h2>
             <Link
               to="/ai-band"

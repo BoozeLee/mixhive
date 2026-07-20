@@ -52,7 +52,10 @@ export default function FeedLayout({ children }: { children: ReactNode }) {
 
                 {/* Mobile menu button */}
                 <div className="md:hidden">
-                  <button aria-label="Toggle menu" className="text-gray-300 hover:text-yellow-400 p-2">
+                  <button
+                    aria-label="Toggle menu"
+                    className="text-gray-300 hover:text-yellow-400 p-2"
+                  >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path
                         strokeLinecap="round"

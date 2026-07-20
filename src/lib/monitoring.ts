@@ -148,7 +148,11 @@ export class ResourceMonitor {
   // Monitor memory usage
   trackMemoryUsage(): void {
     if ('memory' in performance) {
-      const memory = (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+      const memory = (
+        performance as Performance & {
+          memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number };
+        }
+      ).memory;
       this.tracker.trackUIInteraction('resource', 'memory', {
         used: memory.usedJSHeapSize,
         total: memory.totalJSHeapSize,

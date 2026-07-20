@@ -455,9 +455,27 @@ class CDNCostOptimizer {
     const width = window.innerWidth;
     const height = window.innerHeight;
     const connection =
-      (navigator as Navigator & { connection?: unknown; mozConnection?: unknown; webkitConnection?: unknown }).connection ||
-      (navigator as Navigator & { connection?: unknown; mozConnection?: unknown; webkitConnection?: unknown }).mozConnection ||
-      (navigator as Navigator & { connection?: unknown; mozConnection?: unknown; webkitConnection?: unknown }).webkitConnection;
+      (
+        navigator as Navigator & {
+          connection?: unknown;
+          mozConnection?: unknown;
+          webkitConnection?: unknown;
+        }
+      ).connection ||
+      (
+        navigator as Navigator & {
+          connection?: unknown;
+          mozConnection?: unknown;
+          webkitConnection?: unknown;
+        }
+      ).mozConnection ||
+      (
+        navigator as Navigator & {
+          connection?: unknown;
+          mozConnection?: unknown;
+          webkitConnection?: unknown;
+        }
+      ).webkitConnection;
 
     let networkType: QualitySelectionConfig['networkType'] = 'wifi';
 

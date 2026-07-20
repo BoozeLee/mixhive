@@ -83,7 +83,9 @@ export function EpkPdfDocument({
             {topMixes.map((mix, i) => (
               <View key={i} style={styles.mix}>
                 <Text style={styles.mixTitle}>{mix.title}</Text>
-                <Text>{mix.play_count} plays · {mix.like_count} likes</Text>
+                <Text>
+                  {mix.play_count} plays · {mix.like_count} likes
+                </Text>
                 {mix.url_path && <Link src={`https://mixhive.app${mix.url_path}`}>Listen</Link>}
               </View>
             ))}
@@ -99,12 +101,14 @@ export function EpkPdfDocument({
           </View>
         )}
 
-        {customSections && customSections.length > 0 && customSections.map((section, i) => (
-          <View style={styles.section} key={i}>
-            <Text style={styles.sectionTitle}>{section.heading}</Text>
-            <Text>{section.body}</Text>
-          </View>
-        ))}
+        {customSections &&
+          customSections.length > 0 &&
+          customSections.map((section, i) => (
+            <View style={styles.section} key={i}>
+              <Text style={styles.sectionTitle}>{section.heading}</Text>
+              <Text>{section.body}</Text>
+            </View>
+          ))}
 
         {website && (
           <View style={styles.section}>

@@ -310,7 +310,11 @@ async function handleTransformTest(params: {
 }
 
 // Upload test
-async function handleUploadTest(params: { file?: unknown; bucket: string; simulateFailure?: boolean }) {
+async function handleUploadTest(params: {
+  file?: unknown;
+  bucket: string;
+  simulateFailure?: boolean;
+}) {
   try {
     const { file, bucket, simulateFailure } = params;
 

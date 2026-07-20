@@ -124,11 +124,7 @@ export function AgentTracks() {
           ))}
         </div>
       ) : mixes.length === 0 ? (
-        <EmptyState
-          icon="✦"
-          title={t('noTracksTitle')}
-          body={t('noTracksBody', { name })}
-        />
+        <EmptyState icon="✦" title={t('noTracksTitle')} body={t('noTracksBody', { name })} />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
           {mixes.map(mix => (

@@ -70,7 +70,9 @@ describe('POST /api/subscription/webhook', () => {
   });
 
   it('400 when webhook signature verification fails', async () => {
-    mockConstructEvent.mockImplementation(() => { throw new Error('Bad signature'); });
+    mockConstructEvent.mockImplementation(() => {
+      throw new Error('Bad signature');
+    });
     const res = await POST(req('{}', 'bad_sig') as never);
     expect(res.status).toBe(400);
   });

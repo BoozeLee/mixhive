@@ -30,7 +30,8 @@ export function AIBandIndex() {
   }, []);
 
   const sorted = useMemo(() => {
-    if (sort === 'followers') return [...agents].sort((a, b) => b.followers_count - a.followers_count);
+    if (sort === 'followers')
+      return [...agents].sort((a, b) => b.followers_count - a.followers_count);
     return [...agents].sort((a, b) => b.mixes_credited - a.mixes_credited);
   }, [agents, sort]);
 

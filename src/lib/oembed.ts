@@ -7,12 +7,9 @@ const PROVIDERS: Record<string, (url: string) => string | null> = {
       ? `https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}&format=json`
       : null;
   },
-  soundcloud: url =>
-    `https://soundcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`,
-  spotify: url =>
-    `https://open.spotify.com/oembed?url=${encodeURIComponent(url)}&format=json`,
-  mixcloud: url =>
-    `https://www.mixcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+  soundcloud: url => `https://soundcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+  spotify: url => `https://open.spotify.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+  mixcloud: url => `https://www.mixcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`,
 };
 
 function extractYouTubeId(url: string): string | null {
@@ -42,11 +39,7 @@ export async function fetchOembed(url: string): Promise<OembedData | null> {
   if (!provider) return null;
 
   const sb = createServerClient();
-  const { data: cached } = await sb
-    .from('oembed_cache')
-    .select('*')
-    .eq('url', url)
-    .maybeSingle();
+  const { data: cached } = await sb.from('oembed_cache').select('*').eq('url', url).maybeSingle();
   if (cached && Date.now() - new Date(cached.cached_at).getTime() < 7 * 86400000) {
     return cached as OembedData;
   }

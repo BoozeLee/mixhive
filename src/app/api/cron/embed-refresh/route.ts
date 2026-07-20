@@ -11,7 +11,6 @@ const STALE_DAYS = 7;
 const BATCH_LIMIT = 200;
 const SNAPSHOT_TRIGGER_MIXES = 3;
 
-
 function buildMixText(mix: Record<string, unknown>): string {
   const parts: string[] = [];
   if (mix.title) parts.push(String(mix.title));

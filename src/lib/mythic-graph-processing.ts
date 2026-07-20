@@ -691,7 +691,10 @@ export class MythicGraphProcessingWorker {
     return node.id;
   }
 
-  private async ensureOpportunityNode(supabase: ReturnType<typeof createServerClient>, oppId: string): Promise<string | null> {
+  private async ensureOpportunityNode(
+    supabase: ReturnType<typeof createServerClient>,
+    oppId: string
+  ): Promise<string | null> {
     const { data: existing } = await supabase
       .from('mythic_nodes')
       .select('id')
@@ -728,7 +731,10 @@ export class MythicGraphProcessingWorker {
     return error ? null : node?.id || null;
   }
 
-  private async getArtistNodeId(supabase: ReturnType<typeof createServerClient>, profileId: string): Promise<string | null> {
+  private async getArtistNodeId(
+    supabase: ReturnType<typeof createServerClient>,
+    profileId: string
+  ): Promise<string | null> {
     const { data } = await supabase
       .from('mythic_nodes')
       .select('id')

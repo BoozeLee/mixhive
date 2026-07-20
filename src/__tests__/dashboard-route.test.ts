@@ -6,9 +6,7 @@ import { resolve } from 'path';
 
 describe('dashboard routing', () => {
   it('does not redirect /dashboard to /feed in vercel.json', () => {
-    const vercelJson = JSON.parse(
-      readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8')
-    );
+    const vercelJson = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
     const dashboardRedirect = vercelJson.redirects?.find(
       (r: { source: string }) => r.source === '/dashboard'
     );

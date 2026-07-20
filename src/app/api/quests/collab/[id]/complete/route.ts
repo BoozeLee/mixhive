@@ -26,7 +26,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const sb = makeClient(jwt);
     const svc = makeClient(); // Service role for updates
 
-    const { data: { user } } = await sb.auth.getUser();
+    const {
+      data: { user },
+    } = await sb.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     const { data: quest } = await svc
@@ -58,9 +60,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .eq('quest_id', id)
       .eq('status', 'filled');
 
-    const participantIds = Array.from(new Set(
-      [quest.creator_profile_id, ...(roles?.map(r => r.filled_by_profile_id).filter(Boolean) as string[])]
-    ));
+    const participantIds = Array.from(
+      new Set([
+        quest.creator_profile_id,
+        ...(roles?.map(r => r.filled_by_profile_id).filter(Boolean) as string[]),
+      ])
+    );
 
     // 3. Award XP and reputation (RPG mechanics)
     for (const pid of participantIds) {
@@ -93,12 +98,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         user_id: pid,
         type: 'quest_complete',
         body: `Quest "${quest.title}" is complete! You earned ${quest.xp_reward} XP.`,
-        metadata: { quest_id: id, xp_earned: quest.xp_reward, level_up: newLevel > (profile.level || 1) },
+        metadata: {
+          quest_id: id,
+          xp_earned: quest.xp_reward,
+          level_up: newLevel > (profile.level || 1),
+        },
         read: false,
       });
     }
 
-    return NextResponse.json({ ok: true, phase: 'complete', participants_rewarded: participantIds.length });
+    return NextResponse.json({
+      ok: true,
+      phase: 'complete',
+      participants_rewarded: participantIds.length,
+    });
   } catch (err) {
     return handleApiError(err, 'quests/collab/complete');
   }

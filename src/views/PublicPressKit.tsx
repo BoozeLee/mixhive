@@ -142,13 +142,15 @@ export function PublicPressKit() {
         >
           <Block title={t('bookingPitch')}>{content.booking_pitch}</Block>
           {content.bio && <Block title={t('bio')}>{content.bio}</Block>}
-          {content.custom_sections && content.custom_sections.length > 0 && (
-            content.custom_sections.map((section, i) => (
+          {content.custom_sections &&
+            content.custom_sections.length > 0 &&
+            content.custom_sections.map((section, i) =>
               section.heading && section.body ? (
-                <Block key={i} title={section.heading}>{section.body}</Block>
+                <Block key={i} title={section.heading}>
+                  {section.body}
+                </Block>
               ) : null
-            ))
-          )}
+            )}
           <section>
             <h2 style={titleStyle}>{t('featuredMixes')}</h2>
             {content.top_mixes.length === 0 ? (

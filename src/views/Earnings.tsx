@@ -195,7 +195,11 @@ export function Earnings() {
                 ? 'Your Stripe account needs a few more details before payouts can be enabled.'
                 : 'Connect a Stripe account to sell gear and receive agent-package earnings.'}
             </p>
-            <Button onClick={handleConnect} disabled={connecting} style={{ background: 'var(--hive-gold)' }}>
+            <Button
+              onClick={handleConnect}
+              disabled={connecting}
+              style={{ background: 'var(--hive-gold)' }}
+            >
               {connecting
                 ? 'Opening Stripe…'
                 : status?.onboarded

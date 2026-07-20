@@ -18,8 +18,7 @@ export function RitualReplay() {
   }, [id, t]);
 
   if (error) return <div style={{ padding: 40, color: colors.danger }}>{error}</div>;
-  if (!snapshot)
-    return <div style={{ padding: 40, color: colors.text.muted }}>{t('loading')}</div>;
+  if (!snapshot) return <div style={{ padding: 40, color: colors.text.muted }}>{t('loading')}</div>;
 
   return (
     <div style={{ maxWidth: 820, margin: '0 auto', padding: `${space[12]}px ${space[8]}px 120px` }}>

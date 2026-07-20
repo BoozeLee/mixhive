@@ -24,7 +24,9 @@ export async function POST(req: NextRequest) {
     const jwt = authHeader.slice(7);
     const sb = makeClient(jwt);
 
-    const { data: { user } } = await sb.auth.getUser();
+    const {
+      data: { user },
+    } = await sb.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
 
     const body = await req.json();

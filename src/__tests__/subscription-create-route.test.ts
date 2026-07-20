@@ -46,7 +46,10 @@ function chain() {
 }
 
 function req(auth = true, priceId = 'price_insider') {
-  const headers: Record<string, string> = { 'content-type': 'application/json', origin: 'http://localhost:3000' };
+  const headers: Record<string, string> = {
+    'content-type': 'application/json',
+    origin: 'http://localhost:3000',
+  };
   if (auth) headers['authorization'] = 'Bearer jwt';
   return new Request('http://localhost/api/subscription/create', {
     method: 'POST',
@@ -63,11 +66,13 @@ describe('POST /api/subscription/create', () => {
 
   it('400 when priceId is missing', async () => {
     const headers = { 'content-type': 'application/json', authorization: 'Bearer jwt' };
-    const res = await POST(new Request('http://localhost/api/subscription/create', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({}),
-    }) as never);
+    const res = await POST(
+      new Request('http://localhost/api/subscription/create', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({}),
+      }) as never
+    );
     expect(res.status).toBe(400);
   });
 
@@ -96,7 +101,10 @@ describe('POST /api/subscription/create', () => {
   });
 
   it('reuses existing Stripe customer', async () => {
-    mockSelectSingle.mockResolvedValue({ data: { stripe_customer_id: 'cus_existing' }, error: null });
+    mockSelectSingle.mockResolvedValue({
+      data: { stripe_customer_id: 'cus_existing' },
+      error: null,
+    });
     mockCreateSession.mockResolvedValue({ url: 'https://checkout.stripe.com/session_456' });
 
     const res = await POST(req() as never);

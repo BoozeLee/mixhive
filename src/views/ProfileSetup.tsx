@@ -571,7 +571,11 @@ export function ProfileSetup() {
                     setField('username', e.target.value);
                     setUsernameError('');
                   }}
-                  onBlur={() => checkUsername(form.username).catch((err: unknown) => console.error('Username check failed:', err))}
+                  onBlur={() =>
+                    checkUsername(form.username).catch((err: unknown) =>
+                      console.error('Username check failed:', err)
+                    )
+                  }
                   placeholder={t('djyourusername')}
                   error={usernameError || undefined}
                 />

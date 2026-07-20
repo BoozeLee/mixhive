@@ -333,7 +333,10 @@ export async function getArtworkUrl(userId: string, mixId: string, size: number 
   });
 }
 
-export async function deleteArtwork(userId: string, mixId: string): Promise<{ error: Error | null }> {
+export async function deleteArtwork(
+  userId: string,
+  mixId: string
+): Promise<{ error: Error | null }> {
   const path = `${userId}/mixes/${mixId}/artwork.jpg`;
   return await artworkStorage.deleteFile(path);
 }
@@ -406,7 +409,10 @@ export async function getBuzzMediaUrl(
   );
 }
 
-export async function deleteBuzzMedia(userId: string, mediaId: string): Promise<{ error: Error | null }> {
+export async function deleteBuzzMedia(
+  userId: string,
+  mediaId: string
+): Promise<{ error: Error | null }> {
   const path = `${userId}/buzz/${mediaId}`;
   return await buzzMediaStorage.deleteFile(path);
 }

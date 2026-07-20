@@ -1,0 +1,128 @@
+name: Deploy migrations to production
+
+# Applies pending migrations to the linked Supabase project.
+#
+# Why this exists: nothing applied migrations to production. schema-drift.yml
+# only *detects* drift and is gated off behind a repo variable, so schema changes
+# were applied by hand, out of order, and sometimes recorded without running --
+# 071's own header notes that 004 and 023 were marked applied via
+# `repair --status applied` without executing. As of 2026-07-20 production is
+# behind by 9 tables and 11 columns.
+#
+# Deliberately manual (workflow_dispatch only). Schema changes should never ride
+# along with a code deploy, and dry_run defaults to true so the first run of any
+# change reports rather than acts.
+#
+# Requires three repository secrets:
+#   SUPABASE_ACCESS_TOKEN  — personal access token (Account → Access Tokens)
+#   SUPABASE_DB_PASSWORD   — database password (Project Settings → Database)
+#   SUPABASE_PROJECT_REF   — project ref, e.g. the value in supabase/.temp/project-ref
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Report what would be applied without applying it'
+        type: boolean
+        default: true
+      exclude:
+        description: 'Space-separated migration version prefixes to hold back'
+        type: string
+        # 116 adds the required_tier paywall column. MASTER_ROADMAP gates
+        # monetization to the P14 pre-launch quality gate, so it is held back by
+        # default and must be released deliberately.
+        default: '116'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Apply pending migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v2
+        with:
+          version: latest
+
+      - name: Verify required secrets are present
+        env:
+          TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          missing=
+          [ -n "$TOKEN" ]       || missing="$missing SUPABASE_ACCESS_TOKEN"
+          [ -n "$DB_PASSWORD" ] || missing="$missing SUPABASE_DB_PASSWORD"
+          [ -n "$PROJECT_REF" ] || missing="$missing SUPABASE_PROJECT_REF"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing"
+            exit 1
+          fi
+
+      - name: Hold back excluded migrations
+        env:
+          EXCLUDE: ${{ inputs.exclude }}
+        run: |
+          mkdir -p /tmp/held-back
+          for v in $EXCLUDE; do
+            # Validate before it reaches a path: digits only, so the value cannot
+            # traverse directories or glob outside supabase/migrations.
+            case "$v" in
+              '') continue ;;
+              *[!0-9]*)
+                echo "::error::Invalid migration version '$v' — digits only."
+                exit 1 ;;
+            esac
+            for f in supabase/migrations/"$v"_*.sql; do
+              [ -e "$f" ] || continue
+              echo "holding back $(basename "$f")"
+              mv "$f" /tmp/held-back/
+            done
+          done
+          echo "remaining migrations: $(ls supabase/migrations/*.sql | wc -l)"
+
+      - name: Link to the production project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: supabase link --project-ref "$PROJECT_REF"
+
+      - name: Show what is pending
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: supabase migration list --linked
+
+      - name: Apply
+        if: ${{ inputs.dry_run == false }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: supabase db push --linked --include-all
+
+      - name: Dry run notice
+        if: ${{ inputs.dry_run == true }}
+        run: |
+          echo "::notice::Dry run — nothing was applied. The list above is what would be pushed."
+
+      - name: Confirm post-state
+        if: ${{ inputs.dry_run == false }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: supabase migration list --linked
+
+      - name: Restore held-back migrations
+        if: always()
+        run: |
+          if ls /tmp/held-back/*.sql >/dev/null 2>&1; then
+            mv /tmp/held-back/*.sql supabase/migrations/
+            echo "restored held-back migrations to the working tree"
+          fi

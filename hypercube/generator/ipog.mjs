@@ -28,7 +28,8 @@ export function rowPairs(row, dimNames) {
   const keys = [];
   for (let i = 0; i < dimNames.length; i++)
     for (let j = i + 1; j < dimNames.length; j++) {
-      const a = dimNames[i], b = dimNames[j];
+      const a = dimNames[i],
+        b = dimNames[j];
       keys.push(`${a}=${row[a]}|${b}=${row[b]}`);
     }
   return keys;
@@ -65,11 +66,15 @@ export function generateCoveringArray(cls) {
 
   // Greedy set cover over the pool.
   while (uncovered.size > 0) {
-    let best = -1, bestGain = -1;
+    let best = -1,
+      bestGain = -1;
     for (let i = 0; i < pool.length; i++) {
       let gain = 0;
       for (const p of poolPairs[i]) if (uncovered.has(p)) gain++;
-      if (gain > bestGain) { bestGain = gain; best = i; }
+      if (gain > bestGain) {
+        bestGain = gain;
+        best = i;
+      }
     }
     if (best < 0 || bestGain <= 0) break; // safety (shouldn't happen)
     chosen.push(pool[best]);
@@ -79,7 +84,10 @@ export function generateCoveringArray(cls) {
 
   // Post-pass: ensure every target appears at least once (covers 0-pair classes).
   for (const r of pool) {
-    if (!usedTargets.has(r.target)) { chosen.push(r); usedTargets.add(r.target); }
+    if (!usedTargets.has(r.target)) {
+      chosen.push(r);
+      usedTargets.add(r.target);
+    }
   }
 
   return { dimNames, rows: chosen, coverablePairCount: coverable.size };

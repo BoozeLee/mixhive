@@ -120,16 +120,18 @@ const AUTHED_UI = [
   ui('/marketplace/gear/new'),
   ui('/earnings'),
   ui('/messages'),
-  ui('/messages/:conversationId', { params: { conversationId: '00000000-0000-0000-0000-000000000000' } }),
+  ui('/messages/:conversationId', {
+    params: { conversationId: '00000000-0000-0000-0000-000000000000' },
+  }),
   ui('/session/:id', { params: { id: '00000000-0000-0000-0000-000000000000' } }),
   ui('/session/:id/replay', { params: { id: '00000000-0000-0000-0000-000000000000' } }),
 ].map(t => ({ ...t, class: 'authed-ui' }));
 
 // ---- Admin UI routes ------------------------------------------------------
-const ADMIN_UI = [
-  ui('/admin/verification'),
-  ui('/admin/moderation'),
-].map(t => ({ ...t, class: 'admin-ui' }));
+const ADMIN_UI = [ui('/admin/verification'), ui('/admin/moderation')].map(t => ({
+  ...t,
+  class: 'admin-ui',
+}));
 
 // ---- API endpoints --------------------------------------------------------
 const PUBLIC_API = [
@@ -156,7 +158,10 @@ const AUTHED_API = [
 
 const GATED_API = [
   api('/api/subscription/create', { method: 'POST', gate: 'stripe' }),
-  api('/api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy', { method: 'POST', gate: 'stripe' }),
+  api('/api/marketplace/gear/00000000-0000-0000-0000-000000000000/buy', {
+    method: 'POST',
+    gate: 'stripe',
+  }),
   api('/api/ai/generate-image', { method: 'POST', gate: 'openai' }),
   api('/api/composer/suggest', { method: 'POST', gate: 'openai' }),
 ].map(t => ({ ...t, class: 'gated-api' }));
@@ -174,23 +179,51 @@ const AGENTS = [
   agent('lua', 'agent-lua', { path: '/api/lua-agent/run', method: 'GET' }),
   agent('wasmoon', 'agent-wasmoon', { path: '/api/agents/wasmoon-test', method: 'GET' }),
   agent('strategic', 'agent-strategic', { path: '/api/cron/strategic-agents', method: 'POST' }),
-  agent('notif-prioritizer', 'agent-notif', { path: '/api/cron/notification-prioritizer', method: 'POST' }),
-  agent('session-spirit', 'agent-session-spirit', { path: '/api/mythic/sessions/:id/agent', method: 'POST' }),
+  agent('notif-prioritizer', 'agent-notif', {
+    path: '/api/cron/notification-prioritizer',
+    method: 'POST',
+  }),
+  agent('session-spirit', 'agent-session-spirit', {
+    path: '/api/mythic/sessions/:id/agent',
+    method: 'POST',
+  }),
   agent('audio-worker', 'agent-audio', { path: 'worker/audio --selftest' }),
   agent('ai-band-bridge', 'agent-aiband', { path: 'scripts/provenance_publish_demo.mjs' }),
 ];
 
 export const TARGETS = [
-  ...PUBLIC_UI, ...AUTHED_UI, ...ADMIN_UI,
-  ...PUBLIC_API, ...AUTHED_API, ...GATED_API, ...AGENTS,
+  ...PUBLIC_UI,
+  ...AUTHED_UI,
+  ...ADMIN_UI,
+  ...PUBLIC_API,
+  ...AUTHED_API,
+  ...GATED_API,
+  ...AGENTS,
 ];
 
 // ---- Relevance classes: which dims vary, with per-class level subsets ------
 // A dim entry is either a string (use DIMENSIONS[name]) or {name, levels}.
 export const CLASSES = [
-  { name: 'public-ui', relevantDims: ['data', 'viewport', 'locale', 'motion'], pinned: { auth: 'anon' } },
-  { name: 'authed-ui', relevantDims: [{ name: 'auth', levels: ['anon', 'new-incomplete', 'completed'] }, 'data', 'viewport', 'locale', 'motion'] },
-  { name: 'admin-ui', relevantDims: [{ name: 'auth', levels: ['completed', 'admin'] }, 'viewport', 'locale'], pinned: { data: 'populated' } },
+  {
+    name: 'public-ui',
+    relevantDims: ['data', 'viewport', 'locale', 'motion'],
+    pinned: { auth: 'anon' },
+  },
+  {
+    name: 'authed-ui',
+    relevantDims: [
+      { name: 'auth', levels: ['anon', 'new-incomplete', 'completed'] },
+      'data',
+      'viewport',
+      'locale',
+      'motion',
+    ],
+  },
+  {
+    name: 'admin-ui',
+    relevantDims: [{ name: 'auth', levels: ['completed', 'admin'] }, 'viewport', 'locale'],
+    pinned: { data: 'populated' },
+  },
   { name: 'public-api', relevantDims: ['data'], pinned: { auth: 'anon' } },
   { name: 'authed-api', relevantDims: [{ name: 'auth', levels: ['anon', 'completed'] }, 'data'] },
   { name: 'gated-api', relevantDims: [{ name: 'auth', levels: ['completed'] }, 'gate', 'data'] },
@@ -226,7 +259,9 @@ export function forbidden(row, t) {
 
 /** Resolve a class's varied dims to [{name, levels}], including the target dim. */
 export function classDims(cls) {
-  const dims = [{ name: 'target', levels: TARGETS.filter(t => t.class === cls.name).map(t => t.id) }];
+  const dims = [
+    { name: 'target', levels: TARGETS.filter(t => t.class === cls.name).map(t => t.id) },
+  ];
   for (const d of cls.relevantDims) {
     if (typeof d === 'string') dims.push({ name: d, levels: DIMENSIONS[d] });
     else dims.push({ name: d.name, levels: d.levels });

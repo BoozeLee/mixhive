@@ -26,8 +26,10 @@ for (const cls of CLASSES) {
   writeFileSync(join(OUT, `plan.${cls.name}.json`), JSON.stringify(cells, null, 2) + '\n');
 }
 writeFileSync(join(OUT, 'plan.all.json'), JSON.stringify(plan, null, 2) + '\n');
-writeFileSync(join(OUT, 'model.snapshot.json'),
-  JSON.stringify({ DIMENSIONS, CLASSES, TARGETS }, null, 2) + '\n');
+writeFileSync(
+  join(OUT, 'model.snapshot.json'),
+  JSON.stringify({ DIMENSIONS, CLASSES, TARGETS }, null, 2) + '\n'
+);
 
 const cov = verifyAll();
 writeFileSync(join(OUT, 'coverage.json'), JSON.stringify(cov, null, 2) + '\n');

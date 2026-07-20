@@ -1,47 +1,16 @@
 {
   "DIMENSIONS": {
-    "auth": [
-      "anon",
-      "new-incomplete",
-      "completed",
-      "admin"
-    ],
-    "data": [
-      "empty",
-      "populated",
-      "error"
-    ],
-    "viewport": [
-      "320",
-      "390",
-      "768",
-      "1440"
-    ],
-    "locale": [
-      "en",
-      "fr",
-      "nl",
-      "de",
-      "es"
-    ],
-    "motion": [
-      "reduced",
-      "full"
-    ],
-    "gate": [
-      "keys-absent",
-      "test-keys"
-    ]
+    "auth": ["anon", "new-incomplete", "completed", "admin"],
+    "data": ["empty", "populated", "error"],
+    "viewport": ["320", "390", "768", "1440"],
+    "locale": ["en", "fr", "nl", "de", "es"],
+    "motion": ["reduced", "full"],
+    "gate": ["keys-absent", "test-keys"]
   },
   "CLASSES": [
     {
       "name": "public-ui",
-      "relevantDims": [
-        "data",
-        "viewport",
-        "locale",
-        "motion"
-      ],
+      "relevantDims": ["data", "viewport", "locale", "motion"],
       "pinned": {
         "auth": "anon"
       }
@@ -51,11 +20,7 @@
       "relevantDims": [
         {
           "name": "auth",
-          "levels": [
-            "anon",
-            "new-incomplete",
-            "completed"
-          ]
+          "levels": ["anon", "new-incomplete", "completed"]
         },
         "data",
         "viewport",
@@ -68,10 +33,7 @@
       "relevantDims": [
         {
           "name": "auth",
-          "levels": [
-            "completed",
-            "admin"
-          ]
+          "levels": ["completed", "admin"]
         },
         "viewport",
         "locale"
@@ -82,9 +44,7 @@
     },
     {
       "name": "public-api",
-      "relevantDims": [
-        "data"
-      ],
+      "relevantDims": ["data"],
       "pinned": {
         "auth": "anon"
       }
@@ -94,10 +54,7 @@
       "relevantDims": [
         {
           "name": "auth",
-          "levels": [
-            "anon",
-            "completed"
-          ]
+          "levels": ["anon", "completed"]
         },
         "data"
       ]
@@ -107,9 +64,7 @@
       "relevantDims": [
         {
           "name": "auth",
-          "levels": [
-            "completed"
-          ]
+          "levels": ["completed"]
         },
         "gate",
         "data"
@@ -128,10 +83,7 @@
       "relevantDims": [
         {
           "name": "auth",
-          "levels": [
-            "anon",
-            "completed"
-          ]
+          "levels": ["anon", "completed"]
         }
       ]
     },
@@ -140,10 +92,7 @@
       "relevantDims": [
         {
           "name": "auth",
-          "levels": [
-            "anon",
-            "completed"
-          ]
+          "levels": ["anon", "completed"]
         }
       ]
     },

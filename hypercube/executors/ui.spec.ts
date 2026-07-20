@@ -33,11 +33,7 @@ interface Cell {
   pinned?: Record<string, string>;
 }
 
-const CELLS: Cell[] = [
-  ...loadPlan('public-ui'),
-  ...loadPlan('authed-ui'),
-  ...loadPlan('admin-ui'),
-];
+const CELLS: Cell[] = [...loadPlan('public-ui'), ...loadPlan('authed-ui'), ...loadPlan('admin-ui')];
 
 const auth = (c: Cell) => c.dims.auth ?? c.pinned?.auth ?? 'anon';
 const data = (c: Cell) => c.dims.data ?? c.pinned?.data ?? 'empty';
@@ -55,12 +51,15 @@ function resolvePath(c: Cell): string {
   return p;
 }
 
-async function runOracles(page: Page, c: Cell): Promise<{ oracles: Record<string, boolean>; defect: string | undefined }> {
+async function runOracles(
+  page: Page,
+  c: Cell
+): Promise<{ oracles: Record<string, boolean>; defect: string | undefined }> {
   const oracles: Record<string, boolean> = {};
   let defect: string | undefined;
 
   // 1. React shell mounted (gotoShell already waited; re-confirm).
-  oracles.shell = await page.locator('.mixhive-shell').count() > 0;
+  oracles.shell = (await page.locator('.mixhive-shell').count()) > 0;
   // 2. Main landmark present (or an intentional not-found for the 404 target).
   const isNotFound = c.targetMeta.oracle === 'ui-notfound';
   oracles.main = (await page.locator('#main-content').count()) > 0;
@@ -71,11 +70,16 @@ async function runOracles(page: Page, c: Cell): Promise<{ oracles: Record<string
   // 4. Authed route hit while anon → must redirect to /login (auth guard works).
   if (c.class === 'authed-ui' && auth(c) === 'anon') {
     oracles.redirected = /\/login/.test(page.url());
-    if (!oracles.redirected) defect = `authed route ${resolvePath(c)} did not redirect anon → login (url=${page.url()})`;
+    if (!oracles.redirected)
+      defect = `authed route ${resolvePath(c)} did not redirect anon → login (url=${page.url()})`;
   }
   // 5. Not-found target renders a not-found state, not a crash.
   if (isNotFound) {
-    const txt = (await page.locator('#main-content').innerText().catch(() => '')) || '';
+    const txt =
+      (await page
+        .locator('#main-content')
+        .innerText()
+        .catch(() => '')) || '';
     oracles.notFound = /not found|404|doesn't exist|can't find/i.test(txt) || oracles.main;
   }
   return { oracles, defect };
@@ -99,7 +103,15 @@ test.describe(`hypercube-ui [${ENV}]`, () => {
       if (a !== 'anon') {
         const path = stateFor[a];
         if (!path || !existsSync(path)) {
-          appendCell({ class: c.class, target: c.target, dims: c.dims, env: ENV, verdict: 'blocked', reason: 'no-credential', oracles: {} });
+          appendCell({
+            class: c.class,
+            target: c.target,
+            dims: c.dims,
+            env: ENV,
+            verdict: 'blocked',
+            reason: 'no-credential',
+            oracles: {},
+          });
           test.skip(true, `no storageState for auth=${a}`);
           return;
         }
@@ -119,14 +131,20 @@ test.describe(`hypercube-ui [${ENV}]`, () => {
       // Data-state realization.
       const page = await context.newPage();
       if (ENV === 'local' && d === 'empty') {
-        await page.addInitScript(() => { (window as any).__MIXHIVE_DISABLE_SUPABASE__ = true; });
+        await page.addInitScript(() => {
+          (window as any).__MIXHIVE_DISABLE_SUPABASE__ = true;
+        });
       }
       if (d === 'error') {
-        await page.route('**/*.supabase.co/**', r => r.fulfill({ status: 200, contentType: 'application/json', body: '{ this is : not json' }));
+        await page.route('**/*.supabase.co/**', r =>
+          r.fulfill({ status: 200, contentType: 'application/json', body: '{ this is : not json' })
+        );
       }
 
       const consoleErrors: string[] = [];
-      page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+      page.on('console', m => {
+        if (m.type() === 'error') consoleErrors.push(m.text());
+      });
       const pageErrors: string[] = [];
       page.on('pageerror', e => pageErrors.push(String(e)));
 
@@ -141,8 +159,11 @@ test.describe(`hypercube-ui [${ENV}]`, () => {
         defect = r.defect;
 
         // Console-noise filter (favicon/analytics/network — not app defects).
-        const appErrors = consoleErrors.filter(e =>
-          !/favicon|analytics|mixpanel|sentry|Failed to load resource|net::ERR|third-party|manifest\.json/i.test(e)
+        const appErrors = consoleErrors.filter(
+          e =>
+            !/favicon|analytics|mixpanel|sentry|Failed to load resource|net::ERR|third-party|manifest\.json/i.test(
+              e
+            )
         );
         oracles.noConsoleError = appErrors.length === 0;
         oracles.noPageError = pageErrors.length === 0;
@@ -150,9 +171,12 @@ test.describe(`hypercube-ui [${ENV}]`, () => {
         // Axe (gated to en to bound runtime; still covers every target×viewport).
         if (locale === 'en') {
           const axe = await new AxeBuilder({ page }).analyze();
-          const serious = axe.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
+          const serious = axe.violations.filter(
+            v => v.impact === 'serious' || v.impact === 'critical'
+          );
           oracles.axe = serious.length === 0;
-          if (serious.length) defect ??= `axe ${serious.length} serious/critical: ${serious.map(v => v.id).join(',')}`;
+          if (serious.length)
+            defect ??= `axe ${serious.length} serious/critical: ${serious.map(v => v.id).join(',')}`;
         }
 
         // Verdict = all oracles true. Under an INJECTED data=error, a handled
@@ -176,7 +200,15 @@ test.describe(`hypercube-ui [${ENV}]`, () => {
         defect = `nav/mount failed: ${e instanceof Error ? e.message : String(e)}`;
         oracles.shell = false;
       } finally {
-        appendCell({ class: c.class, target: c.target, dims: c.dims, env: ENV, verdict, oracles, defect: defect ?? null });
+        appendCell({
+          class: c.class,
+          target: c.target,
+          dims: c.dims,
+          env: ENV,
+          verdict,
+          oracles,
+          defect: defect ?? null,
+        });
         await context.close();
       }
 

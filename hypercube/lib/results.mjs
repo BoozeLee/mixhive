@@ -30,7 +30,11 @@ export function readCells() {
   for (const line of readFileSync(CELLS_FILE, 'utf8').split('\n')) {
     if (!line.trim()) continue;
     let c;
-    try { c = JSON.parse(line); } catch { continue; }
+    try {
+      c = JSON.parse(line);
+    } catch {
+      continue;
+    }
     byKey.set(`${c.class}|${c.target}|${JSON.stringify(c.dims)}|${c.env}`, c);
   }
   return [...byKey.values()];

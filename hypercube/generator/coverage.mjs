@@ -70,10 +70,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log(pad('class', 22), pad('rows', 6), pad('coverable', 10), pad('covered', 8), 'ρ');
   for (const r of results) {
     const flag = r.rho >= 1 - 1e-9 && r.missingTargets.length === 0 ? '' : '  ✖';
-    console.log(pad(r.class, 22), pad(r.rows, 6), pad(r.coverable, 10), pad(r.covered, 8), r.rho.toFixed(3) + flag);
+    console.log(
+      pad(r.class, 22),
+      pad(r.rows, 6),
+      pad(r.coverable, 10),
+      pad(r.covered, 8),
+      r.rho.toFixed(3) + flag
+    );
     if (r.missingTargets.length) console.log('   missing targets:', r.missingTargets.join(', '));
   }
   console.log('—'.repeat(50));
-  console.log(`TOTAL rows=${rows}  overall ρ=${overallRho.toFixed(4)}  ${ok ? '✓ pairwise complete' : '✖ INCOMPLETE'}`);
+  console.log(
+    `TOTAL rows=${rows}  overall ρ=${overallRho.toFixed(4)}  ${ok ? '✓ pairwise complete' : '✖ INCOMPLETE'}`
+  );
   if (process.argv.includes('--assert') && !ok) process.exit(1);
 }

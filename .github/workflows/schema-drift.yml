@@ -19,7 +19,7 @@ jobs:
     # Skipped automatically if the secret is not configured.
     if: ${{ vars.SCHEMA_DRIFT_ENABLED == 'true' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup Node
         uses: actions/setup-node@v6

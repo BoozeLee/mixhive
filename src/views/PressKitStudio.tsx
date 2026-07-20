@@ -417,9 +417,7 @@ export function PressKitStudio() {
                   setActive(nextKit);
                   setKits(prev => [nextKit, ...prev.filter(k => k.id !== nextKit.id)]);
                 } catch (err) {
-                  setError(
-                    err instanceof Error ? err.message : 'Failed to save custom sections'
-                  );
+                  setError(err instanceof Error ? err.message : 'Failed to save custom sections');
                 } finally {
                   setSaving(false);
                 }
@@ -547,16 +545,16 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
             </ul>
           </section>
         )}
-        {content.custom_sections && content.custom_sections.length > 0 && (
-          content.custom_sections.map((section, i) => (
+        {content.custom_sections &&
+          content.custom_sections.length > 0 &&
+          content.custom_sections.map((section, i) =>
             section.heading && section.body ? (
               <section key={i}>
                 <h3 style={sectionTitleStyle}>{section.heading}</h3>
                 <p style={bodyStyle}>{section.body}</p>
               </section>
             ) : null
-          ))
-        )}
+          )}
       </div>
     </article>
   );

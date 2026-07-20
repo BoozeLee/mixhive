@@ -54,7 +54,9 @@ export class AnalyticsTracker {
 
   private async trackEvent(event: AnalyticsEvent): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const analyticsEvent = {
         ...event,
         profile_id: user?.id,
@@ -131,7 +133,9 @@ export class AnalyticsTracker {
 
     // Also save to search history for logged-in users
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user?.id) {
         await supabase.from('search_history').insert([
           {

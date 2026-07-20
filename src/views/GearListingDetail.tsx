@@ -32,7 +32,9 @@ export function GearListingDetail() {
   const fetchData = async () => {
     if (!id) return;
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const headers: Record<string, string> = {};
       if (session) headers.Authorization = `Bearer ${session.access_token}`;
 
@@ -62,7 +64,9 @@ export function GearListingDetail() {
     if (actionLoading) return;
     setActionLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error('Sign in required');
       const res = await fetch(`/api/marketplace/gear/${id}/${action}`, {
         method: 'POST',
@@ -365,7 +369,14 @@ export function GearListingDetail() {
               >
                 {t('transactionStatus')}
               </h3>
-              <p style={{ color: colors.text.primary, fontSize: 15, fontWeight: 600, margin: '0 0 8px' }}>
+              <p
+                style={{
+                  color: colors.text.primary,
+                  fontSize: 15,
+                  fontWeight: 600,
+                  margin: '0 0 8px',
+                }}
+              >
                 {t(`status_${transaction.transaction_state}`)}
               </p>
 
@@ -403,7 +414,9 @@ export function GearListingDetail() {
               {/* Buyer Controls */}
               {userId === transaction.buyer_profile_id && (
                 <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {['paid_escrow', 'shipped', 'delivered'].includes(transaction.transaction_state) && (
+                  {['paid_escrow', 'shipped', 'delivered'].includes(
+                    transaction.transaction_state
+                  ) && (
                     <Button
                       fullWidth
                       size="lg"
@@ -425,7 +438,9 @@ export function GearListingDetail() {
                       {t('markAsDelivered')}
                     </Button>
                   )}
-                  {['paid_escrow', 'shipped', 'delivered'].includes(transaction.transaction_state) && (
+                  {['paid_escrow', 'shipped', 'delivered'].includes(
+                    transaction.transaction_state
+                  ) && (
                     <Button
                       fullWidth
                       size="lg"

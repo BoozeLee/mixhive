@@ -220,7 +220,10 @@ export function AIBandDetail() {
               <span style={{ fontWeight: fontWeight.semibold, color: colors.text.primary }}>
                 {localFollowers}
               </span>
-              <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}> {t('followers')}</span>
+              <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
+                {' '}
+                {t('followers')}
+              </span>
             </div>
             <div>
               <span style={{ fontWeight: fontWeight.semibold, color: colors.text.primary }}>

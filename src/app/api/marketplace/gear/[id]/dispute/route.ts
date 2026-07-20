@@ -39,8 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .maybeSingle();
 
     if (!txn) return notFound('No active transaction to dispute for this listing');
-    if (txn.buyer_profile_id !== user.id)
-      return forbidden('Only the buyer can open a dispute');
+    if (txn.buyer_profile_id !== user.id) return forbidden('Only the buyer can open a dispute');
 
     await svc
       .from('equipment_transactions')
@@ -60,8 +59,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         metadata: { listing_id: id, transaction_id: txn.id },
         read: false,
       });
-      
-      // Also notify platform/admin if we had an admin notification table, 
+
+      // Also notify platform/admin if we had an admin notification table,
       // but for now the 'disputed' state in the DB is the source of truth.
     } catch {
       // ignore

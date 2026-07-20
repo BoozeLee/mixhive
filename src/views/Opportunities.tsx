@@ -158,7 +158,10 @@ export function Opportunities() {
 
   function setAction(id: string, action: OpportunityAction, draftText?: string) {
     setActions(prev => ({ ...prev, [id]: action }));
-    if (user) upsertOpportunitySave(user.id, id, action, draftText).catch((err: unknown) => console.error('Failed to save opportunity action:', err));
+    if (user)
+      upsertOpportunitySave(user.id, id, action, draftText).catch((err: unknown) =>
+        console.error('Failed to save opportunity action:', err)
+      );
   }
 
   function openDraft(match: OpportunityMatch) {

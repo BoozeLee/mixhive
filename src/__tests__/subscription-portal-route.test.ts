@@ -34,7 +34,10 @@ beforeEach(() => {
 });
 
 function req(auth = true) {
-  const headers: Record<string, string> = { 'content-type': 'application/json', origin: 'http://localhost:3000' };
+  const headers: Record<string, string> = {
+    'content-type': 'application/json',
+    origin: 'http://localhost:3000',
+  };
   if (auth) headers['authorization'] = 'Bearer jwt';
   return new Request('http://localhost/api/subscription/portal', { method: 'POST', headers });
 }
@@ -53,7 +56,10 @@ describe('POST /api/subscription/portal', () => {
   });
 
   it('returns portal URL when customer exists', async () => {
-    mockSelectSingle.mockResolvedValue({ data: { stripe_customer_id: 'cus_existing' }, error: null });
+    mockSelectSingle.mockResolvedValue({
+      data: { stripe_customer_id: 'cus_existing' },
+      error: null,
+    });
     mockCreatePortalSession.mockResolvedValue({ url: 'https://billing.stripe.com/session/portal' });
 
     const res = await POST(req() as never);

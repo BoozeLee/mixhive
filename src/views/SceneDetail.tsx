@@ -166,25 +166,25 @@ export function SceneDetail() {
                     cursor: a.username ? 'pointer' : 'default',
                   }}
                 >
-                <span style={{ color: colors.text.primary, fontSize: fontSize.md }}>
-                  {a.display_name || a.username || 'Unknown'}
-                  {a.verified ? ' ✓' : ''}
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>
-                    {t('xp', { count: a.xp })}
+                  <span style={{ color: colors.text.primary, fontSize: fontSize.md }}>
+                    {a.display_name || a.username || 'Unknown'}
+                    {a.verified ? ' ✓' : ''}
                   </span>
-                  <span
-                    style={{
-                      fontSize: fontSize.xs,
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                      color: BADGE_COLOR[a.badge] || colors.text.muted,
-                    }}
-                  >
-                    {a.badge}
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>
+                      {t('xp', { count: a.xp })}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: fontSize.xs,
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        color: BADGE_COLOR[a.badge] || colors.text.muted,
+                      }}
+                    >
+                      {a.badge}
+                    </span>
                   </span>
-                </span>
                 </button>
               </li>
             ))}

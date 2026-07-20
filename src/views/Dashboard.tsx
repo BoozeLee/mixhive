@@ -78,10 +78,7 @@ export function Dashboard() {
     const actions = [
       {
         title: t('actions.upload.title'),
-        body:
-          mixes.length === 0
-            ? t('actions.upload.bodyEmpty')
-            : t('actions.upload.bodyActive'),
+        body: mixes.length === 0 ? t('actions.upload.bodyEmpty') : t('actions.upload.bodyActive'),
         to: '/upload',
         cta: t('actions.upload.cta'),
       },

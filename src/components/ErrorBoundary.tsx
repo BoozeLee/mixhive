@@ -108,7 +108,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   <pre
                     style={{
                       textAlign: 'left',
-                      fontSize: 10,
+                      fontSize: 11,
                       color: colors.text.muted,
                       background: colors.bg,
                       padding: 8,

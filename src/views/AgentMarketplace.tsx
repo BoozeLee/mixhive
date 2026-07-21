@@ -275,7 +275,7 @@ export function AgentMarketplace() {
               style={{
                 height: 200,
                 background: colors.surface,
-                borderRadius: 12,
+                borderRadius: 10,
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
             />
@@ -403,7 +403,7 @@ function AgentCard({
       style={{
         background: colors.surface,
         border: `1px solid ${colors.surfaceRaised}`,
-        borderRadius: 12,
+        borderRadius: 10,
         padding: 20,
         display: 'flex',
         flexDirection: 'column',
@@ -431,7 +431,7 @@ function AgentCard({
               style={{
                 background: withAlpha(colors.accentBright, 0.18),
                 color: 'var(--hive-gold)',
-                fontSize: 10,
+                fontSize: 11,
                 padding: '2px 6px',
                 borderRadius: 4,
                 fontWeight: 700,
@@ -445,7 +445,7 @@ function AgentCard({
               style={{
                 background: withAlpha(colors.accentBright, 0.13),
                 color: 'var(--hive-gold)',
-                fontSize: 10,
+                fontSize: 11,
                 padding: '2px 6px',
                 borderRadius: 4,
                 fontWeight: 700,
@@ -459,7 +459,7 @@ function AgentCard({
               style={{
                 background: withAlpha(colors.successStrong, 0.13),
                 color: colors.successStrong,
-                fontSize: 10,
+                fontSize: 11,
                 padding: '2px 6px',
                 borderRadius: 4,
                 fontWeight: 700,

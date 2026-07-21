@@ -196,7 +196,7 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
                     borderRadius: radius.sm,
                   }}
                 />
-                <span style={{ color: colors.text.dim, fontSize: 10, textAlign: 'center' }}>
+                <span style={{ color: colors.text.dim, fontSize: 11, textAlign: 'center' }}>
                   {item.label}
                 </span>
               </div>

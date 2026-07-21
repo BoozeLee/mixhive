@@ -67,7 +67,7 @@ export function BuzzToast({ open, message, tone = 'info', duration = 4000, onClo
             maxWidth: 360,
             background: cfg.bg,
             border: `1px solid ${cfg.border}`,
-            borderRadius: 14,
+            borderRadius: 10,
             padding: '12px 14px',
             color: `var(--hive-text, ${colors.hiveText})`,
             backdropFilter: 'blur(10px)',

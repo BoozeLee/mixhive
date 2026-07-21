@@ -113,7 +113,8 @@ function IssueCard({ issue, hero }: { issue: HiveStoryIssue; hero?: boolean }) {
               gap: space[2],
             }}
           >
-            {t('readIssue')}<span aria-hidden="true">→</span>
+            {t('readIssue')}
+            <span aria-hidden="true">→</span>
           </div>
         </div>
       </article>
@@ -181,7 +182,7 @@ export function HiveStoryLanding() {
               style={{
                 height: i === 1 ? 340 : 160,
                 borderRadius: radius.lg,
-                background: 'rgba(240,192,64,0.04)',
+                background: 'rgba(246,196,0,0.04)',
                 border: `1px solid ${colors.border}`,
                 animation: 'pulse 1.4s ease-in-out infinite',
               }}

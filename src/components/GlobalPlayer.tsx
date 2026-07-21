@@ -226,7 +226,7 @@ export function GlobalPlayer() {
             style={{
               height: 3,
               background: colors.borderSubtle,
-              borderRadius: 2,
+              borderRadius: 4,
               cursor: 'pointer',
               position: 'relative',
               outline: 'none',
@@ -243,7 +243,7 @@ export function GlobalPlayer() {
                 height: '100%',
                 width: duration ? `${(currentTime / duration) * 100}%` : '0%',
                 background: colors.accent,
-                borderRadius: 2,
+                borderRadius: 4,
                 transition: 'width 0.1s linear',
               }}
             />
@@ -252,7 +252,7 @@ export function GlobalPlayer() {
             style={{
               display: 'flex',
               justifyContent: 'space-between',
-              fontSize: 10,
+              fontSize: 11,
               color: colors.text.faintest,
               marginTop: 2,
             }}

@@ -304,7 +304,7 @@ export function Opportunities() {
           <div
             style={{
               padding: `${space[4]}px ${space[5]}px`,
-              background: 'rgba(240,192,64,0.06)',
+              background: 'rgba(246,196,0,0.06)',
               borderBottom: `1px solid ${colors.accentMuted}`,
               color: colors.accent,
               fontWeight: fontWeight.bold,

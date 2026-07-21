@@ -83,7 +83,7 @@ export function Navbar() {
           : 'linear-gradient(90deg, rgba(3,3,3,0.92), rgba(13,10,2,0.82), rgba(3,3,3,0.92))',
         backdropFilter: 'blur(18px)',
         borderWidth: '0 0 1px',
-        borderColor: scrolled ? 'rgba(240,192,64,0.24)' : 'rgba(240,192,64,0.12)',
+        borderColor: scrolled ? 'rgba(246,196,0,0.24)' : 'rgba(246,196,0,0.12)',
         borderRadius: 0,
         position: 'sticky',
         top: 0,
@@ -207,8 +207,8 @@ export function Navbar() {
                     background: profile?.avatar_url
                       ? `url(${profile.avatar_url}) center/cover`
                       : colors.surface,
-                    border: `2px solid ${menuOpen ? colors.accent : 'rgba(240,192,64,0.4)'}`,
-                    boxShadow: menuOpen ? '0 0 0 3px rgba(240,192,64,0.18)' : 'none',
+                    border: `2px solid ${menuOpen ? colors.accent : 'rgba(246,196,0,0.4)'}`,
+                    boxShadow: menuOpen ? '0 0 0 3px rgba(246,196,0,0.18)' : 'none',
                     transition: 'border-color 0.15s, box-shadow 0.15s',
                     flexShrink: 0,
                   }}
@@ -222,7 +222,7 @@ export function Navbar() {
                     right: 0,
                     top: 'calc(100% + 10px)',
                     background: colors.bg,
-                    border: `1px solid rgba(240,192,64,0.22)`,
+                    border: `1px solid rgba(246,196,0,0.22)`,
                     borderRadius: 10,
                     minWidth: 172,
                     boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
@@ -233,7 +233,7 @@ export function Navbar() {
                   <div
                     style={{
                       padding: '12px 16px 10px',
-                      borderBottom: '1px solid rgba(240,192,64,0.12)',
+                      borderBottom: '1px solid rgba(246,196,0,0.12)',
                     }}
                   >
                     <div
@@ -256,7 +256,7 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(246,196,0,0.08)';
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -269,7 +269,7 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(246,196,0,0.08)';
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -282,7 +282,7 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(246,196,0,0.08)';
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -295,7 +295,7 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(240,192,64,0.08)';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(246,196,0,0.08)';
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -308,7 +308,7 @@ export function Navbar() {
                     <LanguageSwitcher hideLabel />
                   </div>
 
-                  <div style={{ borderTop: '1px solid rgba(240,192,64,0.10)', marginTop: 2 }} />
+                  <div style={{ borderTop: '1px solid rgba(246,196,0,0.10)', marginTop: 2 }} />
 
                   <button
                     style={{ ...menuItemStyle, color: colors.danger }}

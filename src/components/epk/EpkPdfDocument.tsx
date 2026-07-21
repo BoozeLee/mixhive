@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 13, fontWeight: 'bold', marginBottom: 6, textTransform: 'uppercase' },
   mix: { marginBottom: 8 },
   mixTitle: { fontWeight: 'bold' },
-  footer: { marginTop: 24, fontSize: 10, color: '#777' },
+  footer: { marginTop: 24, fontSize: 11, color: '#777' },
 });
 
 interface Mix {
@@ -61,7 +61,7 @@ export function EpkPdfDocument({
 
         {avatarUrl && (
           <View style={styles.section}>
-            <Image src={avatarUrl} style={{ width: 120, height: 120, borderRadius: 60 }} />
+            <Image src={avatarUrl} style={{ width: 120, height: 120, borderRadius: 999 }} />
           </View>
         )}
 

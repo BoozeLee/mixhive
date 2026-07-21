@@ -265,7 +265,7 @@ export function MixCard({ mix }: Props) {
                         width: 3,
                         height: h,
                         background: colors.accent,
-                        borderRadius: 2,
+                        borderRadius: 4,
                         animation: `eq-bar ${0.6 + i * 0.1}s ease-in-out infinite alternate`,
                       }}
                     />
@@ -320,7 +320,7 @@ export function MixCard({ mix }: Props) {
                   <span
                     title="Published directly from Beehive Studio"
                     style={{
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: fontWeight.bold,
                       padding: '2px 7px',
                       borderRadius: radius.pill,
@@ -339,7 +339,7 @@ export function MixCard({ mix }: Props) {
                 {mix.required_tier && mix.required_tier !== 'free' && (
                   <span
                     style={{
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: fontWeight.bold,
                       padding: '2px 7px',
                       borderRadius: radius.pill,
@@ -355,7 +355,7 @@ export function MixCard({ mix }: Props) {
                   <span
                     title={mix.genre_name}
                     style={{
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: fontWeight.semibold,
                       padding: '2px 7px',
                       borderRadius: radius.pill,
@@ -386,7 +386,7 @@ export function MixCard({ mix }: Props) {
                 )}
                 <span
                   style={{
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: fontWeight.semibold,
                     background: colors.border,
                     color: colors.text.dim,
@@ -516,7 +516,7 @@ export function MixCard({ mix }: Props) {
             <div
               aria-hidden="true"
               className="waveform-gold"
-              style={{ height: 28, borderRadius: 3, opacity: isNowPlaying ? 1 : 0.55 }}
+              style={{ height: 28, borderRadius: 4, opacity: isNowPlaying ? 1 : 0.55 }}
             />
           )}
         </div>

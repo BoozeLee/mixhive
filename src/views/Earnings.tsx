@@ -240,7 +240,7 @@ export function Earnings() {
           style={{
             height: 160,
             background: colors.surface,
-            borderRadius: 12,
+            borderRadius: 10,
             animation: 'pulse 1.5s ease-in-out infinite',
           }}
         />
@@ -251,7 +251,7 @@ export function Earnings() {
             padding: '48px 20px',
             color: colors.text.faintest,
             background: colors.surfaceMuted,
-            borderRadius: 12,
+            borderRadius: 10,
           }}
         >
           <div style={{ fontSize: 40, marginBottom: 8 }}>🪙</div>
@@ -262,7 +262,7 @@ export function Earnings() {
           style={{
             overflowX: 'auto',
             border: `1px solid ${colors.surfaceRaised}`,
-            borderRadius: 12,
+            borderRadius: 10,
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
@@ -338,7 +338,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent: 
 const cardStyle: React.CSSProperties = {
   background: colors.surfaceMuted,
   border: `1px solid ${colors.surfaceRaised}`,
-  borderRadius: 12,
+  borderRadius: 10,
   padding: 18,
 };
 

@@ -146,7 +146,7 @@ export function SearchPage() {
 
   return (
     <div style={{ maxWidth: 760, margin: '0 auto', padding: '24px 16px 96px' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 800, color: colors.text.primary, margin: '0 0 16px' }}>
+      <h1 style={{ fontSize: 20, fontWeight: 800, color: colors.text.primary, margin: '0 0 16px' }}>
         {query
           ? t.rich('resultsFor', {
               query,

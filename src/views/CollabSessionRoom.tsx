@@ -169,11 +169,11 @@ export function CollabSessionRoom() {
           <span
             style={{
               marginLeft: space[2],
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: fontWeight.bold,
               textTransform: 'uppercase',
               padding: '2px 6px',
-              borderRadius: 3,
+              borderRadius: 4,
               background: withAlpha(colors.successStrong, 0.15),
               color: colors.successStrong,
             }}

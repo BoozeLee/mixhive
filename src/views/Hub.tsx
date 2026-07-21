@@ -349,7 +349,7 @@ function HubCard({
             minHeight: 130,
             background: `linear-gradient(135deg, rgba(16,14,10,0.82) 0%, rgba(22,18,12,0.76) 100%)`,
             backdropFilter: 'blur(20px)',
-            border: `1px solid ${locked ? 'rgba(255,255,255,0.04)' : 'rgba(240,192,64,0.10)'}`,
+            border: `1px solid ${locked ? 'rgba(255,255,255,0.04)' : 'rgba(246,196,0,0.10)'}`,
             borderRadius: radius.xl,
             padding: `${space[8]}px`,
             display: 'flex',

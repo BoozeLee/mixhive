@@ -204,7 +204,7 @@ export function MixDetail() {
           width: '100%',
           aspectRatio: '1/1',
           maxHeight: 320,
-          borderRadius: 12,
+          borderRadius: 10,
           background: mix.artwork_url
             ? `url(${mix.artwork_url}) center/cover`
             : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.accentFaint})`,
@@ -222,7 +222,7 @@ export function MixDetail() {
       <div style={{ marginBottom: 20 }}>
         <h1
           style={{
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: 700,
             color: colors.text.primary,
             margin: '0 0 4px',
@@ -235,7 +235,7 @@ export function MixDetail() {
           {mix.required_tier && mix.required_tier !== 'free' && (
             <span
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 700,
                 padding: '3px 8px',
                 borderRadius: 6,
@@ -284,7 +284,7 @@ export function MixDetail() {
             textAlign: 'center',
             background: `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
             border: `1px solid ${colors.accent}33`,
-            borderRadius: 12,
+            borderRadius: 10,
             marginTop: 20,
           }}
         >
@@ -341,7 +341,7 @@ export function MixDetail() {
           style={{
             background: colors.surfaceHover,
             color: colors.text.dim,
-            fontSize: 10,
+            fontSize: 11,
             padding: '2px 6px',
             borderRadius: 4,
             fontWeight: 600,
@@ -530,7 +530,7 @@ export function MixDetail() {
                 background: colors.surfaceHover,
                 color: colors.text.dim,
                 padding: '4px 10px',
-                borderRadius: 12,
+                borderRadius: 10,
                 fontSize: 12,
               }}
             >
@@ -715,7 +715,7 @@ export function MixDetail() {
                         {r.user?.display_name || r.user?.username}
                       </Link>
                       <span
-                        style={{ color: colors.text.faintest, fontSize: 10, marginLeft: 'auto' }}
+                        style={{ color: colors.text.faintest, fontSize: 11, marginLeft: 'auto' }}
                       >
                         {timeAgo(r.created_at)}
                       </span>

@@ -106,7 +106,7 @@ export function AIAgentCard({ agent, currentUserId, onFollowToggle }: Props) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 22,
+                  fontSize: 20,
                   color: colors.accentMuted,
                 }}
               >
@@ -154,7 +154,7 @@ export function AIAgentCard({ agent, currentUserId, onFollowToggle }: Props) {
               <span
                 key={g}
                 style={{
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: fontWeight.semibold,
                   padding: '2px 7px',
                   borderRadius: radius.pill,

@@ -81,7 +81,7 @@ export function AgentTracks() {
           <span
             style={{
               display: 'inline-block',
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: 800,
               letterSpacing: 0.4,
               padding: '2px 7px',

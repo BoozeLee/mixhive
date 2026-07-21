@@ -580,7 +580,7 @@ export function Upload() {
                     maxWidth: 280,
                     aspectRatio: '1 / 1',
                     objectFit: 'cover',
-                    borderRadius: 12,
+                    borderRadius: 10,
                     border: `1px solid ${colors.border}`,
                   }}
                 />
@@ -739,7 +739,7 @@ export function Upload() {
                 padding: 16,
                 background: colors.surface,
                 border: `1px solid ${colors.border}`,
-                borderRadius: 12,
+                borderRadius: 10,
                 color: colors.text.secondary,
                 fontSize: 14,
               }}

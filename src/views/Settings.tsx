@@ -313,7 +313,7 @@ export function Settings() {
       className="container"
       style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px 96px' }}
     >
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, marginBottom: 24 }}>
+      <h1 style={{ fontSize: 20, fontWeight: 700, color: colors.text.primary, marginBottom: 24 }}>
         {t('editProfile')}
       </h1>
 
@@ -444,7 +444,7 @@ export function Settings() {
                 onClick={() => toggleGenre(g)}
                 style={{
                   padding: '6px 12px',
-                  borderRadius: 16,
+                  borderRadius: 10,
                   border: 'none',
                   background: formData.genres.includes(g) ? colors.accent : colors.surfaceHover,
                   color: formData.genres.includes(g) ? colors.bg : colors.text.dim,
@@ -479,7 +479,7 @@ export function Settings() {
                 onClick={() => toggleMulti('dj_equipment', item)}
                 style={{
                   padding: '6px 12px',
-                  borderRadius: 16,
+                  borderRadius: 10,
                   border: 'none',
                   background: formData.dj_equipment.includes(item)
                     ? colors.accent
@@ -509,7 +509,7 @@ export function Settings() {
                 onClick={() => toggleMulti('dj_daw', item)}
                 style={{
                   padding: '6px 12px',
-                  borderRadius: 16,
+                  borderRadius: 10,
                   border: 'none',
                   background: formData.dj_daw.includes(item) ? colors.accent : colors.surfaceHover,
                   color: formData.dj_daw.includes(item) ? colors.bg : colors.text.dim,
@@ -614,7 +614,7 @@ export function Settings() {
                     }
                     style={{
                       padding: '6px 12px',
-                      borderRadius: 16,
+                      borderRadius: 10,
                       border: 'none',
                       background: active ? colors.accent : colors.surfaceHover,
                       color: active ? colors.bg : colors.text.dim,

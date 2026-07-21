@@ -160,7 +160,7 @@ function SuggestionBody({ suggestion }: { suggestion: AISuggestion }) {
             style={{
               padding: `${space[4]}px ${space[5]}px`,
               borderRadius: radius.md,
-              background: 'rgba(240,192,64,0.04)',
+              background: 'rgba(246,196,0,0.04)',
               border: `1px solid ${colors.accentMuted}`,
             }}
           >

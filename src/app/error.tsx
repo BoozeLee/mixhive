@@ -21,7 +21,7 @@ export default function Error({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#0a0a0a',
+        background: '#070706',
         padding: '0 24px',
       }}
     >
@@ -59,14 +59,14 @@ export default function Error({
             margin: '0 0 10px',
             fontSize: 22,
             fontWeight: 900,
-            color: '#eee',
+            color: '#f5f3e7',
             textTransform: 'uppercase',
             letterSpacing: '-0.01em',
           }}
         >
           Something went wrong
         </h1>
-        <p style={{ margin: '0 0 24px', fontSize: 14, color: '#888', lineHeight: 1.6 }}>
+        <p style={{ margin: '0 0 24px', fontSize: 14, color: '#8c8676', lineHeight: 1.6 }}>
           A disturbance in the hive. The bees are investigating.
         </p>
 
@@ -117,7 +117,7 @@ export default function Error({
               padding: '0 18px',
               borderRadius: 7,
               border: '1px solid rgba(246,196,0,0.28)',
-              color: '#f0c040',
+              color: '#f6c400',
               textDecoration: 'none',
               fontSize: 13,
               fontWeight: 600,

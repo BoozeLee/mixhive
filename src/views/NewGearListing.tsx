@@ -298,7 +298,7 @@ export function NewGearListing() {
               tabIndex={0}
               style={{
                 border: `2px dashed ${colors.borderStrong}`,
-                borderRadius: 12,
+                borderRadius: 10,
                 padding: 24,
                 textAlign: 'center',
                 cursor: 'pointer',

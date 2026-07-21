@@ -239,7 +239,7 @@ export function HiveStoryIssue() {
           style={{
             height: 320,
             borderRadius: radius.xl,
-            background: 'rgba(240,192,64,0.04)',
+            background: 'rgba(246,196,0,0.04)',
             border: `1px solid ${colors.border}`,
             animation: 'pulse 1.4s ease-in-out infinite',
           }}
@@ -251,7 +251,7 @@ export function HiveStoryIssue() {
               style={{
                 height: 120,
                 borderRadius: radius.lg,
-                background: 'rgba(240,192,64,0.04)',
+                background: 'rgba(246,196,0,0.04)',
                 border: `1px solid ${colors.border}`,
                 animation: 'pulse 1.4s ease-in-out infinite',
               }}

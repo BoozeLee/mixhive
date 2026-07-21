@@ -223,15 +223,16 @@ export function NftMintModal({
           <div
             style={{
               padding: space[3],
-              background: 'rgba(240,192,64,0.07)',
-              border: '1px solid rgba(240,192,64,0.2)',
+              background: 'rgba(246,196,0,0.07)',
+              border: '1px solid rgba(246,196,0,0.2)',
               borderRadius: radius.sm,
               fontSize: fontSize.xs,
               color: colors.text.muted,
             }}
           >
-            {t('tokensAreMintedOn')}<strong>{t('baseL2')}</strong> via Zora Protocol. Gas is covered
-            by MIXHIVE — free to claim for holders. No secondary market is shown inside the app.
+            {t('tokensAreMintedOn')}
+            <strong>{t('baseL2')}</strong> via Zora Protocol. Gas is covered by MIXHIVE — free to
+            claim for holders. No secondary market is shown inside the app.
           </div>
 
           <div
@@ -309,8 +310,8 @@ export function NftMintModal({
           <div style={{ textAlign: 'center', padding: `${space[4]}px 0` }}>
             <div style={{ fontSize: 40, marginBottom: space[3] }}>✅</div>
             <p style={{ color: colors.text.secondary, fontSize: fontSize.sm }}>
-              {t('collection')}<strong>{name}</strong> is live. Fans can now claim tokens from the{' '}
-              {sourceType} page.
+              {t('collection')}
+              <strong>{name}</strong> is live. Fans can now claim tokens from the {sourceType} page.
             </p>
             {collectionId && (
               <p style={{ fontSize: fontSize.xs, color: colors.text.faint, marginTop: space[2] }}>
@@ -402,9 +403,9 @@ function Tag({ label, gold }: { label: string; gold?: boolean }) {
         padding: '2px 8px',
         borderRadius: 4,
         fontSize: 11,
-        background: gold ? 'rgba(240,192,64,0.12)' : 'rgba(255,255,255,0.06)',
+        background: gold ? 'rgba(246,196,0,0.12)' : 'rgba(255,255,255,0.06)',
         color: gold ? colors.gold : colors.text.muted,
-        border: `1px solid ${gold ? 'rgba(240,192,64,0.25)' : colors.border}`,
+        border: `1px solid ${gold ? 'rgba(246,196,0,0.25)' : colors.border}`,
       }}
     >
       {label}

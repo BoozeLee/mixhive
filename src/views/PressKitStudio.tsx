@@ -460,7 +460,7 @@ function PressKitPreview({ kit, fallbackName }: { kit: PressKit; fallbackName: s
       <div
         style={{
           padding: space[8],
-          background: 'linear-gradient(135deg, rgba(240,192,64,0.18), rgba(7,7,5,0.2))',
+          background: 'linear-gradient(135deg, rgba(246,196,0,0.18), rgba(7,7,5,0.2))',
         }}
       >
         <div style={{ display: 'flex', gap: space[6], alignItems: 'center' }}>

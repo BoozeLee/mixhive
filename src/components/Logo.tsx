@@ -35,7 +35,7 @@ export function Logo({
           borderRadius: size === 'small' ? 4 : 6,
           objectFit: 'cover',
           mixBlendMode: 'screen',
-          filter: 'drop-shadow(0 0 10px rgba(240,192,64,0.32))',
+          filter: 'drop-shadow(0 0 10px rgba(246,196,0,0.32))',
           flexShrink: 0,
         }}
       />
@@ -76,7 +76,7 @@ export function LogoIcon({
         borderRadius: 4,
         objectFit: 'cover',
         mixBlendMode: 'screen',
-        filter: 'drop-shadow(0 0 10px rgba(240,192,64,0.32))',
+        filter: 'drop-shadow(0 0 10px rgba(246,196,0,0.32))',
       }}
     />
   );

@@ -94,7 +94,7 @@ export function SimilarMixesPanel({ mixId }: { mixId: string }) {
                 style={{
                   width: 3,
                   height: 36,
-                  borderRadius: 2,
+                  borderRadius: 4,
                   background: getGenreColor(m.genre),
                   flexShrink: 0,
                 }}

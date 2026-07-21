@@ -106,7 +106,7 @@ export function AgentBandCredits({ mixId }: Props) {
                   style={{
                     display: 'inline-block',
                     marginTop: 3,
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: 700,
                     padding: '1px 6px',
                     borderRadius: radius.pill,

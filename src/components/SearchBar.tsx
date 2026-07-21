@@ -54,7 +54,7 @@ export function SearchBar() {
           transform: 'translateY(-50%)',
           background: colors.surface,
           color: colors.text.muted,
-          fontSize: 10,
+          fontSize: 11,
           padding: '2px 5px',
           borderRadius: 4,
           border: `1px solid ${colors.border}`,

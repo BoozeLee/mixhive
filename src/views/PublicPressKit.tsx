@@ -85,7 +85,7 @@ export function PublicPressKit() {
         <div
           style={{
             padding: `clamp(${space[8]}px, 7vw, ${space[12]}px)`,
-            background: 'linear-gradient(135deg, rgba(240,192,64,0.2), rgba(7,7,5,0.3))',
+            background: 'linear-gradient(135deg, rgba(246,196,0,0.2), rgba(7,7,5,0.3))',
           }}
         >
           <div style={{ display: 'flex', gap: space[7], alignItems: 'center', flexWrap: 'wrap' }}>
@@ -98,7 +98,7 @@ export function PublicPressKit() {
                   ? `url(${content.avatar_url}) center/cover`
                   : colors.surface,
                 border: `1px solid ${colors.accent}`,
-                boxShadow: '0 0 32px rgba(240,192,64,0.24)',
+                boxShadow: '0 0 32px rgba(246,196,0,0.24)',
               }}
             />
             <div>

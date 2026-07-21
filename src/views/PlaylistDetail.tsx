@@ -145,7 +145,7 @@ export function PlaylistDetail() {
                 color: colors.text.primary,
                 padding: '8px 12px',
                 borderRadius: 6,
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: 700,
               }}
             />
@@ -172,7 +172,7 @@ export function PlaylistDetail() {
               background: 'transparent',
               border: 'none',
               padding: 0,
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: 700,
               color: colors.text.primary,
               margin: '0 0 4px',
@@ -186,7 +186,7 @@ export function PlaylistDetail() {
         ) : (
           <h1
             style={{
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: 700,
               color: colors.text.primary,
               margin: '0 0 4px',

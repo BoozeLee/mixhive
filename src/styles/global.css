@@ -88,7 +88,7 @@
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid #f0c040;
+  outline: 2px solid #f6c400;
   outline-offset: 2px;
 }
 
@@ -97,8 +97,8 @@
   position: absolute;
   left: -9999px;
   top: 8px;
-  background: #f0c040;
-  color: #0a0a0a;
+  background: #f6c400;
+  color: #070706;
   padding: 8px 14px;
   border-radius: 6px;
   font-weight: 600;
@@ -185,7 +185,7 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1a1a2e;
+  background: #17150f;
   border-radius: 4px;
 }
 
@@ -233,6 +233,6 @@ button,
 
 /* Focus visible for custom components */
 .focus-visible {
-  outline: 2px solid #f0c040;
+  outline: 2px solid #f6c400;
   outline-offset: 2px;
 }

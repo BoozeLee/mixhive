@@ -37,7 +37,7 @@ export function HiveStat({ label, value, delta, sparkline, icon }: Props) {
           aria-hidden="true"
           style={{
             color: `var(--hive-gold, ${colors.accentBright})`,
-            fontSize: 22,
+            fontSize: 20,
             lineHeight: 1,
             filter: 'drop-shadow(0 0 6px rgba(246,196,0,0.4))',
           }}

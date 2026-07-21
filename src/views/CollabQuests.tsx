@@ -170,7 +170,7 @@ export function CollabQuests() {
               style={{
                 height: 160,
                 background: colors.surface,
-                borderRadius: 12,
+                borderRadius: 10,
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
             />
@@ -210,7 +210,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
         style={{
           background: colors.surface,
           border: `1px solid ${colors.surfaceRaised}`,
-          borderRadius: 12,
+          borderRadius: 10,
           padding: 20,
           transition: 'border-color 0.2s, transform 0.15s',
         }}
@@ -231,7 +231,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
                 style={{
                   background: withAlpha(colors.accentBright, 0.13),
                   color: 'var(--hive-gold)',
-                  fontSize: 10,
+                  fontSize: 11,
                   padding: '2px 8px',
                   borderRadius: 4,
                   fontWeight: 700,
@@ -246,7 +246,7 @@ function QuestCard({ quest }: { quest: CollabQuest }) {
                   style={{
                     background: colors.surfaceRaised,
                     color: colors.text.faint,
-                    fontSize: 10,
+                    fontSize: 11,
                     padding: '2px 8px',
                     borderRadius: 4,
                   }}

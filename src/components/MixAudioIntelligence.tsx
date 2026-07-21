@@ -110,10 +110,10 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
     <section
       style={{
         marginTop: 24,
-        border: '1px solid rgba(240,192,64,0.28)',
-        borderRadius: 12,
+        border: '1px solid rgba(246,196,0,0.28)',
+        borderRadius: 10,
         background:
-          'linear-gradient(135deg, rgba(240,192,64,0.08), transparent 36%), rgba(10,10,8,0.82)',
+          'linear-gradient(135deg, rgba(246,196,0,0.08), transparent 36%), rgba(10,10,8,0.82)',
         padding: 16,
       }}
     >
@@ -166,7 +166,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               onClick={runAiSetAnalysis}
               disabled={aiBusy}
               style={{
-                border: '1px solid rgba(240,192,64,0.5)',
+                border: '1px solid rgba(246,196,0,0.5)',
                 borderRadius: 8,
                 background: aiBusy ? colors.surfaceRaised : 'transparent',
                 color: aiBusy ? colors.text.faintest : colors.accent,
@@ -220,7 +220,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                 <div
                   style={{
                     color: colors.text.faint,
-                    fontSize: 10,
+                    fontSize: 11,
                     textTransform: 'uppercase',
                     fontWeight: 800,
                   }}
@@ -345,7 +345,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                   border: `1px solid ${colors.borderSubtle}`,
                   borderRadius: 10,
                   padding: '12px 14px',
-                  background: 'rgba(240,192,64,0.04)',
+                  background: 'rgba(246,196,0,0.04)',
                 }}
               >
                 <div

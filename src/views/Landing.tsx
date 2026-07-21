@@ -102,7 +102,7 @@ function AppPreview() {
               flex: 1,
               height: h,
               background: i % 3 === 0 ? colors.accent : colors.borderStrong,
-              borderRadius: 1,
+              borderRadius: 0,
             }}
           />
         ))}

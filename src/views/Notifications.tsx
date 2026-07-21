@@ -110,7 +110,7 @@ export function NotificationsPage() {
                   alignItems: 'center',
                   gap: space[6],
                   padding: '14px 16px',
-                  borderRadius: 12,
+                  borderRadius: 10,
                   border: `1px solid ${notification.read ? colors.border : colors.accentMuted}`,
                   background: notification.read ? 'transparent' : 'rgba(246,196,0,0.04)',
                   textDecoration: 'none',

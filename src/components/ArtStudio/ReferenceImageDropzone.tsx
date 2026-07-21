@@ -111,7 +111,7 @@ export function ReferenceImageDropzone({
             <div style={{ padding: '6px 8px' }}>
               <label
                 style={{
-                  fontSize: 10,
+                  fontSize: 11,
                   color: colors.text.dim,
                   display: 'block',
                   marginBottom: 2,

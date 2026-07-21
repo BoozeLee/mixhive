@@ -164,7 +164,7 @@ export function GearListingDetail() {
             style={{
               aspectRatio: '4/3',
               background: colors.bg,
-              borderRadius: 12,
+              borderRadius: 10,
               overflow: 'hidden',
               marginBottom: 12,
             }}
@@ -253,7 +253,7 @@ export function GearListingDetail() {
         <div
           style={{
             background: colors.surface,
-            borderRadius: 12,
+            borderRadius: 10,
             padding: 24,
             border: `1px solid ${colors.surfaceRaised}`,
           }}
@@ -353,7 +353,7 @@ export function GearListingDetail() {
               style={{
                 background: colors.surfaceRaised,
                 padding: 16,
-                borderRadius: 12,
+                borderRadius: 10,
                 border: `1px solid ${colors.border}`,
                 marginBottom: 20,
               }}

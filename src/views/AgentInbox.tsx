@@ -478,9 +478,9 @@ export function AgentInbox() {
           <Icon name="sparkles" size={14} />
         </span>
         <p style={{ margin: 0, fontSize: fontSize.xs, color: colors.text.dim, lineHeight: 1.5 }}>
-          {t('aiIs')}<strong style={{ color: colors.text.muted }}>assistive, not autonomous</strong>{' '}
-          — every suggestion requires your review and approval before it changes anything on your
-          profile.
+          {t('aiIs')}
+          <strong style={{ color: colors.text.muted }}>assistive, not autonomous</strong> — every
+          suggestion requires your review and approval before it changes anything on your profile.
         </p>
       </div>
 

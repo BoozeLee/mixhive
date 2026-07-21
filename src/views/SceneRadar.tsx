@@ -398,11 +398,11 @@ export function SceneRadar() {
                       )}
                       <span
                         style={{
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: fontWeight.bold,
                           textTransform: 'uppercase',
                           padding: '2px 6px',
-                          borderRadius: 3,
+                          borderRadius: 4,
                           background:
                             t.priority === 'high'
                               ? 'rgba(239,68,68,0.15)'

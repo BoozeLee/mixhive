@@ -165,7 +165,7 @@ export function NftMintModal({
           </div>
 
           <div>
-            <label style={labelStyle}>{t('description')}</label>
+            <label style={labelStyle}>{t('description')}</label>
             <textarea
               value={description}
               onChange={e => setDescription(e.target.value)}
@@ -177,7 +177,7 @@ export function NftMintModal({
 
           <div style={{ display: 'flex', gap: space[4] }}>
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>{t('maxSupply')}</label>
+              <label style={labelStyle}>{t('maxSupply')}</label>
               <input
                 type="number"
                 min={1}
@@ -187,12 +187,12 @@ export function NftMintModal({
                 style={inputStyle}
               />
               <span style={{ fontSize: fontSize.xs, color: colors.text.faint }}>
-                {t('leave0ForUnlimited')}
+                {t('leave0ForUnlimited')}
               </span>
             </div>
 
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>{t('soulboundNonTransferable')}</label>
+              <label style={labelStyle}>{t('soulboundNonTransferable')}</label>
               <div style={{ marginTop: 8 }}>
                 <label
                   style={{
@@ -209,7 +209,7 @@ export function NftMintModal({
                     onChange={e => setSoulbound(e.target.checked)}
                     style={{ accentColor: colors.gold }}
                   />
-                  <span>{t('soulboundToken')}</span>
+                  <span>{t('soulboundToken')}</span>
                 </label>
                 <p style={{ fontSize: fontSize.xs, color: colors.text.faint, margin: '4px 0 0' }}>
                   {soulbound
@@ -230,7 +230,7 @@ export function NftMintModal({
               color: colors.text.muted,
             }}
           >
-            {t('tokensAreMintedOn')}<strong>{t('baseL2')}</strong> via Zora Protocol. Gas is covered
+            {t('tokensAreMintedOn')}<strong>{t('baseL2')}</strong> via Zora Protocol. Gas is covered
             by MIXHIVE — free to claim for holders. No secondary market is shown inside the app.
           </div>
 
@@ -243,7 +243,7 @@ export function NftMintModal({
             }}
           >
             <HiveButton variant="secondary" onClick={handleClose}>
-              {t('cancel')}
+              {t('cancel')}
             </HiveButton>
             <HiveButton
               variant="secondary"
@@ -278,7 +278,7 @@ export function NftMintModal({
               ← Edit
             </HiveButton>
             <HiveButton variant="primary" onClick={handleDeploy}>
-              {t('deployOnBase')}
+              {t('deployOnBase')}
             </HiveButton>
           </div>
         </div>
@@ -309,7 +309,7 @@ export function NftMintModal({
           <div style={{ textAlign: 'center', padding: `${space[4]}px 0` }}>
             <div style={{ fontSize: 40, marginBottom: space[3] }}>✅</div>
             <p style={{ color: colors.text.secondary, fontSize: fontSize.sm }}>
-              {t('collection')}<strong>{name}</strong> is live. Fans can now claim tokens from the{' '}
+              {t('collection')}<strong>{name}</strong> is live. Fans can now claim tokens from the{' '}
               {sourceType} page.
             </p>
             {collectionId && (
@@ -319,7 +319,7 @@ export function NftMintModal({
             )}
           </div>
           <HiveButton variant="primary" onClick={handleClose} style={{ width: '100%' }}>
-            {t('done')}
+            {t('done')}
           </HiveButton>
         </div>
       )}

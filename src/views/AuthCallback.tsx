@@ -143,7 +143,7 @@ export function AuthCallback() {
           {error}
         </p>
         <a href="/login" style={{ color: colors.accent, fontSize: 14, textDecoration: 'none' }}>
-          {t('backToSignIn')}
+          {t('backToSignIn')}
         </a>
       </div>
     );
@@ -155,10 +155,10 @@ export function AuthCallback() {
     >
       <div style={{ textAlign: 'center' }}>
         <div style={{ color: colors.accent, fontSize: 14, marginBottom: 8 }}>
-          {t('completingSignIn')}
+          {t('completingSignIn')}
         </div>
         <div style={{ color: colors.text.faintest, fontSize: 12 }}>
-          {t('preparingYourMixhiveProfile')}
+          {t('preparingYourMixhiveProfile')}
         </div>
       </div>
     </div>

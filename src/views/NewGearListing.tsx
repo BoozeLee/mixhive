@@ -163,7 +163,7 @@ export function NewGearListing() {
         {t('listYourGear')}
       </h1>
       <p style={{ color: colors.text.faint, fontSize: 14, marginBottom: 28 }}>
-        {t('sellToCommunity')}
+        {t('sellToCommunity')}
       </p>
 
       {/* Step indicator */}
@@ -262,7 +262,7 @@ export function NewGearListing() {
                 setStep(2);
               }}
             >
-              {t('continue')}
+              {t('continue')}
             </Button>
           </div>
         </div>
@@ -291,7 +291,7 @@ export function NewGearListing() {
           {/* Photo upload */}
           <div>
             <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
-              {t('photosMin1')}
+              {t('photosMin1')}
             </p>
             <div
               role="button"
@@ -360,7 +360,7 @@ export function NewGearListing() {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
             <Button variant="secondary" onClick={() => setStep(1)}>
-              {t('back')}
+              {t('back')}
             </Button>
             <Button
               onClick={() => {
@@ -372,7 +372,7 @@ export function NewGearListing() {
                 setStep(3);
               }}
             >
-              {t('continue')}
+              {t('continue')}
             </Button>
           </div>
         </div>
@@ -455,7 +455,7 @@ export function NewGearListing() {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
             <Button variant="secondary" onClick={() => setStep(2)}>
-              {t('back')}
+              {t('back')}
             </Button>
             <Button
               onClick={handleSubmit}

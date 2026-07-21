@@ -100,13 +100,13 @@ export function CollabSessionRoom() {
       >
         <div style={{ fontSize: 40, marginBottom: space[4] }}>⚡</div>
         <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>
-          {t('sessionUnavailable')}
+          {t('sessionUnavailable')}
         </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>
           {errorMsg}
         </p>
         <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>
-          {t('backToDashboard')}
+          {t('backToDashboard')}
         </HiveButton>
       </div>
     );
@@ -124,17 +124,17 @@ export function CollabSessionRoom() {
       >
         <div style={{ fontSize: 40, marginBottom: space[4] }}>🎛️</div>
         <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>
-          {t('sessionEnded')}
+          {t('sessionEnded')}
         </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>
           {session?.title} — this session has been closed and its provenance written to the graph.
         </p>
         <div style={{ display: 'flex', gap: space[3], justifyContent: 'center' }}>
           <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>
-            {t('dashboard')}
+            {t('dashboard')}
           </HiveButton>
           <HiveButton variant="primary" onClick={() => navigate('/quests')}>
-            {t('viewQuests')}
+            {t('viewQuests')}
           </HiveButton>
         </div>
       </div>
@@ -178,7 +178,7 @@ export function CollabSessionRoom() {
               color: colors.successStrong,
             }}
           >
-            {t('live')}
+            {t('live')}
           </span>
         </div>
         <div style={{ display: 'flex', gap: space[2] }}>
@@ -191,7 +191,7 @@ export function CollabSessionRoom() {
             }}
             style={{ fontSize: fontSize.xs, padding: '6px 12px' }}
           >
-            {t('copyInviteLink')}
+            {t('copyInviteLink')}
           </HiveButton>
           <HiveButton
             variant="secondary"
@@ -229,7 +229,7 @@ export function CollabSessionRoom() {
                 color: colors.text.primary,
               }}
             >
-              {t('sessionReview')}
+              {t('sessionReview')}
             </h2>
             <div
               style={{

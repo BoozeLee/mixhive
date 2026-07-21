@@ -79,7 +79,7 @@ export function VerificationRequestForm({ profile }: Props) {
         }}
       >
         <h2 style={{ margin: 0, color: colors.text.primary, fontSize: 16 }}>
-          {t('verificationRequest')}
+          {t('verificationRequest')}
         </h2>
         <p style={{ color: colors.text.muted, fontSize: 13, margin: '8px 0 0' }}>
           Status:{' '}
@@ -116,7 +116,7 @@ export function VerificationRequestForm({ profile }: Props) {
       }}
     >
       <h2 style={{ margin: 0, color: colors.text.primary, fontSize: 16 }}>
-        {t('requestVerification')}
+        {t('requestVerification')}
       </h2>
       <form onSubmit={submit} style={{ display: 'grid', gap: space[6], marginTop: space[6] }}>
         <Input
@@ -128,7 +128,7 @@ export function VerificationRequestForm({ profile }: Props) {
         <label
           style={{ color: colors.text.secondary, fontSize: 13, display: 'grid', gap: space[3] }}
         >
-          {t('badgeType')}
+          {t('badgeType')}
           <select
             value={requestedBadge}
             onChange={event => setRequestedBadge(event.target.value as VerificationBadgeType)}
@@ -140,9 +140,9 @@ export function VerificationRequestForm({ profile }: Props) {
               padding: '8px 10px',
             }}
           >
-            <option value="verified">{t('verified')}</option>
-            <option value="artist">{t('artist')}</option>
-            <option value="official">{t('official')}</option>
+            <option value="verified">{t('verified')}</option>
+            <option value="artist">{t('artist')}</option>
+            <option value="official">{t('official')}</option>
           </select>
         </label>
         <Input
@@ -166,7 +166,7 @@ export function VerificationRequestForm({ profile }: Props) {
           error={error || undefined}
         />
         <Button type="submit" loading={submitting}>
-          {t('submitRequest')}
+          {t('submitRequest')}
         </Button>
       </form>
     </section>

@@ -6,6 +6,7 @@
 // this file is strictly for functional UI iconography.
 
 import {
+  AlertTriangle,
   Rss,
   Compass,
   Search,
@@ -123,7 +124,8 @@ export type IconKey =
   | 'wave'
   | 'zap'
   | 'square'
-  | 'check';
+  | 'check'
+  | 'alert';
 
 export const ICONS: Record<IconKey, LucideIcon> = {
   // navigation / features
@@ -184,6 +186,7 @@ export const ICONS: Record<IconKey, LucideIcon> = {
   zap: Zap,
   square: Square,
   check: Check,
+  alert: AlertTriangle,
 };
 
 // Less-common one-offs that consumers may import directly when not worth a key.

@@ -152,7 +152,7 @@ export function Agents() {
       >
         <div>
           <h1 style={{ margin: 0, fontSize: fontSize['3xl'], fontWeight: fontWeight.bold }}>
-            {t('luaAgents')}
+            {t('luaAgents')}
           </h1>
           <p style={{ margin: '4px 0 0', color: colors.text.muted, fontSize: fontSize.md }}>
             Tiny Lua scripts that react to events on your account.{' '}
@@ -258,7 +258,7 @@ function AgentRow({
         </div>
         <div style={{ display: 'flex', gap: space[4] }}>
           <Button variant="ghost" size="sm" onClick={onEdit}>
-            {t('edit')}
+            {t('edit')}
           </Button>
           <Button
             variant="secondary"
@@ -406,7 +406,7 @@ function AgentEditor({
           {agent ? `Edit agent — ${agent.name}` : 'New Lua agent'}
         </h1>
         <Button variant="ghost" onClick={onCancel}>
-          {t('cancel')}
+          {t('cancel')}
         </Button>
       </header>
 
@@ -434,7 +434,7 @@ function AgentEditor({
             marginBottom: space[6],
           }}
         >
-          {t('trigger')}
+          {t('trigger')}
         </legend>
         <div
           style={{
@@ -480,7 +480,7 @@ function AgentEditor({
             fontWeight: fontWeight.medium,
           }}
         >
-          {t('luaSource')}
+          {t('luaSource')}
         </label>
         <textarea
           id="lua-code"
@@ -511,21 +511,21 @@ function AgentEditor({
             lineHeight: 1.6,
           }}
         >
-          <strong style={{ color: colors.text.secondary }}>{t('read')}</strong>{' '}
+          <strong style={{ color: colors.text.secondary }}>{t('read')}</strong>{' '}
           <code>mh.get_mix(id)</code> <code>mh.get_profile(id)</code>{' '}
           <code>mh.get_mixes_by_user(uid, limit?)</code> <code>mh.get_followers(uid, limit?)</code>{' '}
           <code>mh.get_following(uid, limit?)</code> <code>mh.fetch_recent_mixes(limit?)</code>
           {'  '}
-          <strong style={{ color: colors.text.secondary }}>{t('write')}</strong>{' '}
+          <strong style={{ color: colors.text.secondary }}>{t('write')}</strong>{' '}
           <code>mh.comment(mix_id, body)</code> <code>mh.delete_comment(id)</code>{' '}
           <code>mh.post_buzz(text)</code> <code>mh.notify(msg)</code> <code>mh.follow(uid)</code>{' '}
           <code>mh.like(mix_id)</code> <code>mh.repost(mix_id)</code>
           {'  '}
-          <strong style={{ color: colors.text.secondary }}>{t('kv')}</strong>{' '}
+          <strong style={{ color: colors.text.secondary }}>{t('kv')}</strong>{' '}
           <code>mh.kv_get(key)</code> <code>mh.kv_set(key, val, ttl?)</code>{' '}
           <code>mh.kv_del(key)</code> <code>mh.kv_list()</code>
           {'  '}
-          <strong style={{ color: colors.text.secondary }}>{t('util')}</strong>{' '}
+          <strong style={{ color: colors.text.secondary }}>{t('util')}</strong>{' '}
           <code>mh.json_encode(t)</code> <code>mh.json_decode(s)</code> <code>mh.print(...)</code>
           {'  '}Plus <code>math</code> <code>string</code> <code>table</code>.{' '}
           <a
@@ -585,7 +585,7 @@ function AgentEditor({
               fontSize: fontSize.md,
             }}
           >
-            {t('agentKv')}
+            {t('agentKv')}
           </h3>
           <div style={{ display: 'grid', gap: space[3] }}>
             {kvEntries.slice(0, 12).map(entry => (
@@ -622,12 +622,12 @@ function AgentEditor({
               }
             }}
           >
-            {t('delete')}
+            {t('delete')}
           </Button>
         )}
         {agent && (
           <Button variant="secondary" loading={testing} onClick={runTest}>
-            {t('runTest')}
+            {t('runTest')}
           </Button>
         )}
         <Button onClick={save} loading={saving} disabled={!name.trim() || !code.trim()}>
@@ -660,7 +660,7 @@ function AgentEditor({
               margin: `0 0 ${space[6]}px`,
             }}
           >
-            {t('recentRuns')}
+            {t('recentRuns')}
           </h3>
           <ul
             style={{
@@ -708,7 +708,7 @@ function AgentEditor({
             style={{ display: 'flex', alignItems: 'center', gap: space[5], marginBottom: space[6] }}
           >
             <h3 style={{ fontSize: fontSize.lg, color: colors.text.primary, margin: 0 }}>
-              {t('kvStore')}
+              {t('kvStore')}
             </h3>
             <button
               type="button"

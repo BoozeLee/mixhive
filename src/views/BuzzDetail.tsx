@@ -90,7 +90,7 @@ export function BuzzDetail() {
         <SkeletonFeed />
       ) : !buzz ? (
         <div style={{ textAlign: 'center', padding: 40, color: colors.text.dim }}>
-          {t('buzzNotFound')}
+          {t('buzzNotFound')}
         </div>
       ) : (
         <>
@@ -223,7 +223,7 @@ export function BuzzDetail() {
                   fontSize: fontSize.base,
                 }}
               >
-                {t('signIn')}
+                {t('signIn')}
               </button>{' '}
               to reply
             </div>

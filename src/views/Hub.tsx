@@ -542,7 +542,7 @@ export function Hub() {
               transition: 'color 0.3s',
             }}
           >
-            {t('featureHub')}
+            {t('featureHub')}
           </div>
 
           {/* Gradient text headline */}
@@ -561,7 +561,7 @@ export function Hub() {
               transition: 'background 0.4s',
             }}
           >
-            {t('mixhive')}
+            {t('mixhive')}
           </h1>
 
           <p

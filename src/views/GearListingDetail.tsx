@@ -125,7 +125,7 @@ export function GearListingDetail() {
           {error || t('listingNotFound')}
         </p>
         <Link to="/marketplace/gear" style={{ color: 'var(--hive-gold)' }}>
-          {t('backToGearMarket')}
+          {t('backToGearMarket')}
         </Link>
       </div>
     );
@@ -145,7 +145,7 @@ export function GearListingDetail() {
           marginBottom: 20,
         }}
       >
-        {t('gearMarket')}
+        {t('gearMarket')}
       </Link>
 
       <div
@@ -506,7 +506,7 @@ export function GearListingDetail() {
               <p
                 style={{ color: colors.borderStrong, fontSize: 11, textAlign: 'center', margin: 0 }}
               >
-                {t('escrowNotice')}
+                {t('escrowNotice')}
               </p>
             </>
           ) : listing.status !== 'active' ? (

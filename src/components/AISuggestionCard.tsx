@@ -561,7 +561,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                   cursor: 'pointer',
                 }}
               >
-                {t('cancel')}
+                {t('cancel')}
               </button>
             </>
           ) : (
@@ -581,7 +581,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                     letterSpacing: 0.5,
                   }}
                 >
-                  {t('applySuggestions')}
+                  {t('applySuggestions')}
                 </Link>
               )}
               {suggestion.suggestion_type !== 'profile_coach' && onApply && (
@@ -617,7 +617,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                     cursor: 'pointer',
                   }}
                 >
-                  {t('edit')}
+                  {t('edit')}
                 </button>
               )}
               <button
@@ -633,12 +633,12 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                   cursor: 'pointer',
                 }}
               >
-                {t('dismiss')}
+                {t('dismiss')}
               </button>
               {!rated && onRate && <StarRating onRate={handleRate} />}
               {rated && (
                 <span style={{ fontSize: fontSize.xs, color: colors.text.muted }}>
-                  {t('thanksForTheFeedback')}
+                  {t('thanksForTheFeedback')}
                 </span>
               )}
             </>
@@ -650,7 +650,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
         onRate && (
           <div style={{ display: 'flex', alignItems: 'center', gap: space[4] }}>
             <span style={{ fontSize: fontSize.xs, color: colors.text.muted }}>
-              {t('howUsefulWasThis')}
+              {t('howUsefulWasThis')}
             </span>
             <StarRating onRate={handleRate} />
           </div>

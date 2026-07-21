@@ -316,7 +316,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
   };
 
   if (!snapshot)
-    return <div style={{ padding: 32, color: colors.text.muted }}>{t('enteringRitual')}</div>;
+    return <div style={{ padding: 32, color: colors.text.muted }}>{t('enteringRitual')}</div>;
 
   const activeVote = votes.find(vote => vote.status === 'open');
   return (
@@ -377,12 +377,12 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
           )}
           {isCreator && (
             <HiveButton variant="ghost" size="sm" onClick={() => void createHandoff()}>
-              {t('openInBeehive')}
+              {t('openInBeehive')}
             </HiveButton>
           )}
           {role === 'owner' && (
             <HiveButton variant="danger" size="sm" onClick={() => void endSession()}>
-              {t('endReview')}
+              {t('endReview')}
             </HiveButton>
           )}
         </div>
@@ -418,7 +418,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               flexWrap: 'wrap',
             }}
           >
-            <strong>{t('sharedSound')}</strong>
+            <strong>{t('sharedSound')}</strong>
             {isCreator && (
               <>
                 <input
@@ -435,7 +435,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                   loading={uploading}
                   onClick={() => fileRef.current?.click()}
                 >
-                  {t('addAudio')}
+                  {t('addAudio')}
                 </HiveButton>
               </>
             )}
@@ -456,7 +456,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                   }}
                 />
                 <HiveButton variant="ghost" size="sm" onClick={() => void inviteCreator()}>
-                  {t('invite')}
+                  {t('invite')}
                 </HiveButton>
               </div>
             )}
@@ -469,7 +469,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               borderBottom: `1px solid ${colors.border}`,
             }}
           >
-            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>{t('nowShaping')}</div>
+            <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>{t('nowShaping')}</div>
             <div style={{ margin: '6px 0 12px', fontWeight: fontWeight.bold }}>
               {currentAsset?.name ?? 'Select an asset'}
             </div>
@@ -482,7 +482,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                     void setPlayback(currentAsset, 'playing', audioRef.current?.currentTime ?? 0)
                   }
                 >
-                  {t('playForEveryone')}
+                  {t('playForEveryone')}
                 </HiveButton>
                 <HiveButton
                   variant="glass"
@@ -491,10 +491,10 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
                     void setPlayback(currentAsset, 'paused', audioRef.current?.currentTime ?? 0)
                   }
                 >
-                  {t('pause')}
+                  {t('pause')}
                 </HiveButton>
                 <HiveButton variant="ghost" size="sm" onClick={() => setShowVote(true)}>
-                  {t('openVote')}
+                  {t('openVote')}
                 </HiveButton>
               </div>
             )}
@@ -522,13 +522,13 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               </button>
             ))}
             {snapshot.assets.length === 0 && (
-              <div style={{ color: colors.text.muted }}>{t('creatorsHaveNotAdded')}</div>
+              <div style={{ color: colors.text.muted }}>{t('creatorsHaveNotAdded')}</div>
             )}
           </div>
         </section>
         <section style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <div style={{ padding: space[6], borderBottom: `1px solid ${colors.border}` }}>
-            <strong>{t('audienceSignal')}</strong> ·{' '}
+            <strong>{t('audienceSignal')}</strong> ·{' '}
             <span style={{ color: colors.text.muted }}>{participants.length} present</span>
           </div>
           {activeVote && (
@@ -623,7 +623,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               </div>
             ))}
             {messages.length === 0 && (
-              <div style={{ color: colors.text.muted }}>{t('theRoomIsListening')}</div>
+              <div style={{ color: colors.text.muted }}>{t('theRoomIsListening')}</div>
             )}
           </div>
           <div
@@ -657,7 +657,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               disabled={!message.trim()}
               onClick={() => void sendMessage()}
             >
-              {t('send')}
+              {t('send')}
             </HiveButton>
           </div>
         </section>
@@ -676,14 +676,14 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
             zIndex: 20,
           }}
         >
-          <h3>{t('openACreativeFork')}</h3>
+          <h3>{t('openACreativeFork')}</h3>
           <p style={{ color: colors.text.muted }}>
             Audience members will choose between the first four shared assets.
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
-            <HiveButton onClick={() => void createVote()}>{t('openVote')}</HiveButton>
+            <HiveButton onClick={() => void createVote()}>{t('openVote')}</HiveButton>
             <HiveButton variant="ghost" onClick={() => setShowVote(false)}>
-              {t('cancel')}
+              {t('cancel')}
             </HiveButton>
           </div>
         </div>

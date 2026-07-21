@@ -183,7 +183,7 @@ export function NewCollabQuest() {
             />
             <div>
               <p style={{ color: colors.text.dimmed, fontSize: 13, marginBottom: 8 }}>
-                {t('goalsDelivered')}
+                {t('goalsDelivered')}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
                 {form.goals.map((g, i) => (
@@ -211,7 +211,7 @@ export function NewCollabQuest() {
 
         {/* Tags & logistics */}
         <section>
-          <h2 style={sectionHeadStyle}>{t('tagsLogistics')}</h2>
+          <h2 style={sectionHeadStyle}>{t('tagsLogistics')}</h2>
           <div
             className="p15-form-2col"
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
@@ -255,7 +255,7 @@ export function NewCollabQuest() {
 
         {/* Roles */}
         <section>
-          <h2 style={sectionHeadStyle}>{t('rolesNeeded')}</h2>
+          <h2 style={sectionHeadStyle}>{t('rolesNeeded')}</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {roles.map((role, i) => (
               <div

@@ -392,7 +392,7 @@ export function HiveComposer() {
             color: colors.text.primary,
           }}
         >
-          {t('hiveComposer')}
+          {t('hiveComposer')}
         </h1>
 
         <input
@@ -427,7 +427,7 @@ export function HiveComposer() {
               cursor: 'pointer',
             }}
           >
-            {t('agentPanel')}
+            {t('agentPanel')}
           </button>
           <button
             type="button"
@@ -466,7 +466,7 @@ export function HiveComposer() {
           }}
         >
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="composer" size={14} /> {t('draftRestored')}
+            <Icon name="composer" size={14} /> {t('draftRestored')}
           </span>
           <button
             type="button"
@@ -480,7 +480,7 @@ export function HiveComposer() {
               fontSize: fontSize.sm,
             }}
           >
-            {t('dismiss')}
+            {t('dismiss')}
           </button>
         </div>
       )}
@@ -498,7 +498,7 @@ export function HiveComposer() {
             alignItems: 'center',
           }}
         >
-          <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{t('filtering')}</span>
+          <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{t('filtering')}</span>
           {genreFilter && (
             <button
               type="button"
@@ -557,7 +557,7 @@ export function HiveComposer() {
                 fontSize: fontSize.md,
               }}
             >
-              {t('startNewSet')}
+              {t('startNewSet')}
             </div>
           )}
           <ComposerCanvas
@@ -628,7 +628,7 @@ export function HiveComposer() {
             />
             {state.searching && (
               <p style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: 0 }}>
-                {t('searching')}
+                {t('searching')}
               </p>
             )}
             {state.searchResults.length > 0 && (
@@ -670,7 +670,7 @@ export function HiveComposer() {
               state.searchQuery.length > 1 &&
               state.searchResults.length === 0 && (
                 <p style={{ color: colors.text.dim, fontSize: fontSize.sm, margin: 0 }}>
-                  {t('noMixesFound')}
+                  {t('noMixesFound')}
                 </p>
               )}
           </div>

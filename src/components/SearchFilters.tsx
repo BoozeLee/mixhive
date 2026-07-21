@@ -82,7 +82,7 @@ export function SearchFilters({
         }}
       >
         <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text.primary, margin: 0 }}>
-          {t('filters')}
+          {t('filters')}
         </h2>
         <div style={{ display: 'flex', gap: space[6] }}>
           <Button
@@ -92,10 +92,10 @@ export function SearchFilters({
             onClick={reset}
             disabled={!hasActiveFilters || isLoading}
           >
-            {t('reset')}
+            {t('reset')}
           </Button>
           <Button type="button" size="sm" onClick={onApply} loading={isLoading}>
-            {t('apply')}
+            {t('apply')}
           </Button>
         </div>
       </div>
@@ -116,7 +116,7 @@ export function SearchFilters({
               marginBottom: space[5],
             }}
           >
-            {t('content')}
+            {t('content')}
           </legend>
           <div style={{ display: 'flex', gap: space[4] }}>
             {(['all', 'mixes', 'profiles', 'scenes'] as const).map(type => (
@@ -145,7 +145,7 @@ export function SearchFilters({
               marginBottom: space[5],
             }}
           >
-            {t('genre')}
+            {t('genre')}
           </label>
           <select
             id="search-genre"
@@ -162,7 +162,7 @@ export function SearchFilters({
               font: 'inherit',
             }}
           >
-            <option value="">{t('allGenres')}</option>
+            <option value="">{t('allGenres')}</option>
             {genres.map(genre => (
               <option key={genre} value={genre}>
                 {genre}
@@ -182,7 +182,7 @@ export function SearchFilters({
               marginBottom: space[5],
             }}
           >
-            {t('location')}
+            {t('location')}
           </label>
           <Input
             id="search-location"

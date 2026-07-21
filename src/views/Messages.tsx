@@ -25,9 +25,9 @@ export function MessagesPage() {
   if (!user) {
     return (
       <div style={{ textAlign: 'center', padding: 60, color: colors.text.dim }}>
-        <p style={{ marginBottom: space[6] }}>{t('signInToSee')}</p>
+        <p style={{ marginBottom: space[6] }}>{t('signInToSee')}</p>
         <Link to="/login" style={{ color: colors.accent }}>
-          {t('signIn')}
+          {t('signIn')}
         </Link>
       </div>
     );
@@ -102,7 +102,7 @@ export function MessagesPage() {
                 >
                   {conv.lastMessage ? (
                     <>
-                      {conv.lastMessage.sender_id === user.id && <span>{t('you')}</span>}
+                      {conv.lastMessage.sender_id === user.id && <span>{t('you')}</span>}
                       {conv.lastMessage.body}
                     </>
                   ) : (

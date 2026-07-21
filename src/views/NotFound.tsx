@@ -13,7 +13,7 @@ export function NotFound() {
         title={t('pageNotFound')}
         body={
           <>
-            <span style={{ color: colors.text.muted }}>{t('noRouteMatches')}</span>{' '}
+            <span style={{ color: colors.text.muted }}>{t('noRouteMatches')}</span>{' '}
             <code style={{ color: colors.accent, fontFamily: 'monospace', fontSize: 13 }}>
               {location.pathname}
             </code>

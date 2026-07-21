@@ -123,7 +123,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
           color: colors.text.dim,
         }}
       >
-        <p style={{ fontSize: fontSize.md, margin: '0 0 8px' }}>{t('thisArtistHasnT')}</p>
+        <p style={{ fontSize: fontSize.md, margin: '0 0 8px' }}>{t('thisArtistHasnT')}</p>
         {isOwn && (
           <p style={{ fontSize: fontSize.sm, color: colors.text.faint }}>
             Enable "Share my journey" in Settings to show your story.
@@ -166,7 +166,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
             fontSize: fontSize.sm,
           }}
         >
-          {t('retry')}
+          {t('retry')}
         </button>
       </div>
     );
@@ -213,7 +213,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
               letterSpacing: '0.08em',
             }}
           >
-            {t('journey')}
+            {t('journey')}
           </h2>
           <div
             style={{
@@ -263,7 +263,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
               letterSpacing: '0.08em',
             }}
           >
-            {t('soundEvolution')}
+            {t('soundEvolution')}
           </h2>
 
           {/* 3-period genre timeline */}
@@ -367,7 +367,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
                           letterSpacing: '0.06em',
                         }}
                       >
-                        {t('soundConsistency')}
+                        {t('soundConsistency')}
                       </span>
                       <span
                         style={{

@@ -221,7 +221,7 @@ export function Opportunities() {
               lineHeight: 1.6,
             }}
           >
-            {t('pilotDescription')}
+            {t('pilotDescription')}
           </p>
         </div>
         <div
@@ -255,7 +255,7 @@ export function Opportunities() {
             {opportunities.length}
           </div>
           <div style={{ color: colors.text.muted, fontSize: fontSize.xs }}>
-            {t('manualSupabaseBacked')}
+            {t('manualSupabaseBacked')}
           </div>
           {user && (
             <Button
@@ -361,7 +361,7 @@ export function Opportunities() {
               </div>
             ))}
             <a href="/agents/inbox" style={{ color: colors.accent, fontSize: fontSize.xs }}>
-              {t('viewAllInAgents')}
+              {t('viewAllInAgents')}
             </a>
           </div>
         </div>
@@ -394,7 +394,7 @@ export function Opportunities() {
               transition: transition.base,
             }}
           >
-            {t(TAB_KEYS[key])}
+            {t(TAB_KEYS[key])}
           </button>
         ))}
       </div>
@@ -472,7 +472,7 @@ export function Opportunities() {
                     {match.score}
                   </div>
                   <div style={{ color: colors.text.dim, fontSize: fontSize.xs }}>
-                    {t('matchLabel')}
+                    {t('matchLabel')}
                   </div>
                 </div>
               </div>
@@ -594,7 +594,7 @@ export function Opportunities() {
                 lineHeight: 1.5,
               }}
             >
-              {t('draftDescription')}
+              {t('draftDescription')}
             </p>
             <textarea
               value={draft}

@@ -136,10 +136,10 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               letterSpacing: 0.8,
             }}
           >
-            {t('djSetAnalyzer')}
+            {t('djSetAnalyzer')}
           </div>
           <h2 style={{ margin: '4px 0 0', color: colors.text.primary, fontSize: 17 }}>
-            {t('audioIntelligence')}
+            {t('audioIntelligence')}
           </h2>
         </div>
         {isOwner && (
@@ -182,7 +182,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         )}
       </div>
 
-      {loading && <p style={{ color: colors.text.dim, fontSize: 13 }}>{t('loadingAnalyzer')}</p>}
+      {loading && <p style={{ color: colors.text.dim, fontSize: 13 }}>{t('loadingAnalyzer')}</p>}
       {message && <p style={{ color: colors.accent, fontSize: 13, lineHeight: 1.5 }}>{message}</p>}
 
       {!loading && !feature && !message && (
@@ -244,7 +244,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
           {sections.length > 0 && (
             <div style={{ marginTop: 16 }}>
               <div style={{ color: colors.text.dimmed, fontSize: 12, marginBottom: 8 }}>
-                {t('structurePreview')}
+                {t('structurePreview')}
               </div>
               <div style={{ display: 'grid', gap: 6 }}>
                 {sections.map(section => (
@@ -288,7 +288,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
           {tracks.length > 0 && (
             <div style={{ marginTop: 16 }}>
               <div style={{ color: colors.text.dimmed, fontSize: 12, marginBottom: 8 }}>
-                {t('recognizedTracklist')}
+                {t('recognizedTracklist')}
               </div>
               {tracks.map(track => (
                 <div
@@ -335,7 +335,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               marginBottom: 10,
             }}
           >
-            {t('aiSetIntelligence')}
+            {t('aiSetIntelligence')}
           </div>
           <div style={{ display: 'grid', gap: 8 }}>
             {aiAnalysis.suggestions.slice(0, 3).map((s, i) => (

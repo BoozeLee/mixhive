@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { colors, space, radius } from '../styles/tokens';
+import { Icon } from './ui/Icon';
 
 interface ErrorComponentProps {
   error?: string | Error | null;
@@ -30,15 +31,20 @@ export function ErrorComponent({
         color: colors.text.muted,
       }}
     >
+      {/* Registry icon rather than an emoji literal. The previous ⚠️ carried a
+          VARIATION SELECTOR-16 (U+FE0F), which forces emoji presentation and
+          renders as a blank box on any system without a colour-emoji font — in
+          the shared error component, i.e. the fallback UI for every view. */}
       <div
         aria-hidden="true"
         style={{
-          fontSize: 48,
           marginBottom: space[4],
           color: colors.danger,
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
-        ⚠️
+        <Icon name="alert" size={48} strokeWidth={1.5} />
       </div>
       <h2
         style={{

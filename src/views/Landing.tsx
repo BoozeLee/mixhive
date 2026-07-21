@@ -87,7 +87,7 @@ function AppPreview() {
         />
         <div style={{ minWidth: 0 }}>
           <div style={{ color: colors.text.primary, fontWeight: fontWeight.semibold }}>
-            {t('midnightWarehouse')}
+            {t('midnightWarehouse')}
           </div>
           <div style={{ color: colors.text.dim, fontSize: fontSize.sm }}>
             @ken_dovor · 128 BPM · Techno
@@ -266,10 +266,10 @@ export function Landing() {
             style={{ display: 'flex', gap: space[6], flexWrap: 'wrap', marginTop: space[10] }}
           >
             <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>
-              {t('joinTheHive')}
+              {t('joinTheHive')}
             </HiveButton>
             <HiveButton variant="ghost" size="lg" onClick={() => navigate('/discover')}>
-              {t('exploreMixes')}
+              {t('exploreMixes')}
             </HiveButton>
           </motion.div>
 
@@ -381,7 +381,7 @@ export function Landing() {
               margin: `${space[8]}px 0 0`,
             }}
           >
-            {t('yourSoundBelongsHere')}
+            {t('yourSoundBelongsHere')}
           </h2>
           <div
             style={{
@@ -393,10 +393,10 @@ export function Landing() {
             }}
           >
             <HiveButton variant="primary" size="lg" onClick={() => navigate('/register')}>
-              {t('createYourAccount')}
+              {t('createYourAccount')}
             </HiveButton>
             <HiveButton variant="ghost" size="lg" onClick={() => navigate('/login')}>
-              {t('signIn')}
+              {t('signIn')}
             </HiveButton>
           </div>
         </div>

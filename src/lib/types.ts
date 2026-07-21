@@ -323,7 +323,19 @@ export interface Notification {
     | 'gear_disputed'
     | 'earnings_paid'
     | 'quest_complete'
-    | 'beehive_publish';
+    | 'beehive_publish'
+    // Added by migration 114's CHECK constraint and rendered by
+    // notificationPresentation.ts. This union had drifted behind both.
+    // live_room_invite and event_reminder are still not produced by anything —
+    // they need an invite table and a scheduler respectively (see migration 118).
+    | 'live_room_invite'
+    | 'live_room_started'
+    | 'live_room_ended'
+    | 'event_created'
+    | 'event_reminder'
+    | 'event_update'
+    | 'event_cancelled'
+    | 'rsvp_confirmed';
   actor_id: string | null;
   mix_id: string | null;
   buzz_id: string | null;

@@ -1,7 +1,7 @@
 'use client';
 import { useTranslations } from 'next-intl';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { colors, fontSize, radius } from '../styles/tokens';
 import { consentDecided, saveConsent } from '../lib/consent';
 
@@ -12,9 +12,38 @@ export function ConsentBanner() {
   const [analytics, setAnalytics] = useState(true);
   const [marketing, setMarketing] = useState(false);
 
+  const bannerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setShow(!consentDecided());
   }, []);
+
+  // Reserve space for the banner instead of letting it sit on top of the page.
+  //
+  // It is position:fixed with nothing compensating, so it covered whatever was
+  // at the bottom of the viewport — the stats row on the desktop home page, and
+  // content cards on mobile. Measured rather than hardcoded because the banner
+  // wraps to two or three rows on narrow screens.
+  useEffect(() => {
+    if (!show) return;
+    const el = bannerRef.current;
+    if (!el) return;
+
+    const apply = () => {
+      document.body.style.paddingBottom = `${el.offsetHeight + 32}px`;
+    };
+    apply();
+
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    window.addEventListener('resize', apply);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', apply);
+      document.body.style.paddingBottom = '';
+    };
+  }, [show, mode]);
 
   if (!show) return null;
 
@@ -36,6 +65,7 @@ export function ConsentBanner() {
 
   return (
     <div
+      ref={bannerRef}
       role="dialog"
       aria-label={t('cookieConsent')}
       style={{
@@ -76,7 +106,7 @@ export function ConsentBanner() {
             })}
           </p>
           <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
-            <button onClick={() => decide(true)} style={btn(colors.success, colors.black)}>
+            <button onClick={() => decide(true)} style={btn(colors.accent, colors.black)}>
               {t('acceptAnalytics')}
             </button>
             <button onClick={() => decide(false)} style={btn('transparent', colors.text.secondary)}>
@@ -156,7 +186,7 @@ export function ConsentBanner() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button
               onClick={() => decide(analytics, marketing)}
-              style={btn(colors.success, colors.black)}
+              style={btn(colors.accent, colors.black)}
             >
               {t('savePreferences')}
             </button>

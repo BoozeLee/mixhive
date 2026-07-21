@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { SearchAutocomplete } from './SearchAutocomplete';
@@ -8,6 +8,15 @@ export function SearchBar() {
   const t = useTranslations('searchBar');
   const wrapperRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  // The handler below accepts Cmd *or* Ctrl, but the hint always read "⌘K" —
+  // so every Windows and Linux user was shown a key they do not have. Resolved
+  // after mount to keep server and client markup identical.
+  const [shortcutLabel, setShortcutLabel] = useState('Ctrl K');
+  useEffect(() => {
+    const isApple = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+    setShortcutLabel(isApple ? '⌘K' : 'Ctrl K');
+  }, []);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -30,7 +39,13 @@ export function SearchBar() {
 
   return (
     <div ref={wrapperRef} style={{ position: 'relative', width: 300, maxWidth: '100%' }}>
-      <SearchAutocomplete onSearch={handleSearch} placeholder={t('placeholder')} />
+      {/* No submit button here: it rendered directly underneath the shortcut
+          hint below, so the two overlapped in the navbar. Enter still submits. */}
+      <SearchAutocomplete
+        onSearch={handleSearch}
+        placeholder={t('placeholder')}
+        showSubmitButton={false}
+      />
       <kbd
         style={{
           position: 'absolute',
@@ -46,7 +61,7 @@ export function SearchBar() {
           pointerEvents: 'none',
         }}
       >
-        ⌘K
+        {shortcutLabel}
       </kbd>
     </div>
   );

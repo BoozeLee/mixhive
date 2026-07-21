@@ -89,7 +89,7 @@ export function Events() {
           marginBottom: space[8],
         }}
       >
-        <SectionHeading eyebrow="EVENTS" title={t('title')} subtitle={t('subtitle')} />
+        <SectionHeading as="h1" eyebrow="EVENTS" title={t('title')} subtitle={t('subtitle')} />
         {user && (
           <Button onClick={() => navigate('/events/new')} size="sm">
             {t('createEvent')}

@@ -11,9 +11,21 @@ interface SearchAutocompleteProps {
   onSearch: (query: string) => void;
   placeholder?: string;
   className?: string;
+  /**
+   * Show the submit button. Off in the navbar, where the field is compact and a
+   * keyboard-shortcut hint sits at the input's right edge — the button used to
+   * render underneath that hint, so the two visibly collided. Enter still
+   * submits either way.
+   */
+  showSubmitButton?: boolean;
 }
 
-export function SearchAutocomplete({ onSearch, placeholder, className }: SearchAutocompleteProps) {
+export function SearchAutocomplete({
+  onSearch,
+  placeholder,
+  className,
+  showSubmitButton = true,
+}: SearchAutocompleteProps) {
   const t = useTranslations('searchAutocomplete');
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -87,9 +99,11 @@ export function SearchAutocomplete({ onSearch, placeholder, className }: SearchA
           placeholder={placeholder || t('placeholder')}
           style={{ flex: 1, minWidth: 0 }}
         />
-        <Button type="submit" size="sm" disabled={!query.trim()}>
-          {t('search')}
-        </Button>
+        {showSubmitButton && (
+          <Button type="submit" size="sm" disabled={!query.trim()}>
+            {t('search')}
+          </Button>
+        )}
       </form>
 
       {open && visibleSuggestions.length > 0 && (

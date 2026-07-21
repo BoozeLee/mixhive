@@ -92,21 +92,40 @@ if (typeof window !== 'undefined')
     })),
   });
 
-// Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
-  unobserve() {}
-};
+// Mock IntersectionObserver / ResizeObserver.
+//
+// Both constructors used to be declared `constructor() {}`, taking no
+// parameters and throwing the callback away. Two consequences: CodeQL reads
+// the whole repo, resolves `new ResizeObserver(cb)` in component code against
+// these stubs rather than the DOM types, and correctly reports a callback
+// handed to a constructor that accepts nothing — which is what blocked #101.
+//
+// The bigger cost is silent: a discarded callback can never fire, so anything
+// driven by one of these observers is inert under test and its logic goes
+// unexercised while the suite still passes. Storing the callback and exposing
+// a trigger keeps the stubs honest and lets a test drive them when it needs to.
+class MockObserver {
+  constructor(callback) {
+    this.callback = callback;
+    this.elements = new Set();
+  }
+  observe(el) {
+    this.elements.add(el);
+  }
+  unobserve(el) {
+    this.elements.delete(el);
+  }
+  disconnect() {
+    this.elements.clear();
+  }
+  /** Test helper — invoke the callback as the real observer would. */
+  trigger(entries = []) {
+    this.callback?.(entries, this);
+  }
+}
 
-// Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
-  unobserve() {}
-};
+global.IntersectionObserver = MockObserver;
+global.ResizeObserver = MockObserver;
 
 // Mock AudioContext
 global.AudioContext = jest.fn();

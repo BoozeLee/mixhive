@@ -38,6 +38,24 @@ interface EventDetail {
   }[];
 }
 
+/**
+ * Fetch a single event, forwarding the caller's access token when signed in.
+ *
+ * An unauthenticated GET only ever sees published events: the
+ * "Organizers can see own draft events" RLS policy keys off auth.uid(), which is
+ * null without a token. Omitting the header meant an organizer was redirected to
+ * their freshly created draft and shown "Event not found" — the draft lifecycle
+ * broken end to end, in production. Anonymous callers are unaffected and still
+ * see only published events.
+ */
+async function fetchEvent(id: string) {
+  const { data: session } = await supabase.auth.getSession();
+  const token = session?.session?.access_token;
+  return fetch(`/api/events/${id}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+}
+
 export function EventDetail() {
   const t = useTranslations('events');
   const { id } = useParams<{ id: string }>();
@@ -53,7 +71,7 @@ export function EventDetail() {
     let cancelled = false;
 
     async function load() {
-      const res = await fetch(`/api/events/${id}`);
+      const res = await fetchEvent(id!);
       if (!cancelled && res.ok) {
         const data = await res.json();
         setEvent(data);
@@ -98,7 +116,7 @@ export function EventDetail() {
         setRsvpStatus(status);
         toast.success(status === 'going' ? t('rsvpGoing') : t('rsvpMaybe'));
         // Reload counts
-        const detailRes = await fetch(`/api/events/${id}`);
+        const detailRes = await fetchEvent(id);
         if (detailRes.ok) setEvent(await detailRes.json());
       }
     } finally {
@@ -115,7 +133,7 @@ export function EventDetail() {
     });
     setRsvpStatus(null);
     toast.success(t('rsvpCancelled'));
-    const detailRes = await fetch(`/api/events/${id}`);
+    const detailRes = await fetchEvent(id);
     if (detailRes.ok) setEvent(await detailRes.json());
   }
 

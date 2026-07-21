@@ -1,47 +1,23 @@
 name: Deploy migrations to production
 
-# ⚠️ DO NOT RUN AS WRITTEN — see the safety note below.
-#
-# Verified against production on 2026-07-20 via the Management API:
-# supabase_migrations.schema_migrations DOES NOT EXIST on the linked project.
-# There is no migration ledger; the schema was assembled by other means.
-#
-# `db push --include-all` means "apply everything absent from the remote history
-# table". With no history table that is ALL 113 migrations, replayed against a
-# database that already holds 112 tables. Not all of them are idempotent, so this
-# would be destructive.
-#
-# The earlier "lying ledger" guard in this file anticipated the wrong failure: it
-# assumed the ledger might falsely claim migrations were applied. In fact there is
-# no ledger to lie.
-#
-# Before this workflow can be used, one of:
-#   a) bootstrap supabase_migrations.schema_migrations to reflect what is really
-#      deployed, then push only what is genuinely pending; or
-#   b) apply the explicit missing set (102, 106, 108-115; NOT 116) directly, each
-#      inside BEGIN/ROLLBACK first to prove it applies cleanly. Direct Postgres is
-#      firewalled from the dev machine, but the Management API endpoint
-#      /v1/projects/{ref}/database/query runs SQL over HTTPS and works.
-#
-# Until then the job below hard-stops.
-
 # Applies pending migrations to the linked Supabase project.
 #
-# Why this exists: nothing applied migrations to production. schema-drift.yml
-# only *detects* drift and is gated off behind a repo variable, so schema changes
-# were applied by hand, out of order, and sometimes recorded without running --
-# 071's own header notes that 004 and 023 were marked applied via
-# `repair --status applied` without executing. As of 2026-07-20 production is
-# behind by 9 tables and 11 columns.
+# History, because it explains the guards below. Production had NO
+# supabase_migrations.schema_migrations at all — the schema was assembled outside
+# the migration system. `db push --include-all` therefore meant "replay all 111
+# migrations against a populated database", so this workflow was hard-stopped.
 #
-# Deliberately manual (workflow_dispatch only). Schema changes should never ride
-# along with a code deploy, and dry_run defaults to true so the first run of any
-# change reports rather than acts.
+# The ledger was bootstrapped on 2026-07-21 after a deep diff (tables, columns,
+# functions, policies, triggers, indexes) confirmed production matched the chain.
+# That diff found three migrations — 096, 101, 107 — that a tables-and-columns
+# comparison had missed, because they create only functions, a policy and an
+# index. They were applied first.
 #
-# Requires three repository secrets:
-#   SUPABASE_ACCESS_TOKEN  — personal access token (Account → Access Tokens)
-#   SUPABASE_DB_PASSWORD   — database password (Project Settings → Database)
-#   SUPABASE_PROJECT_REF   — project ref, e.g. the value in supabase/.temp/project-ref
+# 110 versions (000-115) are recorded. 116 is deliberately NOT, because it is
+# genuinely not deployed.
+#
+# `--include-all` is gone: with a truthful ledger a plain push applies exactly
+# what is pending, and --include-all would defeat the point of having one.
 
 on:
   workflow_dispatch:
@@ -68,13 +44,6 @@ jobs:
     timeout-minutes: 20
     environment: production
     steps:
-      - name: Refuse to run until the ledger question is settled
-        run: |
-          echo "::error::Production has no supabase_migrations.schema_migrations table."
-          echo "::error::'db push --include-all' would replay all 113 migrations against a populated database."
-          echo "::error::See the safety note at the top of this workflow. Remove this step only once the ledger is bootstrapped."
-          exit 1
-
       - uses: actions/checkout@v6
 
       - name: Install Supabase CLI
@@ -135,47 +104,39 @@ jobs:
           supabase migration list --linked
           echo "::endgroup::"
           echo "::group::What db push would apply"
-          supabase db push --linked --include-all --dry-run
+          supabase db push --linked --dry-run
           echo "::endgroup::"
 
-      - name: Warn if an expected migration is already recorded as applied
-        # db push decides purely from the remote history table. This project has
-        # falsified that table before: 071's header records 004 and 023 being
-        # marked applied via `repair --status applied` without their SQL running.
-        # If any of these are recorded-but-not-run, push will skip them and this
-        # job would report success while changing nothing — the exact failure we
-        # are trying to end. Surface it loudly instead.
+      - name: Refuse to push if the remote has no migration ledger
+        # The dangerous state is an ABSENT ledger, not a lying one. Production
+        # had no supabase_migrations.schema_migrations at all until 2026-07-21;
+        # with no ledger every migration reads as pending and a push replays the
+        # entire chain against a populated database.
+        #
+        # The previous version of this step warned when specific versions looked
+        # already-applied. That premise is now inverted — they ARE applied and
+        # recorded — so it would have warned on every single run and taught
+        # everyone to ignore it.
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
-          # Versions known (2026-07-20) to be missing from production by schema
-          # introspection, regardless of what the ledger claims.
-          EXPECTED="102 106 108 109 110 111 112 113 114 115"
-          list=$(supabase migration list --linked 2>/dev/null || true)
-          suspect=
-          for v in $EXPECTED; do
-            # A row showing the version on both local and remote sides means the
-            # ledger already claims it is applied.
-            if echo "$list" | grep -E "^\s*\|?\s*$v\b" | grep -qE "$v.*$v"; then
-              suspect="$suspect $v"
-            fi
-          done
-          if [ -n "$suspect" ]; then
-            echo "::warning::Ledger already claims these are applied, yet schema introspection said they are missing:$suspect"
-            echo "::warning::db push will SKIP them. Reconcile first with: supabase migration repair --status reverted <version>"
-          else
-            echo "No conflict between the ledger and the known-missing set."
+          list=$(supabase migration list --linked 2>&1 || true)
+          echo "$list"
+          recorded=$(echo "$list" | grep -cE "^[[:space:]]*\|?[[:space:]]*[0-9]{3}[[:space:]]*\|[[:space:]]*[0-9]{3}" || true)
+          if [ "${recorded:-0}" -lt 50 ]; then
+            echo "::error::Remote ledger looks absent or near-empty ($recorded rows matched)."
+            echo "::error::A push in this state would replay the whole chain. Bootstrap the ledger first."
+            exit 1
           fi
+          echo "Remote ledger present ($recorded versions recorded)."
 
       - name: Apply
         if: ${{ inputs.dry_run == false }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        # --include-all is required, not incidental: production applied 103-105
-        # but not 102, so a plain push would skip the older pending migration.
-        run: supabase db push --linked --include-all
+        run: supabase db push --linked
 
       - name: Dry run notice
         if: ${{ inputs.dry_run == true }}
@@ -189,7 +150,7 @@ jobs:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
           supabase migration list --linked
-          remaining=$(supabase db push --linked --include-all --dry-run 2>&1 || true)
+          remaining=$(supabase db push --linked --dry-run 2>&1 || true)
           if echo "$remaining" | grep -qE "^\s*[0-9]{3}_"; then
             echo "::error::Migrations are still pending after the push:"
             echo "$remaining"

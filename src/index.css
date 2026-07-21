@@ -21,14 +21,26 @@ input,
 textarea,
 select {
   font-family: inherit;
-  outline: none;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: #f6c40044 !important;
-}
+/*
+ * These two rules used to read:
+ *
+ *   input, textarea, select        { outline: none; }
+ *   input:focus, …                 { border-color: #f6c40044 !important; }
+ *
+ * Together they removed the focus outline from every form control in the app
+ * and replaced it with a gold border at 0x44 alpha. Composited over the field
+ * background that is rgb(71, 57, 4) — 1.78:1, where WCAG 2.4.11 asks for 3:1.
+ * Solid gold on the same background is 12.30:1.
+ *
+ * The !important also meant no component could style its own focus state: any
+ * rule a component defined lost to this one, which is why focus looked
+ * inconsistent from screen to screen no matter what individual forms did.
+ *
+ * Focus is now owned by `:focus-visible` in styles/global.css — the shared
+ * outline for controls generally, and `.mh-field` for text inputs.
+ */
 
 ::selection {
   background: #f6c40044;

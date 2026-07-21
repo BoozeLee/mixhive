@@ -1,5 +1,5 @@
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from 'react';
-import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens';
+import { colors, radius, fontSize, fontWeight } from '../../styles/tokens';
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -51,32 +51,26 @@ export const Input = forwardRef<HTMLInputElement, Props>(function Input(
         ref={ref}
         id={inputId}
         disabled={disabled}
+        // aria-invalid drives the error ring in CSS as well as announcing the
+        // state, so the two can't disagree.
         aria-invalid={Boolean(error) || undefined}
         aria-describedby={describedBy}
         style={{
           background: colors.bg,
-          border: `1px solid ${error ? colors.danger : colors.borderStrong}`,
+          // border, box-shadow and their transition come from `.mh-field` in
+          // global.css so the :focus-visible ring can own them.
           borderRadius: radius.md,
           padding: '8px 12px',
           color: colors.text.primary,
           fontSize: fontSize.md,
           fontFamily: 'inherit',
-          outline: 'none',
-          transition: `border-color ${transition.base}, box-shadow ${transition.base}`,
           opacity: disabled ? 0.55 : 1,
           ...style,
         }}
-        onFocus={e => {
-          e.currentTarget.style.borderColor = error ? colors.danger : colors.accent;
-          e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? colors.dangerBg : colors.accentFaint}`;
-          rest.onFocus?.(e);
-        }}
-        onBlur={e => {
-          e.currentTarget.style.borderColor = error ? colors.danger : colors.borderStrong;
-          e.currentTarget.style.boxShadow = 'none';
-          rest.onBlur?.(e);
-        }}
         {...rest}
+        // After the spread: a caller's className is merged in, never dropped,
+        // and can't clobber the class the focus ring depends on.
+        className={['mh-field', rest.className].filter(Boolean).join(' ')}
       />
       {help && !error && (
         <span id={helpId} style={{ color: colors.text.dim, fontSize: fontSize.xs }}>

@@ -39,6 +39,8 @@
   --hive-dim: #6f6a5c;
   --hive-danger: #ff6b5e;
   --hive-success: #7eed8b;
+  --hive-border: #1f1d16;
+  --hive-border-strong: #35322a;
 
   /* Audio-reactive: src/lib/audioReactive.ts writes a value 0..1 from the
      current track's bass channel. Defaults to 0 when nothing is playing. */

@@ -21,7 +21,7 @@ export function NeonDivider({ width = 220, style }: Props) {
         width,
         height: 2,
         margin: '0 auto',
-        borderRadius: 2,
+        borderRadius: 4,
         background: `linear-gradient(90deg, transparent, ${withAlpha(colors.accent, 0.15)} 20%, ${colors.accentBright} 50%, ${withAlpha(colors.accent, 0.15)} 80%, transparent)`,
         boxShadow: `0 0 14px ${withAlpha(colors.accent, 0.45)}`,
         ...style,

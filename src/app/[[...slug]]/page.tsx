@@ -32,7 +32,7 @@ function AppLoader() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#0a0a0a',
+          background: '#070706',
           color: '#f6c400',
           fontFamily: 'system-ui, sans-serif',
           padding: 24,
@@ -49,7 +49,7 @@ function AppLoader() {
             onClick={() => window.location.reload()}
             style={{
               background: '#f6c400',
-              color: '#0a0a0a',
+              color: '#070706',
               border: 'none',
               padding: '12px 24px',
               borderRadius: 6,

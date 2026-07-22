@@ -82,7 +82,7 @@ export function AddToPlaylistModal({ mixId, userId, onClose }: Props) {
         aria-labelledby="add-to-playlist-title"
         style={{
           background: colors.surface,
-          borderRadius: 12,
+          borderRadius: 10,
           border: `1px solid ${colors.borderSubtle}`,
           padding: 24,
           width: '90%',

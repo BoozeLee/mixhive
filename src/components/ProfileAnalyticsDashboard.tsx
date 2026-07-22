@@ -90,17 +90,17 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
         }}
       >
         <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: colors.text.primary }}>
-          {t('analytics')}
+          {t('analytics')}
         </h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
           <Button type="button" variant="secondary" size="sm" onClick={copyShareCard}>
-            {t('shareCard')}
+            {t('shareCard')}
           </Button>
           <Button type="button" variant="secondary" size="sm" onClick={exportCsv}>
-            {t('csv')}
+            {t('csv')}
           </Button>
           <Button type="button" variant="secondary" size="sm" onClick={exportJson}>
-            {t('json')}
+            {t('json')}
           </Button>
         </div>
       </div>
@@ -150,7 +150,7 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
               textTransform: 'uppercase',
             }}
           >
-            {t('honeyDrop')}
+            {t('honeyDrop')}
           </div>
           <div style={{ color: colors.text.primary, fontSize: 15, fontWeight: 700, marginTop: 4 }}>
             {analytics.totalPlays >= 1000
@@ -161,7 +161,7 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
           </div>
         </div>
         <Button type="button" variant="primary" size="sm" onClick={copyShareCard}>
-          {t('copyDrop')}
+          {t('copyDrop')}
         </Button>
       </div>
       <div
@@ -180,7 +180,7 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
           }}
         >
           <h3 style={{ margin: '0 0 12px', color: colors.text.secondary, fontSize: 14 }}>
-            {t('weeklyActivity')}
+            {t('weeklyActivity')}
           </h3>
           <div style={{ display: 'flex', alignItems: 'end', gap: space[4], height: 90 }}>
             {analytics.weeklyEvents.map(item => (
@@ -196,7 +196,7 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
                     borderRadius: radius.sm,
                   }}
                 />
-                <span style={{ color: colors.text.dim, fontSize: 10, textAlign: 'center' }}>
+                <span style={{ color: colors.text.dim, fontSize: 11, textAlign: 'center' }}>
                   {item.label}
                 </span>
               </div>
@@ -212,10 +212,10 @@ export function ProfileAnalyticsDashboard({ analytics, profileName }: Props) {
           }}
         >
           <h3 style={{ margin: '0 0 12px', color: colors.text.secondary, fontSize: 14 }}>
-            {t('topMixes')}
+            {t('topMixes')}
           </h3>
           {analytics.topMixes.length === 0 ? (
-            <p style={{ color: colors.text.dim, fontSize: 13 }}>{t('noMixesYet')}</p>
+            <p style={{ color: colors.text.dim, fontSize: 13 }}>{t('noMixesYet')}</p>
           ) : (
             analytics.topMixes.map(mix => (
               <div

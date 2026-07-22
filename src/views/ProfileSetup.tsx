@@ -554,7 +554,7 @@ export function ProfileSetup() {
           style={{
             background: colors.surface,
             border: `1px solid ${colors.border}`,
-            borderRadius: 16,
+            borderRadius: 10,
             padding: `${space[11]}px ${space[10]}px`,
           }}
         >

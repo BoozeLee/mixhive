@@ -244,7 +244,7 @@ export function EditMix() {
 
   return (
     <div style={{ maxWidth: 540, margin: '0 auto', padding: '24px 16px' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: colors.text.primary, marginBottom: 24 }}>
+      <h1 style={{ fontSize: 20, fontWeight: 700, color: colors.text.primary, marginBottom: 24 }}>
         {t('title')}
       </h1>
 

@@ -39,7 +39,7 @@ export const HiveCard = forwardRef<HTMLDivElement, Props>(function HiveCard(
 ) {
   const baseStyle: React.CSSProperties = {
     position: 'relative',
-    borderRadius: 18,
+    borderRadius: 10,
     padding: 20,
     color: `var(--hive-text, ${colors.hiveText})`,
     transition: 'border-color 240ms ease, box-shadow 240ms ease, transform 240ms ease',

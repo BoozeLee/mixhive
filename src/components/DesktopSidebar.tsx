@@ -122,7 +122,7 @@ export function DesktopSidebar() {
                   fontWeight: fontWeight.bold,
                   fontSize: fontSize.md,
                   marginBottom: space[4],
-                  boxShadow: '0 4px 18px rgba(240,192,64,0.35)',
+                  boxShadow: '0 4px 18px rgba(246,196,0,0.35)',
                   transition: transition.base,
                 }}
               >
@@ -155,7 +155,7 @@ export function DesktopSidebar() {
               }}
               onMouseEnter={e => {
                 if (!active) {
-                  e.currentTarget.style.background = 'rgba(240,192,64,0.06)';
+                  e.currentTarget.style.background = 'rgba(246,196,0,0.06)';
                   e.currentTarget.style.color = colors.text.secondary;
                 }
               }}
@@ -176,7 +176,7 @@ export function DesktopSidebar() {
                     right: 12,
                     background: colors.accent,
                     color: colors.bg,
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: 700,
                     width: 16,
                     height: 16,
@@ -216,7 +216,7 @@ export function DesktopSidebar() {
             transition: transition.base,
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(240,192,64,0.06)';
+            e.currentTarget.style.background = 'rgba(246,196,0,0.06)';
           }}
           onMouseLeave={e => {
             e.currentTarget.style.background = 'transparent';

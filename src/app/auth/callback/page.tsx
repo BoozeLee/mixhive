@@ -88,13 +88,13 @@ export default function AuthCallbackPage() {
           minHeight: '100svh',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#0a0a0a',
-          color: '#eee',
+          background: '#070706',
+          color: '#f5f3e7',
         }}
       >
         <div style={{ textAlign: 'center', maxWidth: 400, padding: '0 24px' }}>
           <p style={{ color: '#f55', fontSize: 14, marginBottom: 16 }}>{error}</p>
-          <a href="/login" style={{ color: '#f0c040', fontSize: 14 }}>
+          <a href="/login" style={{ color: '#f6c400', fontSize: 14 }}>
             Back to sign in
           </a>
         </div>
@@ -109,15 +109,15 @@ export default function AuthCallbackPage() {
         minHeight: '100svh',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#0a0a0a',
-        color: '#eee',
+        background: '#070706',
+        color: '#f5f3e7',
       }}
     >
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: '#f0c040', marginBottom: 8 }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: '#f6c400', marginBottom: 8 }}>
           MixHive
         </div>
-        <p style={{ color: '#888', fontSize: 13 }}>Completing sign in…</p>
+        <p style={{ color: '#8c8676', fontSize: 13 }}>Completing sign in…</p>
       </div>
     </div>
   );

@@ -61,7 +61,7 @@ export function WaveBar({
             style={{
               flex: 1,
               height: `${Math.max(8, Math.min(100, h * 100))}%`,
-              borderRadius: 1,
+              borderRadius: 0,
               background: played
                 ? `var(--hive-gold-hot, ${colors.accentBrightest})`
                 : `var(--hive-gold, ${colors.accentBright})`,

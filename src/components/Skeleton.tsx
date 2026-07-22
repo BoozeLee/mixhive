@@ -82,7 +82,7 @@ export function SkeletonFeed() {
 export function SkeletonMixDetail() {
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>
-      <SkeletonBar width="100%" height={320} style={{ borderRadius: 12, marginBottom: 20 }} />
+      <SkeletonBar width="100%" height={320} style={{ borderRadius: 10, marginBottom: 20 }} />
       <SkeletonBar width="60%" height={22} style={{ marginBottom: 8 }} />
       <SkeletonBar width="30%" height={14} style={{ marginBottom: 12 }} />
       <SkeletonBar width="100%" height={40} style={{ borderRadius: 10, marginBottom: 16 }} />

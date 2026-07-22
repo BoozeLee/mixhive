@@ -125,14 +125,16 @@ export default function AdminAgentsPage() {
         display: 'flex',
         height: '100vh',
         fontFamily: 'monospace',
-        background: '#0a0a0a',
+        background: '#070706',
         color: '#e0e0e0',
       }}
     >
       {/* Sidebar */}
-      <aside style={{ width: 280, borderRight: '1px solid #222', overflowY: 'auto', padding: 12 }}>
+      <aside
+        style={{ width: 280, borderRight: '1px solid #1f1d16', overflowY: 'auto', padding: 12 }}
+      >
         <h2 style={{ color: '#ffd700', margin: '0 0 12px' }}>Agent Registry</h2>
-        {loading && <p style={{ color: '#888' }}>Loading…</p>}
+        {loading && <p style={{ color: '#8c8676' }}>Loading…</p>}
         {agents.map(a => (
           <button
             key={a.id}
@@ -151,7 +153,7 @@ export default function AdminAgentsPage() {
             }}
           >
             <div style={{ fontWeight: 600, fontSize: 13 }}>{a.display_name}</div>
-            <div style={{ fontSize: 11, color: tierColor[a.tier] ?? '#888' }}>
+            <div style={{ fontSize: 11, color: tierColor[a.tier] ?? '#8c8676' }}>
               {a.tier} · v{a.lua_script_version} · {a.approval_policy}
               {!a.enabled && <span style={{ color: '#f44336', marginLeft: 6 }}>DISABLED</span>}
             </div>
@@ -168,7 +170,7 @@ export default function AdminAgentsPage() {
         ) : (
           <>
             <h2 style={{ color: '#ffd700', margin: '0 0 4px' }}>{selected.display_name}</h2>
-            <p style={{ color: '#888', margin: '0 0 16px', fontSize: 13 }}>
+            <p style={{ color: '#8c8676', margin: '0 0 16px', fontSize: 13 }}>
               {selected.description}
             </p>
 
@@ -189,7 +191,7 @@ export default function AdminAgentsPage() {
             )}
 
             {/* Version history */}
-            <h3 style={{ color: '#ccc', borderBottom: '1px solid #222', paddingBottom: 8 }}>
+            <h3 style={{ color: '#d4cdb0', borderBottom: '1px solid #1f1d16', paddingBottom: 8 }}>
               Version History
             </h3>
             <div style={{ marginBottom: 20 }}>
@@ -204,8 +206,8 @@ export default function AdminAgentsPage() {
                       padding: '10px 14px',
                       marginBottom: 8,
                       borderRadius: 4,
-                      background: '#111',
-                      border: `1px solid ${isLive ? '#ffd700' : isRolledBack ? '#333' : '#222'}`,
+                      background: '#0f0e0c',
+                      border: `1px solid ${isLive ? '#ffd700' : isRolledBack ? '#333' : '#1f1d16'}`,
                       opacity: isRolledBack ? 0.5 : 1,
                     }}
                   >
@@ -231,7 +233,7 @@ export default function AdminAgentsPage() {
                         <span
                           style={{
                             background: '#333',
-                            color: '#888',
+                            color: '#8c8676',
                             padding: '1px 6px',
                             borderRadius: 3,
                             fontSize: 11,
@@ -292,7 +294,7 @@ export default function AdminAgentsPage() {
             )}
 
             {/* Create new version */}
-            <h3 style={{ color: '#ccc', borderBottom: '1px solid #222', paddingBottom: 8 }}>
+            <h3 style={{ color: '#d4cdb0', borderBottom: '1px solid #1f1d16', paddingBottom: 8 }}>
               Create Draft Version
             </h3>
             <input
@@ -304,7 +306,7 @@ export default function AdminAgentsPage() {
                 width: '100%',
                 padding: '6px 10px',
                 marginBottom: 8,
-                background: '#111',
+                background: '#0f0e0c',
                 border: '1px solid #333',
                 color: '#e0e0e0',
                 borderRadius: 4,
@@ -322,7 +324,7 @@ export default function AdminAgentsPage() {
                 width: '100%',
                 padding: '8px 10px',
                 marginBottom: 10,
-                background: '#111',
+                background: '#0f0e0c',
                 border: '1px solid #333',
                 color: '#e0e0e0',
                 borderRadius: 4,
@@ -337,7 +339,7 @@ export default function AdminAgentsPage() {
               disabled={!newScript.trim()}
               style={{
                 padding: '8px 18px',
-                background: newScript.trim() ? '#1a1a3a' : '#111',
+                background: newScript.trim() ? '#1a1a3a' : '#0f0e0c',
                 border: `1px solid ${newScript.trim() ? '#ffd700' : '#333'}`,
                 color: newScript.trim() ? '#ffd700' : '#555',
                 borderRadius: 4,

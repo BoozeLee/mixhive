@@ -5,40 +5,59 @@
 // these tokens; do not introduce new ad-hoc hex codes.
 
 export const colors = {
-  // Surfaces (darkest → lightest)
-  bg: '#0a0a0a',
-  surface: '#111',
-  surfaceHover: '#1a1a2e',
-  surfaceMuted: '#0f0f0f',
+  // Surfaces (darkest → lightest).
+  //
+  // Warm near-blacks, not neutral ones. These used to disagree with the
+  // --hive-* custom properties in mixhive.css (#0a0a0a here vs #030303 there),
+  // so components and shell chrome rendered subtly different surfaces on the
+  // same page. Both sides now carry identical values, enforced by
+  // src/__tests__/palette-parity.test.ts.
+  bg: '#070706',
+  surface: '#0f0e0c',
+  surfaceHover: '#17150f',
+  surfaceMuted: '#0b0a09',
 
   // Borders
-  border: '#1a1a2e',
-  borderStrong: '#333',
-  borderSubtle: '#222',
+  // Both borders used to be cool — #1a1a2e is navy-tinted and #333 is a flat
+  // neutral — which read as a blue-grey edge drawn around warm black surfaces.
+  // These carry the same perceptual weight as the values they replace (1.14 and
+  // 1.51 against `surface`, versus 1.13 and 1.53) so nothing gets harder to see;
+  // only the hue moves, into the same warm family as the rest of the palette.
+  border: '#1f1d16',
+  borderStrong: '#35322a',
+  borderSubtle: '#171510',
 
-  // Accent (MixHive gold)
-  accent: '#f0c040',
-  accentHover: '#f5cd5a',
-  accentMuted: '#f0c04044',
-  accentFaint: '#f0c04022',
+  // Accent (MixHive gold).
+  //
+  // Two different golds were in play — #f0c040 here, #f6c400 in mixhive.css.
+  // Unified on the more saturated hive gold. 11.77:1 on `surface`.
+  accent: '#f6c400',
+  accentHover: '#ffd84a',
+  accentMuted: '#f6c40044',
+  accentFaint: '#f6c40022',
 
-  // Text scale (all levels pass WCAG AA contrast on surfaces #111–#0a0a0a)
+  // Text scale — warm, not neutral grey.
+  //
+  // The old ramp (#eee/#ccc/#888) was neutral while mixhive.css ran a warm cream
+  // ramp, so body copy and shell copy visibly disagreed. Unified on warm, which
+  // also suits the honey identity. Ratios measured against `surface` (#0f0e0c);
+  // every level improved or held.
   text: {
-    primary: '#eee',
-    secondary: '#ccc',
-    dimmed: '#999',
-    muted: '#888',
-    dim: '#808080', // 4.78:1 on #111 — passes AA normal text
-    faint: '#666', // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
-    faintest: '#555', // decorative/disabled only — below AA for text
+    primary: '#f5f3e7', // 17.32:1 — AA text
+    secondary: '#d4cdb0', // 12.09:1 — AA text
+    dimmed: '#b8b09a', // 8.93:1 — AA text
+    muted: '#a9a390', // 7.65:1 — AA text
+    dim: '#8c8676', // 5.32:1 — AA text (was #808080 @ 4.78:1)
+    faint: '#6f6a5c', // 3.58:1 — AA UI components (was #666 @ 3.3:1)
+    faintest: '#57534a', // 2.52:1 — decorative/disabled only, below AA for text
   },
 
   // Semantic
-  danger: '#f55',
+  danger: '#ff6b5e', // 6.91:1 on surface — AA text
   dangerStrong: '#ef4444',
   dangerBg: '#2a1010',
   dangerBgDeep: '#1a0000',
-  success: '#6c6',
+  success: '#7eed8b', // 13.21:1 on surface — AA text
   successStrong: '#22c55e',
   successBg: '#1a3a1a',
   warning: '#fbca04',
@@ -50,7 +69,7 @@ export const colors = {
   accentDeep: '#b96a00', // honey/ember-gradient end
   accentAmber: '#ff8c1a', // honey/ember-gradient mid-amber
   accentCyan: '#25d9ff', // cool secondary accent (mesh backdrop)
-  surfaceRaised: '#1e1e1e',
+  surfaceRaised: '#1e1c17',
   surfaceTint: '#2a1a2e', // purple-tinted surface (gradient pair with `border`)
   hiveText: '#f5f3e7', // brand cream text (--hive-text)
   successBright: '#7eed8b', // bright mint indicator (online/active)
@@ -61,7 +80,7 @@ export const colors = {
 /**
  * Opacity overlay on a token color → `rgba(...)`. Replaces ad-hoc 8-digit hex
  * alphas (e.g. `#f0c04022`) so overlays reference a base token + explicit alpha.
- * `withAlpha(colors.accent, 0.13)` === `'rgba(240, 192, 64, 0.13)'`.
+ * `withAlpha(colors.accent, 0.13)` === `'rgba(246, 196, 0, 0.13)'`.
  */
 export function withAlpha(hex: string, a: number): string {
   const h = hex.replace('#', '');
@@ -148,7 +167,7 @@ export const shadow = {
   sm: '0 1px 2px rgba(0,0,0,0.4)',
   md: '0 4px 12px rgba(0,0,0,0.5)',
   lg: '0 8px 24px rgba(0,0,0,0.6)',
-  accent: '0 4px 16px rgba(240,192,64,0.18)',
+  accent: '0 4px 16px rgba(246,196,0,0.18)',
   // Premium layered elevations with gold bleed — for cinematic cards/panels
   elevated: '0 18px 60px rgba(0,0,0,0.5), 0 0 32px rgba(246,196,0,0.08)',
   honey: '0 0 24px rgba(246,196,0,0.35)',

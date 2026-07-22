@@ -130,7 +130,7 @@ export function PostSessionReview({
     >
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: fontSize.lg, fontWeight: fontWeight.bold }}>
-          {t('reviewSessionOutcomes')}
+          {t('reviewSessionOutcomes')}
         </div>
         <div style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
           {sessionTitle} • These changes will be added to your Mythic legend
@@ -140,7 +140,7 @@ export function PostSessionReview({
       <div style={{ marginBottom: 24 }}>
         {proposedUpdates.length === 0 ? (
           <div style={{ color: colors.text.muted, padding: 20, textAlign: 'center' }}>
-            {t('noProposedUpdates')}
+            {t('noProposedUpdates')}
           </div>
         ) : (
           proposedUpdates.map(update => {
@@ -222,7 +222,7 @@ export function PostSessionReview({
                       onClick={() => handleDiscard(update.id)}
                       style={{ fontSize: 12, padding: '6px 12px' }}
                     >
-                      {t('discard')}
+                      {t('discard')}
                     </HiveButton>
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export function PostSessionReview({
 
       <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
         <HiveButton variant="secondary" onClick={onClose} disabled={isSubmitting}>
-          {t('cancel')}
+          {t('cancel')}
         </HiveButton>
 
         <HiveButton

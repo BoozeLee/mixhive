@@ -40,7 +40,7 @@ export function PublicPressKit() {
       <div
         style={{ maxWidth: 880, margin: '0 auto', padding: space[10], color: colors.text.muted }}
       >
-        {t('loadingEpk')}
+        {t('loadingEpk')}
       </div>
     );
   }
@@ -56,10 +56,10 @@ export function PublicPressKit() {
           textAlign: 'center',
         }}
       >
-        <h1 style={{ color: colors.text.primary }}>{t('epkNotFound')}</h1>
+        <h1 style={{ color: colors.text.primary }}>{t('epkNotFound')}</h1>
         <p>{error || 'This press kit is private or unavailable.'}</p>
         <Link to="/" style={{ color: colors.accent }}>
-          {t('backToMixhive')}
+          {t('backToMixhive')}
         </Link>
       </div>
     );
@@ -85,7 +85,7 @@ export function PublicPressKit() {
         <div
           style={{
             padding: `clamp(${space[8]}px, 7vw, ${space[12]}px)`,
-            background: 'linear-gradient(135deg, rgba(240,192,64,0.2), rgba(7,7,5,0.3))',
+            background: 'linear-gradient(135deg, rgba(246,196,0,0.2), rgba(7,7,5,0.3))',
           }}
         >
           <div style={{ display: 'flex', gap: space[7], alignItems: 'center', flexWrap: 'wrap' }}>
@@ -98,7 +98,7 @@ export function PublicPressKit() {
                   ? `url(${content.avatar_url}) center/cover`
                   : colors.surface,
                 border: `1px solid ${colors.accent}`,
-                boxShadow: '0 0 32px rgba(240,192,64,0.24)',
+                boxShadow: '0 0 32px rgba(246,196,0,0.24)',
               }}
             />
             <div>
@@ -112,7 +112,7 @@ export function PublicPressKit() {
                   letterSpacing: 1,
                 }}
               >
-                {t('mixhiveElectronicPressKit')}
+                {t('mixhiveElectronicPressKit')}
               </p>
               <h1
                 style={{
@@ -152,9 +152,9 @@ export function PublicPressKit() {
               ) : null
             )}
           <section>
-            <h2 style={titleStyle}>{t('featuredMixes')}</h2>
+            <h2 style={titleStyle}>{t('featuredMixes')}</h2>
             {content.top_mixes.length === 0 ? (
-              <p style={bodyStyle}>{t('noPublishedMixhiveMixes')}</p>
+              <p style={bodyStyle}>{t('noPublishedMixhiveMixes')}</p>
             ) : (
               <div style={{ display: 'grid', gap: space[4] }}>
                 {content.top_mixes.map(mix => (
@@ -193,7 +193,7 @@ export function PublicPressKit() {
               fontSize: fontSize.xs,
             }}
           >
-            <span>{t('generatedFromVerifiedMixhive')}</span>
+            <span>{t('generatedFromVerifiedMixhive')}</span>
             <Link
               to="/"
               style={{ color: colors.accent, textDecoration: 'none', fontWeight: fontWeight.bold }}

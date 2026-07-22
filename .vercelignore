@@ -1,2 +1,13 @@
+# Vercel uses this file INSTEAD of .gitignore when it is present, so anything
+# that must not be uploaded has to be repeated here. Without the two build
+# directories below, `vercel deploy` from a working checkout tries to upload
+# ~1.9 GB (node_modules 1.2G, .next 681M) and hangs before it ever builds.
+# Vercel installs dependencies and builds on its own, so neither is wanted.
+node_modules
+.next
+
+# Local git worktrees live beside the main checkout; never ship them.
+mixhive-fix
+
 .env
 .env.*

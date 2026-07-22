@@ -215,7 +215,7 @@ export function Styleguide() {
             .filter(([, v]) => v > 0)
             .map(([k, v]) => (
               <div key={k} style={{ textAlign: 'center' }}>
-                <div style={{ width: v, height: v, background: colors.accent, borderRadius: 2 }} />
+                <div style={{ width: v, height: v, background: colors.accent, borderRadius: 4 }} />
                 <div style={{ fontSize: fontSize.xs, color: colors.text.dim, marginTop: space[2] }}>
                   {k}
                 </div>

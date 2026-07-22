@@ -131,7 +131,7 @@ export function HexCell({
     bottom: '20%',
     width: 3,
     background: genreColor,
-    borderRadius: 2,
+    borderRadius: 4,
     opacity: genre ? 1 : 0,
   };
 
@@ -229,7 +229,7 @@ export function HexCell({
                     color: colors.text.muted,
                     background: `${colors.border}`,
                     padding: '1px 4px',
-                    borderRadius: 3,
+                    borderRadius: 4,
                     lineHeight: 1.4,
                   }}
                 >
@@ -312,7 +312,7 @@ export function HexCell({
             border: 'none',
             color: colors.text.dim,
             cursor: 'pointer',
-            fontSize: 10,
+            fontSize: 11,
             padding: 2,
             lineHeight: 1,
           }}

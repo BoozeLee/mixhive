@@ -64,13 +64,13 @@ export function LiveRituals() {
     <div
       style={{ maxWidth: 1000, margin: '0 auto', padding: `${space[12]}px ${space[8]}px 120px` }}
     >
-      <h1 style={{ fontSize: fontSize['3xl'] }}>{t('liveCreativeRituals')}</h1>
+      <h1 style={{ fontSize: fontSize['3xl'] }}>{t('liveCreativeRituals')}</h1>
       <p style={{ color: colors.text.muted }}>
         Enter the process, influence the direction, witness the provenance.
       </p>
       {invites.length > 0 && (
         <section style={{ marginTop: 24 }}>
-          <h2>{t('creatorInvitations')}</h2>
+          <h2>{t('creatorInvitations')}</h2>
           {invites.map(invite => (
             <div
               key={invite.id}
@@ -91,14 +91,14 @@ export function LiveRituals() {
               </span>
               <span style={{ display: 'flex', gap: 6 }}>
                 <HiveButton size="sm" onClick={() => void answerInvite(invite, 'accepted')}>
-                  {t('joinStage')}
+                  {t('joinStage')}
                 </HiveButton>
                 <HiveButton
                   variant="ghost"
                   size="sm"
                   onClick={() => void answerInvite(invite, 'declined')}
                 >
-                  {t('decline')}
+                  {t('decline')}
                 </HiveButton>
               </span>
             </div>
@@ -134,7 +134,7 @@ export function LiveRituals() {
           </Link>
         ))}
         {rituals.length === 0 && (
-          <div style={{ color: colors.text.muted }}>{t('noPublicRitualsAre')}</div>
+          <div style={{ color: colors.text.muted }}>{t('noPublicRitualsAre')}</div>
         )}
       </div>
     </div>

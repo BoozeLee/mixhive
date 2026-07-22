@@ -106,7 +106,7 @@ export function MixAnalytics() {
               textAlign: 'center',
             }}
           >
-            <div style={{ fontSize: 22, fontWeight: 700, color: colors.accent }}>{stat.value}</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: colors.accent }}>{stat.value}</div>
             <div style={{ fontSize: 11, color: colors.text.muted, marginTop: 4 }}>{stat.label}</div>
           </div>
         ))}
@@ -162,7 +162,7 @@ export function MixAnalytics() {
         )}
         {analytics.playsByDay.length > 0 && (
           <div
-            style={{ fontSize: 10, color: colors.text.faintest, textAlign: 'center', marginTop: 8 }}
+            style={{ fontSize: 11, color: colors.text.faintest, textAlign: 'center', marginTop: 8 }}
           >
             Last {Math.min(analytics.playsByDay.length, 14)} days
           </div>

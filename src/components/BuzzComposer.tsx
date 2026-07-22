@@ -199,7 +199,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
               fontSize: fontSize.base,
             }}
           >
-            {t('signIn')}
+            {t('signIn')}
           </button>{' '}
           to post a Buzz
         </span>
@@ -396,7 +396,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
                 leftIcon={<Icon name="buzz" size={14} />}
                 style={{ borderRadius: radius.pill }}
               >
-                {t('buzz')}
+                {t('buzz')}
               </Button>
             </div>
           </div>
@@ -450,10 +450,10 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[6] }}>
             <Button variant="secondary" onClick={() => setActiveAttach(null)}>
-              {t('cancel')}
+              {t('cancel')}
             </Button>
             <Button onClick={() => setActiveAttach(null)} disabled={!codeSnippet.trim()}>
-              {t('attach')}
+              {t('attach')}
             </Button>
           </div>
         </div>
@@ -468,7 +468,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
           <p style={{ margin: 0, color: colors.text.muted, fontSize: fontSize.base }}>
-            {t('pasteAMixhiveMix')}
+            {t('pasteAMixhiveMix')}
           </p>
           <Input
             hideLabel
@@ -488,10 +488,10 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: space[6] }}>
             <Button variant="secondary" onClick={() => setActiveAttach(null)}>
-              {t('cancel')}
+              {t('cancel')}
             </Button>
             <Button onClick={() => setActiveAttach(null)} disabled={!attachedMixId}>
-              {t('attach')}
+              {t('attach')}
             </Button>
           </div>
         </div>

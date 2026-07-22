@@ -83,7 +83,7 @@ export function SceneDetail() {
           onClick={() => navigate('/scenes')}
           style={{ marginTop: 12, color: colors.text.secondary }}
         >
-          {t('allScenes')}
+          {t('allScenes')}
         </button>
       </div>
     );
@@ -101,7 +101,7 @@ export function SceneDetail() {
           cursor: 'pointer',
         }}
       >
-        {t('allScenes')}
+        {t('allScenes')}
       </button>
 
       <div
@@ -138,11 +138,11 @@ export function SceneDetail() {
 
       <section style={{ marginTop: 28 }}>
         <h2 style={{ fontSize: fontSize.xl, fontWeight: 600, color: colors.text.primary }}>
-          {t('activeArtists')}
+          {t('activeArtists')}
         </h2>
         {listings.length === 0 ? (
           <p style={{ color: colors.text.dim, fontSize: fontSize.sm, marginTop: 8 }}>
-            {t('noArtistsYet')}
+            {t('noArtistsYet')}
           </p>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, marginTop: 12, display: 'grid', gap: 8 }}>
@@ -195,7 +195,7 @@ export function SceneDetail() {
       {partners.length > 0 && (
         <section style={{ marginTop: 28 }}>
           <h2 style={{ fontSize: fontSize.xl, fontWeight: 600, color: colors.text.primary }}>
-            {t('labelPartners')}
+            {t('labelPartners')}
           </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 12 }}>
             {partners.map(p => (

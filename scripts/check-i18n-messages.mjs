@@ -96,6 +96,40 @@ console.log(
   `${missingNs.length ? '✖' : '✓'} namespaces: ${used.size} used, ${missingNs.length} missing`
 );
 
+// ── Control characters in source ─────────────────────────────────────────────
+// 309 stray U+0002 bytes accumulated across 44 files, every one sitting directly
+// after a t('…') call — a mechanical artefact of the i18n externalisation sweep.
+// They are invisible in most editors and in `git diff`, and they render as blank
+// boxes in the browser. Six of them landed on the homepage's primary CTAs.
+//
+// Nothing caught this: not tsc, not ESLint, not Prettier, not the test suite.
+const CONTROL_CHARS = /[\x00-\x08\x0B\x0C\x0E-\x1F]/g;
+
+function walkSource(dir, out = []) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) walkSource(full, out);
+    else if (/\.(tsx?|jsx?)$/.test(entry.name)) out.push(full);
+  }
+  return out;
+}
+
+let controlHits = 0;
+for (const file of walkSource(join(root, 'src'))) {
+  const text = readFileSync(file, 'utf8');
+  const found = text.match(CONTROL_CHARS);
+  if (!found) continue;
+  const rel = file.replace(`${root}/`, '');
+  const line = text.slice(0, text.search(CONTROL_CHARS)).split('\n').length;
+  console.error(
+    `✖ ${rel}:${line} contains ${found.length} control character(s) ` +
+      `(first: U+${found[0].codePointAt(0).toString(16).padStart(4, '0').toUpperCase()}) — these render as blank boxes`
+  );
+  controlHits += found.length;
+}
+console.log(`${controlHits ? '✖' : '✓'} control characters in src: ${controlHits}`);
+failures += controlHits;
+
 // Every locale must carry the same top-level namespaces as en, or that locale
 // silently degrades to raw keys for whole sections of the UI.
 for (const locale of LOCALES.filter(l => l !== 'en')) {

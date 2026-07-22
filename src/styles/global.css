@@ -88,8 +88,50 @@
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid #f0c040;
+  outline: 2px solid #f6c400;
   outline-offset: 2px;
+}
+
+/*
+ * Form-control focus ring.
+ *
+ * Input.tsx used to paint this by assigning to e.currentTarget.style in
+ * onFocus/onBlur. That fights React: `border` is also set through the style
+ * prop, so any re-render that rewrites the shorthand — validation state
+ * changing while someone types, for instance — wiped the ring off a field
+ * that was still focused. It also can't express :focus-visible, and it had
+ * to be reimplemented in every component that wanted the same ring.
+ *
+ * :focus-visible is the right primitive here. Browsers always match it on
+ * text-entry controls regardless of whether focus came from a click or the
+ * keyboard, so inputs keep showing their ring on mouse focus, while buttons
+ * and other controls correctly show one only for keyboard users.
+ *
+ * The border lives here rather than in the component's inline style for a
+ * mechanical reason: an inline `border` shorthand outranks any author
+ * stylesheet, so a CSS focus ring could never have recoloured it.
+ */
+.mh-field {
+  border: 1px solid var(--hive-border-strong);
+  box-shadow: none;
+  transition:
+    border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mh-field[aria-invalid='true'] {
+  border-color: var(--hive-danger);
+}
+
+.mh-field:focus-visible {
+  outline: none; /* replaced by the border + ring below */
+  border-color: var(--hive-gold);
+  box-shadow: 0 0 0 3px rgba(246, 196, 0, 0.22);
+}
+
+.mh-field[aria-invalid='true']:focus-visible {
+  border-color: var(--hive-danger);
+  box-shadow: 0 0 0 3px rgba(255, 107, 94, 0.25);
 }
 
 /* Skip to content link styling */
@@ -97,8 +139,8 @@
   position: absolute;
   left: -9999px;
   top: 8px;
-  background: #f0c040;
-  color: #0a0a0a;
+  background: #f6c400;
+  color: #070706;
   padding: 8px 14px;
   border-radius: 6px;
   font-weight: 600;
@@ -185,7 +227,7 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1a1a2e;
+  background: #17150f;
   border-radius: 4px;
 }
 
@@ -233,6 +275,6 @@ button,
 
 /* Focus visible for custom components */
 .focus-visible {
-  outline: 2px solid #f0c040;
+  outline: 2px solid #f6c400;
   outline-offset: 2px;
 }

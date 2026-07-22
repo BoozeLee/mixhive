@@ -120,7 +120,7 @@ export function ArtHistory() {
               >
                 {gen.prompt}
               </div>
-              <div style={{ fontSize: 10, color: colors.text.faint, marginTop: 2 }}>
+              <div style={{ fontSize: 11, color: colors.text.faint, marginTop: 2 }}>
                 {gen.style} · {gen.aspect_ratio} · {new Date(gen.created_at).toLocaleDateString()}
               </div>
             </div>

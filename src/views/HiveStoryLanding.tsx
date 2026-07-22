@@ -113,7 +113,8 @@ function IssueCard({ issue, hero }: { issue: HiveStoryIssue; hero?: boolean }) {
               gap: space[2],
             }}
           >
-            {t('readIssue')}<span aria-hidden="true">→</span>
+            {t('readIssue')}
+            <span aria-hidden="true">→</span>
           </div>
         </div>
       </article>
@@ -163,10 +164,10 @@ export function HiveStoryLanding() {
             marginBottom: space[2],
           }}
         >
-          {t('editorial')}
+          {t('editorial')}
         </div>
         <h1 style={{ fontSize: 32, fontWeight: 800, color: colors.text.primary, margin: 0 }}>
-          {t('hiveStory')}
+          {t('hiveStory')}
         </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.md, margin: '8px 0 0' }}>
           Monthly spotlight on the artists, mixes, and collabs shaping the underground.
@@ -181,7 +182,7 @@ export function HiveStoryLanding() {
               style={{
                 height: i === 1 ? 340 : 160,
                 borderRadius: radius.lg,
-                background: 'rgba(240,192,64,0.04)',
+                background: 'rgba(246,196,0,0.04)',
                 border: `1px solid ${colors.border}`,
                 animation: 'pulse 1.4s ease-in-out infinite',
               }}
@@ -224,7 +225,7 @@ export function HiveStoryLanding() {
           >
             <BeeMark size={46} color="rgba(246,196,0,0.6)" />
           </div>
-          <p style={{ margin: 0 }}>{t('theFirstHiveStory')}</p>
+          <p style={{ margin: 0 }}>{t('theFirstHiveStory')}</p>
         </div>
       )}
 
@@ -240,7 +241,7 @@ export function HiveStoryLanding() {
               marginBottom: space[4],
             }}
           >
-            {t('latestIssue')}
+            {t('latestIssue')}
           </div>
           <IssueCard issue={latest} hero />
         </section>
@@ -256,7 +257,7 @@ export function HiveStoryLanding() {
               marginBottom: space[6],
             }}
           >
-            {t('archive')}
+            {t('archive')}
           </h2>
           <div
             style={{

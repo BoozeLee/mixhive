@@ -125,7 +125,7 @@ export function GearListingDetail() {
           {error || t('listingNotFound')}
         </p>
         <Link to="/marketplace/gear" style={{ color: 'var(--hive-gold)' }}>
-          {t('backToGearMarket')}
+          {t('backToGearMarket')}
         </Link>
       </div>
     );
@@ -145,7 +145,7 @@ export function GearListingDetail() {
           marginBottom: 20,
         }}
       >
-        {t('gearMarket')}
+        {t('gearMarket')}
       </Link>
 
       <div
@@ -164,7 +164,7 @@ export function GearListingDetail() {
             style={{
               aspectRatio: '4/3',
               background: colors.bg,
-              borderRadius: 12,
+              borderRadius: 10,
               overflow: 'hidden',
               marginBottom: 12,
             }}
@@ -253,7 +253,7 @@ export function GearListingDetail() {
         <div
           style={{
             background: colors.surface,
-            borderRadius: 12,
+            borderRadius: 10,
             padding: 24,
             border: `1px solid ${colors.surfaceRaised}`,
           }}
@@ -353,7 +353,7 @@ export function GearListingDetail() {
               style={{
                 background: colors.surfaceRaised,
                 padding: 16,
-                borderRadius: 12,
+                borderRadius: 10,
                 border: `1px solid ${colors.border}`,
                 marginBottom: 20,
               }}
@@ -506,7 +506,7 @@ export function GearListingDetail() {
               <p
                 style={{ color: colors.borderStrong, fontSize: 11, textAlign: 'center', margin: 0 }}
               >
-                {t('escrowNotice')}
+                {t('escrowNotice')}
               </p>
             </>
           ) : listing.status !== 'active' ? (

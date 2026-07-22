@@ -152,14 +152,14 @@ export function ProfileHeader({
                 LVL {profile.level || 1}
               </span>
               <div
-                style={{ width: 40, height: 4, background: colors.surfaceHover, borderRadius: 2 }}
+                style={{ width: 40, height: 4, background: colors.surfaceHover, borderRadius: 4 }}
               >
                 <div
                   style={{
                     width: `${Math.min(100, (profile.xp || 0) % 100)}%`,
                     height: '100%',
                     background: colors.accent,
-                    borderRadius: 2,
+                    borderRadius: 4,
                   }}
                 />
               </div>

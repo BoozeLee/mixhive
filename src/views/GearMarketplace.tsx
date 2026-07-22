@@ -237,7 +237,7 @@ export function GearMarketplace() {
               style={{
                 height: 280,
                 background: colors.surface,
-                borderRadius: 12,
+                borderRadius: 10,
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
             />
@@ -300,7 +300,7 @@ function GearCard({ listing, badges }: { listing: Listing; badges: VerificationB
       <div
         style={{
           background: colors.surface,
-          borderRadius: 12,
+          borderRadius: 10,
           overflow: 'hidden',
           border: `1px solid ${colors.surfaceRaised}`,
           transition: 'border-color 0.2s, transform 0.2s',

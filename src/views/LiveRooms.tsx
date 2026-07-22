@@ -84,7 +84,7 @@ export function LiveRooms() {
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 16px 96px' }}>
-      <SectionHeading eyebrow="LIVE" title={t('title')} subtitle={t('subtitle')} />
+      <SectionHeading as="h1" eyebrow="LIVE" title={t('title')} subtitle={t('subtitle')} />
 
       <div style={{ display: 'flex', gap: space[3], marginBottom: space[8], flexWrap: 'wrap' }}>
         {(['all', 'live', 'waiting'] as const).map(f => (

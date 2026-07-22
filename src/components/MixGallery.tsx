@@ -53,7 +53,7 @@ export function MixGallery({
         <div className="mb-4" style={{ display: 'inline-flex' }}>
           <Icon name="music" size={56} />
         </div>
-        <h3 className="text-xl font-semibold text-gray-400 mb-2">{t('noMixesYet')}</h3>
+        <h3 className="text-xl font-semibold text-gray-400 mb-2">{t('noMixesYet')}</h3>
         <p className="text-gray-500 text-sm">
           {currentUserId
             ? 'Start sharing your mixes with the community!'
@@ -64,7 +64,7 @@ export function MixGallery({
             to="/upload"
             className="inline-block mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
           >
-            {t('uploadYourFirstMix')}
+            {t('uploadYourFirstMix')}
           </Link>
         )}
       </div>
@@ -109,15 +109,15 @@ export function MixGallery({
           </div>
 
           <div className="flex gap-2 items-center">
-            <span className="text-sm text-gray-400">{t('sortBy')}</span>
+            <span className="text-sm text-gray-400">{t('sortBy')}</span>
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as 'date' | 'plays' | 'likes')}
               className="bg-gray-700 text-white text-sm rounded px-3 py-1 border border-gray-600 focus:border-purple-500 focus:outline-none"
             >
-              <option value="date">{t('newest')}</option>
-              <option value="plays">{t('mostPlays')}</option>
-              <option value="likes">{t('mostLikes')}</option>
+              <option value="date">{t('newest')}</option>
+              <option value="plays">{t('mostPlays')}</option>
+              <option value="likes">{t('mostLikes')}</option>
             </select>
           </div>
         </div>
@@ -145,7 +145,7 @@ export function MixGallery({
       {showControls && filteredMixes.length > 8 && (
         <div className="text-center">
           <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-            {t('loadMoreMixes')}
+            {t('loadMoreMixes')}
           </Button>
         </div>
       )}

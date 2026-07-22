@@ -13,9 +13,13 @@
  */
 
 :root {
+  /* Brand palette. These MUST match src/styles/tokens.ts — components read the
+     tokens, shell chrome reads these, and when they drift the same page renders
+     two different blacks and two different golds. Parity is enforced by
+     src/__tests__/palette-parity.test.ts. */
   --navbar-height: 64px;
-  --hive-black: #030303;
-  --hive-ink: #080806;
+  --hive-black: #070706;
+  --hive-ink: #0f0e0c;
   --hive-panel: rgba(7, 7, 5, 0.78);
   --hive-panel-strong: rgba(12, 10, 3, 0.92);
   --hive-gold: #f6c400;
@@ -32,9 +36,11 @@
   --hive-text: #f5f3e7;
   --hive-text-soft: #d4cdb0;
   --hive-muted: #a9a390;
-  --hive-dim: #6a624a;
-  --hive-danger: #ff5252;
+  --hive-dim: #6f6a5c;
+  --hive-danger: #ff6b5e;
   --hive-success: #7eed8b;
+  --hive-border: #1f1d16;
+  --hive-border-strong: #35322a;
 
   /* Audio-reactive: src/lib/audioReactive.ts writes a value 0..1 from the
      current track's bass channel. Defaults to 0 when nothing is playing. */
@@ -85,7 +91,7 @@ body {
   background:
     radial-gradient(circle at 18% 12%, rgba(246, 196, 0, 0.12), transparent 28%),
     radial-gradient(circle at 82% 18%, rgba(37, 217, 255, 0.08), transparent 26%),
-    linear-gradient(180deg, #030303 0%, #080805 45%, #020202 100%);
+    linear-gradient(180deg, #070706 0%, #0c0b09 45%, #050504 100%);
 }
 
 .mixhive-shell {
@@ -394,7 +400,7 @@ body {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: #030303;
+  background: #070706;
   color: var(--hive-gold);
 }
 
@@ -448,9 +454,9 @@ body {
 .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-surface, #111) 25%,
-    var(--color-surface-hover, #1a1a2e) 50%,
-    var(--color-surface, #111) 75%
+    var(--color-surface, #0f0e0c) 25%,
+    var(--color-surface-hover, #17150f) 50%,
+    var(--color-surface, #0f0e0c) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
@@ -579,10 +585,10 @@ body {
 /* Filter chips in Hive Composer */
 .filter-chip {
   padding: 3px 10px;
-  background: rgba(240, 192, 64, 0.12);
-  border: 1px solid rgba(240, 192, 64, 0.35);
+  background: rgba(246, 196, 0, 0.12);
+  border: 1px solid rgba(246, 196, 0, 0.35);
   border-radius: 999px;
-  color: #f0c040;
+  color: #f6c400;
   font-size: 11px;
   cursor: pointer;
   transition:
@@ -592,8 +598,8 @@ body {
 }
 
 .filter-chip:hover {
-  background: rgba(240, 192, 64, 0.22);
-  border-color: rgba(240, 192, 64, 0.6);
+  background: rgba(246, 196, 0, 0.22);
+  border-color: rgba(246, 196, 0, 0.6);
 }
 
 /* ── Phase 15 — Responsive overrides ────────────────────────────────────── */

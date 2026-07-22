@@ -88,7 +88,7 @@ export function NotificationsBell() {
               right: -8,
               background: colors.accent,
               color: colors.bg,
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: 700,
               width: 16,
               height: 16,
@@ -111,11 +111,11 @@ export function NotificationsBell() {
           title={t('enablePush')}
           style={{
             marginLeft: 6,
-            background: 'rgba(240,192,64,0.12)',
-            border: '1px solid rgba(240,192,64,0.3)',
+            background: 'rgba(246,196,0,0.12)',
+            border: '1px solid rgba(246,196,0,0.3)',
             borderRadius: 6,
             color: colors.accent,
-            fontSize: 10,
+            fontSize: 11,
             fontWeight: 700,
             padding: '2px 7px',
             cursor: 'pointer',
@@ -128,11 +128,11 @@ export function NotificationsBell() {
       )}
 
       {pushState === 'requesting' && (
-        <span style={{ marginLeft: 6, fontSize: 10, color: colors.text.faint }}>…</span>
+        <span style={{ marginLeft: 6, fontSize: 11, color: colors.text.faint }}>…</span>
       )}
 
       {pushState === 'granted' && (
-        <span style={{ marginLeft: 6, fontSize: 10, color: colors.successStrong }}>✓</span>
+        <span style={{ marginLeft: 6, fontSize: 11, color: colors.successStrong }}>✓</span>
       )}
     </div>
   );

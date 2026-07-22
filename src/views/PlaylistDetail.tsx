@@ -145,12 +145,12 @@ export function PlaylistDetail() {
                 color: colors.text.primary,
                 padding: '8px 12px',
                 borderRadius: 6,
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: 700,
               }}
             />
             <Button size="sm" onClick={saveTitle}>
-              {t('save')}
+              {t('save')}
             </Button>
             <Button
               size="sm"
@@ -160,7 +160,7 @@ export function PlaylistDetail() {
                 setTitleDraft(playlist.title);
               }}
             >
-              {t('cancel')}
+              {t('cancel')}
             </Button>
           </div>
         ) : isOwner ? (
@@ -172,7 +172,7 @@ export function PlaylistDetail() {
               background: 'transparent',
               border: 'none',
               padding: 0,
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: 700,
               color: colors.text.primary,
               margin: '0 0 4px',
@@ -186,7 +186,7 @@ export function PlaylistDetail() {
         ) : (
           <h1
             style={{
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: 700,
               color: colors.text.primary,
               margin: '0 0 4px',
@@ -217,7 +217,7 @@ export function PlaylistDetail() {
             />
             <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
               <Button size="sm" onClick={saveDescription}>
-                {t('save')}
+                {t('save')}
               </Button>
               <Button
                 size="sm"
@@ -227,7 +227,7 @@ export function PlaylistDetail() {
                   setDescDraft(playlist.description || '');
                 }}
               >
-                {t('cancel')}
+                {t('cancel')}
               </Button>
             </div>
           </div>
@@ -284,7 +284,7 @@ export function PlaylistDetail() {
             {playlist.mix_count} {playlist.mix_count === 1 ? 'mix' : 'mixes'}
           </span>
           {!playlist.is_public && (
-            <span style={{ color: withAlpha(colors.accent, 0.4) }}>{t('private')}</span>
+            <span style={{ color: withAlpha(colors.accent, 0.4) }}>{t('private')}</span>
           )}
         </div>
 
@@ -305,7 +305,7 @@ export function PlaylistDetail() {
 
       {playlist.mixes.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, color: colors.text.faint, fontSize: 14 }}>
-          {t('noMixesInThis')}
+          {t('noMixesInThis')}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -319,7 +319,7 @@ export function PlaylistDetail() {
                   onClick={() => handleRemoveMix(mix.id)}
                   style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }}
                 >
-                  {t('remove')}
+                  {t('remove')}
                 </Button>
               )}
             </div>

@@ -132,7 +132,7 @@ export const CDNAudio: React.FC<CDNAudioProps> = ({
       {/* CDN optimization indicator */}
       {isOptimized && (
         <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
-          {t('cdn')}
+          {t('cdn')}
         </div>
       )}
 
@@ -140,14 +140,14 @@ export const CDNAudio: React.FC<CDNAudioProps> = ({
       {isLoading && showLoadingIndicator && (
         <div className="flex items-center justify-center p-4">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-500"></div>
-          <span className="ml-2 text-sm">{t('loadingAudio')}</span>
+          <span className="ml-2 text-sm">{t('loadingAudio')}</span>
         </div>
       )}
 
       {/* Error state */}
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded">
-          <p className="text-red-600 text-sm">{t('failedToLoadAudio')}</p>
+          <p className="text-red-600 text-sm">{t('failedToLoadAudio')}</p>
         </div>
       )}
 
@@ -316,7 +316,7 @@ export const CDNLazyAudio: React.FC<CDNAudioProps> = props => {
         <div className="mb-2" style={{ display: 'inline-flex' }}>
           <Icon name="music" size={22} />
         </div>
-        <p className="text-sm text-gray-600">{t('clickToLoadAudio')}</p>
+        <p className="text-sm text-gray-600">{t('clickToLoadAudio')}</p>
       </div>
     );
   }
@@ -339,7 +339,7 @@ export const CDNLazyAudio: React.FC<CDNAudioProps> = props => {
         <div className="mb-2" style={{ display: 'inline-flex' }}>
           <Icon name="music" size={22} />
         </div>
-        <p className="text-sm text-gray-600">{t('clickToPlayAudio')}</p>
+        <p className="text-sm text-gray-600">{t('clickToPlayAudio')}</p>
       </div>
     );
   }
@@ -400,7 +400,7 @@ export const CDNPlaylist: React.FC<{
       {/* Track list */}
       <div className="border-t">
         <div className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('playlist')}</h3>
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('playlist')}</h3>
           <div className="space-y-2">
             {tracks.map((track, index) => (
               <button

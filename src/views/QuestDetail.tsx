@@ -299,7 +299,7 @@ export function QuestDetail() {
                 >
                   <div
                     style={{
-                      fontSize: 22,
+                      fontSize: 20,
                       width: 32,
                       textAlign: 'center',
                       opacity: done ? 1 : 0.6,

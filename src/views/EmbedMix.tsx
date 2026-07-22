@@ -39,7 +39,7 @@ export function EmbedMix() {
         <span style={{ color: colors.accent, fontSize: 18, marginBottom: 4 }} aria-hidden="true">
           ♪
         </span>
-        {t('thisMixIsUnavailable')}
+        {t('thisMixIsUnavailable')}
       </div>
     );
   }

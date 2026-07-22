@@ -96,8 +96,8 @@ export default function InvitePage() {
   }
 
   const bg = 'linear-gradient(135deg, #08080a 0%, #0d0d08 100%)';
-  const gold = '#f0c040';
-  const goldFaint = 'rgba(240,192,64,0.12)';
+  const gold = '#f6c400';
+  const goldFaint = 'rgba(246,196,0,0.12)';
   const text = { primary: '#f2f0e8', muted: '#9a9880', dim: '#6a6850' };
 
   if (status === 'loading') {
@@ -306,7 +306,7 @@ export default function InvitePage() {
               borderRadius: 999,
               background:
                 status === 'redeeming'
-                  ? 'rgba(240,192,64,0.4)'
+                  ? 'rgba(246,196,0,0.4)'
                   : `linear-gradient(135deg, ${gold}, #ffd84a)`,
               color: '#08080a',
               fontWeight: 700,

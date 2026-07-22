@@ -1,5 +1,5 @@
 import { forwardRef, useId, type TextareaHTMLAttributes, type ReactNode } from 'react';
-import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens';
+import { colors, radius, fontSize, fontWeight } from '../../styles/tokens';
 
 interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -55,29 +55,17 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea
         aria-describedby={describedBy}
         style={{
           background: colors.bg,
-          border: `1px solid ${error ? colors.danger : colors.borderStrong}`,
           borderRadius: radius.md,
           padding: '8px 12px',
           color: colors.text.primary,
           fontSize: fontSize.md,
           fontFamily: 'inherit',
-          outline: 'none',
           resize: 'vertical',
           minHeight: 80,
-          transition: `border-color ${transition.base}, box-shadow ${transition.base}`,
           ...style,
         }}
-        onFocus={e => {
-          e.currentTarget.style.borderColor = error ? colors.danger : colors.accent;
-          e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? colors.dangerBg : colors.accentFaint}`;
-          rest.onFocus?.(e);
-        }}
-        onBlur={e => {
-          e.currentTarget.style.borderColor = error ? colors.danger : colors.borderStrong;
-          e.currentTarget.style.boxShadow = 'none';
-          rest.onBlur?.(e);
-        }}
         {...rest}
+        className={['mh-field', rest.className].filter(Boolean).join(' ')}
       />
       {help && !error && (
         <span id={helpId} style={{ color: colors.text.dim, fontSize: fontSize.xs }}>

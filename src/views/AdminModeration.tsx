@@ -64,15 +64,15 @@ export function AdminModeration() {
 
   if (authLoading || loading) {
     return (
-      <div style={{ padding: 32, color: colors.text.muted }}>{t('loadingModerationQueue')}</div>
+      <div style={{ padding: 32, color: colors.text.muted }}>{t('loadingModerationQueue')}</div>
     );
   }
 
   if (!profile?.is_admin) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: 32, color: colors.text.muted }}>
-        <h1 style={{ color: colors.text.primary }}>{t('moderation')}</h1>
-        <p>{t('youDoNotHave')}</p>
+        <h1 style={{ color: colors.text.primary }}>{t('moderation')}</h1>
+        <p>{t('youDoNotHave')}</p>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export function AdminModeration() {
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px 16px 96px' }}>
       <h1 style={{ color: colors.text.primary, fontSize: 24, margin: '0 0 8px' }}>
-        {t('moderation')}
+        {t('moderation')}
       </h1>
       <p style={{ color: colors.text.muted, margin: '0 0 24px' }}>
         Review flagged content and user reports. Hide removes the item; Ban suspends the owner.
@@ -116,7 +116,7 @@ export function AdminModeration() {
           marginBottom: space[8],
         }}
       >
-        {t('resolutionNoteAppliedTo')}
+        {t('resolutionNoteAppliedTo')}
         <textarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
@@ -133,7 +133,7 @@ export function AdminModeration() {
       </label>
 
       {signals.length === 0 ? (
-        <p style={{ color: colors.text.dim }}>{t('nothingInThisQueue')}</p>
+        <p style={{ color: colors.text.dim }}>{t('nothingInThisQueue')}</p>
       ) : (
         <div style={{ display: 'grid', gap: space[6] }}>
           {signals.map(signal => {
@@ -201,7 +201,7 @@ export function AdminModeration() {
                       loading={busyId === signal.id}
                       onClick={() => act(signal, 'hide')}
                     >
-                      {t('hideContent')}
+                      {t('hideContent')}
                     </Button>
                     <Button
                       size="sm"
@@ -209,7 +209,7 @@ export function AdminModeration() {
                       loading={busyId === signal.id}
                       onClick={() => act(signal, 'ban')}
                     >
-                      {t('banOwner')}
+                      {t('banOwner')}
                     </Button>
                     <Button
                       size="sm"
@@ -217,7 +217,7 @@ export function AdminModeration() {
                       loading={busyId === signal.id}
                       onClick={() => act(signal, 'dismiss')}
                     >
-                      {t('dismiss')}
+                      {t('dismiss')}
                     </Button>
                   </div>
                 ) : (

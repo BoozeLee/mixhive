@@ -673,7 +673,7 @@ export function Feed() {
                 fontWeight: fontWeight.bold,
                 fontSize: fontSize.sm,
                 cursor: 'pointer',
-                boxShadow: `0 4px 14px rgba(240,192,64,0.35)`,
+                boxShadow: `0 4px 14px rgba(246,196,0,0.35)`,
               }}
             >
               ↑ {t('newItems', { count: newCount })}

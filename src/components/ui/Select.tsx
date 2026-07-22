@@ -1,5 +1,5 @@
 import { forwardRef, useId, type SelectHTMLAttributes, type ReactNode } from 'react';
-import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens';
+import { colors, radius, fontSize, fontWeight } from '../../styles/tokens';
 
 interface Option {
   value: string;
@@ -63,13 +63,11 @@ export const Select = forwardRef<HTMLSelectElement, Props>(function Select(
         aria-describedby={describedBy}
         style={{
           background: colors.bg,
-          border: `1px solid ${error ? colors.danger : colors.borderStrong}`,
           borderRadius: radius.md,
           padding: '8px 12px',
           color: colors.text.primary,
           fontSize: fontSize.md,
           fontFamily: 'inherit',
-          outline: 'none',
           appearance: 'none',
           backgroundImage:
             'linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%)',
@@ -77,20 +75,10 @@ export const Select = forwardRef<HTMLSelectElement, Props>(function Select(
           backgroundSize: '5px 5px',
           backgroundRepeat: 'no-repeat',
           paddingRight: 32,
-          transition: `border-color ${transition.base}, box-shadow ${transition.base}`,
           ...style,
         }}
-        onFocus={e => {
-          e.currentTarget.style.borderColor = error ? colors.danger : colors.accent;
-          e.currentTarget.style.boxShadow = `0 0 0 3px ${error ? colors.dangerBg : colors.accentFaint}`;
-          rest.onFocus?.(e);
-        }}
-        onBlur={e => {
-          e.currentTarget.style.borderColor = error ? colors.danger : colors.borderStrong;
-          e.currentTarget.style.boxShadow = 'none';
-          rest.onBlur?.(e);
-        }}
         {...rest}
+        className={['mh-field', rest.className].filter(Boolean).join(' ')}
       >
         {placeholder && <option value="">{placeholder}</option>}
         {options

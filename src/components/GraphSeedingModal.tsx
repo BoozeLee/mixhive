@@ -126,7 +126,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           padding: 24,
         }}
       >
-        <h2 style={{ marginTop: 0 }}>{t('seedYourMythicGraph')}</h2>
+        <h2 style={{ marginTop: 0 }}>{t('seedYourMythicGraph')}</h2>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
           Log real activity so your agents and quests have data to work with.
         </p>
@@ -163,7 +163,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           <div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                {t('date')}
+                {t('date')}
               </label>
               <input
                 type="date"
@@ -206,7 +206,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
             >
               <div>
                 <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                  {t('city')}
+                  {t('city')}
                 </label>
                 <input
                   value={gigForm.city}
@@ -224,7 +224,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               </div>
               <div>
                 <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                  {t('role')}
+                  {t('role')}
                 </label>
                 <select
                   value={gigForm.role}
@@ -238,17 +238,17 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
                     borderRadius: 6,
                   }}
                 >
-                  <option value="headline">{t('headline')}</option>
-                  <option value="support">{t('support')}</option>
-                  <option value="resident">{t('resident')}</option>
-                  <option value="radio">{t('radio')}</option>
-                  <option value="festival">{t('festivalSlot')}</option>
+                  <option value="headline">{t('headline')}</option>
+                  <option value="support">{t('support')}</option>
+                  <option value="resident">{t('resident')}</option>
+                  <option value="radio">{t('radio')}</option>
+                  <option value="festival">{t('festivalSlot')}</option>
                 </select>
               </div>
             </div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                {t('notesOptional')}
+                {t('notesOptional')}
               </label>
               <textarea
                 value={gigForm.notes}
@@ -304,14 +304,14 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               Success! Created {lastResult.nodesCreated} nodes and {lastResult.edgesCreated} edges.
             </div>
             <div style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: 16 }}>
-              {t('thisPerformanceIsNow')}
+              {t('thisPerformanceIsNow')}
             </div>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
               <HiveButton variant="secondary" onClick={handleLogAnother}>
-                {t('logAnotherGig')}
+                {t('logAnotherGig')}
               </HiveButton>
               <HiveButton variant="primary" onClick={handleDone}>
-                {t('done')}
+                {t('done')}
               </HiveButton>
             </div>
           </div>
@@ -319,7 +319,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           /* Normal submit buttons */
           <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 16 }}>
             <HiveButton variant="secondary" onClick={onClose} disabled={isSubmitting}>
-              {t('cancel')}
+              {t('cancel')}
             </HiveButton>
             <HiveButton
               variant="primary"

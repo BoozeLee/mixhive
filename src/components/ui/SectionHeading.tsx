@@ -9,6 +9,14 @@ interface Props {
   align?: 'left' | 'center';
   titleVariant?: 'gradient' | 'neon' | 'plain';
   maxWidth?: number;
+  /**
+   * Heading level. Defaults to h2 because this is usually a *section* heading.
+   *
+   * Pass `as="h1"` when it is the page's main heading — several routes rendered
+   * no h1 at all because this was hard-coded, which costs both document outline
+   * and assistive-tech navigation. A page should carry exactly one h1.
+   */
+  as?: 'h1' | 'h2' | 'h3';
 }
 
 /**
@@ -23,6 +31,7 @@ export function SectionHeading({
   align = 'left',
   titleVariant = 'gradient',
   maxWidth,
+  as = 'h2',
 }: Props) {
   return (
     <div
@@ -49,7 +58,7 @@ export function SectionHeading({
         </div>
       )}
       <GlowText
-        as="h2"
+        as={as}
         variant={titleVariant}
         style={{
           display: 'block',

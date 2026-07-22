@@ -149,7 +149,7 @@ function OpportunityCard({ opp }: { opp: Opportunity }) {
                 color: daysUntil <= 7 ? colors.danger : colors.text.muted,
               }}
             >
-              {t('deadline')}
+              {t('deadline')}
             </div>
             <div
               style={{
@@ -452,12 +452,12 @@ export function AgentInbox() {
             color: colors.text.primary,
           }}
         >
-          {t('agentInbox')}
+          {t('agentInbox')}
         </h1>
         <p
           style={{ margin: `${space[3]}px 0 0`, fontSize: fontSize.base, color: colors.text.muted }}
         >
-          {t('yourAiSuggestionsTasks')}
+          {t('yourAiSuggestionsTasks')}
         </p>
       </div>
 
@@ -478,9 +478,9 @@ export function AgentInbox() {
           <Icon name="sparkles" size={14} />
         </span>
         <p style={{ margin: 0, fontSize: fontSize.xs, color: colors.text.dim, lineHeight: 1.5 }}>
-          {t('aiIs')}<strong style={{ color: colors.text.muted }}>assistive, not autonomous</strong>{' '}
-          — every suggestion requires your review and approval before it changes anything on your
-          profile.
+          {t('aiIs')}
+          <strong style={{ color: colors.text.muted }}>assistive, not autonomous</strong> — every
+          suggestion requires your review and approval before it changes anything on your profile.
         </p>
       </div>
 
@@ -546,7 +546,7 @@ export function AgentInbox() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
           {loading.suggestions && (
             <div style={{ color: colors.text.muted, fontSize: fontSize.base }}>
-              {t('loadingSuggestions')}
+              {t('loadingSuggestions')}
             </div>
           )}
           {error.suggestions && (
@@ -559,7 +559,7 @@ export function AgentInbox() {
               <div style={{ marginBottom: space[5], display: 'flex' }}>
                 <Icon name="inbox" size={30} />
               </div>
-              <div style={{ fontSize: fontSize.md }}>{t('noAiSuggestionsYet')}</div>
+              <div style={{ fontSize: fontSize.md }}>{t('noAiSuggestionsYet')}</div>
               <div style={{ fontSize: fontSize.base, marginTop: space[3] }}>
                 Go to your Dashboard and click "Analyse profile" to get started.
               </div>
@@ -583,7 +583,7 @@ export function AgentInbox() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
           {loading.tasks && (
             <div style={{ color: colors.text.muted, fontSize: fontSize.base }}>
-              {t('loadingTasks')}
+              {t('loadingTasks')}
             </div>
           )}
           {error.tasks && (
@@ -594,9 +594,9 @@ export function AgentInbox() {
               style={{ textAlign: 'center', padding: `${space[12]}px 0`, color: colors.text.muted }}
             >
               <div style={{ fontSize: 32, marginBottom: space[5] }}>✓</div>
-              <div style={{ fontSize: fontSize.md }}>{t('allCaughtUp')}</div>
+              <div style={{ fontSize: fontSize.md }}>{t('allCaughtUp')}</div>
               <div style={{ fontSize: fontSize.base, marginTop: space[3] }}>
-                {t('noOpenTasksRight')}
+                {t('noOpenTasksRight')}
               </div>
             </div>
           )}
@@ -611,7 +611,7 @@ export function AgentInbox() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: space[6] }}>
           {loading.opportunities && (
             <div style={{ color: colors.text.muted, fontSize: fontSize.base }}>
-              {t('loadingOpportunities')}
+              {t('loadingOpportunities')}
             </div>
           )}
           {error.opportunities && (
@@ -626,7 +626,7 @@ export function AgentInbox() {
               <div style={{ marginBottom: space[5], display: 'flex' }}>
                 <Icon name="sparkles" size={30} />
               </div>
-              <div style={{ fontSize: fontSize.md }}>{t('noOpportunitiesAvailable')}</div>
+              <div style={{ fontSize: fontSize.md }}>{t('noOpportunitiesAvailable')}</div>
             </div>
           )}
           {opportunities.map(o => (

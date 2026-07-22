@@ -249,7 +249,7 @@ export function AIBandDetail() {
                 <span
                   key={g}
                   style={{
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: fontWeight.semibold,
                     padding: '2px 7px',
                     borderRadius: 999,

@@ -162,6 +162,21 @@ export const fontWeight = {
   bold: 700,
 } as const;
 
+// Shared button sizing. MixHive runs two deliberate button tiers — the sober
+// utility `ui/Button` and the flamboyant brand-CTA `hive/HiveButton` — which is
+// a legitimate split (they never appear in the same file). What was *not*
+// deliberate is that each carried its own size numbers, so a `md` button was
+// 36px tall in one and 38px in the other. Both tiers now read padding, height
+// and label size from here, so a given size means one thing across the app;
+// the tiers still differ where they should (shape, fill, motion, case).
+// `height` is applied as a fixed height by the utility button and as a
+// min-height by the brand button (which may wrap), but the number is shared.
+export const buttonSize = {
+  sm: { padding: '6px 14px', height: 30, fontSize: fontSize.sm },
+  md: { padding: '9px 18px', height: 38, fontSize: fontSize.md },
+  lg: { padding: '13px 24px', height: 46, fontSize: fontSize.lg },
+} as const;
+
 export const shadow = {
   none: 'none',
   sm: '0 1px 2px rgba(0,0,0,0.4)',

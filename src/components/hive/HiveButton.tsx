@@ -1,7 +1,15 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { colors } from '../../styles/tokens';
+import { colors, buttonSize } from '../../styles/tokens';
 
+/**
+ * Brand-CTA button — the flamboyant tier. Use this for primary *moments*: the
+ * landing hero, a modal's headline action, a session's call to start. Honey
+ * gradient, pill shape, uppercase, and a hover animation (three honey droplets;
+ * respects prefers-reduced-motion). For ordinary actions — form submits, filter
+ * toggles, list-row buttons — use the sober `ui/Button`, which shares this size
+ * scale so the two tiers line up but stays rectangular and quiet.
+ */
 type Variant = 'primary' | 'ghost' | 'glass' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
 
@@ -15,10 +23,12 @@ interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'
   children?: ReactNode;
 }
 
+// Shared scale, applied as a min-height because the brand button may wrap on
+// narrow screens; padding and label size come straight from the token.
 const sizeStyle: Record<Size, React.CSSProperties> = {
-  sm: { padding: '6px 14px', fontSize: 12, minHeight: 30 },
-  md: { padding: '10px 20px', fontSize: 14, minHeight: 38 },
-  lg: { padding: '14px 28px', fontSize: 16, minHeight: 48 },
+  sm: { padding: buttonSize.sm.padding, fontSize: buttonSize.sm.fontSize, minHeight: buttonSize.sm.height },
+  md: { padding: buttonSize.md.padding, fontSize: buttonSize.md.fontSize, minHeight: buttonSize.md.height },
+  lg: { padding: buttonSize.lg.padding, fontSize: buttonSize.lg.fontSize, minHeight: buttonSize.lg.height },
 };
 
 const variantStyle: Record<Variant, React.CSSProperties> = {

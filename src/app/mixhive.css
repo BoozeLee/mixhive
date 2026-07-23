@@ -49,7 +49,11 @@
 }
 
 .mixhive-fonts {
-  --font-display: Impact, 'Arial Black', 'Trebuchet MS', system-ui, sans-serif;
+  /* Display face. --font-anton is set by next/font/local in layout.tsx and
+     serves a self-hosted Anton woff2 from our own origin. The Impact chain
+     stays as the fallback so a headline still renders if the variable is ever
+     unset (it never is in the app shell, but this keeps the token honest). */
+  --font-display: var(--font-anton), 'Arial Narrow', 'Arial Black', system-ui, sans-serif;
   --font-ui:
     'Segoe UI', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', ui-monospace, monospace;

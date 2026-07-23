@@ -1,6 +1,14 @@
 import { forwardRef, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react';
-import { colors, radius, fontSize, fontWeight, transition } from '../../styles/tokens';
+import { colors, radius, fontWeight, transition, buttonSize } from '../../styles/tokens';
 
+/**
+ * Utility button — the sober tier. Use this for forms, dialogs, settings, and
+ * app chrome: anything that is an action rather than a *moment*. Rectangular
+ * (radius.md), solid fills, sentence-case labels, no motion. For primary brand
+ * moments — the landing hero, a modal's headline CTA — reach for
+ * `hive/HiveButton` instead, which shares this size scale but adds the honey
+ * gradient, pill shape and animation.
+ */
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
 type Size = 'sm' | 'md' | 'lg';
 
@@ -14,10 +22,11 @@ interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'
   children?: ReactNode;
 }
 
+// Fixed height from the shared scale (see buttonSize in tokens).
 const sizes: Record<Size, CSSProperties> = {
-  sm: { padding: '6px 12px', fontSize: fontSize.sm, height: 28 },
-  md: { padding: '8px 18px', fontSize: fontSize.md, height: 36 },
-  lg: { padding: '12px 22px', fontSize: fontSize.lg, height: 44 },
+  sm: { ...buttonSize.sm },
+  md: { ...buttonSize.md },
+  lg: { ...buttonSize.lg },
 };
 
 const variants: Record<Variant, CSSProperties> = {

@@ -287,7 +287,8 @@ export function Styleguide() {
 
       <Section title="Buttons">
         <div style={{ fontSize: fontSize.xs, color: colors.text.dim, marginBottom: space[4] }}>
-          ui/Button
+          <strong style={{ color: colors.text.secondary }}>ui/Button — utility.</strong> Forms,
+          dialogs, settings, list actions. Rectangular, quiet, sentence case.
         </div>
         <Row>
           {buttonVariants.map(v => (
@@ -303,7 +304,9 @@ export function Styleguide() {
             margin: `${space[6]}px 0 ${space[4]}px`,
           }}
         >
-          hive/HiveButton
+          <strong style={{ color: colors.text.secondary }}>hive/HiveButton — brand CTA.</strong>{' '}
+          Primary moments only: hero, modal headline action, start-a-session. Shares the size scale;
+          adds honey gradient, pill shape and motion.
         </div>
         <Row>
           {hiveVariants.map(v => (

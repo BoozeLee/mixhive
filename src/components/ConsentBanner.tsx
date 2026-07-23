@@ -24,13 +24,22 @@ export function ConsentBanner() {
   // at the bottom of the viewport — the stats row on the desktop home page, and
   // content cards on mobile. Measured rather than hardcoded because the banner
   // wraps to two or three rows on narrow screens.
+  //
+  // Padding reserves scroll space, but it can't stop another fixed element from
+  // colliding with the banner: on mobile the banner spans nearly the full width
+  // and sat on top of the Start-a-Ritual FAB (bottom-right, lower z-index), so
+  // the button was unreachable until consent was dismissed. So we also publish
+  // the banner's height as --consent-banner-space, and fixed bottom chrome (the
+  // FAB) lifts above it — the same variable pattern the player bar already uses.
   useEffect(() => {
     if (!show) return;
     const el = bannerRef.current;
     if (!el) return;
 
     const apply = () => {
-      document.body.style.paddingBottom = `${el.offsetHeight + 32}px`;
+      const space = `${el.offsetHeight + 32}px`;
+      document.body.style.paddingBottom = space;
+      document.documentElement.style.setProperty('--consent-banner-space', space);
     };
     apply();
 
@@ -42,6 +51,7 @@ export function ConsentBanner() {
       observer.disconnect();
       window.removeEventListener('resize', apply);
       document.body.style.paddingBottom = '';
+      document.documentElement.style.removeProperty('--consent-banner-space');
     };
   }, [show, mode]);
 

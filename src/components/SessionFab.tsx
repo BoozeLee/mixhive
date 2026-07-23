@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HiveButton } from './hive/HiveButton';
 import { StartMythicSessionModal } from './StartMythicSessionModal';
@@ -15,9 +15,13 @@ export function SessionFab() {
       <div
         style={{
           position: 'fixed',
-          bottom: 24,
+          // Lift above the consent banner while it is shown so the two fixed
+          // bottom elements don't collide on narrow screens; --consent-banner-space
+          // is 0 once consent is decided, returning the FAB to its resting spot.
+          bottom: 'calc(24px + var(--consent-banner-space, 0px))',
           right: 24,
           zIndex: 1100,
+          transition: 'bottom 220ms cubic-bezier(0.22, 1, 0.36, 1)',
         }}
       >
         <Link

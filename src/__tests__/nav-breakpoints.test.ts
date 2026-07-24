@@ -20,9 +20,7 @@ function governingBreakpoint(rule: RegExp): number | null {
 
 describe('navigation breakpoints', () => {
   it('hides the mobile nav at exactly the width the desktop sidebar appears (no dead zone)', () => {
-    const sidebarAppearsAt = governingBreakpoint(
-      /\.desktop-sidebar\s*\{[^}]*display:\s*flex/
-    );
+    const sidebarAppearsAt = governingBreakpoint(/\.desktop-sidebar\s*\{[^}]*display:\s*flex/);
     const mobileNavHidesAt = governingBreakpoint(/\.mobile-nav\s*\{[^}]*display:\s*none/);
 
     expect(sidebarAppearsAt).toBe(1024);

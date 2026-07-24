@@ -15,10 +15,11 @@ export function SessionFab() {
       <div
         style={{
           position: 'fixed',
-          // Lift above the consent banner while it is shown so the two fixed
-          // bottom elements don't collide on narrow screens; --consent-banner-space
-          // is 0 once consent is decided, returning the FAB to its resting spot.
-          bottom: 'calc(24px + var(--consent-banner-space, 0px))',
+          // Lift above the consent banner AND the bottom MobileNav so the fixed
+          // bottom elements don't collide. --consent-banner-space is 0 once
+          // consent is decided; --mobile-nav-space is 0 at ≥768px where the
+          // bottom nav is replaced by the left sidebar.
+          bottom: 'calc(24px + var(--consent-banner-space, 0px) + var(--mobile-nav-space, 0px))',
           right: 24,
           zIndex: 1100,
           transition: 'bottom 220ms cubic-bezier(0.22, 1, 0.36, 1)',

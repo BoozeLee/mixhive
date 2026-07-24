@@ -332,7 +332,11 @@ export async function getTrending(
   const dt = data || [];
   const last = dt[dt.length - 1];
   return {
-    data: dt,
+    // Map through formatFeedMix so nested profiles/genres are flattened into
+    // dj_username/dj_display_name/genre_name — the shape MixCard renders.
+    // getTrendingMixes (Discover) already does this on the same RPC; without
+    // it the Feed's trending cards render with no author/genre.
+    data: dt.map(formatFeedMix),
     cursor: dt.length === limit && last ? { score: last.score ?? 0, id: last.id } : null,
   };
 }
@@ -346,7 +350,9 @@ export async function getRecentMixes(limit = 20, cursor?: FeedCursor): Promise<F
   });
   const dt = data || [];
   return {
-    data: dt,
+    // Same flattening as getTrending — get_latest_cursor returns nested
+    // profiles/genres that MixCard cannot read until formatFeedMix maps them.
+    data: dt.map(formatFeedMix),
     cursor:
       dt.length === limit
         ? { created_at: dt[dt.length - 1].created_at, id: dt[dt.length - 1].id }

@@ -261,7 +261,16 @@ export async function runStrategicAgent(
     const text = await res.text().catch(() => '');
     throw new Error(`agent run failed ${res.status}: ${text}`);
   }
-  return res.json() as Promise<AgentOutput>;
+  // Normalize the array fields: a 200 response can omit them (partial/legacy
+  // output), and consumers dereference .length/.map directly — an undefined
+  // here would crash the whole view (blank page) rather than render empty.
+  const data = (await res.json()) as Partial<AgentOutput>;
+  return {
+    ...(data as AgentOutput),
+    suggestions: data.suggestions ?? [],
+    tasks: data.tasks ?? [],
+    notifications: data.notifications ?? [],
+  };
 }
 
 /** Fire an agent ad-hoc with a custom event payload (the "Test run" button).

@@ -376,7 +376,7 @@ export function Opportunities() {
           paddingBottom: space[2],
         }}
       >
-        {(Object.keys(tabLabels) as Tab[]).map(key => (
+        {(Object.keys(TAB_KEYS) as Tab[]).map(key => (
           <button
             key={key}
             type="button"

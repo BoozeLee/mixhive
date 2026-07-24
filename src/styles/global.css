@@ -44,18 +44,19 @@
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
-  /* At tablet, nav links are hidden (no sidebar yet) — only logo + search + user actions */
+  /* Tablet: the top navbar links are hidden and the desktop sidebar is not
+     shown yet, so the bottom MobileNav is the navigation here. Hide the inline
+     links and keep content clear of the fixed bottom bar. */
   .navbar-links {
     display: none !important;
+  }
+
+  main {
+    padding-bottom: 136px; /* clearance for the fixed bottom MobileNav */
   }
 }
 
 @media (min-width: 768px) {
-  /* Hide mobile nav on tablet+ */
-  .mobile-nav {
-    display: none !important;
-  }
-
   /* Restore container max-width on tablet+ */
   .container {
     max-width: 640px;
@@ -69,6 +70,12 @@
   /* Show desktop sidebar, shift main content right */
   .desktop-sidebar {
     display: flex !important;
+  }
+
+  /* Sidebar takes over navigation here, so the bottom MobileNav retires at the
+     SAME breakpoint the sidebar appears — no width range is left without nav. */
+  .mobile-nav {
+    display: none !important;
   }
 
   .app-main {

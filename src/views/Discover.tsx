@@ -202,6 +202,7 @@ export function Discover() {
         subtitle={t('trendingSubtitle')}
         href="/search?tab=mixes"
         hrefLabel={t('seeAll')}
+        emptyLabel={t('laneEmpty')}
         loading={trendingLoading}
         skeletonCount={5}
         skeletonWidth={160}
@@ -217,6 +218,7 @@ export function Discover() {
         subtitle={t('freshDropsSubtitle')}
         href="/search?tab=mixes"
         hrefLabel={t('seeAll')}
+        emptyLabel={t('laneEmpty')}
         loading={freshLoading}
         skeletonCount={5}
         skeletonWidth={160}
@@ -232,6 +234,7 @@ export function Discover() {
         subtitle={t('topCreatorsSubtitle')}
         href="/search?tab=artists"
         hrefLabel={t('seeAll')}
+        emptyLabel={t('laneEmpty')}
         loading={creatorsLoading}
         skeletonCount={5}
         skeletonWidth={160}
@@ -247,6 +250,7 @@ export function Discover() {
         subtitle={t('buzzingNowSubtitle')}
         href="/feed?tab=latest"
         hrefLabel={t('seeAll')}
+        emptyLabel={t('laneEmpty')}
         loading={buzzLoading}
         skeletonCount={4}
         skeletonWidth={280}
@@ -275,6 +279,7 @@ export function Discover() {
         subtitle={t('aiBandSubtitle')}
         href="/ai-band"
         hrefLabel={t('seeAll')}
+        emptyLabel={t('laneEmpty')}
         loading={agentsLoading}
         skeletonCount={4}
         skeletonWidth={240}
@@ -292,6 +297,7 @@ export function Discover() {
         subtitle={t('popularGenresSubtitle')}
         href="/search"
         hrefLabel={t('seeAll')}
+        emptyLabel={t('laneEmpty')}
         loading={genresLoading}
         skeletonCount={6}
         skeletonWidth={140}
@@ -307,6 +313,7 @@ export function Discover() {
         subtitle={t('upcomingEventsSubtitle') || 'Raves, sessions, and meetups'}
         href="/events"
         hrefLabel={t('seeAll')}
+        emptyLabel={t('laneEmpty')}
         loading={eventsLoading}
         skeletonCount={4}
         skeletonWidth={260}

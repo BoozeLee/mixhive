@@ -39,6 +39,9 @@ function Stat({ value, label }: { value: string; label: string }) {
           fontSize: fontSize['2xl'],
           color: colors.text.primary,
           lineHeight: 1,
+          // Stats sit over the animated WebGL gold backdrop (not a flat
+          // surface); the shadow keeps them legible over bright regions.
+          textShadow: '0 1px 10px rgba(0,0,0,0.55)',
         }}
       >
         {value}
@@ -46,10 +49,11 @@ function Stat({ value, label }: { value: string; label: string }) {
       <div
         style={{
           fontSize: fontSize.xs,
-          color: colors.text.dim,
+          color: colors.text.muted,
           textTransform: 'uppercase',
           letterSpacing: '0.12em',
           marginTop: space[2],
+          textShadow: '0 1px 8px rgba(0,0,0,0.55)',
         }}
       >
         {label}

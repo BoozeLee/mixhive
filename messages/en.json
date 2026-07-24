@@ -337,6 +337,7 @@
     "upcomingEvents": "Upcoming Events",
     "upcomingEventsSubtitle": "Raves, sessions, and meetups",
     "seeAll": "See all",
+    "laneEmpty": "Nothing here yet — check back soon.",
     "emptyState": "The Hive is quiet. Check back soon for new mixes and creators."
   },
   "profile": {

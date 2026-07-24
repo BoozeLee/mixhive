@@ -119,14 +119,14 @@ export function PricingPage() {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: space[6],
-          alignItems: 'start',
+          alignItems: 'stretch',
         }}
       >
         {TIERS.map(tier => (
           <div
             key={tier.id}
             style={{
-              background: tier.featured ? colors.surfaceElevated : colors.surface,
+              background: tier.featured ? colors.surfaceRaised : colors.surface,
               border: `1px solid ${tier.featured ? colors.accent : colors.border}`,
               borderRadius: radius.lg,
               padding: space[8],

@@ -236,9 +236,9 @@ export function SceneRadar() {
           </div>
 
           {/* Notifications (scene summaries) */}
-          {activeOutput.notifications.length > 0 && (
+          {(activeOutput.notifications ?? []).length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>
-              {activeOutput.notifications.map((n, i) => (
+              {(activeOutput.notifications ?? []).map((n, i) => (
                 <div
                   key={i}
                   style={{
@@ -286,7 +286,7 @@ export function SceneRadar() {
           )}
 
           {/* Suggestions */}
-          {activeOutput.suggestions.length > 0 && (
+          {(activeOutput.suggestions ?? []).length > 0 && (
             <div>
               <h2
                 style={{
@@ -299,7 +299,7 @@ export function SceneRadar() {
                 {t('recommendations')}
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>
-                {activeOutput.suggestions.map((s, i) => (
+                {(activeOutput.suggestions ?? []).map((s, i) => (
                   <div
                     key={i}
                     style={{
@@ -361,7 +361,7 @@ export function SceneRadar() {
           )}
 
           {/* Tasks */}
-          {activeOutput.tasks.length > 0 && (
+          {(activeOutput.tasks ?? []).length > 0 && (
             <div>
               <h2
                 style={{
@@ -374,7 +374,7 @@ export function SceneRadar() {
                 {t('suggestedActions')}
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[2] }}>
-                {activeOutput.tasks.map((t, i) => (
+                {(activeOutput.tasks ?? []).map((t, i) => (
                   <div
                     key={i}
                     style={{
@@ -427,9 +427,9 @@ export function SceneRadar() {
           )}
 
           {/* Empty state */}
-          {activeOutput.notifications.length === 0 &&
-            activeOutput.suggestions.length === 0 &&
-            activeOutput.tasks.length === 0 && (
+          {(activeOutput.notifications ?? []).length === 0 &&
+            (activeOutput.suggestions ?? []).length === 0 &&
+            (activeOutput.tasks ?? []).length === 0 && (
               <div
                 style={{
                   textAlign: 'center',

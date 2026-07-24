@@ -23,7 +23,9 @@ describe('navigation breakpoints', () => {
     const sidebarAppearsAt = governingBreakpoint(/\.desktop-sidebar\s*\{[^}]*display:\s*flex/);
     const mobileNavHidesAt = governingBreakpoint(/\.mobile-nav\s*\{[^}]*display:\s*none/);
 
-    expect(sidebarAppearsAt).toBe(1024);
+    // The left sidebar is the nav from 768px up; below that, the bottom
+    // MobileNav takes over. They must cross at the same width.
+    expect(sidebarAppearsAt).toBe(768);
     // If these differ, a logged-in user loses all navigation between them.
     expect(mobileNavHidesAt).toBe(sidebarAppearsAt);
   });

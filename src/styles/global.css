@@ -13,7 +13,7 @@
   min-width: 0;
 }
 
-/* Desktop sidebar: hidden by default, shown at ≥ 1024px */
+/* Desktop sidebar: hidden by default, shown as the left nav at ≥ 768px */
 .desktop-sidebar {
   display: none !important;
 }
@@ -23,6 +23,9 @@
 @media (max-width: 767px) {
   :root {
     --mixhive-player-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    /* Height the fixed SessionFab must clear so it never covers the bottom
+       MobileNav (only present below 768px). Zero at wider widths. */
+    --mobile-nav-space: 72px;
   }
 
   /* Hide desktop-only elements */
@@ -43,20 +46,29 @@
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
-  /* Tablet: the top navbar links are hidden and the desktop sidebar is not
-     shown yet, so the bottom MobileNav is the navigation here. Hide the inline
-     links and keep content clear of the fixed bottom bar. */
-  .navbar-links {
+@media (min-width: 768px) {
+  /* The persistent left sidebar is the navigation from 768px up, so the bottom
+     MobileNav and the inline top-navbar links retire here and the main content
+     shifts right to clear the fixed 220px sidebar. This keeps the full nav on
+     the LEFT across tablet + desktop (no bottom bar, no dead zone). */
+  .desktop-sidebar {
+    display: flex !important;
+  }
+
+  .mobile-nav {
     display: none !important;
   }
 
-  main {
-    padding-bottom: 136px; /* clearance for the fixed bottom MobileNav */
+  .app-main {
+    margin-left: 220px; /* matches sidebar width */
   }
-}
 
-@media (min-width: 768px) {
+  /* Nav links + Buzz pill live in the sidebar now — hide the top-navbar copies */
+  .navbar-links,
+  .navbar-buzz-pill {
+    display: none !important;
+  }
+
   /* Restore container max-width on tablet+ */
   .container {
     max-width: 640px;
@@ -67,27 +79,6 @@
 }
 
 @media (min-width: 1024px) {
-  /* Show desktop sidebar, shift main content right */
-  .desktop-sidebar {
-    display: flex !important;
-  }
-
-  /* Sidebar takes over navigation here, so the bottom MobileNav retires at the
-     SAME breakpoint the sidebar appears — no width range is left without nav. */
-  .mobile-nav {
-    display: none !important;
-  }
-
-  .app-main {
-    margin-left: 220px; /* matches sidebar width */
-  }
-
-  /* Hide nav links + Buzz pill from top navbar — sidebar has them */
-  .navbar-links,
-  .navbar-buzz-pill {
-    display: none !important;
-  }
-
   .container {
     max-width: 768px;
   }

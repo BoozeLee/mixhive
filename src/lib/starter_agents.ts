@@ -611,6 +611,70 @@ mh.print("stored " .. #log .. " run entries")
 mh.notify("JSON state demo: " .. #log .. " entries in run_log KV key")
 `,
   },
+
+  {
+    id: 'boost-followed-dj-drops',
+    name: 'Support new drops',
+    description:
+      "When a DJ you follow publishes a mix, notify yourself and auto-like the drop so it's on your radar.",
+    trigger_type: 'on_mix_upload',
+    tags: ['social', 'discovery'],
+    default_for_trigger: true,
+    lua_code: `-- Support new drops from DJs you follow.
+-- Fires when someone you follow publishes a mix.
+
+function on_mix_upload(event)
+  local dj = mh.get_profile(event.actor_id)
+  local who = dj and ("@" .. dj.username) or "a DJ you follow"
+  mh.notify("🆕 " .. who .. " dropped: " .. (event.title or "a new mix"))
+
+  -- Auto-like the drop (idempotent). Comment out to disable.
+  mh.like(event.mix_id)
+end
+`,
+  },
+
+  {
+    id: 'acknowledge-mentions',
+    name: 'Acknowledge mentions',
+    description:
+      "Ping yourself when you're @mentioned anywhere — deduplicated so each source only notifies once.",
+    trigger_type: 'on_mention',
+    tags: ['social', 'engagement'],
+    default_for_trigger: true,
+    lua_code: `-- Get pinged when you're @mentioned, once per source.
+
+function on_mention(event)
+  local key = "mentioned:" .. (event.source_type or "x") .. ":" .. (event.source_id or "")
+  if mh.kv_get(key) then return end  -- already acknowledged this source
+  mh.kv_set(key, "1")
+
+  local actor = mh.get_profile(event.actor_id)
+  local who = actor and ("@" .. actor.username) or "someone"
+  mh.notify("💬 " .. who .. " mentioned you (" .. (event.source_type or "post") .. ").")
+end
+`,
+  },
+
+  {
+    id: 'quiet-churn-tracker',
+    name: 'Quiet churn tracker',
+    description:
+      'Privately record unfollows to your durable state for later review. Never messages or retaliates against the person.',
+    trigger_type: 'on_unfollow',
+    tags: ['analytics', 'insights'],
+    default_for_trigger: true,
+    lua_code: `-- Quietly track unfollows for your own review.
+-- Deliberately does NOT notify or message the person who unfollowed.
+
+function on_unfollow(event)
+  local total = (mh.state_get({ "unfollows", "total" }) or 0) + 1
+  mh.state_set({ "unfollows", "total" }, total)
+  mh.history_add({ kind = "unfollow", who = event.actor_id })
+  mh.print("Recorded unfollow #" .. total .. " (actor " .. tostring(event.actor_id) .. ")")
+end
+`,
+  },
 ];
 
 /** Default starter body for a freshly-picked trigger in the editor.

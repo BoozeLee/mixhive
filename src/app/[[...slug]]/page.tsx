@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { colors } from '@/styles/tokens';
 
 const MixHiveClient = dynamic(() => import('../../MixHiveClient'), {
   ssr: false,
@@ -32,8 +33,8 @@ function AppLoader() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#070706',
-          color: '#f6c400',
+          background: colors.bg,
+          color: colors.accentBright,
           fontFamily: 'system-ui, sans-serif',
           padding: 24,
           textAlign: 'center',
@@ -48,8 +49,8 @@ function AppLoader() {
           <button
             onClick={() => window.location.reload()}
             style={{
-              background: '#f6c400',
-              color: '#070706',
+              background: colors.accentBright,
+              color: colors.bg,
               border: 'none',
               padding: '12px 24px',
               borderRadius: 6,

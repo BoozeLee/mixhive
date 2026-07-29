@@ -64,7 +64,20 @@ jobs:
       - name: Build checked-out application
         run: npm run build
 
-      - name: Run E2E tests against checked-out application
+      - name: Start application server
+        run: |
+          npm run start -- -p 3099 &
+          echo "Waiting for server on port 3099..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3099 > /dev/null 2>&1; then
+              echo "Server is ready."
+              break
+            fi
+            sleep 2
+          done
+          curl -sf http://localhost:3099 > /dev/null || { echo "Server failed to start"; exit 1; }
+
+      - name: Run E2E tests against local server
         run: npx playwright test --project='Desktop Chrome' --project='Mobile Chrome'
 
       - name: Stop Supabase

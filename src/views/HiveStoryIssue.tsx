@@ -228,7 +228,7 @@ export function HiveStoryIssue() {
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, notFound, t]);
 
   const theme = issue?.theme_color ?? colors.accent;
 

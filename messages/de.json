@@ -131,6 +131,7 @@
     "title": "Benachrichtigungen",
     "loading": "Benachrichtigungen laden…",
     "markAllRead": "Alle als gelesen markieren",
+    "preferences": "Einstellungen",
     "unread": "Ungelesen",
     "signInPrompt": "Melde dich an, um deine Benachrichtigungen zu sehen"
   },
@@ -145,7 +146,8 @@
     "noResults": "Keine Ergebnisse gefunden",
     "noResultsBody": "Versuche eine andere Schreibweise, Genre oder Location.",
     "resultsFor": "Ergebnisse für <q>{query}</q>",
-    "aiBand": "AI Band"
+    "aiBand": "AI Band",
+    "searchUnavailable": "Suche nicht verfügbar"
   },
   "feed": {
     "liveFeed": "Live-Feed",
@@ -174,7 +176,12 @@
     "emptyLatestAction": "Mix hochladen",
     "errorFeedTitle": "Feed konnte nicht geladen werden",
     "errorFeedBody": "Beim Laden des Bienenstocks ist ein Fehler aufgetreten. Erneut versuchen?",
-    "errorFeedAction": "Erneut versuchen"
+    "errorFeedAction": "Erneut versuchen",
+    "dateAll": "Alle",
+    "date24h": "24h",
+    "dateWeek": "Diese Woche",
+    "dateMonth": "Diesen Monat",
+    "dateYear": "Dieses Jahr"
   },
   "dashboard": {
     "title": "Hive Growth OS",
@@ -194,6 +201,8 @@
     "topMixStats": "{plays} Wiedergaben / {likes} Likes / {comments} Kommentare",
     "topMixEmpty": "Noch kein Top-Mix. Lade deinen ersten Mix hoch, um Signal zu sammeln.",
     "recentActivityEmpty": "Aktivität erscheint hier, sobald Hörer abspielen, liken, folgen und kommentieren.",
+    "loadError": "Fehler beim Laden der Dashboard-Daten.",
+    "retry": "Wiederholen",
     "activity": {
       "uploaded": "{title} hochgeladen",
       "liked": "{title} geliked",
@@ -560,7 +569,14 @@
     "status": "Status",
     "paidOut": "Ausgezahlt",
     "pendingEscrow": "Ausstehend (Escrow)",
-    "held": "Zurückgehalten (Auszahlungen einrichten)"
+    "held": "Zurückgehalten (Auszahlungen einrichten)",
+    "loadingPayoutStatus": "Auszahlungsstatus wird geladen…",
+    "payoutsActive": "Auszahlungen aktiv — du kannst Marketplace-Einnahmen empfangen.",
+    "stripeNeedsDetails": "Dein Stripe-Konto benötigt noch ein paar Details, bevor Auszahlungen aktiviert werden können.",
+    "connectStripePrompt": "Verbinde ein Stripe-Konto, um Ausrüstung zu verkaufen und Agent-Paket-Einnahmen zu erhalten.",
+    "openingStripe": "Stripe wird geöffnet…",
+    "finishPayoutSetup": "Auszahlungseinrichtung abschließen",
+    "setUpPayouts": "Auszahlungen einrichten"
   },
   "editMix": {
     "title": "Mix bearbeiten",
@@ -778,6 +794,12 @@
     "sectionHeadingPlaceholder": "Abschnittsüberschrift (z.B. „Vergangene Auftritte“)",
     "sectionBodyPlaceholder": "Schreibe hier deinen Abschnittstext…"
   },
+  "saved": {
+    "signInToSee": "Melde dich an, um deine Favoriten zu sehen.",
+    "eyebrow": "Favoriten",
+    "title": "Gespeicherte Mixe",
+    "empty": "Du hast noch keine Mixe geliked."
+  },
   "sceneRadar": {
     "signInToSee": "Melde dich an, um dein Szenen-Radar zu sehen.",
     "signIn": "Anmelden",
@@ -828,6 +850,33 @@
     "hideContent": "Inhalt ausblenden",
     "banOwner": "Eigentümcmer sperren",
     "dismiss": "Verwerfen"
+  },
+  "adminUsers": {
+    "title": "Benutzerverwaltung",
+    "subtitle": "Benutzer suchen, sperren/entsperren und Moderationsverlauf einsehen.",
+    "searchPlaceholder": "Nach Benutzername oder Anzeigename suchen...",
+    "search": "Suchen",
+    "bannedOnly": "Nur gesperrte",
+    "loading": "Benutzer laden...",
+    "noResults": "Keine Benutzer gefunden.",
+    "noUsers": "Keine Benutzer gefunden.",
+    "colUser": "Benutzer",
+    "colStatus": "Status",
+    "colMixes": "Mixes",
+    "colFollowers": "Follower",
+    "colJoined": "Beigetreten",
+    "colActions": "Aktionen",
+    "banned": "Gesperrt",
+    "verified": "Verifiziert",
+    "active": "Aktiv",
+    "ban": "Sperren",
+    "unban": "Entsperren",
+    "audit": "Prüfprotokoll",
+    "prev": "Zurück",
+    "next": "Weiter",
+    "auditTitle": "Moderationsverlauf",
+    "auditLoading": "Prüfprotokoll wird geladen...",
+    "auditEmpty": "Kein Moderationsverlauf für diesen Benutzer."
   },
   "agentsGallery": {
     "agentGallery": "Agenten-Galerie",
@@ -950,11 +999,20 @@
     "signIn": "Anmelden",
     "you": "Du:",
     "chat": "Chat",
-    "messages": "Nachrichten"
+    "messages": "Nachrichten",
+    "newConversation": "Neue Unterhaltung",
+    "newMessage": "Neue Nachricht",
+    "searchUsers": "Benutzer suchen…",
+    "noConversations": "Noch keine Unterhaltungen.",
+    "noMessagesYet": "Noch keine Nachrichten",
+    "searching": "Suche…",
+    "noResults": "Keine Benutzer gefunden"
   },
   "notFound": {
     "noRouteMatches": "Keine passende Route",
-    "pageNotFound": "Seite nicht gefunden"
+    "pageNotFound": "Seite nicht gefunden",
+    "mightHaveMoved": ". Sie wurde möglicherweise verschoben oder existiert nicht mehr.",
+    "backToFeed": "Zurück zum Feed"
   },
   "publicPressKit": {
     "loadingEpk": "EPK laden…",

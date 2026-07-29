@@ -54,19 +54,6 @@ export default defineConfig([
       // types; keep lint focused on behavioral issues.
       'react-refresh/only-export-components': 'off',
 
-      // no-raw-hex (P1 design-system): prefer tokens from src/styles/tokens.ts.
-      // The hard regression gate is scripts/check-raw-hex.mjs (--max budget in
-      // CI via `npm run lint:hex`). Kept at 'warn' here because `npm run lint`
-      // is currently stubbed and the repo still carries pre-existing hex
-      // (mostly src/app/*). Promote to 'error' once lint is un-stubbed and the
-      // budget reaches 0. tokens.ts (the palette source) is exempted below.
-      'no-restricted-syntax': [
-        'warn',
-        {
-          selector: 'Literal[value=/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
-          message: 'Use a design token from src/styles/tokens.ts instead of a raw hex color.',
-        },
-      ],
 
       // jsx-a11y — every rule the codebase currently satisfies is at 'error'.
       'jsx-a11y/alt-text': 'error',
@@ -106,6 +93,44 @@ export default defineConfig([
       'jsx-a11y/scope': 'error',
       'jsx-a11y/tabindex-no-positive': 'error',
     },
+  },
+  // Raw-hex lint — views and components must use design tokens (error).
+  // Exempt sites carry an eslint-disable-next-line with a rationale.
+  {
+    files: ['src/views/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
+          message: 'Use a design token from src/styles/tokens.ts instead of a raw hex color.',
+        },
+      ],
+    },
+  },
+  // Raw-rgba lint — warn only, withAlpha() available for new code.
+  // Promote to error once the ~100 existing rgba() sites are migrated (P1 follow-up).
+  {
+    files: ['src/views/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'Literal[value=/^rgba\\(/]',
+          message: 'Use withAlpha() from src/styles/tokens.ts instead of a raw rgba() string.',
+        },
+      ],
+    },
+  },
+  {
+    // PDF document styles use a different rendering context (no CSS tokens).
+    files: ['src/components/epk/EpkPdfDocument.tsx'],
+    rules: { 'no-restricted-syntax': 'off' },
+  },
+  {
+    // Google brand colors in the SVG "Sign in with Google" button.
+    files: ['src/views/Register.tsx'],
+    rules: { 'no-restricted-syntax': 'off' },
   },
   {
     // The design-token palette is the one legitimate home for raw hex.

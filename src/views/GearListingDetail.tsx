@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { colors } from '../styles/tokens';
 import { useParams, Link } from 'react-router-dom';
@@ -29,7 +29,7 @@ export function GearListingDetail() {
   const [buyError, setBuyError] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!id) return;
     try {
       const {
@@ -48,14 +48,14 @@ export function GearListingDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUserId(session?.user.id ?? null);
     });
     fetchData();
-  }, [id]);
+  }, [fetchData]);
 
   const handleAction = async (
     action: 'ship' | 'deliver' | 'confirm' | 'dispute',

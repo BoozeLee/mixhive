@@ -27,14 +27,18 @@ export function AdminModeration() {
   const { user, profile, loading: authLoading } = useAuth();
   const [signals, setSignals] = useState<ModerationSignal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<ModerationSignalStatus | ''>('open');
   const [busyId, setBusyId] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
 
   async function load() {
     setLoading(true);
+    setError(null);
     try {
       setSignals(await listModerationSignals(statusFilter || undefined));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load moderation queue');
     } finally {
       setLoading(false);
     }
@@ -79,6 +83,12 @@ export function AdminModeration() {
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px 16px 96px' }}>
+      {error && (
+        <div style={{ padding: '12px 16px', marginBottom: 16, background: 'rgba(255,85,85,0.1)', border: '1px solid rgba(255,85,85,0.3)', borderRadius: radius.md, color: colors.danger, fontSize: 13 }}>
+          {error}
+        </div>
+      )}
+
       <h1 style={{ color: colors.text.primary, fontSize: 24, margin: '0 0 8px' }}>
         {t('moderation')}
       </h1>

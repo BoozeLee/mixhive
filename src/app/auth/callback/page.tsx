@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { colors } from '@/styles/tokens';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -88,13 +89,13 @@ export default function AuthCallbackPage() {
           minHeight: '100svh',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#070706',
-          color: '#f5f3e7',
+          background: colors.bg,
+          color: colors.text.primary,
         }}
       >
         <div style={{ textAlign: 'center', maxWidth: 400, padding: '0 24px' }}>
-          <p style={{ color: '#f55', fontSize: 14, marginBottom: 16 }}>{error}</p>
-          <a href="/login" style={{ color: '#f6c400', fontSize: 14 }}>
+          <p style={{ color: colors.danger, fontSize: 14, marginBottom: 16 }}>{error}</p>
+          <a href="/login" style={{ color: colors.accent, fontSize: 14 }}>
             Back to sign in
           </a>
         </div>
@@ -109,15 +110,15 @@ export default function AuthCallbackPage() {
         minHeight: '100svh',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#070706',
-        color: '#f5f3e7',
+        background: colors.bg,
+        color: colors.text.primary,
       }}
     >
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: '#f6c400', marginBottom: 8 }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: colors.accent, marginBottom: 8 }}>
           MixHive
         </div>
-        <p style={{ color: '#8c8676', fontSize: 13 }}>Completing sign in…</p>
+        <p style={{ color: colors.text.muted, fontSize: 13 }}>Completing sign in…</p>
       </div>
     </div>
   );

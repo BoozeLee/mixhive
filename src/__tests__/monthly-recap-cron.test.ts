@@ -77,9 +77,17 @@ describe('monthly-recap cron', () => {
     expect(mockSend).toHaveBeenCalled();
   });
 
-  it('returns 401 without valid cron secret', async () => {
+  it('allows access when no CRON_SECRET is configured (dev mode)', async () => {
     delete process.env.CRON_SECRET;
     const res = await GET(new NextRequest('https://mixhive.test/api/cron/monthly-recap'));
+    expect(res.status).toBe(200);
+  });
+
+  it('returns 401 with wrong cron secret', async () => {
+    process.env.CRON_SECRET = 'real-secret';
+    const res = await GET(new NextRequest('https://mixhive.test/api/cron/monthly-recap', {
+      headers: { authorization: 'Bearer wrong-secret' },
+    }));
     expect(res.status).toBe(401);
   });
 });

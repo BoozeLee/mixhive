@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { z } from 'zod';
 import { moderateContent } from '@/lib/moderation';
+import { rateLimiter } from '@/lib/rateLimiter';
+
+const CreateBuzzSchema = z.object({
+  text: z.string().trim().min(1, 'Buzz text is required').max(500),
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,14 +36,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
 
-    const { text } = await req.json();
-    if (!text?.trim()) {
-      return NextResponse.json({ error: 'Buzz text is required' }, { status: 400 });
+    const rateCheck = await rateLimiter.checkApiLimit('buzz', user.id);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const parsed = CreateBuzzSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.issues[0]?.message || 'Invalid input' }, { status: 400 });
     }
 
     const { data: buzz, error } = await sb
       .from('buzzes')
-      .insert({ author_id: user.id, body: text })
+      .insert({ author_id: user.id, body: parsed.data.text })
       .select()
       .single();
 

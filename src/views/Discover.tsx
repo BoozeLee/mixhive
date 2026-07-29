@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import {
@@ -22,7 +22,17 @@ import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
 import { useAuth } from '../hooks/useAuth';
 import type { FeedMix, Profile, FeedBuzz } from '../lib/types';
-import { colors, radius, space, fontSize, transition } from '../styles/tokens';
+import { colors, radius, space, fontSize, fontWeight, transition, withAlpha } from '../styles/tokens';
+
+const NAV_ITEMS: { key: string; label: string }[] = [
+  { key: 'trending', label: 'Trending' },
+  { key: 'fresh', label: 'Fresh' },
+  { key: 'creators', label: 'Creators' },
+  { key: 'buzz', label: 'Buzz' },
+  { key: 'aiBand', label: 'AI Band' },
+  { key: 'genres', label: 'Genres' },
+  { key: 'events', label: 'Events' },
+];
 
 interface DiscoverGenre {
   id: string;
@@ -46,24 +56,36 @@ export function Discover() {
 
   const [trending, setTrending] = useState<FeedMix[]>([]);
   const [trendingLoading, setTrendingLoading] = useState(true);
+  const [trendingError, setTrendingError] = useState(false);
 
   const [fresh, setFresh] = useState<FeedMix[]>([]);
   const [freshLoading, setFreshLoading] = useState(true);
+  const [freshError, setFreshError] = useState(false);
 
   const [creators, setCreators] = useState<Profile[]>([]);
   const [creatorsLoading, setCreatorsLoading] = useState(true);
+  const [creatorsError, setCreatorsError] = useState(false);
 
   const [buzzes, setBuzzes] = useState<FeedBuzz[]>([]);
   const [buzzLoading, setBuzzLoading] = useState(true);
+  const [buzzError, setBuzzError] = useState(false);
 
   const [agents, setAgents] = useState<AIAgent[]>([]);
   const [agentsLoading, setAgentsLoading] = useState(true);
+  const [agentsError, setAgentsError] = useState(false);
 
   const [genres, setGenres] = useState<DiscoverGenre[]>([]);
   const [genresLoading, setGenresLoading] = useState(true);
+  const [genresError, setGenresError] = useState(false);
 
   const [events, setEvents] = useState<DiscoverEvent[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);
+  const [eventsError, setEventsError] = useState(false);
+
+  const scrollToSection = useCallback((key: string) => {
+    const el = document.getElementById(`discover-${key}`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,8 +94,8 @@ export function Discover() {
       .then(result => {
         if (!cancelled) setTrending(result.data);
       })
-      .catch(error => {
-        console.error('Error fetching trending mixes:', error);
+      .catch(() => {
+        if (!cancelled) setTrendingError(true);
       })
       .finally(() => {
         if (!cancelled) setTrendingLoading(false);
@@ -83,8 +105,8 @@ export function Discover() {
       .then(result => {
         if (!cancelled) setFresh(result.data);
       })
-      .catch(error => {
-        console.error('Error fetching recent mixes:', error);
+      .catch(() => {
+        if (!cancelled) setFreshError(true);
       })
       .finally(() => {
         if (!cancelled) setFreshLoading(false);
@@ -94,8 +116,8 @@ export function Discover() {
       .then(result => {
         if (!cancelled) setCreators(result.data);
       })
-      .catch(error => {
-        console.error('Error fetching top DJs:', error);
+      .catch(() => {
+        if (!cancelled) setCreatorsError(true);
       })
       .finally(() => {
         if (!cancelled) setCreatorsLoading(false);
@@ -105,8 +127,8 @@ export function Discover() {
       .then(result => {
         if (!cancelled) setBuzzes(result.data);
       })
-      .catch(error => {
-        console.error('Error fetching latest buzz:', error);
+      .catch(() => {
+        if (!cancelled) setBuzzError(true);
       })
       .finally(() => {
         if (!cancelled) setBuzzLoading(false);
@@ -116,8 +138,8 @@ export function Discover() {
       .then(result => {
         if (!cancelled) setAgents(result);
       })
-      .catch(error => {
-        console.error('Error fetching AI agents:', error);
+      .catch(() => {
+        if (!cancelled) setAgentsError(true);
       })
       .finally(() => {
         if (!cancelled) setAgentsLoading(false);
@@ -127,8 +149,8 @@ export function Discover() {
       .then(result => {
         if (!cancelled) setGenres(result.data);
       })
-      .catch(error => {
-        console.error('Error fetching genres:', error);
+      .catch(() => {
+        if (!cancelled) setGenresError(true);
       })
       .finally(() => {
         if (!cancelled) setGenresLoading(false);
@@ -165,7 +187,7 @@ export function Discover() {
           setEvents(data.map(e => ({ ...e, rsvp_counts: counts[e.id] || { going: 0, maybe: 0 } })));
         }
       } catch {
-        // Events are optional — don't block discover
+        if (!cancelled) setEventsError(true);
       } finally {
         if (!cancelled) setEventsLoading(false);
       }
@@ -178,18 +200,61 @@ export function Discover() {
 
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 16px 96px' }}>
-      <header style={{ marginBottom: space[11] }}>
-        <SectionHeading
-          as="h1"
-          eyebrow={t('eyebrow')}
-          title={t('title')}
-          subtitle={t('subtitle')}
-        />
+      <header style={{ marginBottom: space[8] }}>
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
       </header>
+
+      {/* Quick-nav pills */}
+      <div
+        style={{
+          display: 'flex',
+          gap: space[2],
+          overflowX: 'auto',
+          paddingBottom: space[4],
+          marginBottom: space[6],
+          scrollbarWidth: 'none',
+          position: 'sticky',
+          top: 72,
+          zIndex: 20,
+          background: withAlpha(colors.bg, 0.92),
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+        }}
+      >
+        {NAV_ITEMS.map(item => (
+          <button
+            key={item.key}
+            onClick={() => scrollToSection(item.key)}
+            style={{
+              flexShrink: 0,
+              padding: `${space[2]}px ${space[5]}px`,
+              borderRadius: radius.pill,
+              border: `1px solid ${colors.border}`,
+              background: colors.surface,
+              color: colors.text.muted,
+              fontSize: fontSize.sm,
+              fontWeight: fontWeight.medium,
+              cursor: 'pointer',
+              transition: transition.fast,
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = colors.accentMuted;
+              e.currentTarget.style.color = colors.accent;
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = colors.border;
+              e.currentTarget.style.color = colors.text.muted;
+            }}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
 
       {/* Hero: top trending mix */}
       {!trendingLoading && trending[0] && (
-        <section style={{ marginBottom: space[12] }}>
+        <section id="discover-hero" style={{ marginBottom: space[12] }}>
           <Reveal index={0} from="up">
             <MixCard mix={trending[0]} />
           </Reveal>
@@ -197,13 +262,14 @@ export function Discover() {
       )}
 
       {/* Trending mixes lane */}
+      <div id="discover-trending"><Reveal index={1} from="up">
       <DiscoverLane
         title={t('trendingMixes')}
         subtitle={t('trendingSubtitle')}
         href="/search?tab=mixes"
         hrefLabel={t('seeAll')}
-        emptyLabel={t('laneEmpty')}
         loading={trendingLoading}
+        error={trendingError}
         skeletonCount={5}
         skeletonWidth={160}
       >
@@ -211,15 +277,17 @@ export function Discover() {
           <CompactMixCard key={mix.id} mix={mix} />
         ))}
       </DiscoverLane>
+      </Reveal></div>
 
       {/* Fresh drops lane */}
+      <div id="discover-fresh"><Reveal index={2} from="up">
       <DiscoverLane
         title={t('freshDrops')}
         subtitle={t('freshDropsSubtitle')}
         href="/search?tab=mixes"
         hrefLabel={t('seeAll')}
-        emptyLabel={t('laneEmpty')}
         loading={freshLoading}
+        error={freshError}
         skeletonCount={5}
         skeletonWidth={160}
       >
@@ -227,15 +295,17 @@ export function Discover() {
           <CompactMixCard key={mix.id} mix={mix} />
         ))}
       </DiscoverLane>
+      </Reveal></div>
 
       {/* Top creators lane */}
+      <div id="discover-creators"><Reveal index={3} from="up">
       <DiscoverLane
         title={t('topCreators')}
         subtitle={t('topCreatorsSubtitle')}
         href="/search?tab=artists"
         hrefLabel={t('seeAll')}
-        emptyLabel={t('laneEmpty')}
         loading={creatorsLoading}
+        error={creatorsError}
         skeletonCount={5}
         skeletonWidth={160}
       >
@@ -243,15 +313,17 @@ export function Discover() {
           <CreatorCard key={profile.id} profile={profile} />
         ))}
       </DiscoverLane>
+      </Reveal></div>
 
       {/* Buzzing now lane */}
+      <div id="discover-buzz"><Reveal index={4} from="up">
       <DiscoverLane
         title={t('buzzingNow')}
         subtitle={t('buzzingNowSubtitle')}
         href="/feed?tab=latest"
         hrefLabel={t('seeAll')}
-        emptyLabel={t('laneEmpty')}
         loading={buzzLoading}
+        error={buzzError}
         skeletonCount={4}
         skeletonWidth={280}
       >
@@ -272,15 +344,17 @@ export function Discover() {
           </div>
         ))}
       </DiscoverLane>
+      </Reveal></div>
 
       {/* AI Band lane */}
+      <div id="discover-aiBand"><Reveal index={5} from="up">
       <DiscoverLane
         title={t('aiBand')}
         subtitle={t('aiBandSubtitle')}
         href="/ai-band"
         hrefLabel={t('seeAll')}
-        emptyLabel={t('laneEmpty')}
         loading={agentsLoading}
+        error={agentsError}
         skeletonCount={4}
         skeletonWidth={240}
       >
@@ -290,15 +364,17 @@ export function Discover() {
           </div>
         ))}
       </DiscoverLane>
+      </Reveal></div>
 
       {/* Popular genres lane */}
+      <div id="discover-genres"><Reveal index={6} from="up">
       <DiscoverLane
         title={t('popularGenres')}
         subtitle={t('popularGenresSubtitle')}
         href="/search"
         hrefLabel={t('seeAll')}
-        emptyLabel={t('laneEmpty')}
         loading={genresLoading}
+        error={genresError}
         skeletonCount={6}
         skeletonWidth={140}
       >
@@ -306,15 +382,17 @@ export function Discover() {
           <GenreCard key={genre.id} name={genre.name} count={genre.count} />
         ))}
       </DiscoverLane>
+      </Reveal></div>
 
       {/* Upcoming events lane */}
+      <div id="discover-events"><Reveal index={7} from="up">
       <DiscoverLane
         title={t('upcomingEvents') || 'Upcoming Events'}
         subtitle={t('upcomingEventsSubtitle') || 'Raves, sessions, and meetups'}
         href="/events"
         hrefLabel={t('seeAll')}
-        emptyLabel={t('laneEmpty')}
         loading={eventsLoading}
+        error={eventsError}
         skeletonCount={4}
         skeletonWidth={260}
       >
@@ -334,41 +412,21 @@ export function Discover() {
               overflow: 'hidden',
               transition: transition.base,
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = colors.accent;
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = colors.border;
-            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = colors.accent; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = colors.border; }}
           >
-            <div
-              style={{
-                height: 100,
-                background: event.cover_image_url
-                  ? `url(${event.cover_image_url}) center/cover`
-                  : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
-                display: 'flex',
-                alignItems: 'flex-end',
-                padding: space[2],
-              }}
-            >
-              <div
-                style={{
-                  background: colors.bg,
-                  borderRadius: radius.sm,
-                  padding: `${space[1]} ${space[2]}`,
-                  textAlign: 'center',
-                  minWidth: 40,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: fontSize.xs,
-                    color: colors.accent,
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                  }}
-                >
+            <div style={{
+              height: 100,
+              background: event.cover_image_url
+                ? `url(${event.cover_image_url}) center/cover`
+                : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
+              display: 'flex', alignItems: 'flex-end', padding: space[2],
+            }}>
+              <div style={{
+                background: colors.bg, borderRadius: radius.sm,
+                padding: `${space[1]} ${space[2]}`, textAlign: 'center', minWidth: space[12],
+              }}>
+                <div style={{ fontSize: fontSize.xs, color: colors.accent, fontWeight: 700, textTransform: 'uppercase' }}>
                   {new Date(event.starts_at).toLocaleDateString(undefined, { month: 'short' })}
                 </div>
                 <div style={{ fontSize: fontSize.xl, fontWeight: 700, lineHeight: 1 }}>
@@ -377,15 +435,7 @@ export function Discover() {
               </div>
             </div>
             <div style={{ padding: space[3] }}>
-              <h4
-                style={{
-                  fontSize: fontSize.sm,
-                  fontWeight: 700,
-                  margin: 0,
-                  marginBottom: space[1],
-                  lineHeight: 1.3,
-                }}
-              >
+              <h4 style={{ fontSize: fontSize.sm, fontWeight: 700, margin: 0, marginBottom: space[1], lineHeight: 1.3 }}>
                 {event.title}
               </h4>
               {event.venue_name && (
@@ -393,20 +443,14 @@ export function Discover() {
                   {event.venue_name}
                 </p>
               )}
-              <p
-                style={{
-                  fontSize: fontSize.xs,
-                  color: colors.text.muted,
-                  margin: 0,
-                  marginTop: space[1],
-                }}
-              >
+              <p style={{ fontSize: fontSize.xs, color: colors.text.muted, margin: 0, marginTop: space[1] }}>
                 {event.rsvp_counts.going} going · {event.is_free ? 'Free' : 'Ticket'}
               </p>
             </div>
           </Link>
         ))}
       </DiscoverLane>
+      </Reveal></div>
 
       {/* Empty state when everything fails */}
       {!trendingLoading &&

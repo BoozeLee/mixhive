@@ -67,32 +67,29 @@ export function AgentsGallery() {
     }
   }
 
-  const matchesSearch = (text: string) => text.toLowerCase().includes(search.trim().toLowerCase());
+  const filteredStarters = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return STARTER_AGENTS.filter(
+      s =>
+        s.name.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        s.tags.some(t => t.toLowerCase().includes(q))
+    ).filter(
+      s => category === 'all' || s.tags.some(tag => tag.toLowerCase() === category.toLowerCase())
+    ).map(s => ({ ...s, kind: 'starter' as const }));
+  }, [search, category]);
 
-  const matchesCategory = (tags: string[]) =>
-    category === 'all' || tags.some(tag => tag.toLowerCase() === category.toLowerCase());
-
-  const filteredStarters = useMemo(
-    () =>
-      STARTER_AGENTS.filter(
-        s =>
-          (matchesSearch(s.name) || matchesSearch(s.description) || s.tags.some(matchesSearch)) &&
-          matchesCategory(s.tags)
-      ).map(s => ({ ...s, kind: 'starter' as const })),
-    [search, category]
-  );
-
-  const filteredAgents = useMemo(
-    () =>
-      agents.filter(
-        a =>
-          (matchesSearch(a.name) ||
-            matchesSearch(a.description || '') ||
-            (a.tags ?? []).some(matchesSearch)) &&
-          matchesCategory(a.tags ?? [])
-      ),
-    [agents, search, category]
-  );
+  const filteredAgents = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return agents.filter(
+      a =>
+        a.name.toLowerCase().includes(q) ||
+        (a.description ?? '').toLowerCase().includes(q) ||
+        (a.tags ?? []).some(t => t.toLowerCase().includes(q))
+    ).filter(
+      a => category === 'all' || (a.tags ?? []).some(tag => tag.toLowerCase() === category.toLowerCase())
+    );
+  }, [agents, search, category]);
 
   const hasAny = filteredStarters.length > 0 || filteredAgents.length > 0;
 

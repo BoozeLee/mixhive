@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { colors } from '../styles/tokens';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
-import { runStrategicAgent } from '../lib/agents';
-import type { AgentOutput } from '../lib/agents';
+import { useAgentStream } from '../lib/useAgentStream';
+import { useAgentStore } from '../lib/agentStore';
 import type { AudioFeature, Mix, MixTrack } from '../lib/types';
 
 interface Props {
@@ -24,9 +24,8 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [aiAnalysis, setAiAnalysis] = useState<AgentOutput | null>(null);
-  const [aiBusy, setAiBusy] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
+
+  const stream = useAgentStream();
 
   useEffect(() => {
     let alive = true;
@@ -64,17 +63,37 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
     };
   }, [mix.id]);
 
-  async function runAiSetAnalysis() {
-    setAiBusy(true);
-    setAiError(null);
-    try {
-      const result = await runStrategicAgent('dj_set_analyzer', { mix_id: mix.id }, false);
-      setAiAnalysis(result);
-    } catch (err) {
-      setAiError(err instanceof Error ? err.message : 'AI analysis failed');
-    } finally {
-      setAiBusy(false);
+  useEffect(() => {
+    const unsub = useAgentStore.getState().subscribe(mix.dj_id);
+    return unsub;
+  }, [mix.dj_id]);
+
+  useEffect(() => {
+    useAgentStore.getState().setRunning(stream.running);
+  }, [stream.running]);
+
+  useEffect(() => {
+    if (stream.suggestions.length > 0) {
+      useAgentStore.getState().addSuggestions(
+        stream.suggestions.map((s, i) => ({
+          id: `stream-${mix.id}-${i}`,
+          type: s.type,
+          payload: (s.payload ?? {}) as Record<string, unknown>,
+          rationale: s.rationale ?? null,
+          confidence: s.confidence ?? 0,
+          status: 'pending' as const,
+          source: 'dj_set_analyzer',
+          created_at: new Date().toISOString(),
+        }))
+      );
     }
+  }, [stream.suggestions, mix.id]);
+
+  async function runAiSetAnalysis() {
+    const bustCache = stream.complete;
+    useAgentStore.getState().setRunning(true);
+    useAgentStore.getState().setError(null);
+    stream.start(mix.id, { agentId: 'dj_set_analyzer', context: { audio_features: feature ?? undefined, mix_title: mix.title, genre: mix.genre_name ?? null }, bustCache });
   }
 
   async function analyze() {
@@ -164,19 +183,19 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
             <button
               type="button"
               onClick={runAiSetAnalysis}
-              disabled={aiBusy}
+              disabled={stream.running}
               style={{
                 border: '1px solid rgba(246,196,0,0.5)',
                 borderRadius: 8,
-                background: aiBusy ? colors.surfaceRaised : 'transparent',
-                color: aiBusy ? colors.text.faintest : colors.accent,
+                background: stream.running ? colors.surfaceRaised : 'transparent',
+                color: stream.running ? colors.text.faintest : colors.accent,
                 padding: '8px 12px',
                 fontWeight: 800,
                 fontSize: 12,
-                cursor: aiBusy ? 'default' : 'pointer',
+                cursor: stream.running ? 'default' : 'pointer',
               }}
             >
-              {aiBusy ? 'Running AI…' : 'AI Set Analysis'}
+              {stream.running ? (stream.statusMessage || 'Running AI…') : stream.complete ? 'Run again' : 'AI Set Analysis'}
             </button>
           </div>
         )}
@@ -184,6 +203,46 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
 
       {loading && <p style={{ color: colors.text.dim, fontSize: 13 }}>{t('loadingAnalyzer')}</p>}
       {message && <p style={{ color: colors.accent, fontSize: 13, lineHeight: 1.5 }}>{message}</p>}
+
+      {feature?.status === 'processing' && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginTop: 16,
+            padding: 12,
+            borderRadius: 8,
+            background: 'rgba(240,192,64,0.08)',
+            border: `1px solid ${colors.border}`,
+          }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1 }}>⏳</span>
+          <span style={{ color: colors.text.muted, fontSize: 13 }}>
+            Audio intelligence is processing...
+          </span>
+        </div>
+      )}
+
+      {feature?.status === 'failed' && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginTop: 16,
+            padding: 12,
+            borderRadius: 8,
+            background: 'rgba(255,68,68,0.08)',
+            border: '1px solid rgba(255,68,68,0.25)',
+          }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1 }}>⚠️</span>
+          <span style={{ color: colors.text.muted, fontSize: 13 }}>
+            {feature.error_message || 'Analysis failed.'}
+          </span>
+        </div>
+      )}
 
       {!loading && !feature && !message && (
         <p style={{ color: colors.text.dim, fontSize: 13, lineHeight: 1.5 }}>
@@ -321,9 +380,9 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         </>
       )}
 
-      {aiError && <p style={{ marginTop: 12, color: colors.danger, fontSize: 13 }}>{aiError}</p>}
+      {stream.error && <p style={{ marginTop: 12, color: colors.danger, fontSize: 13 }}>{stream.error}</p>}
 
-      {aiAnalysis && aiAnalysis.suggestions.length > 0 && (
+      {stream.suggestions.length > 0 && (
         <div style={{ marginTop: 16 }}>
           <div
             style={{
@@ -338,7 +397,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
             {t('aiSetIntelligence')}
           </div>
           <div style={{ display: 'grid', gap: 8 }}>
-            {aiAnalysis.suggestions.slice(0, 3).map((s, i) => (
+            {stream.suggestions.slice(0, 3).map((s, i) => (
               <div
                 key={i}
                 style={{
@@ -378,9 +437,9 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               </div>
             ))}
           </div>
-          {aiAnalysis.suggestions.length > 3 && (
+          {stream.suggestions.length > 3 && (
             <p style={{ marginTop: 8, color: colors.text.faintest, fontSize: 12 }}>
-              +{aiAnalysis.suggestions.length - 3} more in{' '}
+              +{stream.suggestions.length - 3} more in{' '}
               <a href="/agents/inbox" style={{ color: colors.accent }}>
                 agents inbox
               </a>
@@ -389,7 +448,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         </div>
       )}
 
-      {aiAnalysis && aiAnalysis.suggestions.length === 0 && aiAnalysis.status === 'ok' && (
+      {stream.complete && stream.suggestions.length === 0 && (
         <p style={{ marginTop: 12, color: colors.text.faintest, fontSize: 13 }}>
           AI analysis complete — no specific suggestions at this time.
         </p>

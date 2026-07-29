@@ -225,7 +225,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
     await load();
   };
 
-  const invokeAgent = async () => {
+  const invokeAgent = useCallback(async () => {
     setAgentBusy(true);
     try {
       const result = await ritualRequest<{ action: { message: string } }>(
@@ -239,13 +239,13 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
     } finally {
       setAgentBusy(false);
     }
-  };
+  }, [sessionId, load]);
 
   useEffect(() => {
     if (role !== 'owner' || !snapshot?.state.agent_enabled) return;
     const timer = window.setInterval(() => void invokeAgent(), 120_000);
     return () => window.clearInterval(timer);
-  }, [role, snapshot?.state.agent_enabled, snapshot?.state.agent_budget_remaining]);
+  }, [role, snapshot?.state.agent_enabled, snapshot?.state.agent_budget_remaining, invokeAgent]);
 
   const toggleAgent = async () => {
     await ritualRequest(`/api/mythic/sessions/${sessionId}/agent`, {
@@ -461,7 +461,11 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
               </div>
             )}
           </div>
-          {currentAsset && <audio ref={audioRef} src={assetUrl(currentAsset)} preload="auto" />}
+          {currentAsset && (
+            <audio ref={audioRef} src={assetUrl(currentAsset)} preload="auto" aria-label="Audio player">
+              <track kind="captions" src="" label="No captions" />
+            </audio>
+          )}
           <div
             style={{
               padding: space[6],

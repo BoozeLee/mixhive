@@ -131,6 +131,7 @@
     "title": "Notificaciones",
     "loading": "Cargando notificaciones…",
     "markAllRead": "Marcar todo como leído",
+    "preferences": "Preferencias",
     "unread": "No leído",
     "signInPrompt": "Inicia sesión para ver tus notificaciones"
   },
@@ -145,7 +146,8 @@
     "noResults": "No se encontraron resultados",
     "noResultsBody": "Intenta con otra ortografía, género o ubicación.",
     "resultsFor": "Resultados para <q>{query}</q>",
-    "aiBand": "AI Band"
+    "aiBand": "AI Band",
+    "searchUnavailable": "Búsqueda no disponible"
   },
   "feed": {
     "liveFeed": "Feed en vivo",
@@ -174,7 +176,12 @@
     "emptyLatestAction": "Subir un mix",
     "errorFeedTitle": "No se pudo cargar el feed",
     "errorFeedBody": "Algo salió mal al cargar la colmena. ¿Intentar de nuevo?",
-    "errorFeedAction": "Reintentar"
+    "errorFeedAction": "Reintentar",
+    "dateAll": "Todo",
+    "date24h": "24h",
+    "dateWeek": "Esta semana",
+    "dateMonth": "Este mes",
+    "dateYear": "Este año"
   },
   "dashboard": {
     "title": "Hive Growth OS",
@@ -194,6 +201,8 @@
     "topMixStats": "{plays} reproducciones / {likes} me gusta / {comments} comentarios",
     "topMixEmpty": "Aún no hay mix destacado. Sube tu primer mix para empezar a captar señal.",
     "recentActivityEmpty": "La actividad aparecerá aquí a medida que los oyentes reproduzcan, den me gusta, sigan y comenten.",
+    "loadError": "Error al cargar los datos del panel.",
+    "retry": "Reintentar",
     "activity": {
       "uploaded": "Subió {title}",
       "liked": "Le gustó {title}",
@@ -560,7 +569,14 @@
     "status": "Estado",
     "paidOut": "Pagado",
     "pendingEscrow": "Pendiente de depósito",
-    "held": "Retenido (configura los pagos)"
+    "held": "Retenido (configura los pagos)",
+    "loadingPayoutStatus": "Cargando estado de pagos…",
+    "payoutsActive": "Pagos activos: puedes recibir ganancias del mercado.",
+    "stripeNeedsDetails": "Tu cuenta de Stripe necesita más detalles antes de habilitar los pagos.",
+    "connectStripePrompt": "Conecta una cuenta de Stripe para vender equipo y recibir ganancias de paquetes de agente.",
+    "openingStripe": "Abriendo Stripe…",
+    "finishPayoutSetup": "Completar configuración de pagos",
+    "setUpPayouts": "Configurar pagos"
   },
   "editMix": {
     "title": "Editar mix",
@@ -778,6 +794,12 @@
     "sectionHeadingPlaceholder": "Encabezado de sección (p. ej. «Actuaciones pasadas»)",
     "sectionBodyPlaceholder": "Escribe el contenido de tu sección aquí…"
   },
+  "saved": {
+    "signInToSee": "Inicia sesión para ver tus favoritos.",
+    "eyebrow": "Favoritos",
+    "title": "Mixes guardados",
+    "empty": "Aún no has dado like a ningún mix."
+  },
   "sceneRadar": {
     "signInToSee": "Inicia sesión para ver tu radar de escenas.",
     "signIn": "Iniciar sesión",
@@ -828,6 +850,33 @@
     "hideContent": "Ocultar contenido",
     "banOwner": "Bloquear propietario",
     "dismiss": "Descartar"
+  },
+  "adminUsers": {
+    "title": "Gestión de usuarios",
+    "subtitle": "Buscar, bloquear/desbloquear usuarios y revisar el historial de moderación.",
+    "searchPlaceholder": "Buscar por nombre de usuario o nombre visible...",
+    "search": "Buscar",
+    "bannedOnly": "Solo bloqueados",
+    "loading": "Cargando usuarios...",
+    "noResults": "No hay usuarios que coincidan con tu búsqueda.",
+    "noUsers": "No se encontraron usuarios.",
+    "colUser": "Usuario",
+    "colStatus": "Estado",
+    "colMixes": "Mixes",
+    "colFollowers": "Seguidores",
+    "colJoined": "Registrado",
+    "colActions": "Acciones",
+    "banned": "Bloqueado",
+    "verified": "Verificado",
+    "active": "Activo",
+    "ban": "Bloquear",
+    "unban": "Desbloquear",
+    "audit": "Auditar",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "auditTitle": "Historial de moderación",
+    "auditLoading": "Cargando registro de auditoría...",
+    "auditEmpty": "Sin historial de moderación para este usuario."
   },
   "agentsGallery": {
     "agentGallery": "Galería de agentes",
@@ -950,11 +999,20 @@
     "signIn": "Iniciar sesión",
     "you": "Tú:",
     "chat": "Chat",
-    "messages": "Mensajes"
+    "messages": "Mensajes",
+    "newConversation": "Nueva conversación",
+    "newMessage": "Nuevo mensaje",
+    "searchUsers": "Buscar usuarios…",
+    "noConversations": "Aún no hay conversaciones.",
+    "noMessagesYet": "Aún no hay mensajes",
+    "searching": "Buscando…",
+    "noResults": "No se encontraron usuarios"
   },
   "notFound": {
     "noRouteMatches": "Ninguna ruta coincide",
-    "pageNotFound": "Página no encontrada"
+    "pageNotFound": "Página no encontrada",
+    "mightHaveMoved": ". Puede que se haya movido o nunca haya existido.",
+    "backToFeed": "Volver al feed"
   },
   "publicPressKit": {
     "loadingEpk": "Cargando EPK...",

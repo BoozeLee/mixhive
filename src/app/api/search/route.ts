@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
+import { rateLimiter } from '@/lib/rateLimiter';
 
 const SearchRequestSchema = z.object({
   q: z.string().trim().min(2).max(100),
@@ -18,6 +19,11 @@ function emptySection() {
 }
 
 export async function GET(req: NextRequest) {
+  const rateCheck = await rateLimiter.checkApiLimit('search');
+  if (!rateCheck.allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+  }
+
   const parsed = SearchRequestSchema.safeParse(Object.fromEntries(new URL(req.url).searchParams));
   if (!parsed.success) {
     return NextResponse.json(

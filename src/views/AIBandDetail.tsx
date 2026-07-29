@@ -49,12 +49,14 @@ export function AIBandDetail() {
   const [agent, setAgent] = useState<AIAgent | null>(null);
   const [mixes, setMixes] = useState<AIAgentMix[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [following, setFollowing] = useState(false);
   const [followBusy, setFollowBusy] = useState(false);
   const [localFollowers, setLocalFollowers] = useState(0);
 
   useEffect(() => {
     if (!slug) return;
+    setError(null);
     Promise.all([getAIAgent(slug), user ? isFollowingAIAgent(user.id, '') : Promise.resolve(false)])
       .then(([a]) => {
         setAgent(a);
@@ -65,7 +67,7 @@ export function AIBandDetail() {
         return a ? getAIAgentMixes(a.id) : [];
       })
       .then(setMixes)
-      .catch(console.error)
+      .catch(() => setError('Failed to load AI agent'))
       .finally(() => setLoading(false));
   }, [slug, user]);
 
@@ -88,6 +90,18 @@ export function AIBandDetail() {
     } finally {
       setFollowBusy(false);
     }
+  }
+
+  if (error) {
+    return (
+      <div style={{ maxWidth: 600, margin: '80px auto', textAlign: 'center', padding: '0 16px' }}>
+        <Link to="/ai-band" style={{ color: colors.text.muted, fontSize: 13, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4, marginBottom: 16 }}>← Back to AI Band</Link>
+        <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>
+          <p>{error}</p>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
   }
 
   if (loading) {

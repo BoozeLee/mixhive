@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { colors } from '@/styles/tokens';
 
 interface Agent {
   id: string;
@@ -125,16 +126,14 @@ export default function AdminAgentsPage() {
         display: 'flex',
         height: '100vh',
         fontFamily: 'monospace',
-        background: '#070706',
-        color: '#e0e0e0',
+        background: colors.bg,
+        color: colors.text.primary,
       }}
     >
       {/* Sidebar */}
-      <aside
-        style={{ width: 280, borderRight: '1px solid #1f1d16', overflowY: 'auto', padding: 12 }}
-      >
-        <h2 style={{ color: '#ffd700', margin: '0 0 12px' }}>Agent Registry</h2>
-        {loading && <p style={{ color: '#8c8676' }}>Loading…</p>}
+      <aside style={{ width: 280, borderRight: `1px solid ${colors.borderSubtle}`, overflowY: 'auto', padding: 12 }}>
+        <h2 style={{ color: colors.accent, margin: '0 0 12px' }}>Agent Registry</h2>
+        {loading && <p style={{ color: colors.text.muted }}>Loading…</p>}
         {agents.map(a => (
           <button
             key={a.id}
@@ -146,16 +145,16 @@ export default function AdminAgentsPage() {
               padding: '8px 10px',
               marginBottom: 4,
               cursor: 'pointer',
-              background: selected?.id === a.id ? '#1a1a1a' : 'transparent',
-              border: selected?.id === a.id ? '1px solid #ffd700' : '1px solid #333',
+              background: selected?.id === a.id ? colors.surface : 'transparent',
+              border: selected?.id === a.id ? `1px solid ${colors.accent}` : `1px solid ${colors.borderStrong}`,
               borderRadius: 4,
-              color: '#e0e0e0',
+              color: colors.text.primary,
             }}
           >
             <div style={{ fontWeight: 600, fontSize: 13 }}>{a.display_name}</div>
-            <div style={{ fontSize: 11, color: tierColor[a.tier] ?? '#8c8676' }}>
+            <div style={{ fontSize: 11, color: tierColor[a.tier] ?? colors.text.muted }}>
               {a.tier} · v{a.lua_script_version} · {a.approval_policy}
-              {!a.enabled && <span style={{ color: '#f44336', marginLeft: 6 }}>DISABLED</span>}
+              {!a.enabled && <span style={{ color: colors.dangerStrong, marginLeft: 6 }}>DISABLED</span>}
             </div>
           </button>
         ))}
@@ -164,13 +163,13 @@ export default function AdminAgentsPage() {
       {/* Main panel */}
       <main style={{ flex: 1, overflowY: 'auto', padding: 20 }}>
         {!selected ? (
-          <div style={{ color: '#555', marginTop: 60, textAlign: 'center' }}>
+          <div style={{ color: colors.text.faintest, marginTop: 60, textAlign: 'center' }}>
             Select an agent to manage its versions.
           </div>
         ) : (
           <>
-            <h2 style={{ color: '#ffd700', margin: '0 0 4px' }}>{selected.display_name}</h2>
-            <p style={{ color: '#8c8676', margin: '0 0 16px', fontSize: 13 }}>
+            <h2 style={{ color: colors.accent, margin: '0 0 4px' }}>{selected.display_name}</h2>
+            <p style={{ color: colors.text.muted, margin: '0 0 16px', fontSize: 13 }}>
               {selected.description}
             </p>
 
@@ -180,9 +179,9 @@ export default function AdminAgentsPage() {
                   padding: '8px 12px',
                   marginBottom: 16,
                   borderRadius: 4,
-                  background: status.startsWith('Error') ? '#2d0000' : '#002d00',
-                  border: `1px solid ${status.startsWith('Error') ? '#f44336' : '#4caf50'}`,
-                  color: status.startsWith('Error') ? '#f44336' : '#4caf50',
+                  background: status.startsWith('Error') ? colors.dangerBg : colors.successBg,
+                  border: `1px solid ${status.startsWith('Error') ? colors.dangerStrong : colors.successStrong}`,
+                  color: status.startsWith('Error') ? colors.dangerStrong : colors.successStrong,
                   fontSize: 13,
                 }}
               >
@@ -191,11 +190,11 @@ export default function AdminAgentsPage() {
             )}
 
             {/* Version history */}
-            <h3 style={{ color: '#d4cdb0', borderBottom: '1px solid #1f1d16', paddingBottom: 8 }}>
+            <h3 style={{ color: colors.text.secondary, borderBottom: `1px solid ${colors.borderSubtle}`, paddingBottom: 8 }}>
               Version History
             </h3>
             <div style={{ marginBottom: 20 }}>
-              {versions.length === 0 && <p style={{ color: '#555' }}>No versions yet.</p>}
+              {versions.length === 0 && <p style={{ color: colors.text.faintest }}>No versions yet.</p>}
               {versions.map(v => {
                 const isLive = v.version === selected.lua_script_version && !v.rolled_back_at;
                 const isRolledBack = Boolean(v.rolled_back_at);
@@ -206,20 +205,20 @@ export default function AdminAgentsPage() {
                       padding: '10px 14px',
                       marginBottom: 8,
                       borderRadius: 4,
-                      background: '#0f0e0c',
-                      border: `1px solid ${isLive ? '#ffd700' : isRolledBack ? '#333' : '#1f1d16'}`,
+                      background: colors.surface,
+                      border: `1px solid ${isLive ? colors.accent : isRolledBack ? colors.borderStrong : colors.borderSubtle}`,
                       opacity: isRolledBack ? 0.5 : 1,
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span style={{ fontWeight: 700, color: isLive ? '#ffd700' : '#aaa' }}>
+                      <span style={{ fontWeight: 700, color: isLive ? colors.accent : colors.text.dimmed }}>
                         v{v.version}
                       </span>
                       {isLive && (
                         <span
                           style={{
-                            background: '#ffd700',
-                            color: '#000',
+                            background: colors.accent,
+                            color: colors.black,
                             padding: '1px 6px',
                             borderRadius: 3,
                             fontSize: 11,
@@ -232,8 +231,8 @@ export default function AdminAgentsPage() {
                       {isRolledBack && (
                         <span
                           style={{
-                            background: '#333',
-                            color: '#8c8676',
+                            background: colors.borderStrong,
+                            color: colors.text.muted,
                             padding: '1px 6px',
                             borderRadius: 3,
                             fontSize: 11,
@@ -243,14 +242,14 @@ export default function AdminAgentsPage() {
                         </span>
                       )}
                       {v.promoted_at && !isRolledBack && (
-                        <span style={{ color: '#4caf50', fontSize: 11 }}>promoted</span>
+                        <span style={{ color: colors.successStrong, fontSize: 11 }}>promoted</span>
                       )}
-                      <span style={{ color: '#555', fontSize: 11, marginLeft: 'auto' }}>
+                      <span style={{ color: colors.text.faintest, fontSize: 11, marginLeft: 'auto' }}>
                         {v.author ?? 'unknown'} · {new Date(v.created_at).toLocaleDateString()}
                       </span>
                     </div>
                     {v.notes && (
-                      <div style={{ color: '#aaa', fontSize: 12, marginTop: 4 }}>{v.notes}</div>
+                      <div style={{ color: colors.text.dimmed, fontSize: 12, marginTop: 4 }}>{v.notes}</div>
                     )}
                     {!isLive && !isRolledBack && (
                       <button
@@ -258,9 +257,9 @@ export default function AdminAgentsPage() {
                         style={{
                           marginTop: 8,
                           padding: '4px 10px',
-                          background: '#1a3a00',
-                          border: '1px solid #4caf50',
-                          color: '#4caf50',
+                          background: colors.successBg,
+                          border: `1px solid ${colors.successStrong}`,
+                          color: colors.successStrong,
                           borderRadius: 3,
                           cursor: 'pointer',
                           fontSize: 12,
@@ -280,9 +279,9 @@ export default function AdminAgentsPage() {
                 onClick={handleRollback}
                 style={{
                   padding: '6px 14px',
-                  background: '#2d0000',
-                  border: '1px solid #f44336',
-                  color: '#f44336',
+                  background: colors.dangerBg,
+                  border: `1px solid ${colors.dangerStrong}`,
+                  color: colors.dangerStrong,
                   borderRadius: 4,
                   cursor: 'pointer',
                   fontSize: 13,
@@ -294,7 +293,7 @@ export default function AdminAgentsPage() {
             )}
 
             {/* Create new version */}
-            <h3 style={{ color: '#d4cdb0', borderBottom: '1px solid #1f1d16', paddingBottom: 8 }}>
+            <h3 style={{ color: colors.text.secondary, borderBottom: `1px solid ${colors.borderSubtle}`, paddingBottom: 8 }}>
               Create Draft Version
             </h3>
             <input
@@ -306,9 +305,9 @@ export default function AdminAgentsPage() {
                 width: '100%',
                 padding: '6px 10px',
                 marginBottom: 8,
-                background: '#0f0e0c',
-                border: '1px solid #333',
-                color: '#e0e0e0',
+                background: colors.surface,
+                border: `1px solid ${colors.borderStrong}`,
+                color: colors.text.primary,
                 borderRadius: 4,
                 boxSizing: 'border-box',
                 fontFamily: 'monospace',
@@ -324,9 +323,9 @@ export default function AdminAgentsPage() {
                 width: '100%',
                 padding: '8px 10px',
                 marginBottom: 10,
-                background: '#0f0e0c',
-                border: '1px solid #333',
-                color: '#e0e0e0',
+                background: colors.surface,
+                border: `1px solid ${colors.borderStrong}`,
+                color: colors.text.primary,
                 borderRadius: 4,
                 boxSizing: 'border-box',
                 fontFamily: 'monospace',
@@ -339,9 +338,9 @@ export default function AdminAgentsPage() {
               disabled={!newScript.trim()}
               style={{
                 padding: '8px 18px',
-                background: newScript.trim() ? '#1a1a3a' : '#0f0e0c',
-                border: `1px solid ${newScript.trim() ? '#ffd700' : '#333'}`,
-                color: newScript.trim() ? '#ffd700' : '#555',
+                background: newScript.trim() ? colors.surfaceHover : colors.surface,
+                border: `1px solid ${newScript.trim() ? colors.accent : colors.borderStrong}`,
+                color: newScript.trim() ? colors.accent : colors.text.faintest,
                 borderRadius: 4,
                 cursor: newScript.trim() ? 'pointer' : 'not-allowed',
                 fontSize: 13,

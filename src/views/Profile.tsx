@@ -34,7 +34,7 @@ import { ActivityTab } from '../components/profile/ActivityTab';
 import { AgentsTab } from '../components/profile/AgentsTab';
 import { EventsTab } from '../components/profile/EventsTab';
 import { maybeAnnounceXpGain } from '../lib/xpToast';
-import { space } from '../styles/tokens';
+import { colors, fontSize, radius, space, withAlpha } from '../styles/tokens';
 import type {
   ActivityEvent,
   Mix,
@@ -61,6 +61,7 @@ export function ProfilePage() {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showSessionModal, setShowSessionModal] = useState(false);
 
   const isOwn = Boolean(user && profile?.id === user.id);
@@ -69,6 +70,7 @@ export function ProfilePage() {
     if (!username) return;
     let cancelled = false;
     setLoading(true);
+    setError(null);
     getProfile(username)
       .then(async nextProfile => {
         if (cancelled) return;
@@ -115,7 +117,7 @@ export function ProfilePage() {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => { setLoading(false); setError('Failed to load profile'); });
     return () => {
       cancelled = true;
     };
@@ -170,11 +172,21 @@ export function ProfilePage() {
 
   const featuredMix = mixes.length > 0 ? mixes[0] : null;
 
+  if (error) {
+    return (
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '64px 16px', textAlign: 'center' }} role="alert">
+        <div style={{ padding: '12px 16px', marginBottom: 16, background: withAlpha(colors.danger, 0.1), border: `1px solid ${withAlpha(colors.danger, 0.3)}`, borderRadius: radius.md, color: colors.danger, fontSize: fontSize.sm, display: 'inline-block' }}>
+          {error}
+        </div>
+      </div>
+    );
+  }
+
   if (loading) return <SkeletonProfile />;
   if (!profile) return <NotFoundState what="DJ" />;
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '16px 12px 96px' }}>
+    <main style={{ maxWidth: 900, margin: '0 auto', padding: '16px 12px 96px' }}>
       <ProfileHeader
         profile={profile}
         badges={badges}
@@ -200,7 +212,8 @@ export function ProfilePage() {
       <section>
         <ProfileTabs tabs={tabs} activeTab={profileTab} onChange={setProfileTab} />
 
-        {profileTab === 'mixes' &&
+        <div role="tabpanel" aria-live="polite">
+          {profileTab === 'mixes' &&
           (mixes.length === 0 ? (
             <EmptyState
               iconKey="mix"
@@ -222,7 +235,7 @@ export function ProfilePage() {
               {mixes.map(mix => (
                 <div
                   key={mix.id}
-                  style={{ minWidth: 'min(420px, 88vw)', scrollSnapAlign: 'start' }}
+                  style={{ minWidth: 'min(280px, 88vw)', scrollSnapAlign: 'start' }}
                 >
                   <MixCard
                     mix={{
@@ -290,12 +303,13 @@ export function ProfilePage() {
         {profileTab === 'events' && <EventsTab />}
 
         {profileTab === 'about' && <AboutTab profile={profile} />}
+      </div>
       </section>
 
       <StartMythicSessionModal
         isOpen={showSessionModal}
         onClose={() => setShowSessionModal(false)}
       />
-    </div>
+    </main>
   );
 }

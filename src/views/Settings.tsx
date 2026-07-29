@@ -9,6 +9,7 @@ import { Button } from '../components/ui/Button';
 import { IconButton } from '../components/ui/IconButton';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ProfilePictureUploadSmall } from '../components/ProfilePictureUploadSmall';
 import { NotificationSettings } from '../components/NotificationSettings';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
@@ -110,6 +111,30 @@ export function Settings() {
         }
       })
       .catch((err: unknown) => console.error('Failed to load deletion status:', err));
+  }, [user]);
+
+  const [subscriptionTier, setSubscriptionTier] = useState<string | null>(null);
+  const [tierLoading, setTierLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setSubscriptionTier(null); return; }
+    let cancelled = false;
+    setTierLoading(true);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session?.access_token) {
+        if (!cancelled) { setSubscriptionTier('free'); setTierLoading(false); }
+        return;
+      }
+      fetch('/api/subscription/status', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+        .then(res => res.ok ? res.json() : { tier: 'free' })
+        .then(data => {
+          if (!cancelled) { setSubscriptionTier(data.tier || 'free'); setTierLoading(false); }
+        })
+        .catch(() => { if (!cancelled) { setSubscriptionTier('free'); setTierLoading(false); } });
+    });
+    return () => { cancelled = true; };
   }, [user]);
 
   const [formData, setFormData] = useState({
@@ -1153,7 +1178,17 @@ export function Settings() {
         <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginBottom: space[4] }}>
           {t('billingDescription')}
         </p>
-        <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap', alignItems: 'center', marginBottom: space[4] }}>
+          {tierLoading ? (
+            <LoadingSpinner size="small" />
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: space[2], color: colors.text.secondary, fontSize: fontSize.sm }}>
+              <span>Current plan:</span>
+              <span style={{ color: colors.text.primary, fontWeight: 600, textTransform: 'capitalize' }}>
+                {subscriptionTier || 'Free'}
+              </span>
+            </div>
+          )}
           <Button
             variant="secondary"
             size="sm"

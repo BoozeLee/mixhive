@@ -6,8 +6,11 @@ export function DevLogin() {
   const t = useTranslations('devLogin');
   const [loading, setLoading] = useState(false);
 
+  const [devError, setDevError] = useState('');
+
   const handleDevLogin = async () => {
     setLoading(true);
+    setDevError('');
     try {
       const result = await signInWithMock();
       // Mock auth doesn't return error, just check if user exists
@@ -16,7 +19,7 @@ export function DevLogin() {
         window.location.href = '/';
       }
     } catch (err) {
-      console.error('Login failed:', err);
+      setDevError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -31,6 +34,11 @@ export function DevLogin() {
         </div>
 
         <div className="space-y-4">
+          {devError && (
+            <div className="bg-red-500/20 border border-red-500 text-red-300 text-sm rounded-lg p-3 text-center">
+              {devError}
+            </div>
+          )}
           <button
             onClick={handleDevLogin}
             disabled={loading}

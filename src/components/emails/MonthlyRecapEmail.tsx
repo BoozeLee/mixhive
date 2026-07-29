@@ -1,3 +1,5 @@
+import { colors } from '../../styles/tokens';
+
 interface Props {
   displayName: string;
   plays: number;
@@ -16,7 +18,7 @@ export function MonthlyRecapEmail({
   followersGained,
 }: Props) {
   return (
-    <div style={{ fontFamily: 'sans-serif', color: '#111', maxWidth: 480 }}>
+    <div style={{ fontFamily: 'sans-serif', color: colors.surface, maxWidth: 480 }}>
       <h1>Your MixHive month in review</h1>
       <p>Hi {displayName}, here is how your sound moved the hive this month:</p>
       <ul>

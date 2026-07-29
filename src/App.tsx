@@ -86,6 +86,12 @@ const AdminVerification = lazy(() =>
 const AdminModeration = lazy(() =>
   import('./views/AdminModeration').then(m => ({ default: m.AdminModeration }))
 );
+const AdminUsers = lazy(() =>
+  import('./views/AdminUsers').then(m => ({ default: m.AdminUsers }))
+);
+const AdminInviteGenerator = lazy(() =>
+  import('./views/AdminInviteGenerator').then(m => ({ default: m.AdminInviteGenerator }))
+);
 const BuzzDetail = lazy(() => import('./views/BuzzDetail').then(m => ({ default: m.BuzzDetail })));
 const ProfileSetup = lazy(() =>
   import('./views/ProfileSetup').then(m => ({ default: m.ProfileSetup }))
@@ -165,6 +171,9 @@ const MessagesPage = lazy(() =>
 );
 const MessageThreadPage = lazy(() =>
   import('./views/MessageThread').then(m => ({ default: m.MessageThreadPage }))
+);
+const SavedPage = lazy(() =>
+  import('./views/Saved').then(m => ({ default: m.SavedPage }))
 );
 // Phase 17 — Live Rooms & Events
 const LiveRooms = lazy(() => import('./views/LiveRooms').then(m => ({ default: m.LiveRooms })));
@@ -254,6 +263,14 @@ function AnimatedRoutes() {
         <Route path="/agents/gallery" element={<AgentsGallery />} />
         <Route path="/ai-band" element={<AIBandIndex />} />
         <Route path="/ai-band/:slug" element={<AIBandDetail />} />
+          <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute>
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/verification"
           element={
@@ -267,6 +284,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <AdminModeration />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/invites"
+          element={
+            <ProtectedRoute>
+              <AdminInviteGenerator />
             </ProtectedRoute>
           }
         />
@@ -415,6 +440,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <MessageThreadPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute>
+              <SavedPage />
             </ProtectedRoute>
           }
         />

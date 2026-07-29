@@ -17,10 +17,10 @@ export function NotFound() {
             <code style={{ color: colors.accent, fontFamily: 'monospace', fontSize: 13 }}>
               {location.pathname}
             </code>
-            . It might have moved or never existed.
+            {t('mightHaveMoved')}
           </>
         }
-        actionLabel="Back to feed"
+        actionLabel={t('backToFeed')}
         actionTo="/feed"
       />
     </div>

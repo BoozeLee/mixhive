@@ -7,6 +7,7 @@ import { MixCard } from '../components/MixCard';
 import { AgentFollowButton } from '../components/AgentFollowButton';
 import { EmptyState } from '../components/EmptyState';
 import { SkeletonBar } from '../components/Skeleton';
+import { Button } from '../components/ui/Button';
 import { colors, gradient, radius, shadow, space } from '../styles/tokens';
 
 // AI agent-artist page: a followable "AI bandmate" with stats + discography.
@@ -16,22 +17,24 @@ export function AgentTracks() {
   const [agent, setAgent] = useState<AiAgent | null>(null);
   const [mixes, setMixes] = useState<Mix[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [followDelta, setFollowDelta] = useState(0);
 
   useEffect(() => {
     if (!slug) return;
     let cancelled = false;
     setLoading(true);
+    setError(null);
     setFollowDelta(0);
     Promise.all([getAgent(slug), getMixesByAgent(slug)])
       .then(([a, rows]) => {
         if (cancelled) return;
+        if (!a) { setError('Agent not found'); setLoading(false); return; }
         setAgent(a);
         setMixes(rows);
       })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+      .catch(() => { if (!cancelled) setError('Failed to load agent'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
     return () => {
       cancelled = true;
     };
@@ -46,6 +49,17 @@ export function AgentTracks() {
     [String(mixes.length), mixes.length === 1 ? t('track') : t('tracks')],
     [totalPlays.toLocaleString(), t('plays')],
   ];
+
+  if (error) {
+    return (
+      <div style={{ maxWidth: 720, margin: '0 auto', padding: '16px 12px 96px' }}>
+        <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>
+          <p>{error}</p>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: '16px 12px 96px' }}>

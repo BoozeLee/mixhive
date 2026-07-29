@@ -367,7 +367,26 @@ export async function getMixesByDj(djId: string): Promise<Mix[]> {
     .select('*')
     .eq('dj_id', djId)
     .order('created_at', { ascending: false });
-  return data || [];
+  const mixes = data || [];
+  if (mixes.length > 0) {
+    const { data: features } = await supabase
+      .from('audio_features')
+      .select('mix_id, bpm, musical_key, mood, energy')
+      .in('mix_id', mixes.map(m => m.id));
+    if (features) {
+      const featMap = new Map(features.map(f => [f.mix_id, f]));
+      for (const mix of mixes) {
+        const f = featMap.get(mix.id);
+        if (f) {
+          (mix as Record<string, unknown>).bpm = f.bpm;
+          (mix as Record<string, unknown>).musical_key = f.musical_key;
+          (mix as Record<string, unknown>).mood = f.mood;
+          (mix as Record<string, unknown>).energy = f.energy;
+        }
+      }
+    }
+  }
+  return mixes;
 }
 
 export async function getMix(id: string): Promise<Mix | null> {
@@ -378,8 +397,14 @@ export async function getMix(id: string): Promise<Mix | null> {
     .eq('id', id)
     .maybeSingle();
   if (error || !data) return null;
+  const { data: features } = await supabase
+    .from('audio_features')
+    .select('bpm, musical_key, mood, energy')
+    .eq('mix_id', id)
+    .maybeSingle();
   return {
     ...data,
+    ...(features ? { bpm: features.bpm, musical_key: features.musical_key, mood: features.mood, energy: features.energy } : {}),
     dj: data.profiles,
     genre_name: data.genres?.name,
   };
@@ -482,7 +507,12 @@ export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
   if (!isSupabaseConfigured) return null;
   // Abuse guard: cap uploads per user (10/hour) — mirrors createBuzz.
   if (mix.dj_id && !(await checkRateLimit('upload', mix.dj_id))) return null;
-  const { data } = await supabase.from('mixes').insert(mix).select().single();
+  const payload = {
+    ...mix,
+    visibility: mix.visibility ?? 'published',
+    published_at: mix.visibility === 'published' ? new Date().toISOString() : mix.published_at,
+  };
+  const { data } = await supabase.from('mixes').insert(payload).select().single();
   if (data?.id && typeof window !== 'undefined') {
     fetch('/api/embed', {
       method: 'POST',
@@ -495,7 +525,11 @@ export async function createMix(mix: Partial<Mix>): Promise<Mix | null> {
 
 export async function updateMix(id: string, updates: Partial<Mix>): Promise<void> {
   if (!isSupabaseConfigured) return;
-  await supabase.from('mixes').update(updates).eq('id', id);
+  const payload: Partial<Mix> = { ...updates };
+  if (updates.visibility === 'published' && !updates.published_at) {
+    payload.published_at = new Date().toISOString();
+  }
+  await supabase.from('mixes').update(payload).eq('id', id);
 }
 
 export async function deleteMix(id: string): Promise<void> {
@@ -629,6 +663,20 @@ export async function hasLiked(userId: string, mixId: string): Promise<boolean> 
     .eq('mix_id', mixId)
     .maybeSingle();
   return !!data;
+}
+
+export async function getLikedMixes(userId: string, limit = 50, offset = 0): Promise<Mix[]> {
+  if (!isSupabaseConfigured) return [];
+  const { data } = await supabase
+    .from('likes')
+    .select('mix:mix_id(*)')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+  if (!data) return [];
+  return data
+    .map(row => (row as { mix: unknown }).mix as Mix)
+    .filter((m): m is Mix => m != null && typeof m === 'object');
 }
 
 // --- Comments ---

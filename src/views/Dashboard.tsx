@@ -29,6 +29,15 @@ export function Dashboard() {
     return t('time.months', { n: Math.floor(diff / 2592000) });
   }
 
+  const draftMixes = useMemo(
+    () => mixes.filter(m => m.visibility === 'draft' || (!m.visibility && !m.published)),
+    [mixes]
+  );
+  const scheduledMixes = useMemo(
+    () => mixes.filter(m => m.visibility === 'scheduled' || (m.scheduled_at && !m.published)),
+    [mixes]
+  );
+
   function activityLabel(event: ActivityEvent) {
     if (event.activity_type === 'upload')
       return t('activity.uploaded', { title: event.mix_title || t('activity.aMix') });
@@ -44,6 +53,7 @@ export function Dashboard() {
   const [activity, setActivity] = useState<ActivityEvent[]>([]);
   const [agents, setAgents] = useState<LuaAgent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -51,12 +61,22 @@ export function Dashboard() {
     setLoading(true);
 
     async function load() {
-      const nextMixes = await getMixesByDj(user!.id);
-      const [nextAnalytics, nextActivity, nextAgents] = await Promise.all([
-        getProfileAnalytics(user!.id, nextMixes),
-        getUserActivity(user!.id),
-        listAgents().catch(() => [] as LuaAgent[]),
-      ]);
+      let nextMixes: Mix[] = [];
+      let nextAnalytics: ProfileAnalytics | null = null;
+      let nextActivity: ActivityEvent[] = [];
+      let nextAgents: LuaAgent[] = [];
+
+      try {
+        nextMixes = await getMixesByDj(user!.id);
+        [nextAnalytics, nextActivity, nextAgents] = await Promise.all([
+          getProfileAnalytics(user!.id, nextMixes).catch(() => null),
+          getUserActivity(user!.id).catch(() => []),
+          listAgents().catch(() => [] as LuaAgent[]),
+        ]);
+      } catch {
+        if (!cancelled) setLoadError(true);
+      }
+
       if (cancelled) return;
       setMixes(nextMixes);
       setAnalytics(nextAnalytics);
@@ -65,9 +85,7 @@ export function Dashboard() {
       setLoading(false);
     }
 
-    void load().catch(() => {
-      if (!cancelled) setLoading(false);
-    });
+    void load();
 
     return () => {
       cancelled = true;
@@ -102,15 +120,145 @@ export function Dashboard() {
       },
     ];
     return actions;
-  }, [mixes.length, profile?.bio, profile?.username, t]);
+  }, [mixes, profile, t]);
 
   const topMix = analytics?.topMixes[0];
   const sparkline = analytics?.weeklyEvents.map(item => item.count) ?? [0, 0, 0, 0, 0, 0];
+
+  if (loadError) {
+    return (
+      <div style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 16px 112px' }}>
+        <div style={{ textAlign: 'center', color: colors.text.dim, padding: space[10] }}>
+          <p style={{ marginBottom: space[4] }}>{t('loadError')}</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              background: colors.accent,
+              color: colors.black,
+              border: 'none',
+              borderRadius: radius.md,
+              padding: '8px 18px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            {t('retry')}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
       <div style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 16px 112px' }}>
         <SkeletonFeed />
+      </div>
+    );
+  }
+
+  if (!loading && !loadError && mixes.length === 0) {
+    return (
+      <div style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 16px 112px' }}>
+        <header
+          className="hive-panel"
+          style={{
+            borderRadius: radius.lg,
+            padding: 'clamp(22px, 4vw, 42px)',
+            marginBottom: space[10],
+            overflow: 'hidden',
+            position: 'relative',
+          }}
+        >
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: 720 }}>
+            <p
+              style={{
+                margin: '0 0 8px',
+                color: 'var(--hive-gold)',
+                fontSize: 12,
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+              }}
+            >
+              {t('title')}
+            </p>
+            <h1
+              style={{
+                margin: 0,
+                color: colors.text.primary,
+                fontSize: 'clamp(30px, 6vw, 58px)',
+                lineHeight: 1,
+                textTransform: 'uppercase',
+              }}
+            >
+              {t('commandCell', {
+                name: profile?.display_name || profile?.username || t('creatorFallback'),
+              })}
+            </h1>
+            <p
+              style={{
+                margin: '16px 0 0',
+                color: colors.text.secondary,
+                fontSize: 16,
+                lineHeight: 1.7,
+              }}
+            >
+              {t('subtitle')}
+            </p>
+          </div>
+        </header>
+
+        <div
+          style={{
+            textAlign: 'center',
+            padding: space[12],
+            border: `1px dashed ${colors.border}`,
+            borderRadius: radius.lg,
+          }}
+        >
+          <p style={{ color: colors.text.primary, fontSize: 20, fontWeight: 700, marginBottom: space[4] }}>
+            Welcome to your Command Cell
+          </p>
+          <p style={{ color: colors.text.dim, fontSize: 14, maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+            Upload your first mix to see analytics, activity, and recommendations here.
+            Your dashboard fills up as your sound reaches listeners.
+          </p>
+          <div style={{ marginTop: space[8], display: 'flex', gap: space[4], justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link
+              to="/upload"
+              style={{
+                background: colors.accent,
+                color: colors.black,
+                border: 'none',
+                borderRadius: radius.md,
+                padding: '10px 24px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                textDecoration: 'none',
+                fontSize: 14,
+              }}
+            >
+              {t('actions.upload.cta')}
+            </Link>
+            <Link
+              to="/pricing"
+              style={{
+                background: 'transparent',
+                color: colors.accent,
+                border: `1px solid ${colors.accent}`,
+                borderRadius: radius.md,
+                padding: '10px 24px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                textDecoration: 'none',
+                fontSize: 14,
+              }}
+            >
+              View pricing
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -191,6 +339,81 @@ export function Dashboard() {
           <HiveStat label={t('stats.followers')} value={analytics?.followers ?? 0} />
         </HiveCard>
       </section>
+
+      {(draftMixes.length > 0 || scheduledMixes.length > 0) && (
+        <section style={{ marginBottom: space[10] }}>
+          {draftMixes.length > 0 && (
+            <div style={{ marginBottom: space[6] }}>
+              <h2 style={{ margin: '0 0 12px', color: colors.text.primary, fontSize: 18 }}>
+                {t('drafts') || 'Drafts'}
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>
+                {draftMixes.map(m => (
+                  <Link
+                    key={m.id}
+                    to={`/upload?draft=${m.id}`}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: `${space[4]}px ${space[6]}px`,
+                      background: colors.surface,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: radius.md,
+                      color: 'inherit',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span style={{ color: colors.text.primary, fontSize: 14, fontWeight: 600 }}>
+                      {m.title || 'Untitled mix'}
+                    </span>
+                    <span style={{ color: colors.text.dim, fontSize: 12 }}>
+                      {new Date(m.updated_at || m.created_at).toLocaleDateString()}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+          {scheduledMixes.length > 0 && (
+            <div>
+              <h2 style={{ margin: '0 0 12px', color: colors.text.primary, fontSize: 18 }}>
+                {t('scheduled') || 'Scheduled'}
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>
+                {scheduledMixes.map(m => (
+                  <div
+                    key={m.id}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: `${space[4]}px ${space[6]}px`,
+                      background: colors.surface,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: radius.md,
+                    }}
+                  >
+                    <span style={{ color: colors.text.primary, fontSize: 14, fontWeight: 600 }}>
+                      {m.title || 'Untitled mix'}
+                    </span>
+                    <span style={{ color: colors.text.dim, fontSize: 12 }}>
+                      {m.scheduled_at
+                        ? new Date(m.scheduled_at).toLocaleDateString(undefined, {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        : ''}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       <CreatorRecap />
 

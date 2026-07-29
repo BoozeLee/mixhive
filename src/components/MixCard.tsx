@@ -6,6 +6,9 @@ import { repost, unrepost, hasReposted } from '../lib/api';
 import { LikeButton } from './LikeButton';
 import { ShareButton } from './ShareButton';
 import { AiBandBadge } from './AiBandBadge';
+import { BpmChip } from './BpmChip';
+import { KeyChip } from './KeyChip';
+import { WaveBar } from './hive/WaveBar';
 import { Icon } from './ui/Icon';
 import type { FeedMix } from '../lib/types';
 import {
@@ -265,7 +268,7 @@ export function MixCard({ mix }: Props) {
                         width: 3,
                         height: h,
                         background: colors.accent,
-                        borderRadius: 4,
+                        borderRadius: 2,
                         animation: `eq-bar ${0.6 + i * 0.1}s ease-in-out infinite alternate`,
                       }}
                     />
@@ -310,7 +313,7 @@ export function MixCard({ mix }: Props) {
               </div>
 
               {/* DJ name */}
-              <div style={{ fontSize: fontSize.sm, color: colors.text.muted, marginBottom: 5 }}>
+              <div style={{ fontSize: fontSize.sm, color: colors.text.muted, marginBottom: 5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {mix.dj_display_name || mix.dj_username}
               </div>
 
@@ -320,7 +323,7 @@ export function MixCard({ mix }: Props) {
                   <span
                     title="Published directly from Beehive Studio"
                     style={{
-                      fontSize: 11,
+                      fontSize: 10,
                       fontWeight: fontWeight.bold,
                       padding: '2px 7px',
                       borderRadius: radius.pill,
@@ -339,7 +342,7 @@ export function MixCard({ mix }: Props) {
                 {mix.required_tier && mix.required_tier !== 'free' && (
                   <span
                     style={{
-                      fontSize: 11,
+                      fontSize: 10,
                       fontWeight: fontWeight.bold,
                       padding: '2px 7px',
                       borderRadius: radius.pill,
@@ -355,7 +358,7 @@ export function MixCard({ mix }: Props) {
                   <span
                     title={mix.genre_name}
                     style={{
-                      fontSize: 11,
+                      fontSize: 10,
                       fontWeight: fontWeight.semibold,
                       padding: '2px 7px',
                       borderRadius: radius.pill,
@@ -386,7 +389,7 @@ export function MixCard({ mix }: Props) {
                 )}
                 <span
                   style={{
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: fontWeight.semibold,
                     background: colors.border,
                     color: colors.text.dim,
@@ -396,6 +399,8 @@ export function MixCard({ mix }: Props) {
                 >
                   {mix.audio_quality === 'original' ? 'HQ' : mix.audio_quality || 'MP3'}
                 </span>
+                {mix.bpm && <BpmChip bpm={mix.bpm} size="sm" />}
+                {mix.musical_key && <KeyChip keyCamelot={mix.musical_key} />}
               </div>
             </div>
 
@@ -513,10 +518,10 @@ export function MixCard({ mix }: Props) {
 
           {/* Waveform row — shown when the mix has audio */}
           {mix.audio_url && (
-            <div
+            <WaveBar
+              peaks={Array.isArray(mix.waveform_data) ? (mix.waveform_data as number[]) : undefined}
+              height={28}
               aria-hidden="true"
-              className="waveform-gold"
-              style={{ height: 28, borderRadius: 4, opacity: isNowPlaying ? 1 : 0.55 }}
             />
           )}
         </div>

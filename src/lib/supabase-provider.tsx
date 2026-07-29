@@ -42,7 +42,7 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  }, []);
 
   return (
     <SupabaseContext.Provider value={{ supabase, session, user, loading }}>

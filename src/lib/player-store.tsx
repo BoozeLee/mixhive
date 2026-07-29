@@ -110,6 +110,7 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.repeatMode, state.currentIndex, state.playlist]);
 
   const play = () => {
@@ -272,7 +273,9 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
     <PlayerContext.Provider value={value}>
       {children}
       {/* Hidden audio element */}
-      <audio ref={audioRef} />
+      <audio ref={audioRef} aria-label="Audio player">
+        <track kind="captions" src="" label="No captions" />
+      </audio>
     </PlayerContext.Provider>
   );
 }

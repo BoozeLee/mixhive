@@ -56,18 +56,23 @@ export function Agents() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<LuaAgent | null>(null);
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [presetTrigger, setPresetTrigger] = useState<LuaAgentTrigger | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     if (!user) return;
     setLoading(true);
+    setError(null);
     listAgents()
       .then(a => {
         setAgents(a);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Failed to load agents');
+        setLoading(false);
+      });
   }, [user]);
 
   // Deep-link from MixDetail: /agents?new=1&trigger=on_comment
@@ -163,6 +168,12 @@ export function Agents() {
         </div>
         <Button onClick={() => setCreating(true)}>+ New agent</Button>
       </header>
+
+      {error && (
+        <div style={{ padding: '12px 16px', marginBottom: 16, background: 'rgba(255,85,85,0.1)', border: '1px solid rgba(255,85,85,0.3)', borderRadius: radius.md, color: colors.danger, fontSize: fontSize.sm }}>
+          {error}
+        </div>
+      )}
 
       {loading ? (
         <div style={{ padding: 24, textAlign: 'center' }}>

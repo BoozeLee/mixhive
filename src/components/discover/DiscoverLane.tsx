@@ -1,4 +1,4 @@
-import { Children, useRef } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { colors, fontSize, fontWeight, radius, space, transition } from '../../styles/tokens';
 import { SkeletonBar } from '../Skeleton';
@@ -9,10 +9,9 @@ interface DiscoverLaneProps {
   href?: string;
   hrefLabel?: string;
   loading?: boolean;
+  error?: boolean;
   skeletonCount?: number;
   skeletonWidth?: number;
-  /** Shown when the lane has resolved with no items. Falls back to a generic note. */
-  emptyLabel?: string;
   children: React.ReactNode;
 }
 
@@ -22,13 +21,12 @@ export function DiscoverLane({
   href,
   hrefLabel,
   loading,
+  error,
   skeletonCount = 4,
   skeletonWidth = 200,
-  emptyLabel,
   children,
 }: DiscoverLaneProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isEmpty = !loading && Children.count(children) === 0;
 
   function scroll(direction: 'left' | 'right') {
     const el = scrollRef.current;
@@ -76,12 +74,10 @@ export function DiscoverLane({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: space[3], flexShrink: 0 }}>
-          {!loading && !isEmpty && (
-            <div style={{ display: 'flex', gap: space[2] }}>
-              <ScrollButton direction="left" onClick={() => scroll('left')} />
-              <ScrollButton direction="right" onClick={() => scroll('right')} />
-            </div>
-          )}
+          <div style={{ display: 'flex', gap: space[2] }}>
+            <ScrollButton direction="left" onClick={() => scroll('left')} />
+            <ScrollButton direction="right" onClick={() => scroll('right')} />
+          </div>
           {href && hrefLabel && (
             <Link
               to={href}
@@ -117,26 +113,18 @@ export function DiscoverLane({
             />
           ))}
         </div>
-      ) : isEmpty ? (
-        <div
+      ) : error ? (
+        <p
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: space[3],
-            padding: `${space[7]}px ${space[6]}px`,
-            border: `1px dashed ${colors.borderStrong}`,
-            borderRadius: radius.lg,
-            background: colors.surfaceMuted,
-            color: colors.text.dim,
+            color: colors.text.faint,
             fontSize: fontSize.sm,
+            padding: `${space[6]}px 0`,
+            textAlign: 'center',
           }}
         >
-          <span aria-hidden="true" style={{ color: colors.accentMuted, fontSize: fontSize.lg }}>
-            ⬡
-          </span>
-          {emptyLabel || 'Nothing here yet — check back soon.'}
-        </div>
-      ) : (
+          This section is temporarily unavailable.
+        </p>
+      ) : !children || (Array.isArray(children) && children.length === 0) ? null : (
         <div
           ref={scrollRef}
           style={{

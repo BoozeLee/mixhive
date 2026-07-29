@@ -6,7 +6,7 @@ import { LogoIcon } from './Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Icon } from './ui/Icon';
 import type { IconKey } from '../lib/icons';
-import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens';
+import { colors, space, transition, fontSize, fontWeight, layout, shadow, withAlpha } from '../styles/tokens';
 
 interface NavItem {
   path: string;
@@ -48,16 +48,16 @@ export function MobileNav() {
         bottom: 'env(safe-area-inset-bottom, 0px)',
         left: 0,
         right: 0,
-        background: 'linear-gradient(180deg, rgba(8,8,6,0.86), rgba(2,2,2,0.98))',
+        background: `linear-gradient(180deg, ${withAlpha(colors.black, 0.86)}, ${withAlpha(colors.black, 0.98)})`,
         borderTop: `1px solid ${colors.accentMuted}`,
-        boxShadow: '0 -16px 42px rgba(0,0,0,0.66), 0 0 24px rgba(246,196,0,0.1)',
+        boxShadow: shadow.elevated,
         backdropFilter: 'blur(18px)',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'center',
         padding: `${space[2]} 0`,
         zIndex: 100,
-        height: 60,
+        height: layout.mobileNavHeight,
         paddingBottom: space[2],
       }}
     >
@@ -102,9 +102,9 @@ export function MobileNav() {
             borderRadius: '50%',
             background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentBrightest})`,
             color: colors.bg,
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: 900,
-            boxShadow: `0 4px 18px rgba(246,196,0,0.5)`,
+            boxShadow: `0 4px 18px ${withAlpha(colors.accent, 0.5)}`,
             border: `2px solid ${colors.accent}`,
             marginTop: -14,
           }}
@@ -152,7 +152,7 @@ export function MobileNav() {
                 display: 'grid',
                 placeItems: 'center',
                 clipPath: 'polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%)',
-                background: isActive ? colors.accent : 'rgba(246,196,0,0.08)',
+                background: isActive ? colors.accent : `${withAlpha(colors.accent, 0.08)}`,
                 color: isActive ? colors.bg : colors.accent,
                 border: `1px solid ${isActive ? colors.accent : colors.accentMuted}`,
                 position: 'relative',

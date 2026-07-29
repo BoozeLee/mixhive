@@ -124,6 +124,12 @@
     "audioRequired": "Audio file is required",
     "titleRequired": "Title is required",
     "genreRequired": "Genre is required",
+    "publishNow": "Publish now",
+    "scheduleForLater": "Schedule for later",
+    "draftSaved": "Draft saved!",
+    "scheduleSuccess": "Mix scheduled!",
+    "resumeDraft": "Resume draft",
+    "startNewUpload": "Start new upload",
     "scheduleFor": "Schedule for later"
   },
   "notifications": {
@@ -131,6 +137,7 @@
     "title": "Notifications",
     "loading": "Loading notifications…",
     "markAllRead": "Mark all read",
+    "preferences": "Preferences",
     "unread": "Unread",
     "signInPrompt": "Sign in to see your notifications"
   },
@@ -142,10 +149,12 @@
     "artists": "Artists",
     "mixes": "Mixes",
     "scenes": "Scenes",
+    "agents": "Agents",
     "noResults": "No results found",
     "noResultsBody": "Try another spelling, genre, or location.",
     "resultsFor": "Results for <q>{query}</q>",
-    "aiBand": "AI Band"
+    "aiBand": "AI Band",
+    "searchUnavailable": "Search unavailable"
   },
   "feed": {
     "liveFeed": "Live Feed",
@@ -174,7 +183,13 @@
     "emptyLatestAction": "Upload a mix",
     "errorFeedTitle": "Couldn't load feed",
     "errorFeedBody": "Something went wrong while loading the hive. Try again?",
-    "errorFeedAction": "Retry"
+    "errorFeedAction": "Retry",
+    "dateAll": "All time",
+    "date24h": "Past 24h",
+    "dateWeek": "Past week",
+    "dateMonth": "Past month",
+    "dateYear": "Past year",
+    "aiBandOnly": "AI Band only"
   },
   "dashboard": {
     "title": "Hive Growth OS",
@@ -194,6 +209,10 @@
     "topMixStats": "{plays} plays / {likes} likes / {comments} comments",
     "topMixEmpty": "No top mix yet. Upload your first mix to start collecting signal.",
     "recentActivityEmpty": "Activity will appear here as listeners play, like, follow, and comment.",
+    "loadError": "Failed to load dashboard data.",
+    "retry": "Retry",
+    "drafts": "Drafts",
+    "scheduled": "Scheduled",
     "activity": {
       "uploaded": "Uploaded {title}",
       "liked": "Liked {title}",
@@ -271,6 +290,7 @@
     "sortLabel": "Sort AI Band",
     "sortFollowers": "Top followers",
     "sortMixes": "Most mixes",
+    "sortCredibility": "Most credited",
     "emptyTitle": "No AI agents yet",
     "emptyBody": "AI-Band members will appear here once they're active in the Hive.",
     "follow": "Follow",
@@ -292,7 +312,8 @@
     "plays": "plays",
     "discography": "Discography",
     "noTracksTitle": "No tracks yet",
-    "noTracksBody": "No published tracks credit {name} as an AI band member yet."
+    "noTracksBody": "No published tracks credit {name} as an AI band member yet.",
+    "allGenres": "All genres"
   },
   "ritualReplay": {
     "unavailable": "Replay unavailable",
@@ -412,6 +433,8 @@
     "patron": "Patron",
     "popular": "Most popular",
     "subscribe": "Subscribe",
+    "current": "Current",
+    "manage": "Manage",
     "aiStudio": "AI Studio access",
     "analyticsExport": "Analytics export",
     "prioritySupport": "Priority support",
@@ -560,7 +583,14 @@
     "status": "Status",
     "paidOut": "Paid out",
     "pendingEscrow": "Pending escrow",
-    "held": "Held (set up payouts)"
+    "held": "Held (set up payouts)",
+    "loadingPayoutStatus": "Loading payout status…",
+    "payoutsActive": "Payouts active — you can receive marketplace earnings.",
+    "stripeNeedsDetails": "Your Stripe account needs a few more details before payouts can be enabled.",
+    "connectStripePrompt": "Connect a Stripe account to sell gear and receive agent-package earnings.",
+    "openingStripe": "Opening Stripe…",
+    "finishPayoutSetup": "Finish payout setup",
+    "setUpPayouts": "Set up payouts"
   },
   "editMix": {
     "title": "Edit Mix",
@@ -778,6 +808,12 @@
     "sectionHeadingPlaceholder": "Section heading (e.g. \"Past performances\")",
     "sectionBodyPlaceholder": "Write your section content here…"
   },
+  "saved": {
+    "signInToSee": "Sign in to see your favorites.",
+    "eyebrow": "Favorites",
+    "title": "Saved Mixes",
+    "empty": "You haven't liked any mixes yet."
+  },
   "sceneRadar": {
     "signInToSee": "Sign in to see your scene radar.",
     "signIn": "Sign in",
@@ -828,6 +864,33 @@
     "hideContent": "Hide content",
     "banOwner": "Ban owner",
     "dismiss": "Dismiss"
+  },
+  "adminUsers": {
+    "title": "User Management",
+    "subtitle": "Search, ban/unban users, and review moderation history.",
+    "searchPlaceholder": "Search by username or display name...",
+    "search": "Search",
+    "bannedOnly": "Banned only",
+    "loading": "Loading users...",
+    "noResults": "No users match your search.",
+    "noUsers": "No users found.",
+    "colUser": "User",
+    "colStatus": "Status",
+    "colMixes": "Mixes",
+    "colFollowers": "Followers",
+    "colJoined": "Joined",
+    "colActions": "Actions",
+    "banned": "Banned",
+    "verified": "Verified",
+    "active": "Active",
+    "ban": "Ban",
+    "unban": "Unban",
+    "audit": "Audit",
+    "prev": "Prev",
+    "next": "Next",
+    "auditTitle": "Moderation History",
+    "auditLoading": "Loading audit log...",
+    "auditEmpty": "No moderation history for this user."
   },
   "agentsGallery": {
     "agentGallery": "Agent gallery",
@@ -950,11 +1013,20 @@
     "signIn": "Sign in",
     "you": "You:",
     "chat": "Chat",
-    "messages": "Messages"
+    "messages": "Messages",
+    "newConversation": "New Conversation",
+    "newMessage": "New Message",
+    "searchUsers": "Search users…",
+    "noConversations": "No conversations yet.",
+    "noMessagesYet": "No messages yet",
+    "searching": "Searching…",
+    "noResults": "No users found"
   },
   "notFound": {
     "noRouteMatches": "No route matches",
-    "pageNotFound": "Page not found"
+    "pageNotFound": "Page not found",
+    "mightHaveMoved": ". It might have moved or never existed.",
+    "backToFeed": "Back to feed"
   },
   "publicPressKit": {
     "loadingEpk": "Loading EPK...",

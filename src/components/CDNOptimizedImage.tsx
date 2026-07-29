@@ -5,7 +5,7 @@
  * with lazy loading, responsive loading, and fallback support.
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import {
   getOptimizedImageUrl,
@@ -75,12 +75,14 @@ export const CDNImage: React.FC<CDNImageProps> = ({
   const [isOptimized, setIsOptimized] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  // Determine optimization parameters
-  const optimizedParams: ImageOptimizationParams = {
-    format: 'webp',
-    quality,
-    ...optimization,
-  };
+  const optimizedParams: ImageOptimizationParams = useMemo(
+    () => ({
+      format: 'webp',
+      quality,
+      ...optimization,
+    }),
+    [quality, optimization]
+  );
 
   // Get CDN-optimized URL
   useEffect(() => {

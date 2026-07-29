@@ -29,6 +29,7 @@ export function QuestsList() {
   const { user } = useAuth();
   const [quests, setQuests] = useState<QuestSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [_error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showSeedingModal, setShowSeedingModal] = useState(false);
 
@@ -52,7 +53,7 @@ export function QuestsList() {
         }));
         setQuests(formatted);
       })
-      .catch(() => setQuests([]))
+      .catch(() => setError('Failed to load quests'))
       .finally(() => setLoading(false));
   }, [user]);
 
@@ -102,7 +103,7 @@ export function QuestsList() {
             style={{
               display: 'grid',
               gap: space[4],
-              gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))',
             }}
           >
             {activeQuests.map(quest => (
@@ -189,7 +190,7 @@ export function QuestsList() {
             style={{
               display: 'grid',
               gap: space[4],
-              gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))',
             }}
           >
             {completedQuests.map(quest => (

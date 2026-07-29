@@ -27,6 +27,7 @@ const tabs: Array<{ value: SearchEntityType; labelKey: string }> = [
   { value: 'all', labelKey: 'all' },
   { value: 'mixes', labelKey: 'mixes' },
   { value: 'profiles', labelKey: 'artists' },
+  { value: 'agents', labelKey: 'agents' },
   { value: 'scenes', labelKey: 'scenes' },
 ];
 
@@ -122,7 +123,7 @@ export function SearchPage() {
   useEffect(() => {
     const nextQuery = searchParams.get('q') || '';
     const requestedType = searchParams.get('type');
-    const nextType: SearchEntityType = ['mixes', 'profiles', 'scenes'].includes(requestedType || '')
+    const nextType: SearchEntityType = ['mixes', 'profiles', 'scenes', 'agents'].includes(requestedType || '')
       ? (requestedType as SearchEntityType)
       : 'all';
     const nextFilters: SearchFiltersValue = {
@@ -255,7 +256,7 @@ export function SearchPage() {
             <SkeletonFeed />
           ) : error ? (
             <ErrorComponent
-              message="Search unavailable"
+              message={t('searchUnavailable')}
               error={error}
               onRetry={() => void performSearch(query, filters)}
             />
@@ -263,7 +264,7 @@ export function SearchPage() {
             <GroupedResults results={results} onSeeAll={switchTab} agents={filteredAgents} />
           ) : (
             <>
-              <EntityResults type={tab} results={results} />
+              <EntityResults type={tab} results={results} agents={tab === 'agents' ? filteredAgents : undefined} />
               {activeSection?.hasMore && (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: space[10] }}>
                   <Button
@@ -409,17 +410,38 @@ function ResultGroup({
 function EntityResults({
   type,
   results,
+  agents,
 }: {
   type: Exclude<SearchEntityType, 'all'>;
   results: SearchResponse;
+  agents?: AIAgent[];
 }) {
-  const section = results.sections[type];
-  if (!section.items.length)
+  const t = useTranslations('search');
+  if (type === 'agents') {
+    const agentList = agents ?? [];
+    if (!agentList.length)
+      return (
+        <EmptyState
+          iconKey="search"
+          title={t('noResults')}
+          body={t('noResultsBody')}
+        />
+      );
+    return (
+      <div style={{ display: 'grid', gap: space[6] }}>
+        {agentList.map(agent => (
+          <AgentRow key={agent.id} agent={agent} />
+        ))}
+      </div>
+    );
+  }
+  const section = results.sections[type as keyof typeof results.sections];
+  if (!section?.items.length)
     return (
       <EmptyState
         iconKey="search"
-        title={`No ${type === 'profiles' ? 'artists' : type} found`}
-        body="Try another spelling, genre, or location."
+        title={t('noResults')}
+        body={t('noResultsBody')}
       />
     );
   if (type === 'mixes')

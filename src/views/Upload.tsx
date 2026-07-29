@@ -16,15 +16,11 @@ import { UploadProgress } from '../components/upload/UploadProgress';
 import { AudioDropZone } from '../components/upload/AudioDropZone';
 import { AudioPreview } from '../components/upload/AudioPreview';
 import { PostPublishPanel } from '../components/upload/PostPublishPanel';
+import { PlatformLinksSection } from '../components/upload/PlatformLinksSection';
+import { SchedulePublishToggle } from '../components/upload/SchedulePublishToggle';
 import type { Mix, TrackItem } from '../lib/types';
 
-const PLATFORMS = [
-  ['SoundCloud', 'soundcloud'],
-  ['Mixcloud', 'mixcloud'],
-  ['YouTube', 'youtube'],
-  ['Spotify', 'spotify'],
-  ['Apple Music', 'applemusic'],
-] as const;
+const DRAFT_KEY = 'mixhive-upload-draft';
 
 export function Upload() {
   const t = useTranslations('upload');
@@ -57,6 +53,9 @@ export function Upload() {
   const [generalError, setGeneralError] = useState('');
   const [publishedMix, setPublishedMix] = useState<{ id: string; title: string } | null>(null);
   const [scheduleDate, setScheduleDate] = useState('');
+  const [draftMixId, setDraftMixId] = useState<string | null>(null);
+  const [publishMode, setPublishMode] = useState<'now' | 'later'>('now');
+  const [showDraftResume, setShowDraftResume] = useState(false);
   const abortRef = useRef<(() => void) | null>(null);
 
   const steps = [
@@ -138,6 +137,43 @@ export function Upload() {
     return () => URL.revokeObjectURL(url);
   }, [artworkFile]);
 
+  // Resume draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setFormData(prev => ({ ...prev, ...parsed.formData }));
+        setTracklist(parsed.tracklist ?? []);
+        setPlatformLinks(parsed.platformLinks ?? {});
+        setIsExplicit(parsed.isExplicit ?? false);
+        if (parsed.draftMixId) setDraftMixId(parsed.draftMixId);
+        setShowDraftResume(true);
+      }
+    } catch {
+      localStorage.removeItem(DRAFT_KEY);
+    }
+  }, []);
+
+  // Auto-save form state to localStorage on changes
+  useEffect(() => {
+    if (showDraftResume) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          formData: { title: formData.title, description: formData.description, genreId: formData.genreId, tags: formData.tags },
+          tracklist,
+          platformLinks,
+          isExplicit,
+          draftMixId,
+        }));
+      } catch {
+        // localStorage full or unavailable
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [formData, tracklist, platformLinks, isExplicit, draftMixId, showDraftResume]);
+
   async function uploadFileWithProgress(
     file: File,
     bucket: string
@@ -206,6 +242,47 @@ export function Upload() {
     setUploadTotal(0);
   }
 
+  async function saveDraft() {
+    if (!user) return;
+    setGeneralError('');
+    try {
+      const res = await fetch('/api/mixes/draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: draftMixId,
+          title: formData.title || undefined,
+          description: formData.description || undefined,
+          genre_id: formData.genreId || undefined,
+          tags: formData.tags
+            .split(',')
+            .map(t => t.trim())
+            .filter(Boolean),
+          tracklist: tracklist.length > 0 ? tracklist : undefined,
+          platform_links: Object.keys(platformLinks).length > 0 ? platformLinks : undefined,
+          is_explicit: isExplicit,
+          duration_seconds: duration,
+        }),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        setDraftMixId(result.id);
+        localStorage.removeItem(DRAFT_KEY);
+        if (typeof window !== 'undefined') {
+          const toast = document.createElement('div');
+          toast.textContent = t('draftSaved');
+          toast.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${colors.successStrong};color:${colors.white};padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;`;
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 3000);
+        }
+      } else {
+        setGeneralError(result.error || 'Failed to save draft');
+      }
+    } catch {
+      setGeneralError('Failed to save draft');
+    }
+  }
+
   async function handlePublish(publish = true) {
     if (!user || !audioFile) return;
     if (!isSupabaseConfigured) {
@@ -259,6 +336,7 @@ export function Upload() {
         artworkUrl = url;
       }
 
+      const isScheduled = publishMode === 'later' && scheduleDate;
       const mixData: Partial<Mix> = {
         dj_id: user.id,
         title: formData.title,
@@ -275,8 +353,9 @@ export function Upload() {
         waveform_url: waveformUrl || null,
         status: 'ready',
         upload_status: 'uploaded',
-        published: publish && !scheduleDate,
-        scheduled_at: scheduleDate ? new Date(scheduleDate).toISOString() : null,
+        published: publish && !isScheduled,
+        visibility: isScheduled ? 'scheduled' : publish ? 'published' : 'draft',
+        scheduled_at: isScheduled ? new Date(scheduleDate).toISOString() : null,
       };
 
       if (tracklist.length > 0) {
@@ -287,13 +366,25 @@ export function Upload() {
         mixData.platform_links = platformLinks;
       }
 
-      const mix = await createMix(mixData);
-
-      if (mix) {
+      if (isScheduled && draftMixId) {
+        // Update existing draft as scheduled
+        await updateMix(draftMixId, mixData);
         setUploadProgress(100);
-        void updateMix(mix.id, { upload_status: 'processing' });
-        setPublishedMix({ id: mix.id, title: mix.title });
+        setPublishedMix({ id: draftMixId, title: formData.title || 'Untitled mix' });
+      } else {
+        const mix = await createMix(mixData);
+        if (mix) {
+          setUploadProgress(100);
+          if (!isScheduled) {
+            void updateMix(mix.id, { upload_status: 'processing' });
+          }
+          setPublishedMix({ id: mix.id, title: mix.title });
+        }
       }
+
+      // Clear draft on successful publish/schedule
+      localStorage.removeItem(DRAFT_KEY);
+      setDraftMixId(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Upload failed';
       if (message !== 'Upload cancelled') {
@@ -453,12 +544,67 @@ export function Upload() {
 
       <UploadStepper steps={steps} currentStep={step} />
 
+      {showDraftResume && (
+        <div
+          style={{
+            padding: '12px 16px',
+            marginBottom: 16,
+            background: `${colors.accentFaint}`,
+            border: `1px solid ${colors.accentMuted}`,
+            borderRadius: 8,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            flexWrap: 'wrap',
+          }}
+        >
+          <span style={{ color: colors.text.secondary, fontSize: 13 }}>
+            {t('resumeDraft') || 'Resume draft'}
+          </span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              type="button"
+              onClick={() => setShowDraftResume(false)}
+              style={{
+                background: colors.surfaceHover,
+                color: colors.text.secondary,
+                border: `1px solid ${colors.border}`,
+                borderRadius: 6,
+                padding: '6px 12px',
+                fontSize: 12,
+                cursor: 'pointer',
+              }}
+            >
+              {t('startNewUpload') || 'Start new'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDraftResume(false)}
+              style={{
+                background: colors.accent,
+                color: colors.bg,
+                border: 'none',
+                borderRadius: 6,
+                padding: '6px 12px',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
+
       {uploading && (
         <UploadProgress
           progress={uploadProgress}
           loadedBytes={uploadLoaded}
           totalBytes={uploadTotal}
           label={uploadLabel}
+          onCancel={cancelUpload}
         />
       )}
 
@@ -472,9 +618,34 @@ export function Upload() {
             fontSize: 13,
             marginBottom: 16,
             border: `1px solid ${withAlpha(colors.danger, 0.27)}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 8,
+            flexWrap: 'wrap',
           }}
         >
-          {generalError}
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{generalError}</span>
+          {step === 'publish' && !uploading && (
+            <button
+              type="button"
+              onClick={() => handlePublish(true)}
+              style={{
+                background: colors.accent,
+                color: colors.black,
+                border: 'none',
+                borderRadius: 6,
+                padding: '6px 12px',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+            >
+              Retry
+            </button>
+          )}
         </div>
       )}
 
@@ -580,7 +751,7 @@ export function Upload() {
                     maxWidth: 280,
                     aspectRatio: '1 / 1',
                     objectFit: 'cover',
-                    borderRadius: 10,
+                    borderRadius: 12,
                     border: `1px solid ${colors.border}`,
                   }}
                 />
@@ -612,39 +783,11 @@ export function Upload() {
               <span>{t('explicit')}</span>
             </label>
 
-            <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-              <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
-                {t('platformLinks')}
-              </legend>
-              <div style={{ marginTop: 8 }}>
-                {PLATFORMS.map(([label, key]) => (
-                  <div
-                    key={key}
-                    style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}
-                  >
-                    <Input
-                      type="text"
-                      value={platformLinks[key] || ''}
-                      onChange={e => validatePlatformLink(key, e.target.value)}
-                      placeholder={`${label} URL`}
-                      error={platformErrors[key]}
-                    />
-                    {platformErrors[key] && (
-                      <small
-                        style={{
-                          color: colors.danger,
-                          fontSize: 11,
-                          display: 'block',
-                          marginTop: 2,
-                        }}
-                      >
-                        {platformErrors[key]}
-                      </small>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </fieldset>
+            <PlatformLinksSection
+              values={platformLinks}
+              errors={platformErrors}
+              onChange={validatePlatformLink}
+            />
 
             <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
               <legend style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>
@@ -655,37 +798,40 @@ export function Upload() {
                   <div
                     key={index}
                     style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) 96px 44px',
+                      display: 'flex',
+                      flexWrap: 'wrap',
                       gap: 8,
                       alignItems: 'center',
                       marginBottom: 10,
                     }}
                   >
-                    <Input
-                      type="text"
-                      value={track.artist}
-                      onChange={e => updateTrack(index, { artist: e.target.value })}
-                      placeholder="Artist"
-                      style={{ flex: 1 }}
-                    />
-                    <Input
-                      type="text"
-                      value={track.title}
-                      onChange={e => updateTrack(index, { title: e.target.value })}
-                      placeholder={t('trackTitle')}
-                      style={{ flex: 1 }}
-                    />
-                    <Input
-                      type="number"
-                      value={track.start_time ?? 0}
-                      onChange={e => {
-                        const val = e.target.value === '' ? undefined : Number(e.target.value);
-                        updateTrack(index, { start_time: val });
-                      }}
-                      placeholder={t('startSec')}
-                      style={{ width: '100%' }}
-                    />
+                    <div style={{ flex: '1 1 140px', minWidth: 0 }}>
+                      <Input
+                        type="text"
+                        value={track.artist}
+                        onChange={e => updateTrack(index, { artist: e.target.value })}
+                        placeholder="Artist"
+                      />
+                    </div>
+                    <div style={{ flex: '1 1 140px', minWidth: 0 }}>
+                      <Input
+                        type="text"
+                        value={track.title}
+                        onChange={e => updateTrack(index, { title: e.target.value })}
+                        placeholder={t('trackTitle')}
+                      />
+                    </div>
+                    <div style={{ flex: '0 0 100px' }}>
+                      <Input
+                        type="number"
+                        value={track.start_time ?? 0}
+                        onChange={e => {
+                          const val = e.target.value === '' ? undefined : Number(e.target.value);
+                          updateTrack(index, { start_time: val });
+                        }}
+                        placeholder={t('startSec')}
+                      />
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeTrack(index)}
@@ -698,6 +844,7 @@ export function Upload() {
                         padding: '8px 10px',
                         fontSize: 16,
                         cursor: 'pointer',
+                        flexShrink: 0,
                       }}
                     >
                       −
@@ -739,7 +886,7 @@ export function Upload() {
                 padding: 16,
                 background: colors.surface,
                 border: `1px solid ${colors.border}`,
-                borderRadius: 10,
+                borderRadius: 12,
                 color: colors.text.secondary,
                 fontSize: 14,
               }}
@@ -760,25 +907,15 @@ export function Upload() {
                 {formData.tags && ` · ${formData.tags}`}
               </div>
             </div>
-            <div style={{ marginTop: 12 }}>
-              <label
-                style={{
-                  color: colors.text.muted,
-                  fontSize: 13,
-                  marginBottom: 6,
-                  display: 'block',
-                }}
-              >
-                {t('scheduleFor')}
-              </label>
-              <Input
-                hideLabel
-                label={t('scheduleFor')}
-                type="datetime-local"
-                value={scheduleDate}
-                onChange={e => setScheduleDate(e.target.value)}
-              />
-            </div>
+            <SchedulePublishToggle
+              mode={publishMode}
+              scheduledAt={scheduleDate}
+              onModeChange={mode => {
+                setPublishMode(mode);
+                if (mode === 'now') setScheduleDate('');
+              }}
+              onScheduledAtChange={setScheduleDate}
+            />
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 16 }}>
               <Button
                 type="button"
@@ -786,7 +923,7 @@ export function Upload() {
                 fullWidth
                 size="lg"
                 variant="secondary"
-                onClick={() => handlePublish(false)}
+                onClick={saveDraft}
               >
                 {uploading ? t('savingDraft') : t('saveDraft')}
               </Button>
@@ -810,11 +947,6 @@ export function Upload() {
           </div>
         )}
 
-        {uploading && (
-          <Button type="button" variant="danger" onClick={cancelUpload}>
-            Cancel upload
-          </Button>
-        )}
       </form>
     </div>
   );

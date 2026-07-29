@@ -42,6 +42,20 @@
   --hive-border: #1f1d16;
   --hive-border-strong: #35322a;
 
+  /* Surface & border tokens — bridges JS tokens.ts to CSS consumers */
+  --hive-bg: #0a0a0a;
+  --hive-surface: #111;
+  --hive-surface-hover: #1a1a2e;
+  --hive-surface-muted: #0f0f0f;
+  --hive-border: #1a1a2e;
+  --hive-border-strong: #333;
+  --hive-border-subtle: #222;
+  --hive-accent: #f0c040;
+  --hive-accent-hover: #f5cd5a;
+  --hive-text-primary: #eee;
+  --hive-text-secondary: #ccc;
+  --hive-text-dimmed: #999;
+
   /* Audio-reactive: src/lib/audioReactive.ts writes a value 0..1 from the
      current track's bass channel. Defaults to 0 when nothing is playing. */
   --hive-pulse: 0;
@@ -78,6 +92,19 @@
   --color-hive-danger: var(--hive-danger);
   --color-hive-success: var(--hive-success);
 
+  --color-hive-bg: var(--hive-bg);
+  --color-hive-surface: var(--hive-surface);
+  --color-hive-surface-hover: var(--hive-surface-hover);
+  --color-hive-surface-muted: var(--hive-surface-muted);
+  --color-hive-border: var(--hive-border);
+  --color-hive-border-strong: var(--hive-border-strong);
+  --color-hive-border-subtle: var(--hive-border-subtle);
+  --color-hive-accent: var(--hive-accent);
+  --color-hive-accent-hover: var(--hive-accent-hover);
+  --color-hive-text-primary: var(--hive-text-primary);
+  --color-hive-text-secondary: var(--hive-text-secondary);
+  --color-hive-text-dimmed: var(--hive-text-dimmed);
+
   --font-display: var(--font-display, 'Permanent Marker'), system-ui, sans-serif;
   --font-ui: var(--font-ui, 'Space Grotesk'), system-ui, sans-serif;
   --font-mono: var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace;
@@ -92,10 +119,19 @@ html {
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+  word-break: break-word;
   background:
     radial-gradient(circle at 18% 12%, rgba(246, 196, 0, 0.12), transparent 28%),
     radial-gradient(circle at 82% 18%, rgba(37, 217, 255, 0.08), transparent 26%),
     linear-gradient(180deg, #070706 0%, #0c0b09 45%, #050504 100%);
+}
+
+pre, code {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .mixhive-shell {
@@ -628,5 +664,47 @@ body {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 12px !important;
+  }
+}
+
+/* ── Composer two-panel: stack vertically on mobile ─────────────────────── */
+@media (max-width: 768px) {
+  .composer-two-panel {
+    flex-direction: column !important;
+    overflow-y: auto !important;
+  }
+  .composer-two-panel > div {
+    flex: none !important;
+    width: 100% !important;
+  }
+  .composer-two-panel .panel-enter {
+    flex: 1 !important;
+    width: 100% !important;
+    border-left: none !important;
+    border-top: 1px solid #1a1a2e !important;
+    height: auto !important;
+  }
+}
+
+/* ── Landing pillar cards — hover lift ──────────────────────── */
+.landing-pillar {
+  transition:
+    border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.landing-pillar:hover {
+  border-color: var(--hive-gold, #f6c400);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5), 0 0 32px rgba(246, 196, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-pillar {
+    transition: none;
+  }
+  .landing-pillar:hover {
+    transform: none;
   }
 }

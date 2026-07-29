@@ -1,10 +1,12 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/Button';
 import { Icon } from '../components/ui/Icon';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 import { colors, space, fontSize, radius } from '../styles/tokens';
 import { useNavigate } from 'react-router-dom';
 
@@ -58,6 +60,57 @@ export function PricingPage() {
   const t = useTranslations('pricing');
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [subscriptionTier, setSubscriptionTier] = useState<string | null>(null);
+  const [tierLoading, setTierLoading] = useState(false);
+  const [tierError, setTierError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setSubscriptionTier(null);
+      setTierError(null);
+      return;
+    }
+    let cancelled = false;
+    setTierLoading(true);
+    setTierError(null);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session?.access_token) {
+        if (!cancelled) { setTierLoading(false); setSubscriptionTier('free'); }
+        return;
+      }
+      fetch('/api/subscription/status', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      }).then(res => {
+        if (!res.ok) throw new Error('Failed to fetch status');
+        return res.json();
+      }).then(data => {
+        if (!cancelled) {
+          setSubscriptionTier(data.tier || 'free');
+          setTierLoading(false);
+        }
+      }).catch(() => {
+        if (!cancelled) {
+          setTierError('Could not load subscription status');
+          setTierLoading(false);
+        }
+      });
+    });
+    return () => { cancelled = true; };
+  }, [user]);
+
+  const handleManageBilling = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) return;
+    const res = await fetch('/api/subscription/portal', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify({}),
+    });
+    if (res.ok) {
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+    }
+  };
 
   const handleSubscribe = async (priceEnvVar: string) => {
     if (!user) {
@@ -84,6 +137,8 @@ export function PricingPage() {
     const { url } = await res.json();
     if (url) window.location.assign(url);
   };
+
+  const hasSubscription = subscriptionTier && subscriptionTier !== 'free';
 
   return (
     <div
@@ -114,111 +169,143 @@ export function PricingPage() {
         {t('subtitle')}
       </p>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: space[6],
-          alignItems: 'stretch',
-        }}
-      >
-        {TIERS.map(tier => (
-          <div
-            key={tier.id}
-            style={{
-              background: tier.featured ? colors.surfaceRaised : colors.surface,
-              border: `1px solid ${tier.featured ? colors.accent : colors.border}`,
-              borderRadius: radius.lg,
-              padding: space[8],
-              display: 'flex',
-              flexDirection: 'column',
-              gap: space[6],
-              transform: tier.featured ? 'scale(1.05)' : undefined,
-              position: 'relative',
-            }}
-          >
-            {tier.featured && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: -12,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  background: colors.accent,
-                  color: colors.black,
-                  padding: '4px 16px',
-                  borderRadius: radius.full,
-                  fontSize: fontSize.xs,
-                  fontWeight: 600,
-                }}
-              >
-                {t('popular')}
-              </span>
-            )}
+      {tierError && (
+        <div style={{ marginBottom: space[8], padding: space[4], background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}`, color: colors.danger, fontSize: fontSize.sm }}>
+          {tierError}
+        </div>
+      )}
 
-            <h2
+      {tierLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: space[12] }}>
+          <LoadingSpinner size="large" />
+        </div>
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: space[6],
+            alignItems: 'start',
+          }}
+        >
+          {TIERS.map(tier => {
+            const isCurrentTier = subscriptionTier === tier.id;
+            return (
+            <div
+              key={tier.id}
               style={{
-                fontSize: fontSize['2xl'],
-                fontWeight: 700,
-                color: colors.text.primary,
-                textTransform: 'capitalize',
-              }}
-            >
-              {t(tier.id as never)}
-            </h2>
-
-            <div>
-              <span
-                style={{
-                  fontSize: fontSize['3xl'],
-                  fontWeight: 700,
-                  color: colors.text.primary,
-                }}
-              >
-                {tier.price}
-              </span>
-              <span style={{ fontSize: fontSize.sm, color: colors.text.dim }}>{tier.period}</span>
-            </div>
-
-            <ul
-              style={{
-                listStyle: 'none',
-                padding: 0,
-                margin: 0,
+                background: tier.featured ? colors.surfaceElevated : colors.surface,
+                border: `1px solid ${tier.featured ? colors.accent : colors.border}`,
+                borderRadius: radius.lg,
+                padding: space[8],
                 display: 'flex',
                 flexDirection: 'column',
-                gap: space[3],
-                textAlign: 'left',
+                gap: space[6],
+                transform: tier.featured ? 'scale(1.05)' : undefined,
+                position: 'relative',
               }}
             >
-              {tier.features.map(f => (
-                <li
-                  key={f}
+              {tier.featured && (
+                <span
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: space[2],
-                    fontSize: fontSize.sm,
-                    color: colors.text.secondary,
+                    position: 'absolute',
+                    top: -12,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: colors.accent,
+                    color: colors.black,
+                    padding: '4px 16px',
+                    borderRadius: radius.full,
+                    fontSize: fontSize.xs,
+                    fontWeight: 600,
                   }}
                 >
-                  <Icon name="check" size={16} color={colors.success} />
-                  {t(f)}
-                </li>
-              ))}
-            </ul>
+                  {t('popular')}
+                </span>
+              )}
 
-            <Button
-              variant={tier.featured ? 'primary' : 'secondary'}
-              size="lg"
-              onClick={() => handleSubscribe(`${tier.id.toUpperCase()}_PRICE_ID`)}
-              style={{ marginTop: 'auto' }}
-            >
-              {t('subscribe')}
-            </Button>
-          </div>
-        ))}
-      </div>
+              <h2
+                style={{
+                  fontSize: fontSize['2xl'],
+                  fontWeight: 700,
+                  color: colors.text.primary,
+                  textTransform: 'capitalize',
+                }}
+              >
+                {t(tier.id as never)}
+              </h2>
+
+              <div>
+                <span
+                  style={{
+                    fontSize: fontSize['3xl'],
+                    fontWeight: 700,
+                    color: colors.text.primary,
+                  }}
+                >
+                  {tier.price}
+                </span>
+                <span style={{ fontSize: fontSize.sm, color: colors.text.dim }}>{tier.period}</span>
+              </div>
+
+              <ul
+                style={{
+                  listStyle: 'none',
+                  padding: 0,
+                  margin: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: space[3],
+                  textAlign: 'left',
+                }}
+              >
+                {tier.features.map(f => (
+                  <li
+                    key={f}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: space[2],
+                      fontSize: fontSize.sm,
+                      color: colors.text.secondary,
+                    }}
+                  >
+                    <Icon name="check" size={16} color={colors.success} />
+                    {t(f)}
+                  </li>
+                ))}
+              </ul>
+
+              {isCurrentTier ? (
+                <Button variant="secondary" size="lg" disabled style={{ marginTop: 'auto' }}>
+                  {t('current')}
+                </Button>
+              ) : (
+                <Button
+                  variant={tier.featured ? 'primary' : 'secondary'}
+                  size="lg"
+                  onClick={() => handleSubscribe(`${tier.id.toUpperCase()}_PRICE_ID`)}
+                  style={{ marginTop: 'auto' }}
+                >
+                  {t('subscribe')}
+                </Button>
+              )}
+
+              {hasSubscription && isCurrentTier && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleManageBilling}
+                  style={{ marginTop: 0 }}
+                >
+                  {t('manage')}
+                </Button>
+              )}
+            </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

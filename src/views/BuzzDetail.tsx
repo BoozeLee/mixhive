@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { getBuzz, getBuzzReplies, replyToBuzz } from '../lib/api';
 import { BuzzCard } from '../components/BuzzCard';
 import { ReportButton } from '../components/ReportButton';
+import { Button } from '../components/ui/Button';
 import { SkeletonFeed } from '../components/Skeleton';
 import { colors, radius, space, fontSize, fontWeight } from '../styles/tokens';
 import { BuzzToast } from '../components/hive/BuzzToast';
@@ -28,15 +29,18 @@ export function BuzzDetail() {
     message: string;
     tone: 'info' | 'success' | 'danger';
   }>({ open: false, message: '', tone: 'info' });
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
+    setError(null);
     Promise.all([getBuzz(id), getBuzzReplies(id, 50)])
       .then(([b, r]) => {
         if (b) setBuzz(b as FeedBuzz);
         setReplies(r.data);
       })
+      .catch(() => setError('Failed to load buzz'))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -65,6 +69,18 @@ export function BuzzDetail() {
 
   const remaining = MAX_CHARS - replyBody.length;
   const canReply = replyBody.trim().length > 0 && remaining >= 0 && !replyBusy;
+
+  if (error) {
+    return (
+      <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>
+        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>← Back</Button>
+        <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>
+          <p>{error}</p>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>

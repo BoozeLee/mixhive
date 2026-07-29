@@ -206,6 +206,8 @@ export interface ProfileAnalytics {
   gearSalesCount?: number;
 }
 
+export type MixVisibility = 'draft' | 'scheduled' | 'published' | 'unlisted';
+
 export interface Mix {
   id: string;
   dj_id: string;
@@ -222,8 +224,11 @@ export interface Mix {
   play_count: number;
   like_count: number;
   comment_count: number;
+  /** @deprecated Use visibility instead */
   published: boolean;
+  /** @deprecated Use visibility instead */
   archived: boolean;
+  visibility: MixVisibility;
   scheduled_at: string | null;
   published_at: string | null;
   required_tier: 'free' | 'supporter' | 'insider' | 'patron';
@@ -236,6 +241,10 @@ export interface Mix {
   waveform_data?: unknown | null;
   audio_metadata?: unknown | null;
   audio_quality: string | null;
+  bpm?: number | null;
+  musical_key?: string | null;
+  mood?: string | null;
+  energy?: number | null;
   created_at: string;
   updated_at: string;
   dj?: Profile;

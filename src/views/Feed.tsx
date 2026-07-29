@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getTrending, getMixedFollowingFeed, getLatestMixed } from '../lib/api';
-import { feedService } from '../lib/feedService';
 import { useRealtime } from '../hooks/useRealtime';
 import { MixCard } from '../components/MixCard';
 import { BuzzCard } from '../components/BuzzCard';
@@ -15,12 +14,15 @@ import { EmptyState } from '../components/EmptyState';
 import { Icon } from '../components/ui/Icon';
 import {
   colors,
+  display,
   fontSize,
   fontWeight,
   getGenreColor,
   radius,
+  shadow,
   space,
   transition,
+  withAlpha,
 } from '../styles/tokens';
 import type {
   FeedMix,
@@ -32,6 +34,7 @@ import type {
 } from '../lib/types';
 
 type Tab = 'feed' | 'trending' | 'latest';
+type DateRange = 'all' | '24h' | 'week' | 'month' | 'year';
 
 interface MixTabState {
   data: FeedMix[];
@@ -73,10 +76,8 @@ const POPULAR_GENRES = [
 function RightRailPanel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div
+      className="hive-panel"
       style={{
-        background: colors.surface,
-        border: `1px solid ${colors.border}`,
-        borderRadius: radius.lg,
         padding: `${space[8]}px`,
         overflow: 'hidden',
       }}
@@ -113,23 +114,23 @@ function GenreRadar() {
               style={{
                 padding: '4px 10px',
                 borderRadius: radius.pill,
-                border: `1px solid ${c}55`,
-                background: `${c}18`,
+                border: `1px solid ${withAlpha(c, 0.33)}`,
+                background: withAlpha(c, 0.09),
                 color: c,
                 fontSize: fontSize.xs,
                 fontWeight: fontWeight.semibold,
                 cursor: 'pointer',
                 textTransform: 'capitalize',
-                transition: transition.fast,
+                transition: transition.smooth,
                 whiteSpace: 'nowrap',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = `${c}30`;
-                e.currentTarget.style.borderColor = `${c}88`;
+                e.currentTarget.style.background = withAlpha(c, 0.19);
+                e.currentTarget.style.borderColor = withAlpha(c, 0.53);
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = `${c}18`;
-                e.currentTarget.style.borderColor = `${c}55`;
+                e.currentTarget.style.background = withAlpha(c, 0.09);
+                e.currentTarget.style.borderColor = withAlpha(c, 0.33);
               }}
             >
               {genre}
@@ -190,7 +191,7 @@ function TrendingNowPanel({ mixes }: { mixes: FeedMix[] }) {
               >
                 {mix.title}
               </div>
-              <div style={{ fontSize: fontSize.xs, color: colors.text.dim }}>
+              <div style={{ fontSize: fontSize.xs, color: colors.text.dim, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {mix.dj_display_name || mix.dj_username}
               </div>
             </div>
@@ -214,10 +215,12 @@ export function Feed() {
   const [mixedFeed, setMixedFeed] = useState<MixedTabState>(emptyMixedTab());
   const [latestMixed, setLatestMixed] = useState<MixedTabState>(emptyMixedTab());
   const [trendingTab, setTrendingTab] = useState<MixTabState>(emptyMixTab());
-  const [loading, setLoading] = useState(false);
   const loadingMoreRef = useRef(false);
-  const initializedRef = useRef(false);
   const [newCount, setNewCount] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedGenre, setSelectedGenre] = useState<string>('');
+  const [dateRange, setDateRange] = useState<DateRange>('all');
+  const [aiBandOnly, setAiBandOnly] = useState(false);
 
   const { mixUpdates } = useRealtime(user?.id ?? null, {
     enableMixUpdates: true,
@@ -244,72 +247,13 @@ export function Feed() {
     [user]
   );
 
-  // TODO(phase16): this loadFeed path (via feedService.getFeed) coexists with the
-  // mixed-feed effect below (getMixedFollowingFeed / getLatestMixed / getTrending) and
-  // casts EnhancedFeedItem[]/string|null into FeedMix[]/*Cursor with incompatible shapes.
-  // The two loaders are coupled through initializedRef; reconcile to a single canonical
-  // path per the discover-feed-v1.5 spec before shipping the redesigned feed to prod.
-  const loadFeed = useCallback(async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      let result;
-      switch (tab) {
-        case 'trending':
-          result = await feedService.getFeed({ type: 'trending', limit: 20, genre: undefined });
-          setTrendingTab({
-            data: result.items as FeedMix[],
-            cursor: result.cursor as TrendingCursor,
-            hasMore: result.hasMore,
-            loading: false,
-          });
-          break;
-        case 'latest':
-          result = await feedService.getFeed({ type: 'latest', limit: 20 });
-          setLatestMixed({
-            data: result.items as FeedItem[],
-            mixCursor: result.cursor as FeedCursor,
-            buzzCursor: null,
-            hasMore: result.hasMore,
-            loading: false,
-          });
-          break;
-        case 'feed':
-        default:
-          if (!user) break;
-          result = await feedService.getFeed({ type: 'following', userId: user.id, limit: 20 });
-          setMixedFeed({
-            data: result.items as FeedItem[],
-            mixCursor: result.cursor as FeedCursor,
-            buzzCursor: null,
-            hasMore: result.hasMore,
-            loading: false,
-          });
-          break;
-      }
-    } catch (error) {
-      console.error('Failed to load feed:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [tab, user, loading]);
-
-  useEffect(() => {
-    if (!initializedRef.current) {
-      initializedRef.current = true;
-      loadFeed();
-    } else {
-      loadFeed();
-    }
-  }, [tab, user, loadFeed]);
-
   useEffect(() => {
     if (!user || !mixUpdates.length) return;
     setNewCount(prev => prev + mixUpdates.length);
   }, [mixUpdates, user]);
 
   useEffect(() => {
-    if (!initializedRef.current) return;
+    setError(null);
     if (tab === 'feed') {
       if (mixedFeed.data.length > 0 || !mixedFeed.hasMore || mixedFeed.loading) return;
       if (!user) return;
@@ -324,7 +268,10 @@ export function Feed() {
             loading: false,
           });
         })
-        .catch(() => setMixedFeed(prev => ({ ...prev, loading: false })));
+        .catch(() => {
+          setMixedFeed(prev => ({ ...prev, loading: false }));
+          setError('Failed to load feed');
+        });
       return;
     }
     if (tab === 'latest') {
@@ -340,7 +287,10 @@ export function Feed() {
             loading: false,
           });
         })
-        .catch(() => setLatestMixed(prev => ({ ...prev, loading: false })));
+        .catch(() => {
+          setLatestMixed(prev => ({ ...prev, loading: false }));
+          setError('Failed to load latest mixes');
+        });
       return;
     }
     if (trendingTab.data.length > 0 || !trendingTab.hasMore || trendingTab.loading) return;
@@ -354,7 +304,10 @@ export function Feed() {
           loading: false,
         });
       })
-      .catch(() => setTrendingTab(prev => ({ ...prev, loading: false })));
+      .catch(() => {
+        setTrendingTab(prev => ({ ...prev, loading: false }));
+        setError('Failed to load trending');
+      });
   }, [tab, user, fetchFollowingFeed, latestMixed, trendingTab, mixedFeed]);
 
   useEffect(() => {
@@ -480,6 +433,7 @@ export function Feed() {
   };
 
   const handleRetry = async (t: Tab) => {
+    setError(null);
     if (t === 'feed') {
       setMixedFeed(prev => ({ ...prev, loading: true }));
       try {
@@ -493,6 +447,7 @@ export function Feed() {
         });
       } catch {
         setMixedFeed(prev => ({ ...prev, loading: false }));
+        setError('Failed to load feed');
       }
       return;
     }
@@ -509,6 +464,7 @@ export function Feed() {
         });
       } catch {
         setLatestMixed(prev => ({ ...prev, loading: false }));
+        setError('Failed to load latest mixes');
       }
       return;
     }
@@ -523,6 +479,7 @@ export function Feed() {
       });
     } catch {
       setTrendingTab(prev => ({ ...prev, loading: false }));
+      setError('Failed to load trending');
     }
   };
 
@@ -539,12 +496,35 @@ export function Feed() {
     if (tab !== 'feed' && tab !== 'latest') setNewCount(c => c + 1);
   }
 
+  function isWithinDateRange(dateStr: string, range: DateRange): boolean {
+    if (range === 'all') return true;
+    const now = Date.now();
+    const then = new Date(dateStr).getTime();
+    const diff = now - then;
+    switch (range) {
+      case '24h': return diff < 86400000;
+      case 'week': return diff < 604800000;
+      case 'month': return diff < 2592000000;
+      case 'year': return diff < 31536000000;
+      default: return true;
+    }
+  }
+
+  const filterItem = (item: FeedItem): boolean => {
+    const mix = item.type === 'mix' ? item.data : null;
+    if (!mix) return true;
+    if (selectedGenre && mix.genre_name?.toLowerCase() !== selectedGenre.toLowerCase()) return false;
+    if (dateRange !== 'all' && !isWithinDateRange(mix.created_at, dateRange)) return false;
+    if (aiBandOnly && !mix.ai_band) return false;
+    return true;
+  };
+
   const currentData: FeedItem[] =
     tab === 'feed'
-      ? mixedFeed.data
+      ? mixedFeed.data.filter(filterItem)
       : tab === 'latest'
-        ? latestMixed.data
-        : trendingTab.data.map(m => ({ type: 'mix' as const, data: m }));
+        ? latestMixed.data.filter(filterItem)
+        : trendingTab.data.map(m => ({ type: 'mix' as const, data: m })).filter(filterItem);
   const currentLoading =
     tab === 'feed'
       ? mixedFeed.loading
@@ -626,7 +606,7 @@ export function Feed() {
           </p>
           <h1
             className="hive-title"
-            style={{ margin: 0, fontSize: 'clamp(22px, 3vw, 32px)', lineHeight: 1.1 }}
+            style={{ margin: 0, fontSize: display.sm, lineHeight: 1.1 }}
           >
             {t('heroTitle')}
           </h1>
@@ -664,8 +644,8 @@ export function Feed() {
               onClick={handleShowNew}
               style={{
                 display: 'block',
-                margin: '0 auto 12px',
-                padding: '7px 18px',
+                margin: `0 auto ${space[6]}px`,
+                padding: `${space[3]}px ${space[9]}px`,
                 background: colors.accent,
                 color: colors.bg,
                 border: 'none',
@@ -673,7 +653,7 @@ export function Feed() {
                 fontWeight: fontWeight.bold,
                 fontSize: fontSize.sm,
                 cursor: 'pointer',
-                boxShadow: `0 4px 14px rgba(246,196,0,0.35)`,
+                boxShadow: shadow.accent,
               }}
             >
               ↑ {t('newItems', { count: newCount })}
@@ -686,12 +666,13 @@ export function Feed() {
             aria-label={t('tabsAria')}
             style={{
               display: 'flex',
-              gap: 4,
-              marginBottom: 16,
+              gap: space[1],
+              marginBottom: space[8],
               background: colors.surface,
               borderRadius: radius.lg,
-              padding: 4,
+              padding: space[1],
               border: `1px solid ${colors.border}`,
+              overflow: 'hidden',
             }}
           >
             {tabs.map(({ id, label, icon }) => (
@@ -714,7 +695,7 @@ export function Feed() {
                   fontWeight: tab === id ? fontWeight.bold : fontWeight.normal,
                   cursor: 'pointer',
                   fontSize: fontSize.sm,
-                  transition: transition.fast,
+                  transition: transition.smooth,
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -723,6 +704,88 @@ export function Feed() {
               </button>
             ))}
           </div>
+
+          {/* Filter bar */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: space[3],
+              marginBottom: space[8],
+            }}
+          >
+            {/* Genre chips */}
+            {POPULAR_GENRES.map(g => (
+              <button
+                key={g}
+                onClick={() => setSelectedGenre(selectedGenre === g ? '' : g)}
+                style={{
+                  padding: '4px 12px',
+                  borderRadius: radius.pill,
+                  border: `1px solid ${selectedGenre === g ? colors.accent : colors.border}`,
+                  background: selectedGenre === g ? colors.accent : 'transparent',
+                  color: selectedGenre === g ? colors.bg : colors.text.muted,
+                  fontSize: fontSize.xs,
+                  fontWeight: selectedGenre === g ? fontWeight.bold : fontWeight.normal,
+                  cursor: 'pointer',
+                  transition: transition.fast,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {g}
+              </button>
+            ))}
+            {/* AI Band only toggle */}
+            <button
+              type="button"
+              onClick={() => setAiBandOnly(v => !v)}
+              aria-pressed={aiBandOnly}
+              style={{
+                padding: '4px 12px',
+                borderRadius: radius.pill,
+                border: `1px solid ${aiBandOnly ? colors.accent : colors.border}`,
+                background: aiBandOnly ? colors.accent : 'transparent',
+                color: aiBandOnly ? colors.bg : colors.text.muted,
+                fontSize: fontSize.xs,
+                fontWeight: aiBandOnly ? fontWeight.bold : fontWeight.normal,
+                cursor: 'pointer',
+                transition: transition.fast,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {t('aiBandOnly')}
+            </button>
+            {/* Date range select */}
+            <select
+              value={dateRange}
+              onChange={e => setDateRange(e.target.value as DateRange)}
+              style={{
+                marginLeft: 'auto',
+                padding: '4px 10px',
+                borderRadius: radius.md,
+                border: `1px solid ${colors.border}`,
+                background: colors.surface,
+                color: colors.text.muted,
+                fontSize: fontSize.xs,
+                cursor: 'pointer',
+              }}
+            >
+              <option value="all">{t('dateAll')}</option>
+              <option value="24h">{t('date24h')}</option>
+              <option value="week">{t('dateWeek')}</option>
+              <option value="month">{t('dateMonth')}</option>
+              <option value="year">{t('dateYear')}</option>
+            </select>
+          </div>
+
+          {/* Error banner */}
+          {error && (
+            <div style={{ padding: `${space[6]}px ${space[8]}px`, marginBottom: space[8], background: withAlpha(colors.danger, 0.1), border: `1px solid ${withAlpha(colors.danger, 0.3)}`, borderRadius: radius.md, color: colors.danger, fontSize: fontSize.sm }}>
+              {error}
+              <Button variant="danger" size="sm" onClick={() => handleRetry(tab)}>Retry</Button>
+            </div>
+          )}
 
           {/* Unauthenticated following tab prompt */}
           {tab === 'feed' && !user && (
@@ -770,7 +833,7 @@ export function Feed() {
                   onClick={handleLoadMore}
                   disabled={currentLoading}
                   style={{
-                    marginTop: 12,
+                    marginTop: space[6],
                     padding: `${space[5]}px ${space[8]}px`,
                     background: currentLoading ? colors.surfaceMuted : colors.surface,
                     border: `1px solid ${colors.border}`,

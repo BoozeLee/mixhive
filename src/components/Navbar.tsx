@@ -9,7 +9,7 @@ import { BeeMark } from './brand/BeeMark';
 import { MixhiveWordmark } from './brand/MixhiveWordmark';
 import { Icon } from './ui/Icon';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { colors, space } from '../styles/tokens';
+import { colors, space, transition, withAlpha } from '../styles/tokens';
 
 const navLinks = [
   { to: '/', labelKey: 'home' },
@@ -79,16 +79,16 @@ export function Navbar() {
         padding: `0 clamp(14px, 4vw, 48px)`,
         height: scrolled ? 58 : 64,
         background: scrolled
-          ? 'linear-gradient(90deg, rgba(3,3,3,0.98), rgba(13,10,2,0.94), rgba(3,3,3,0.98))'
-          : 'linear-gradient(90deg, rgba(3,3,3,0.92), rgba(13,10,2,0.82), rgba(3,3,3,0.92))',
+          ? `linear-gradient(90deg, ${withAlpha(colors.black, 0.98)}, rgba(13,10,2,0.94), ${withAlpha(colors.black, 0.98)})`
+          : `linear-gradient(90deg, ${withAlpha(colors.black, 0.92)}, rgba(13,10,2,0.82), ${withAlpha(colors.black, 0.92)})`,
         backdropFilter: 'blur(18px)',
         borderWidth: '0 0 1px',
-        borderColor: scrolled ? 'rgba(246,196,0,0.24)' : 'rgba(246,196,0,0.12)',
+        borderColor: scrolled ? `${withAlpha(colors.accent, 0.24)}` : `${withAlpha(colors.accent, 0.12)}`,
         borderRadius: 0,
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        transition: 'height 0.25s ease, border-color 0.25s ease, background 0.25s ease',
+        transition: `height ${transition.smooth}, border-color ${transition.smooth}, background ${transition.smooth}`,
       }}
     >
       {/* Left: Logo + nav links */}
@@ -207,8 +207,8 @@ export function Navbar() {
                     background: profile?.avatar_url
                       ? `url(${profile.avatar_url}) center/cover`
                       : colors.surface,
-                    border: `2px solid ${menuOpen ? colors.accent : 'rgba(246,196,0,0.4)'}`,
-                    boxShadow: menuOpen ? '0 0 0 3px rgba(246,196,0,0.18)' : 'none',
+                    border: `2px solid ${menuOpen ? colors.accent : withAlpha(colors.accent, 0.4)}`,
+                    boxShadow: menuOpen ? `0 0 0 3px ${withAlpha(colors.accent, 0.18)}` : 'none',
                     transition: 'border-color 0.15s, box-shadow 0.15s',
                     flexShrink: 0,
                   }}
@@ -222,10 +222,10 @@ export function Navbar() {
                     right: 0,
                     top: 'calc(100% + 10px)',
                     background: colors.bg,
-                    border: `1px solid rgba(246,196,0,0.22)`,
+                    border: `1px solid ${withAlpha(colors.accent, 0.22)}`,
                     borderRadius: 10,
                     minWidth: 172,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
+                    boxShadow: `0 8px 32px ${withAlpha(colors.black, 0.7)}`,
                     overflow: 'hidden',
                     zIndex: 200,
                   }}
@@ -233,7 +233,7 @@ export function Navbar() {
                   <div
                     style={{
                       padding: '12px 16px 10px',
-                      borderBottom: '1px solid rgba(246,196,0,0.12)',
+                      borderBottom: `1px solid ${withAlpha(colors.accent, 0.12)}`,
                     }}
                   >
                     <div
@@ -256,7 +256,7 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(246,196,0,0.08)';
+                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.accent, 0.08)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -269,7 +269,7 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(246,196,0,0.08)';
+                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.accent, 0.08)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -282,7 +282,7 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(246,196,0,0.08)';
+                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.accent, 0.08)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -295,7 +295,7 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(246,196,0,0.08)';
+                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.accent, 0.08)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -308,7 +308,7 @@ export function Navbar() {
                     <LanguageSwitcher hideLabel />
                   </div>
 
-                  <div style={{ borderTop: '1px solid rgba(246,196,0,0.10)', marginTop: 2 }} />
+                  <div style={{ borderTop: `1px solid ${withAlpha(colors.accent, 0.10)}`, marginTop: 2 }} />
 
                   <button
                     style={{ ...menuItemStyle, color: colors.danger }}
@@ -318,7 +318,7 @@ export function Navbar() {
                       navigate('/');
                     }}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(224,85,85,0.10)';
+                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.danger, 0.10)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';

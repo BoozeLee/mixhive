@@ -1,9 +1,10 @@
 import { Document, Page, Text, View, StyleSheet, Link, Image } from '@react-pdf/renderer';
+import { colors } from '../../styles/tokens';
 
 const styles = StyleSheet.create({
   page: { padding: 40, fontFamily: 'Helvetica', fontSize: 11, color: '#1a1a1a' },
   header: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
-  subheader: { fontSize: 14, color: '#555', marginBottom: 16 },
+  subheader: { fontSize: 14, color: colors.text.faintest, marginBottom: 16 },
   section: { marginBottom: 16 },
   sectionTitle: { fontSize: 13, fontWeight: 'bold', marginBottom: 6, textTransform: 'uppercase' },
   mix: { marginBottom: 8 },

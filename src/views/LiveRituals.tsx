@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -27,17 +27,24 @@ export function LiveRituals() {
   const { user } = useAuth();
   const [rituals, setRituals] = useState<Ritual[]>([]);
   const [invites, setInvites] = useState<RitualInvite[]>([]);
-  useEffect(() => {
-    void supabase
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const load = useCallback(() => {
+    setLoading(true);
+    setError('');
+    supabase
       .from('collab_sessions')
       .select('id,title,description,created_at')
       .eq('is_public', true)
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(30)
-      .then(({ data }) => setRituals((data ?? []) as Ritual[]));
+      .then(({ data }) => setRituals((data ?? []) as Ritual[]))
+      .catch(e => setError(String(e)))
+      .finally(() => setLoading(false));
     if (user) {
-      void supabase
+      supabase
         .from('collab_session_invites')
         .select('id,session_id,role,collab_sessions(title)')
         .eq('profile_id', user.id)
@@ -46,6 +53,8 @@ export function LiveRituals() {
         .then(({ data }) => setInvites((data ?? []) as unknown as RitualInvite[]));
     }
   }, [user]);
+
+  useEffect(() => { load(); }, [load]);
 
   const answerInvite = async (invite: RitualInvite, status: 'accepted' | 'declined') => {
     try {
@@ -105,6 +114,14 @@ export function LiveRituals() {
           ))}
         </section>
       )}
+      {loading ? (
+        <div style={{ padding: 40, textAlign: 'center', color: colors.text.muted }}>Loading...</div>
+      ) : error ? (
+        <div style={{ padding: 40, textAlign: 'center' }}>
+          <p style={{ color: colors.danger, marginBottom: 16 }}>{error}</p>
+          <HiveButton onClick={load}>Retry</HiveButton>
+        </div>
+      ) : (
       <div
         style={{
           display: 'grid',
@@ -137,6 +154,7 @@ export function LiveRituals() {
           <div style={{ color: colors.text.muted }}>{t('noPublicRitualsAre')}</div>
         )}
       </div>
+    )}
     </div>
   );
 }

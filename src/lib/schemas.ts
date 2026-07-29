@@ -141,6 +141,20 @@ export function formatZodError(error: z.ZodError): Record<string, string> {
   return errors;
 }
 
+// ── Upload release flow schemas ───────────────────────────────────────────────
+
+export const PlatformLinksSchema = z.record(
+  z.enum(['soundcloud', 'mixcloud', 'youtube', 'spotify', 'applemusic']),
+  z.string().url('Invalid URL').or(z.literal(''))
+);
+
+export const ScheduleSchema = z.object({
+  scheduledAt: z.string().datetime().refine(
+    iso => new Date(iso) > new Date(Date.now() + 5 * 60 * 1000),
+    'Schedule time must be at least 5 minutes in the future'
+  ),
+});
+
 // ── Subscription schemas ──────────────────────────────────────────────────────
 
 export const SubscriptionTierSchema = z.enum(['free', 'supporter', 'insider', 'patron']);

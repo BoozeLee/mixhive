@@ -1,6 +1,6 @@
 import type { FeedMix, Profile } from './types';
 
-export type SearchEntityType = 'mixes' | 'profiles' | 'scenes' | 'all';
+export type SearchEntityType = 'mixes' | 'profiles' | 'scenes' | 'agents' | 'all';
 
 export interface SearchFilters {
   genre?: string;

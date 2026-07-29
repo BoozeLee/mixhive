@@ -131,6 +131,7 @@
     "title": "Notifications",
     "loading": "Chargement des notifications…",
     "markAllRead": "Tout marquer comme lu",
+    "preferences": "Préférences",
     "unread": "Non lu",
     "signInPrompt": "Connectez-vous pour voir vos notifications"
   },
@@ -145,7 +146,8 @@
     "noResults": "Aucun résultat trouvé",
     "noResultsBody": "Essayez une autre orthographe, un autre genre ou un autre lieu.",
     "resultsFor": "Résultats pour <q>{query}</q>",
-    "aiBand": "AI Band"
+    "aiBand": "AI Band",
+    "searchUnavailable": "Recherche indisponible"
   },
   "feed": {
     "liveFeed": "Fil en direct",
@@ -174,7 +176,12 @@
     "emptyLatestAction": "Téléverser un mix",
     "errorFeedTitle": "Impossible de charger le fil",
     "errorFeedBody": "Une erreur s'est produite lors du chargement de la ruche. Réessayer ?",
-    "errorFeedAction": "Réessayer"
+    "errorFeedAction": "Réessayer",
+    "dateAll": "Tout",
+    "date24h": "24h",
+    "dateWeek": "Cette semaine",
+    "dateMonth": "Ce mois",
+    "dateYear": "Cette année"
   },
   "dashboard": {
     "title": "Hive Growth OS",
@@ -194,6 +201,8 @@
     "topMixStats": "{plays} écoutes / {likes} j'aime / {comments} commentaires",
     "topMixEmpty": "Pas encore de mix phare. Téléversez votre premier mix pour commencer à capter du signal.",
     "recentActivityEmpty": "L'activité apparaîtra ici au fil des écoutes, j'aime, abonnements et commentaires.",
+    "loadError": "Échec du chargement des données du tableau de bord.",
+    "retry": "Réessayer",
     "activity": {
       "uploaded": "A publié {title}",
       "liked": "A aimé {title}",
@@ -560,7 +569,14 @@
     "status": "Statut",
     "paidOut": "Payé",
     "pendingEscrow": "En attente d'escrow",
-    "held": "En attente (configurez les paiements)"
+    "held": "En attente (configurez les paiements)",
+    "loadingPayoutStatus": "Chargement du statut des paiements…",
+    "payoutsActive": "Paiements actifs — vous pouvez recevoir des gains sur le marché.",
+    "stripeNeedsDetails": "Votre compte Stripe a besoin de quelques détails supplémentaires avant d'activer les paiements.",
+    "connectStripePrompt": "Connectez un compte Stripe pour vendre du matériel et recevoir des gains de packs d'agents.",
+    "openingStripe": "Ouverture de Stripe…",
+    "finishPayoutSetup": "Terminer la configuration des paiements",
+    "setUpPayouts": "Configurer les paiements"
   },
   "editMix": {
     "title": "Modifier le mix",
@@ -778,6 +794,12 @@
     "sectionHeadingPlaceholder": "Titre de section (ex. « Performances passées »)",
     "sectionBodyPlaceholder": "Écrivez le contenu de votre section ici…"
   },
+  "saved": {
+    "signInToSee": "Connectez-vous pour voir vos favoris.",
+    "eyebrow": "Favoris",
+    "title": "Mixes sauvegardés",
+    "empty": "Vous n'avez encore liké aucun mix."
+  },
   "sceneRadar": {
     "signInToSee": "Connectez-vous pour voir votre radar de scène.",
     "signIn": "Se connecter",
@@ -828,6 +850,33 @@
     "hideContent": "Masquer le contenu",
     "banOwner": "Bannir le propriétaire",
     "dismiss": "Ignorer"
+  },
+  "adminUsers": {
+    "title": "Gestion des utilisateurs",
+    "subtitle": "Rechercher, bannir/débannir des utilisateurs et consulter l'historique de modération.",
+    "searchPlaceholder": "Rechercher par nom d'utilisateur ou nom d'affichage...",
+    "search": "Rechercher",
+    "bannedOnly": "Bannis uniquement",
+    "loading": "Chargement des utilisateurs...",
+    "noResults": "Aucun utilisateur ne correspond à votre recherche.",
+    "noUsers": "Aucun utilisateur trouvé.",
+    "colUser": "Utilisateur",
+    "colStatus": "Statut",
+    "colMixes": "Mixes",
+    "colFollowers": "Abonnés",
+    "colJoined": "Inscription",
+    "colActions": "Actions",
+    "banned": "Banni",
+    "verified": "Vérifié",
+    "active": "Actif",
+    "ban": "Bannir",
+    "unban": "Débannir",
+    "audit": "Audit",
+    "prev": "Préc",
+    "next": "Suiv",
+    "auditTitle": "Historique de modération",
+    "auditLoading": "Chargement du journal d'audit...",
+    "auditEmpty": "Aucun historique de modération pour cet utilisateur."
   },
   "agentsGallery": {
     "agentGallery": "Galerie d'agents",
@@ -950,11 +999,20 @@
     "signIn": "Se connecter",
     "you": "Vous :",
     "chat": "Discussion",
-    "messages": "Messages"
+    "messages": "Messages",
+    "newConversation": "Nouvelle conversation",
+    "newMessage": "Nouveau message",
+    "searchUsers": "Rechercher des utilisateurs…",
+    "noConversations": "Aucune conversation pour le moment.",
+    "noMessagesYet": "Pas encore de messages",
+    "searching": "Recherche…",
+    "noResults": "Aucun utilisateur trouvé"
   },
   "notFound": {
     "noRouteMatches": "Aucune correspondance de route",
-    "pageNotFound": "Page introuvable"
+    "pageNotFound": "Page introuvable",
+    "mightHaveMoved": ". Elle a peut-être été déplacée ou n'a jamais existé.",
+    "backToFeed": "Retour au fil d'actualité"
   },
   "publicPressKit": {
     "loadingEpk": "Chargement de l'EPK…",

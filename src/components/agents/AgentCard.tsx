@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { Button } from '../ui/Button';
-import { colors, fontSize, fontWeight, radius, space, transition } from '../../styles/tokens';
+import { colors, fontSize, fontWeight, radius, space, transition, getAgentCategoryColor } from '../../styles/tokens';
 import type { StarterAgent } from '../../lib/starter_agents';
 import type { PublicLuaAgent } from '../../lib/agents';
 
@@ -15,13 +15,13 @@ interface AgentCardProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  social: '#8b5cf6',
-  growth: '#22c55e',
-  discovery: '#3b82f6',
-  moderation: '#ef4444',
-  release: '#f59e0b',
-  schedule: '#06b6d4',
-  engagement: '#ec4899',
+  social: getAgentCategoryColor('social'),
+  growth: getAgentCategoryColor('growth'),
+  discovery: getAgentCategoryColor('discovery'),
+  moderation: getAgentCategoryColor('moderation'),
+  release: getAgentCategoryColor('release'),
+  schedule: getAgentCategoryColor('schedule'),
+  engagement: getAgentCategoryColor('engagement'),
 };
 
 export function AgentCard({ agent, forking, onFork }: AgentCardProps) {
@@ -37,7 +37,7 @@ export function AgentCard({ agent, forking, onFork }: AgentCardProps) {
   async function handleFork() {
     setForkError('');
     try {
-      onFork();
+      await onFork();
     } catch (e) {
       setForkError(t('forkError', { message: e instanceof Error ? e.message : 'unknown' }));
     }

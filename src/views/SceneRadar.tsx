@@ -160,8 +160,8 @@ export function SceneRadar() {
               padding: `${space[2]}px ${space[4]}px`,
               background: 'transparent',
               border: 'none',
-              borderBottom: tab === t ? `2px solid ${colors.gold}` : '2px solid transparent',
-              color: tab === t ? colors.gold : colors.text.muted,
+              borderBottom: tab === t ? `2px solid ${colors.accent}` : '2px solid transparent',
+              color: tab === t ? colors.accent : colors.text.muted,
               fontWeight: tab === t ? fontWeight.semibold : fontWeight.normal,
               fontSize: fontSize.sm,
               cursor: 'pointer',
@@ -176,13 +176,14 @@ export function SceneRadar() {
 
       {/* Content */}
       {activeLoading && (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: `${space[10]}px 0` }}>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: `${space[10]}px 0` }} role="status" aria-live="polite">
           <LoadingSpinner />
         </div>
       )}
 
       {!activeLoading && activeError && (
         <div
+          role="alert"
           style={{
             background: 'rgba(239,68,68,0.08)',
             border: '1px solid rgba(239,68,68,0.25)',
@@ -197,7 +198,7 @@ export function SceneRadar() {
           <HiveButton
             variant="secondary"
             onClick={activeRefresh}
-            style={{ marginLeft: space[3], fontSize: 12, padding: '4px 10px' }}
+            style={{ marginLeft: space[3], minHeight: 44, display: 'inline-flex', alignItems: 'center' }}
           >
             {t('retry')}
           </HiveButton>
@@ -205,9 +206,9 @@ export function SceneRadar() {
       )}
 
       {!activeLoading && activeOutput && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }} aria-live="polite">
           {/* Status badge */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: space[2] }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: space[2], flexWrap: 'wrap' }}>
             <span
               style={{
                 display: 'inline-block',
@@ -263,6 +264,7 @@ export function SceneRadar() {
                       fontSize: fontSize.sm,
                       margin: 0,
                       lineHeight: 1.6,
+                      wordBreak: 'break-word',
                     }}
                   >
                     {n.body}
@@ -274,7 +276,7 @@ export function SceneRadar() {
                         display: 'inline-block',
                         marginTop: space[3],
                         fontSize: fontSize.sm,
-                        color: colors.gold,
+                        color: colors.accent,
                       }}
                     >
                       {n.cta_url.startsWith('/') ? 'View →' : 'Open →'}
@@ -319,7 +321,7 @@ export function SceneRadar() {
                     >
                       <span
                         style={{
-                          color: colors.gold,
+                          color: colors.accent,
                           fontSize: 11,
                           fontWeight: fontWeight.bold,
                           textTransform: 'uppercase',

@@ -1,15 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { colors, fontSize, fontWeight, radius, space, withAlpha } from '../styles/tokens';
-import {
-  ReferenceImageDropzone,
-  type ReferenceImage,
-} from '../components/ArtStudio/ReferenceImageDropzone';
+import { meetsTier } from '../lib/subscription';
+import { ReferenceImageDropzone, type ReferenceImage } from '../components/ArtStudio/ReferenceImageDropzone';
 import { PromptEditor, type ArtPromptState } from '../components/ArtStudio/PromptEditor';
 import { ArtResultGrid, type ArtResult } from '../components/ArtStudio/ArtResultGrid';
 import { ArtHistory } from '../components/ArtStudio/ArtHistory';
@@ -28,7 +26,7 @@ const DEFAULT_PROMPT: ArtPromptState = {
 
 export function ArtStudio() {
   const t = useTranslations('artStudio');
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const [references, setReferences] = useState<ReferenceImage[]>([]);
   const [promptState, setPromptState] = useState<ArtPromptState>(DEFAULT_PROMPT);
   const [generating, setGenerating] = useState(false);
@@ -36,7 +34,38 @@ export function ArtStudio() {
   const [error, setError] = useState<string | null>(null);
   const [savingUrl, setSavingUrl] = useState<string | null>(null);
 
-  const isPro = profile?.is_pro || profile?.is_admin;
+  const [userTier, setUserTier] = useState<string>('free');
+  const [tierLoading, setTierLoading] = useState(false);
+
+  const isPro = meetsTier(userTier, 'supporter');
+
+  useEffect(() => {
+    if (!user) {
+      setUserTier('free');
+      return;
+    }
+    setTierLoading(true);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session?.access_token) {
+        setUserTier('free');
+        setTierLoading(false);
+        return;
+      }
+      fetch('/api/subscription/status', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      }).then(res => {
+        if (!res.ok) {
+          setUserTier('free');
+          return;
+        }
+        res.json().then(data => {
+          setUserTier(data.tier || 'free');
+        });
+      }).finally(() => {
+        setTierLoading(false);
+      });
+    });
+  }, [user]);
 
   const buildPrompt = useCallback(() => {
     const parts: string[] = ['Masterpiece, best quality, ultra-detailed, 8k'];
@@ -132,11 +161,7 @@ export function ArtStudio() {
 
       if (data.url) {
         setResults(prev => [
-          {
-            url: data.url,
-            prompt: data.prompt || buildPrompt(),
-            style: data.style || promptState.style,
-          },
+          { url: data.url, prompt: data.prompt || buildPrompt(), style: data.style || promptState.style },
           ...prev,
         ]);
 
@@ -228,11 +253,17 @@ export function ArtStudio() {
         >
           {t('heading')}
         </h1>
-        <p style={{ margin: '8px 0 0', fontSize: 13, color: colors.text.muted }}>{t('subtitle')}</p>
+        <p style={{ margin: '8px 0 0', fontSize: 13, color: colors.text.muted }}>
+          {t('subtitle')}
+        </p>
       </div>
 
       {/* Pro badge or upgrade prompt */}
-      {isPro ? (
+      {tierLoading ? (
+        <div style={{ marginBottom: space[8], color: colors.text.dim, fontSize: fontSize.sm }}>
+          Checking subscription…
+        </div>
+      ) : isPro ? (
         <div
           style={{
             display: 'inline-flex',
@@ -297,15 +328,7 @@ export function ArtStudio() {
       )}
 
       {/* Generate button */}
-      <div
-        style={{
-          display: 'flex',
-          gap: space[5],
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          marginBottom: space[8],
-        }}
-      >
+      <div style={{ display: 'flex', gap: space[5], alignItems: 'center', flexWrap: 'wrap', marginBottom: space[8] }}>
         <button
           type="button"
           onClick={generate}

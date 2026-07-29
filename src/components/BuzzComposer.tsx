@@ -347,7 +347,7 @@ export function BuzzComposer({ onBuzzCreated, placeholder = "What's buzzing?" }:
 
             {/* Bottom toolbar */}
             <div
-              style={{ display: 'flex', alignItems: 'center', gap: space[3], marginTop: space[5] }}
+              style={{ display: 'flex', alignItems: 'center', gap: space[3], marginTop: space[5], flexWrap: 'wrap' }}
             >
               <AttachButton
                 label={t('s')}
@@ -557,12 +557,11 @@ function AttachBadge({ label, onRemove }: { label: ReactNode; onRemove: () => vo
         border: `1px solid ${colors.accentMuted}`,
         borderRadius: radius.pill,
         padding: `${space[2]}px ${space[5]}px`,
-        marginBottom: space[4],
-        fontSize: fontSize.sm,
-        color: colors.accent,
+        maxWidth: '100%',
+        overflow: 'hidden',
       }}
     >
-      {label}
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{label}</span>
       <button
         onClick={onRemove}
         aria-label={t('remove')}

@@ -1,40 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { spawn } from 'child_process';
+import fs from 'fs/promises';
+import path from 'path';
+import { pipeline } from 'stream/promises';
+import { createWriteStream } from 'fs';
 
-const keys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
-const camelot = ['8B', '3B', '10B', '5B', '12B', '7B', '2B', '9B', '4B', '11B', '6B', '1B'];
-
-function hash(value: string) {
-  return Array.from(value).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-}
-
-function chooseMood(text: string) {
-  const normalized = text.toLowerCase();
-  if (/(industrial|hard|acid|peak|rave|techno)/.test(normalized)) return 'high-pressure';
-  if (/(ambient|downtempo|deep|jazz|chill)/.test(normalized)) return 'immersive';
-  if (/(house|disco|funk|groove)/.test(normalized)) return 'warm-groove';
-  return 'underground-club';
-}
-
-function buildStructure(duration: number | null, energy: number) {
-  const total = Math.max(duration || 1800, 300);
-  const cuts = [
-    ['intro', 0, Math.round(total * 0.12), Math.max(0.2, energy - 0.28)],
-    ['build', Math.round(total * 0.12), Math.round(total * 0.38), Math.max(0.35, energy - 0.12)],
-    ['peak', Math.round(total * 0.38), Math.round(total * 0.72), energy],
-    ['release', Math.round(total * 0.72), Math.round(total * 0.9), Math.max(0.35, energy - 0.18)],
-    ['outro', Math.round(total * 0.9), total, Math.max(0.25, energy - 0.3)],
-  ] as const;
-  return {
-    summary: 'Rule-based preview until Essentia/AudD processing is connected.',
-    sections: cuts.map(([label, start_sec, end_sec, sectionEnergy]) => ({
-      label,
-      start_sec,
-      end_sec,
-      energy: Number(sectionEnergy.toFixed(2)),
-    })),
-  };
-}
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function requireSupabase() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -47,7 +19,126 @@ function isMissingTable(error: { code?: string; message?: string } | null | unde
   return error?.code === '42P01' || /Could not find the table/i.test(error?.message || '');
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+async function extractRawPcm(
+): Promise<{ samples: Float32Array; duration: number }> {
+  const outPath = filePath + '.raw';
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const ff = spawn('ffmpeg', [
+        '-i', filePath,
+        '-f', 's16le',
+        '-acodec', 'pcm_s16le',
+        '-ar', String(sampleRate),
+        '-ac', '1',
+        '-y', outPath,
+      ]);
+      ff.on('close', code => (code === 0 ? resolve() : reject(new Error(`ffmpeg exit ${code}`))));
+      ff.on('error', reject);
+    });
+    const buf = await fs.readFile(outPath);
+    const samples = new Float32Array(buf.length / 2);
+    for (let i = 0; i < samples.length; i++) {
+      samples[i] = buf.readInt16LE(i * 2) / 32768;
+    }
+    const duration = samples.length / sampleRate;
+    return { samples, duration };
+  } finally {
+    try { await fs.unlink(outPath); } catch { /* best-effort */ }
+  }
+}
+
+function detectBpm(samples: Float32Array, sampleRate: number): number {
+  const minBpm = 60;
+  const maxBpm = 200;
+  const minLag = Math.floor((60 / maxBpm) * sampleRate);
+  const maxLag = Math.ceil((60 / minBpm) * sampleRate);
+
+  // Compute RMS envelope per ~23ms windows (~43 fps)
+  const windowSize = Math.floor(sampleRate * 0.023);
+  const envelope: number[] = [];
+  for (let i = 0; i < samples.length; i += windowSize) {
+    let sumSq = 0;
+    let count = 0;
+    for (let j = i; j < i + windowSize && j < samples.length; j++) {
+      sumSq += samples[j] * samples[j];
+      count++;
+    }
+    envelope.push(Math.sqrt(sumSq / count));
+  }
+  if (envelope.length < maxLag) return 0;
+
+  // Simplifed autocorrelation on envelope
+  const envLen = envelope.length;
+  const mid = Math.floor(envLen / 2);
+  let bestLag = 0;
+  let bestScore = -Infinity;
+
+  for (let lag = minLag; lag <= maxLag && lag < mid; lag++) {
+    let score = 0;
+    let count = 0;
+    for (let i = 0; i + lag < mid; i++) {
+      score += envelope[i] * envelope[i + lag];
+      count++;
+    }
+    if (count > 0) {
+      const mean = score / count;
+      if (mean > bestScore) {
+        bestScore = mean;
+        bestLag = lag;
+      }
+    }
+  }
+
+  if (bestLag === 0) return 0;
+  const envSampleRate = sampleRate / windowSize;
+  const bpm = (60 * envSampleRate) / bestLag;
+  return Math.round(Math.max(minBpm, Math.min(maxBpm, bpm)));
+}
+
+function estimateEnergyAndMood(
+  samples: Float32Array
+): { energy: number; mood: string; danceability: number } {
+  let sumSq = 0;
+  let peak = 0;
+  let zeroCrossings = 0;
+  for (let i = 0; i < samples.length; i++) {
+    sumSq += samples[i] * samples[i];
+    if (Math.abs(samples[i]) > peak) peak = Math.abs(samples[i]);
+    if (i > 0 && Math.sign(samples[i]) !== Math.sign(samples[i - 1])) zeroCrossings++;
+  }
+  const rms = Math.sqrt(sumSq / samples.length);
+  const energy = Number(Math.min(1, rms * 10).toFixed(2));
+  const zcRate = zeroCrossings / samples.length;
+  const danceability = Number(Math.min(1, Math.max(0.15, zcRate * 0.8)).toFixed(2));
+
+  let mood: string;
+  if (energy < 0.3) {
+    mood = (zcRate > 0.12) ? 'immersive' : 'atmospheric';
+  } else if (energy < 0.6) {
+    mood = (zcRate > 0.14) ? 'deep' : 'warm-groove';
+  } else {
+    mood = (zcRate > 0.18) ? 'high-energy' : 'underground-club';
+  }
+
+  return { energy, mood, danceability };
+}
+
+async function downloadMixFile(
+  supabaseUrl: string,
+  supabaseAnonKey: string,
+  fileUrl: string,
+  mixId: string
+): Promise<string> {
+  const tmpDir = '/tmp/mixhive-audio';
+  await fs.mkdir(tmpDir, { recursive: true });
+  const ext = path.extname(new URL(fileUrl).pathname) || '.mp3';
+  const tmpPath = path.join(tmpDir, `${mixId}-${Date.now()}${ext}`);
+
+  const resp = await fetch(fileUrl);
+  if (!resp.ok) throw new Error(`Download failed: ${resp.statusText}`);
+  await pipeline(resp.body as unknown as NodeJS.ReadableStream, createWriteStream(tmpPath));
+  return tmpPath;
+}
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ mixId: string }> }) {
   const env = requireSupabase();
@@ -68,14 +159,11 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ mix
 
   if (isMissingTable(error)) {
     return NextResponse.json({
-      feature: null,
-      tracks: [],
-      setup_required: true,
+      feature: null, tracks: [], setup_required: true,
       message: 'audio_features migration has not been applied yet.',
     });
   }
   if (error) {
-    // Invalid UUID or RLS error — not an internal server error
     return NextResponse.json({ feature: null, tracks: [] }, { status: 404 });
   }
 
@@ -86,7 +174,6 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ mix
     .order('start_sec', { ascending: true });
 
   if (tracksError && tracksError.code !== '42P01') {
-    // Non-fatal — return what we have
     return NextResponse.json({ feature, tracks: [] });
   }
 
@@ -117,7 +204,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ mix
 
   const { data: mix, error: mixError } = await sb
     .from('mixes')
-    .select('id, dj_id, title, description, tags, duration_seconds')
+    .select('id, dj_id, title, description, tags, duration_seconds, file_url')
     .eq('id', mixId)
     .single();
 
@@ -125,43 +212,92 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ mix
   if (mix.dj_id !== user.id)
     return NextResponse.json({ error: 'Only the mix owner can analyze this mix' }, { status: 403 });
 
-  const seed = hash(`${mix.id}:${mix.title}`);
-  const text = [mix.title, mix.description, ...(mix.tags || [])].filter(Boolean).join(' ');
-  const keyIndex = seed % keys.length;
-  const bpm = 118 + (seed % 30);
-  const energy = Number((0.55 + (seed % 36) / 100).toFixed(2));
-  const payload = {
-    mix_id: mix.id,
-    status: 'complete',
-    bpm,
-    musical_key: `${keys[keyIndex]} minor`,
-    camelot: camelot[keyIndex],
-    mood: chooseMood(text),
-    energy,
-    danceability: Number(Math.min(0.96, energy + 0.08).toFixed(2)),
-    structure_json: buildStructure(mix.duration_seconds, energy),
-    source: 'mixhive-rule-v1',
-    model: 'deterministic-preview',
-    confidence: 0.42,
-    error_message: null,
-  };
-
-  const { data: feature, error } = await sb
+  // Upsert processing status immediately
+  const { error: upsertError } = await sb
     .from('audio_features')
-    .upsert(payload, { onConflict: 'mix_id' })
-    .select()
-    .single();
-
-  if (isMissingTable(error)) {
-    return NextResponse.json(
+    .upsert(
       {
-        error: 'audio_intelligence_storage_not_ready',
-        message: 'Run Supabase migrations before storing audio analysis.',
+        mix_id: mix.id,
+        status: 'processing',
+        source: 'mixhive-ffmpeg-v1',
+        model: 'ffmpeg-extraction-v1',
       },
-      { status: 503 }
+      { onConflict: 'mix_id' }
     );
+  if (upsertError && !isMissingTable(upsertError)) {
+    return NextResponse.json({ error: upsertError.message }, { status: 500 });
   }
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({ feature, tracks: [] });
+  try {
+    let bpm: number | null = null;
+    let energy = 0.5;
+    let mood = 'underground-club';
+    let danceability: number | null = null;
+    let errorMessage: string | null = null;
+
+    if (mix.file_url) {
+      let tmpPath: string | null = null;
+      try {
+        tmpPath = await downloadMixFile(env.supabaseUrl, env.supabaseAnonKey, mix.file_url, mix.id);
+
+        // Extract PCM and detect BPM / energy
+        const sampleRate = 22050;
+        const { samples } = await extractRawPcm(tmpPath, sampleRate);
+
+        bpm = detectBpm(samples, sampleRate);
+        const e = estimateEnergyAndMood(samples);
+        energy = e.energy;
+        mood = e.mood;
+        danceability = e.danceability;
+      } catch (err) {
+        errorMessage = err instanceof Error ? err.message : 'Unknown processing error';
+      } finally {
+        if (tmpPath) try { await fs.unlink(tmpPath); } catch { /* best-effort */ }
+      }
+    }
+
+    const payload = {
+      mix_id: mix.id,
+      status: errorMessage ? 'failed' : 'complete',
+      bpm,
+      musical_key: null,
+      camelot: null,
+      mood,
+      energy,
+      danceability,
+      structure_json: {},
+      source: 'mixhive-ffmpeg-v1',
+      model: 'ffmpeg-extraction-v1',
+      confidence: bpm ? 0.75 : null,
+      error_message: errorMessage,
+    };
+
+    const { data: feature, error: writeError } = await sb
+      .from('audio_features')
+      .upsert(payload, { onConflict: 'mix_id' })
+      .select()
+      .single();
+
+    if (isMissingTable(writeError)) {
+      return NextResponse.json(
+        { error: 'audio_intelligence_storage_not_ready', message: 'Run Supabase migrations before storing audio analysis.' },
+        { status: 503 }
+      );
+    }
+    if (writeError) return NextResponse.json({ error: writeError.message }, { status: 500 });
+
+    return NextResponse.json({ feature, tracks: [] });
+  } catch (err) {
+    // Mark failed on unexpected error
+    await sb.from('audio_features').upsert(
+      {
+        mix_id: mix.id,
+        status: 'failed',
+        error_message: err instanceof Error ? err.message : 'Unexpected error',
+        source: 'mixhive-ffmpeg-v1',
+      },
+      { onConflict: 'mix_id' }
+    );
+    return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
+  }
 }

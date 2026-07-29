@@ -1,5 +1,10 @@
+import bundleAnalyzer from '@next/bundle-analyzer';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const appDir = dirname(fileURLToPath(import.meta.url));
 const hasNextPublicSupabasePair = Boolean(
@@ -26,14 +31,27 @@ const nextConfig = {
   turbopack: {
     root: appDir,
   },
-  serverExternalPackages: ['ioredis', 'web-push'],
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'date-fns', '@radix-ui/react-avatar', '@radix-ui/react-dropdown-menu', '@radix-ui/react-hover-card', '@radix-ui/react-popover', '@radix-ui/react-scroll-area', '@radix-ui/react-separator', '@radix-ui/react-tabs', '@radix-ui/react-toast'],
+  },
+  serverExternalPackages: [
+    'ioredis',
+    'web-push',
+    'stripe',
+    '@react-pdf/renderer',
+    'wasmoon',
+    'ethers',
+    'resend',
+    'spotify-web-api-node',
+    'node-addon-api',
+  ],
 
   // Images optimization
   images: {
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 3600,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
@@ -114,8 +132,8 @@ const nextConfig = {
       config.performance = {
         ...config.performance,
         hints: 'warning',
-        maxEntrypointSize: 512000, // 512KB
-        maxAssetSize: 512000, // 512KB
+        maxEntrypointSize: 400000, // 400KB
+        maxAssetSize: 250000, // 250KB
       };
     }
 
@@ -303,4 +321,4 @@ const nextConfig = {
   generateEtags: false,
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

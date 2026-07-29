@@ -5,8 +5,9 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
-  const cronSecret = req.headers.get('authorization')?.replace('Bearer ', '');
-  if (cronSecret !== process.env.CRON_SECRET) {
+  const cronSecret = process.env.CRON_SECRET;
+  const auth = req.headers.get('authorization');
+  if (cronSecret && auth !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -18,12 +19,13 @@ export async function GET(req: NextRequest) {
 
   const sb = createClient(supabaseUrl, supabaseKey);
 
+  // Fetch due scheduled mixes using the new visibility column.
+  // Falls back to the legacy published=false pattern for rows not yet migrated.
   const { data: mixes, error } = await sb
     .from('mixes')
-    .select('id, dj_id')
+    .select('id')
     .lte('scheduled_at', new Date().toISOString())
-    .eq('published', false)
-    .eq('archived', false)
+    .or(`visibility.eq.scheduled,published.eq.false`)
     .not('scheduled_at', 'is', null);
 
   if (error) {
@@ -31,20 +33,20 @@ export async function GET(req: NextRequest) {
   }
 
   const now = new Date().toISOString();
-  const results: { id: string; ok: boolean; error?: string }[] = [];
+  const ids = mixes?.map(m => m.id) ?? [];
 
-  for (const mix of mixes || []) {
-    const { error: updateErr } = await sb
-      .from('mixes')
-      .update({ published: true, published_at: now, scheduled_at: null })
-      .eq('id', mix.id);
-
-    results.push({
-      id: mix.id,
-      ok: !updateErr,
-      error: updateErr?.message,
-    });
+  if (ids.length === 0) {
+    return NextResponse.json({ published: 0 });
   }
 
-  return NextResponse.json({ published: results.length, results });
+  const { error: updateError } = await sb
+    .from('mixes')
+    .update({ visibility: 'published', published: true, published_at: now, scheduled_at: null })
+    .in('id', ids);
+
+  if (updateError) {
+    return NextResponse.json({ error: updateError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ published: ids.length });
 }

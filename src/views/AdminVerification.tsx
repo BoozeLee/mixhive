@@ -16,11 +16,15 @@ export function AdminVerification() {
   const [batchBusy, setBatchBusy] = useState(false);
   const [reason, setReason] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [error, setError] = useState('');
 
   async function load() {
     setLoading(true);
+    setError('');
     try {
       setRequests(await listVerificationRequests());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load verification requests');
     } finally {
       setLoading(false);
     }
@@ -86,7 +90,7 @@ export function AdminVerification() {
 
   if (authLoading || loading) {
     return (
-      <div style={{ padding: 32, color: colors.text.muted }}>{t('loadingVerificationQueue')}</div>
+      <div style={{ padding: 32, color: colors.text.muted }}>{t('loadingVerificationQueue')}</div>
     );
   }
 
@@ -99,10 +103,33 @@ export function AdminVerification() {
     );
   }
 
+  if (error) {
+    return (
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px 16px 96px' }}>
+        <h1 style={{ color: colors.text.primary, fontSize: 24, margin: '0 0 8px' }}>
+          {t('verificationAdmin')}
+        </h1>
+        <div
+          style={{
+            background: colors.dangerBg,
+            border: `1px solid ${colors.danger}`,
+            borderRadius: radius.md,
+            padding: 16,
+            color: colors.danger,
+            marginBottom: 16,
+          }}
+        >
+          {error}
+        </div>
+        <Button onClick={load}>Retry</Button>
+      </div>
+    );
+  }
+
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px 16px 96px' }}>
       <h1 style={{ color: colors.text.primary, fontSize: 24, margin: '0 0 8px' }}>
-        {t('verificationAdmin')}
+        {t('verificationAdmin')}
       </h1>
       <p style={{ color: colors.text.muted, margin: '0 0 24px' }}>
         Review DJ verification requests and grant profile badges.
@@ -117,7 +144,7 @@ export function AdminVerification() {
           marginBottom: space[8],
         }}
       >
-        {t('reviewNote')}
+        {t('reviewNote')}
         <textarea
           value={reason}
           onChange={event => setReason(event.target.value)}
@@ -157,10 +184,10 @@ export function AdminVerification() {
               setSelectedIds(new Set(requests.filter(r => r.status === 'pending').map(r => r.id)))
             }
           >
-            {t('selectPending')}
+            {t('selectPending')}
           </Button>
           <Button size="sm" variant="secondary" onClick={() => setSelectedIds(new Set())}>
-            {t('clear')}
+            {t('clear')}
           </Button>
           <Button
             size="sm"
@@ -168,7 +195,7 @@ export function AdminVerification() {
             disabled={selectedIds.size === 0}
             onClick={() => batchReview('approved')}
           >
-            {t('batchApprove')}
+            {t('batchApprove')}
           </Button>
           <Button
             size="sm"
@@ -177,13 +204,13 @@ export function AdminVerification() {
             disabled={selectedIds.size === 0}
             onClick={() => batchReview('rejected')}
           >
-            {t('batchReject')}
+            {t('batchReject')}
           </Button>
         </div>
       )}
 
       {requests.length === 0 ? (
-        <p style={{ color: colors.text.dim }}>{t('noVerificationRequestsYet')}</p>
+        <p style={{ color: colors.text.dim }}>{t('noVerificationRequestsYet')}</p>
       ) : (
         <div style={{ display: 'grid', gap: space[6] }}>
           {requests.map(request => (
@@ -278,7 +305,7 @@ export function AdminVerification() {
                     loading={busyId === request.id}
                     onClick={() => review(request, 'approved', request.requested_badge)}
                   >
-                    {t('approve')}
+                    {t('approve')}
                   </Button>
                   <Button
                     size="sm"
@@ -286,7 +313,7 @@ export function AdminVerification() {
                     loading={busyId === request.id}
                     onClick={() => review(request, 'approved', 'artist')}
                   >
-                    {t('grantArtist')}
+                    {t('grantArtist')}
                   </Button>
                   <Button
                     size="sm"
@@ -294,7 +321,7 @@ export function AdminVerification() {
                     loading={busyId === request.id}
                     onClick={() => review(request, 'approved', 'official')}
                   >
-                    {t('grantOfficial')}
+                    {t('grantOfficial')}
                   </Button>
                   <Button
                     size="sm"
@@ -302,7 +329,7 @@ export function AdminVerification() {
                     loading={busyId === request.id}
                     onClick={() => review(request, 'rejected')}
                   >
-                    {t('reject')}
+                    {t('reject')}
                   </Button>
                 </div>
               )}

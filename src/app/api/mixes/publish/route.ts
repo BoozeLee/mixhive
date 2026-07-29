@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { z } from 'zod';
 import { slugify } from '@/lib/slug';
+import { rateLimiter } from '@/lib/rateLimiter';
 
 // Publish a finished track into MixHive as a real `mixes` row, optionally with
 // AI-agent provenance ("AI band" credits). Authed by the user's Supabase JWT, so
@@ -15,6 +17,25 @@ const cap = (v: unknown, n: number): string | null => {
   const s = v.trim();
   return s ? s.slice(0, n) : null;
 };
+
+const PublishMetadataSchema = z.object({
+  title: z.string().trim().min(1, 'title required').max(200),
+  description: z.string().max(2000).optional(),
+  genre: z.string().max(80).optional(),
+  durationSecs: z.number().finite().optional(),
+  tags: z.array(z.string().max(40)).max(20).optional(),
+  source: z.string().max(100).optional(),
+  bpm: z.number().finite().optional(),
+  key: z.string().max(10).optional(),
+  provenance: z.object({
+    agents: z.array(z.object({
+      name: z.string().max(80),
+      role: z.string().max(60).optional(),
+      contribution: z.string().max(280).optional(),
+      model: z.string().max(60).optional(),
+    })).max(MAX_AGENTS).optional(),
+  }).optional(),
+});
 
 // Parse + validate the optional AI-agent provenance into credit rows. Returns []
 // when absent/invalid so publishing without provenance behaves exactly as before.
@@ -66,6 +87,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
 
+    const rateCheck = await rateLimiter.checkUploadLimit(user.id);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: 'Upload rate limit exceeded' }, { status: 429 });
+    }
+
     const form = await req.formData();
     const audio = form.get('audio');
     const metaRaw = form.get('metadata');
@@ -81,8 +107,15 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'invalid metadata json' }, { status: 400 });
       }
     }
-    const title = String(meta.title ?? '').trim();
-    if (!title) return NextResponse.json({ error: 'title required' }, { status: 400 });
+    const parsedMeta = PublishMetadataSchema.safeParse(meta);
+    if (!parsedMeta.success) {
+      return NextResponse.json(
+        { error: parsedMeta.error.issues[0]?.message || 'Invalid metadata' },
+        { status: 400 },
+      );
+    }
+    const validatedMeta = parsedMeta.data;
+    const title = validatedMeta.title;
     if (audio.size === 0) return NextResponse.json({ error: 'empty audio file' }, { status: 400 });
     if (audio.size > MAX_AUDIO_BYTES) {
       return NextResponse.json({ error: 'audio file too large' }, { status: 413 });
@@ -106,29 +139,29 @@ export async function POST(req: NextRequest) {
     } = sb.storage.from('mix-audio').getPublicUrl(path);
 
     let genreId: number | null = null;
-    if (typeof meta.genre === 'string' && meta.genre.trim()) {
+    if (validatedMeta.genre) {
       const { data: g } = await sb
         .from('genres')
         .select('id')
-        .ilike('name', meta.genre.trim())
+        .ilike('name', validatedMeta.genre)
         .limit(1)
         .maybeSingle();
       genreId = (g?.id as number | undefined) ?? null;
     }
 
-    const durationSecs = Number(meta.durationSecs);
+    const durationSecs = validatedMeta.durationSecs ?? 0;
     const credits = parseCredits(meta);
     const pMix = {
       title,
-      description: typeof meta.description === 'string' ? meta.description : null,
+      description: validatedMeta.description ?? null,
       audio_url: publicUrl,
       duration_seconds: Number.isFinite(durationSecs) ? Math.round(durationSecs) : null,
       genre_id: genreId,
-      tags: Array.isArray(meta.tags) ? meta.tags : null,
+      tags: validatedMeta.tags ?? null,
       platform_links: {
-        source: typeof meta.source === 'string' ? meta.source : 'mixhive',
-        bpm: meta.bpm ?? null,
-        key: meta.key ?? null,
+        source: validatedMeta.source ?? 'mixhive',
+        bpm: validatedMeta.bpm ?? null,
+        key: validatedMeta.key ?? null,
       },
       is_explicit: false,
     };

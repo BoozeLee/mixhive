@@ -35,18 +35,28 @@ export function Events() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'upcoming' | 'all'>('upcoming');
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       setLoading(true);
+      setError(null);
       const params = new URLSearchParams({ limit: '30' });
       if (filter === 'upcoming') params.set('upcoming', 'true');
-      const res = await fetch(`/api/events?${params}`);
-      if (!cancelled && res.ok) {
-        const data = await res.json();
-        setEvents(data.events || []);
+      try {
+        const res = await fetch(`/api/events?${params}`);
+        if (!cancelled) {
+          if (res.ok) {
+            const data = await res.json();
+            setEvents(data.events || []);
+          } else {
+            setError(`Failed to load events (${res.status})`);
+          }
+        }
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load events');
       }
       if (!cancelled) setLoading(false);
     }
@@ -120,6 +130,12 @@ export function Events() {
           </button>
         ))}
       </div>
+
+      {error && (
+        <div style={{ padding: '12px 16px', marginBottom: 16, background: 'rgba(255,85,85,0.1)', border: '1px solid rgba(255,85,85,0.3)', borderRadius: radius.md, color: colors.danger, fontSize: fontSize.sm }}>
+          {error}
+        </div>
+      )}
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: space[12] }}>

@@ -1,7 +1,7 @@
 'use client';
 import { useTranslations } from 'next-intl';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { colors, fontSize, space, fontWeight, radius, withAlpha } from '../styles/tokens';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
@@ -34,9 +34,9 @@ export function CollabSessionRoom() {
   useEffect(() => {
     if (!id || !user) return;
     fetchSession();
-  }, [id, user]);
+  }, [id, user, fetchSession]);
 
-  const fetchSession = async () => {
+  const fetchSession = useCallback(async () => {
     if (!isSupabaseConfigured || !id) {
       setErrorMsg('Supabase not configured');
       setMode('error');
@@ -62,7 +62,7 @@ export function CollabSessionRoom() {
     } else {
       setMode('room');
     }
-  };
+  }, [id]);
 
   const handleEndSession = () => {
     setMode('review');

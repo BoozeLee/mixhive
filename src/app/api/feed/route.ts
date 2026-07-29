@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { redisCache } from '@/lib/redis';
+import { rateLimiter } from '@/lib/rateLimiter';
 
 export const runtime = 'nodejs';
 
@@ -15,6 +16,11 @@ function makeSupabase(jwt?: string) {
 }
 
 export async function GET(req: NextRequest) {
+  const rateCheck = await rateLimiter.checkApiLimit('feed');
+  if (!rateCheck.allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+  }
+
   const { searchParams } = new URL(req.url);
   const type = searchParams.get('type') ?? 'trending';
   const genre = searchParams.get('genre') ?? 'all';

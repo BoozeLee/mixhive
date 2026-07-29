@@ -8,6 +8,7 @@ import { getOpportunitySaves, upsertOpportunitySave } from '../lib/api';
 import { colors, fontSize, fontWeight, radius, space, transition } from '../styles/tokens';
 import { Icon } from '../components/ui/Icon';
 import { Button } from '../components/ui/Button';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
 type Tab = 'for-you' | 'saved' | 'applied' | 'dismissed';
 type OpportunityAction = OpportunitySaveStatus;
@@ -278,6 +279,7 @@ export function Opportunities() {
 
       {matchError && (
         <div
+          role="alert"
           style={{
             marginBottom: space[6],
             padding: `${space[4]}px`,
@@ -332,6 +334,8 @@ export function Opportunities() {
                     display: 'flex',
                     justifyContent: 'space-between',
                     marginBottom: space[1],
+                    flexWrap: 'wrap',
+                    gap: space[1],
                   }}
                 >
                   <span
@@ -399,7 +403,7 @@ export function Opportunities() {
         ))}
       </div>
 
-      {loading && <div style={{ color: colors.text.muted }}>{t('loadingMatches')}</div>}
+      {loading && <div role="status" aria-live="polite"><LoadingSpinner size="medium" /></div>}
       {error && <div style={{ color: colors.danger }}>{error}</div>}
       {!loading && !error && visibleMatches.length === 0 && (
         <div

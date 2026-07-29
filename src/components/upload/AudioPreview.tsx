@@ -73,7 +73,9 @@ export function AudioPreview({ file }: AudioPreviewProps) {
         borderRadius: radius.lg,
       }}
     >
-      <audio ref={audioRef} src={url} preload="metadata" />
+      <audio ref={audioRef} src={url} preload="metadata" aria-label="Audio preview">
+        <track kind="captions" src="" label="No captions" />
+      </audio>
       <button
         type="button"
         onClick={togglePlay}

@@ -16,6 +16,7 @@ import {
   display,
   gradient,
   shadow,
+  transition,
 } from '../styles/tokens';
 import { DURATION, EASE_OUT } from '../lib/motion';
 
@@ -155,11 +156,12 @@ export function Landing() {
   const t = useTranslations('landing');
   const navigate = useNavigate();
   const [stats, setStats] = useState<HiveStats | null>(null);
+  const [statsError, setStatsError] = useState(false);
 
   useEffect(() => {
     getHiveStats()
       .then(setStats)
-      .catch(() => setStats(null));
+      .catch(() => { setStats(null); setStatsError(true); });
   }, []);
 
   const s = stats ?? { mixes_total: 0, voices_total: 0, plays_total: 0, live_now: 0 };
@@ -182,7 +184,7 @@ export function Landing() {
           position: 'absolute',
           inset: 0,
           background: gradient.scanline,
-          opacity: 0.4,
+          opacity: 0.35,
           pointerEvents: 'none',
         }}
       />
@@ -291,6 +293,11 @@ export function Landing() {
             <Stat value={formatCount(s.voices_total)} label={t('voices')} />
             <Stat value={formatCount(s.plays_total)} label={t('plays2')} />
             <Stat value={formatCount(s.live_now)} label={t('liveNow')} />
+            {statsError && (
+              <div style={{ color: colors.text.dim, fontSize: fontSize.xs, width: '100%' }}>
+                Could not refresh stats
+              </div>
+            )}
           </motion.div>
         </motion.div>
 
@@ -324,11 +331,13 @@ export function Landing() {
           {pillars.map(p => (
             <div
               key={p.t}
+              className="landing-pillar"
               style={{
                 background: colors.surface,
                 border: `1px solid ${colors.border}`,
-                borderRadius: radius.lg,
+                borderRadius: radius['2xl'],
                 padding: space[10],
+                transition: transition.smooth,
               }}
             >
               <div
@@ -367,10 +376,11 @@ export function Landing() {
         }}
       >
         <div
+          className="landing-pillar"
           style={{
             background: colors.surface,
             border: `1px solid ${colors.border}`,
-            borderRadius: radius.xl,
+            borderRadius: radius['2xl'],
             boxShadow: shadow.elevated,
             padding: 'clamp(32px, 5vw, 64px)',
           }}

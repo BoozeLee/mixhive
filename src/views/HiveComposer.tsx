@@ -224,7 +224,7 @@ export function HiveComposer() {
     if (!tail) return;
     if (tail.genre) setGenreFilter(tail.genre);
     if (tail.bpm) setBpmRange([Math.max(0, tail.bpm - 10), tail.bpm + 10]);
-  }, [state.tracks.length]);
+  }, [state.tracks.length, state.tracks]);
 
   const handleAddTrack = useCallback(() => {
     dispatch({ type: 'TOGGLE_SEARCH', open: true });
@@ -357,7 +357,7 @@ export function HiveComposer() {
     } finally {
       dispatch({ type: 'SET_SAVING', saving: false });
     }
-  }, [user, state.tracks, setTitle, navigate, clearDraft]);
+  }, [user, state.tracks, setTitle, navigate, clearDraft, t]);
 
   return (
     <div
@@ -545,7 +545,7 @@ export function HiveComposer() {
       )}
 
       {/* Main area */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div className="composer-two-panel" style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Canvas */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {state.tracks.length === 0 && (

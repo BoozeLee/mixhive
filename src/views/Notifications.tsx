@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../lib/notificationStore';
-import { colors, space, fontSize } from '../styles/tokens';
+import { colors, radius, space, fontSize } from '../styles/tokens';
 import { EmptyState } from '../components/EmptyState';
 import { Button } from '../components/ui/Button';
 import { Icon } from '../components/ui/Icon';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
 import type { IconKey } from '../lib/icons';
@@ -31,15 +32,29 @@ export function NotificationsPage() {
   const { user } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead, refresh } = useNotifications();
   const [loading, setLoading] = useState(!user); // Loading when no user
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch initial notifications when user changes
   useEffect(() => {
     if (user) {
-      void refresh();
+      setError(null);
+      refresh().catch(() => setError('Failed to load notifications'));
     } else {
       setLoading(false);
     }
   }, [user, refresh]);
+
+  if (error) {
+    return (
+      <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
+        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
+        <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
+          <p>{error}</p>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   async function handleMarkAllAsRead() {
     if (!user) return;
@@ -50,7 +65,9 @@ export function NotificationsPage() {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
         <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
-        <p style={{ color: colors.text.dim, marginTop: space[8] }}>{t('loading')}</p>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: space[12] }}>
+          <LoadingSpinner size="lg" />
+        </div>
       </div>
     );
   }
@@ -78,14 +95,27 @@ export function NotificationsPage() {
         }}
       >
         <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleMarkAllAsRead}
-          disabled={unreadCount === 0}
-        >
-          {t('markAllRead')}
-        </Button>
+        <div style={{ display: 'flex', gap: space[3] }}>
+          <Link
+            to="/settings#notifications"
+            style={{
+              fontSize: fontSize.sm,
+              color: colors.text.dim,
+              textDecoration: 'none',
+              padding: '6px 0',
+            }}
+          >
+            {t('preferences')}
+          </Link>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={handleMarkAllAsRead}
+            disabled={unreadCount === 0}
+          >
+            {t('markAllRead')}
+          </Button>
+        </div>
       </div>
 
       {notifications.length === 0 ? (
@@ -174,13 +204,14 @@ export function NotificationsPage() {
                     />
                   </span>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                   <p
                     style={{
                       fontSize: fontSize.md,
                       color: colors.text.secondary,
                       margin: 0,
                       lineHeight: 1.4,
+                      wordBreak: 'break-word',
                     }}
                   >
                     {notificationPresentation(notification).body}

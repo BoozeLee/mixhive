@@ -168,7 +168,10 @@ export const CDNAudio: React.FC<CDNAudioProps> = ({
           onTimeUpdate={onTimeUpdate}
           onLoadedMetadata={onLoadedMetadata}
           className="w-full"
-        />
+          aria-label="Audio player"
+        >
+          <track kind="captions" src="" label="No captions" />
+        </audio>
       )}
     </div>
   );

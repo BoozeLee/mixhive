@@ -310,6 +310,13 @@ export function ProfileHeader({
                 </HiveButton>
               </Link>
             )}
+            {profile.is_admin && (
+              <Link to="/admin/users" style={{ textDecoration: 'none' }}>
+                <HiveButton variant="glass" style={{ minHeight: 40 }}>
+                  Users
+                </HiveButton>
+              </Link>
+            )}
           </>
         )}
         <HiveButton variant="ghost" onClick={onCopyLink} style={{ minHeight: 40 }}>

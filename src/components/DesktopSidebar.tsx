@@ -4,7 +4,7 @@ import { useMessages } from '../lib/messagesStore';
 import { Logo } from './Logo';
 import { Icon, HexIcon } from './ui/Icon';
 import type { IconKey } from '../lib/icons';
-import { colors, space, transition, fontSize, fontWeight } from '../styles/tokens';
+import { colors, space, transition, fontSize, fontWeight, layout, withAlpha } from '../styles/tokens';
 
 interface SidebarItem {
   path: string;
@@ -26,28 +26,17 @@ const topItems: SidebarItem[] = [
   { path: '/feed', icon: 'feed', label: 'Feed', ariaLabel: 'Hive Feed' },
   { path: '/discover', icon: 'discover', label: 'Explore', ariaLabel: 'Explore MixHive' },
   { path: '/scenes', icon: 'events', label: 'Scenes', ariaLabel: 'Scene communities' },
-  { path: '/events', icon: 'events', label: 'Events', ariaLabel: 'Events and raves' },
-  { path: '/live-rooms', icon: 'session', label: 'Live Rooms', ariaLabel: 'Live audio rooms' },
   { path: '/search', icon: 'network', label: 'Network', ariaLabel: 'Hive Radar' },
   { path: '/opportunities', icon: 'events', label: 'Opportunities', ariaLabel: 'Opportunity Hub' },
-  {
-    path: '/collab-quests',
-    icon: 'sparkles',
-    label: 'Collab Quests',
-    ariaLabel: 'Collaboration quests',
-  },
   { path: '/epk', icon: 'epk', label: 'EPK', ariaLabel: 'Press Kit Studio' },
   { path: '/upload', icon: 'upload', label: 'Upload', ariaLabel: 'Nectar Upload' },
-  { path: '/studio/art', icon: 'visual', label: 'Art Studio', ariaLabel: 'Art Studio' },
-  { path: '/studio/avatar', icon: 'camera', label: 'Avatar Studio', ariaLabel: 'Avatar Studio' },
   { path: '/agents/inbox', icon: 'inbox', label: 'Inbox', ariaLabel: 'Agent Inbox' },
   { path: '/messages', icon: 'messages', label: 'Messages', ariaLabel: 'Direct messages' },
+  { path: '/favorites', icon: 'like', label: 'Favorites', ariaLabel: 'Your favorite mixes' },
   { path: '/agents/gallery', icon: 'agents', label: 'BeeCast', ariaLabel: 'BeeCast agents' },
   { path: '/ai-band', icon: 'agents', label: 'AI Band', ariaLabel: 'AI Band agents' },
-  { path: '/marketplace/gear', icon: 'gear', label: 'Gear Market', ariaLabel: 'Gear marketplace' },
   { path: '/leaderboard', icon: 'star', label: 'Leaderboard', ariaLabel: 'XP Leaderboard' },
   { path: '/quests', icon: 'quests', label: 'Quests', ariaLabel: 'Mythic Quest Lines' },
-  { path: '/rituals', icon: 'mythic', label: 'Rituals', ariaLabel: 'Live mythic rituals' },
   { path: '/scene-radar', icon: 'radar', label: 'Radar', ariaLabel: 'Scene Radar' },
   { path: '/composer', icon: 'composer', label: 'Composer', ariaLabel: 'Hive Composer' },
   { path: '/hive-story', icon: 'story', label: 'Hive Story', ariaLabel: 'Hive Story editorial' },
@@ -82,14 +71,14 @@ export function DesktopSidebar() {
       aria-label="Main navigation"
       style={{
         position: 'fixed',
-        top: 'var(--navbar-height, 73px)',
+        top: `var(--navbar-height, ${layout.navbarHeight}px)`,
         left: 0,
         bottom: 0,
-        width: 220,
+        width: layout.sidebarWidth,
         zIndex: 90,
         display: 'flex',
         flexDirection: 'column',
-        background: 'linear-gradient(180deg, rgba(8,8,6,0.94) 0%, rgba(2,2,2,0.99) 100%)',
+        background: `linear-gradient(180deg, ${withAlpha(colors.black, 0.94)} 0%, ${withAlpha(colors.black, 0.99)} 100%)`,
         borderRight: `1px solid ${colors.accentMuted}`,
         backdropFilter: 'blur(18px)',
         overflowY: 'auto',
@@ -134,7 +123,7 @@ export function DesktopSidebar() {
                   fontWeight: fontWeight.bold,
                   fontSize: fontSize.md,
                   marginBottom: space[4],
-                  boxShadow: '0 4px 18px rgba(246,196,0,0.35)',
+                  boxShadow: `0 4px 18px ${withAlpha(colors.accent, 0.35)}`,
                   transition: transition.base,
                 }}
               >
@@ -167,7 +156,7 @@ export function DesktopSidebar() {
               }}
               onMouseEnter={e => {
                 if (!active) {
-                  e.currentTarget.style.background = 'rgba(246,196,0,0.06)';
+                  e.currentTarget.style.background = `${withAlpha(colors.accent, 0.06)}`;
                   e.currentTarget.style.color = colors.text.secondary;
                 }
               }}
@@ -188,7 +177,7 @@ export function DesktopSidebar() {
                     right: 12,
                     background: colors.accent,
                     color: colors.bg,
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: 700,
                     width: 16,
                     height: 16,
@@ -228,7 +217,7 @@ export function DesktopSidebar() {
             transition: transition.base,
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(246,196,0,0.06)';
+            e.currentTarget.style.background = `${withAlpha(colors.accent, 0.06)}`;
           }}
           onMouseLeave={e => {
             e.currentTarget.style.background = 'transparent';

@@ -10,6 +10,7 @@ import {
 import { LevelBadge } from '../components/LevelBadge';
 import { EmptyState } from '../components/EmptyState';
 import { SkeletonBar } from '../components/Skeleton';
+import { Button } from '../components/ui/Button';
 import { colors, tierColors, fontSize, fontWeight, radius, space } from '../styles/tokens';
 
 function rankAccent(rank: number): string {
@@ -24,6 +25,7 @@ export function Leaderboard() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [agents, setAgents] = useState<AIAgent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,6 +37,9 @@ export function Leaderboard() {
           setAgents(ags);
         }
       })
+      .catch(() => {
+        if (!cancelled) setError('Failed to load leaderboard');
+      })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -42,6 +47,21 @@ export function Leaderboard() {
       cancelled = true;
     };
   }, []);
+
+  if (error) {
+    return (
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '16px 12px 96px' }}>
+        <header style={{ marginBottom: space[9] }}>
+          <h1 style={{ margin: 0, fontSize: 26, color: colors.text.primary }}>{t('title')}</h1>
+          <p style={{ color: colors.text.dim, fontSize: 13, margin: '6px 0 0' }}>{t('subtitle')}</p>
+        </header>
+        <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
+          <p>{error}</p>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '16px 12px 96px' }}>
@@ -53,7 +73,7 @@ export function Leaderboard() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
           gap: space[8],
           alignItems: 'start',
         }}

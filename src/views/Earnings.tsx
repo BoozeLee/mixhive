@@ -177,12 +177,12 @@ export function Earnings() {
       {/* Payout account status */}
       <div style={cardStyle}>
         {loading && !status ? (
-          <p style={{ color: colors.text.faint }}>Loading payout status…</p>
+          <p style={{ color: colors.text.faint }}>{t('loadingPayoutStatus')}</p>
         ) : status?.payouts_enabled ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ color: colors.successStrong, fontSize: 20 }}>✓</span>
             <span style={{ color: colors.text.secondary }}>
-              Payouts active — you can receive marketplace earnings.
+              {t('payoutsActive')}
             </span>
           </div>
         ) : (
@@ -192,8 +192,8 @@ export function Earnings() {
             </p>
             <p style={{ color: colors.text.muted, fontSize: 13, margin: '0 0 14px' }}>
               {status?.onboarded
-                ? 'Your Stripe account needs a few more details before payouts can be enabled.'
-                : 'Connect a Stripe account to sell gear and receive agent-package earnings.'}
+                ? t('stripeNeedsDetails')
+                : t('connectStripePrompt')}
             </p>
             <Button
               onClick={handleConnect}
@@ -201,10 +201,10 @@ export function Earnings() {
               style={{ background: 'var(--hive-gold)' }}
             >
               {connecting
-                ? 'Opening Stripe…'
+                ? t('openingStripe')
                 : status?.onboarded
-                  ? 'Finish payout setup'
-                  : 'Set up payouts'}
+                  ? t('finishPayoutSetup')
+                  : t('setUpPayouts')}
             </Button>
           </div>
         )}

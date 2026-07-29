@@ -219,7 +219,7 @@ export function AdminUsers() {
       </form>
 
       {error && (
-        <div style={{ padding: 12, marginBottom: 16, borderRadius: radius.md, background: colors.dangerBg, border: `1px solid ${colors.dangerStrong}`, color: colors.danger }}>
+        <div role="alert" style={{ padding: 12, marginBottom: 16, borderRadius: radius.md, background: colors.dangerBg, border: `1px solid ${colors.dangerStrong}`, color: colors.danger }}>
           {error}
         </div>
       )}
@@ -419,6 +419,7 @@ export function AdminUsers() {
           <div
             role="dialog"
             aria-modal="true"
+            aria-labelledby="audit-dialog-title"
             onClick={e => e.stopPropagation()}
             style={{
               maxWidth: 600,
@@ -432,10 +433,11 @@ export function AdminUsers() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, color: colors.text.primary }}>
+              <h3 id="audit-dialog-title" style={{ margin: 0, color: colors.text.primary }}>
                 {t('auditTitle')} — @{auditTarget.username}
               </h3>
               <button
+                aria-label="Close audit log"
                 onClick={() => setAuditTarget(null)}
                 style={{ background: 'none', border: 'none', color: colors.text.dim, cursor: 'pointer', fontSize: 18 }}
               >

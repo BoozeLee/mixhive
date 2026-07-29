@@ -127,7 +127,7 @@ export function Dashboard() {
 
   if (loadError) {
     return (
-      <div style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 16px 112px' }}>
+      <div role="alert" style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 16px 112px' }}>
         <div style={{ textAlign: 'center', color: colors.text.dim, padding: space[10] }}>
           <p style={{ marginBottom: space[4] }}>{t('loadError')}</p>
           <button

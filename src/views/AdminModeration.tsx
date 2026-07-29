@@ -84,7 +84,7 @@ export function AdminModeration() {
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px 16px 96px' }}>
       {error && (
-        <div style={{ padding: '12px 16px', marginBottom: 16, background: 'rgba(255,85,85,0.1)', border: '1px solid rgba(255,85,85,0.3)', borderRadius: radius.md, color: colors.danger, fontSize: 13 }}>
+        <div role="alert" style={{ padding: '12px 16px', marginBottom: 16, background: 'rgba(255,85,85,0.1)', border: '1px solid rgba(255,85,85,0.3)', borderRadius: radius.md, color: colors.danger, fontSize: 13 }}>
           {error}
         </div>
       )}

@@ -583,6 +583,7 @@ export function HiveComposer() {
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- Pointer backdrop dismissal only; keyboard users dismiss via the explicit Close control.
         <div
           role="dialog"
+          aria-modal="true"
           aria-label={t('searchForAMix')}
           style={{
             position: 'fixed',

@@ -103,4 +103,4 @@ Reduced:     all animations/transitions → 0.01ms via `prefers-reduced-motion`
 5. ✅ One-off inline hex replaced with tokens across all views and components (P1 sweep).
 6. ⬜ Converge duplicate ad-hoc buttons/inputs onto the canonical components above.
 7. ✅ ESLint rule banning raw hex in `src/views|components` — promoted to `error`.
-8. ⬜ a11y + 320px mobile sweep per component.
+8. ✅ a11y sweep — `role="alert"` on error banners, `aria-label` on icon-only buttons, `role="dialog"`/`aria-modal` on modals, `as="h1"` on SectionHeading page titles, skip-to-content link in root layout.

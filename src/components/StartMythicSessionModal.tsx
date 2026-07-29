@@ -82,8 +82,12 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
   };
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Pointer backdrop dismissal only; keyboard users dismiss via the explicit Close control.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- role=dialog backdrop needs click/keyboard for backdrop-dismiss; Escape handled inline
     <div
+      role="dialog"
+      aria-modal="true"
+      tabIndex={-1}
+      aria-label={mode === 'form' ? 'Start Mythic Session' : sessionData?.title || 'Mythic Session'}
       style={{
         position: 'fixed',
         inset: 0,
@@ -97,6 +101,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
       onClick={e => {
         if (e.target === e.currentTarget) onClose();
       }}
+      onKeyDown={e => { if (e.key === 'Escape') onClose(); }}
     >
       <div
         style={{
@@ -132,6 +137,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
             </div>
           </div>
           <button
+            aria-label="Close"
             onClick={onClose}
             style={{
               background: 'transparent',

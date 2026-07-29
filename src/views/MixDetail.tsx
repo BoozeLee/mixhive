@@ -200,7 +200,7 @@ export function MixDetail() {
   if (loading) return <SkeletonMixDetail />;
   if (loadError) {
     return (
-      <div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: 32, textAlign: 'center' }}>
+      <div role="alert" style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: 32, textAlign: 'center' }}>
         <p style={{ color: colors.danger, marginBottom: 16 }}>{loadError}</p>
         <Button onClick={() => window.location.reload()}>Retry</Button>
       </div>

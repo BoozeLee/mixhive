@@ -38,7 +38,7 @@ export function SavedPage() {
   if (error) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
-        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
+        <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} />
         <ErrorComponent message={error} onRetry={() => window.location.reload()} />
       </div>
     );
@@ -46,7 +46,7 @@ export function SavedPage() {
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
-      <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
+      <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} />
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: 40 }}>

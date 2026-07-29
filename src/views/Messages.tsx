@@ -74,6 +74,9 @@ function NewConversationDialog({
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="New conversation"
       style={{
         position: 'fixed',
         inset: 0,
@@ -120,6 +123,7 @@ function NewConversationDialog({
             {t('newConversation')}
           </span>
           <button
+            aria-label="Close"
             onClick={onClose}
             style={{
               background: 'transparent',
@@ -236,7 +240,7 @@ export function MessagesPage() {
   if (error) {
     return (
 <div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[8]}px ${space[8]}px ${space[15]}px` }}>
-        <SectionHeading eyebrow={t('chat')} title={t('messages')} />
+        <SectionHeading as="h1" eyebrow={t('chat')} title={t('messages')} />
         <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
           <p>{error}</p>
           <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
@@ -259,7 +263,7 @@ export function MessagesPage() {
   return (
     <div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[8]}px ${space[8]}px ${space[15]}px` }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: space[3] }}>
-        <SectionHeading eyebrow={t('chat')} title={t('messages')} />
+        <SectionHeading as="h1" eyebrow={t('chat')} title={t('messages')} />
         <button
           onClick={() => setComposeOpen(true)}
           style={{

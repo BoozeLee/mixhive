@@ -387,6 +387,7 @@ export function AdminInviteGenerator() {
       {/* Error banner */}
       {error && (
         <div
+          role="alert"
           style={{
             padding: '12px 16px',
             marginBottom: space[6],

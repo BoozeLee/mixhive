@@ -47,7 +47,7 @@ export function NotificationsPage() {
   if (error) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
-        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
+        <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} />
         <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
           <p>{error}</p>
           <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
@@ -64,7 +64,7 @@ export function NotificationsPage() {
   if (loading) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
-        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
+        <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} />
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: space[12] }}>
           <LoadingSpinner size="lg" />
         </div>
@@ -94,7 +94,7 @@ export function NotificationsPage() {
           marginBottom: space[10],
         }}
       >
-        <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
+        <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} />
         <div style={{ display: 'flex', gap: space[3] }}>
           <Link
             to="/settings#notifications"

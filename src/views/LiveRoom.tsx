@@ -279,7 +279,7 @@ export function LiveRoom() {
         flexShrink: 0,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: space[3] }}>
-          <Button variant="ghost" onClick={() => navigate('/live-rooms')}>←</Button>
+          <Button variant="ghost" aria-label="Back to live rooms" onClick={() => navigate('/live-rooms')}>←</Button>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: space[2] }}>
               <h1 style={{ fontSize: fontSize.lg, fontWeight: 700, margin: 0 }}>{room.title}</h1>

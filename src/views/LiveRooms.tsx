@@ -85,6 +85,7 @@ export function LiveRooms() {
     return (
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 16px 96px' }}>
         <SectionHeading
+          as="h1"
           eyebrow="LIVE"
           title={t('title')}
         />
@@ -99,6 +100,7 @@ export function LiveRooms() {
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 16px 96px' }}>
       <SectionHeading
+        as="h1"
         eyebrow="LIVE"
         title={t('title')}
         subtitle={t('subtitle')}

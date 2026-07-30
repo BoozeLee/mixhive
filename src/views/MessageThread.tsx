@@ -259,7 +259,7 @@ export function MessageThreadPage() {
               {msg.body}
               {msg.status === 'failed' && (
                 <span style={{ color: colors.danger, fontSize: 11, marginLeft: space[2] }}>
-                  {t('failed')}
+                  {t('failed')}
                 </span>
               )}
             </div>
@@ -303,7 +303,7 @@ export function MessageThreadPage() {
           disabled={!input.trim() || blocked || sending}
           style={{ padding: '8px 14px' }}
         >
-          {t('send')}
+          {t('send')}
         </HiveButton>
       </div>
     </div>

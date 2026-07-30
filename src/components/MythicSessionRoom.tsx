@@ -16,6 +16,7 @@ import {
 import { reportContent } from '../lib/api';
 import { supabase } from '../lib/supabase';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
+import { FlowKeyTap } from './FlowKeyTap';
 import { HiveButton } from './hive/HiveButton';
 import { Avatar } from './ui/Avatar';
 
@@ -353,6 +354,8 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
           {participants.slice(0, 6).map(person => (
             <Avatar key={person.id} src={person.avatar_url} name={person.username} size={30} />
           ))}
+          {/* Ambient: the whole room sees the key turn. Never a modal. */}
+          <FlowKeyTap sessionId={sessionId} isCreator={isCreator} />
           {isCreator && (
             <HiveButton variant="glass" size="sm" onClick={() => void talkback.toggle()}>
               {talkback.enabled

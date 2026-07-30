@@ -10,6 +10,18 @@ export interface RitualAsset {
   duration_seconds: number | null;
   asset_type: 'stem' | 'mix' | 'preview';
   uploader_id: string;
+  /** Needed by the Flow Key capping boundary. */
+  created_at?: string;
+}
+
+/** Flow Key tap state for a session (GET /api/mythic/sessions/:id/flow-key). */
+export interface FlowKeyState {
+  is_open: boolean;
+  opened_at: string | null;
+  turns_count: number;
+  spore_id: string | null;
+  capped: number;
+  skipped: number;
 }
 
 export interface RitualPlaybackState {

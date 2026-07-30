@@ -60,6 +60,22 @@ Migration 119 was therefore verified against a **local** Postgres
 be confirmed safe against production until someone establishes what production's
 real schema state is.
 
+### B5 — Vercel deploys are failing on cron limits 🔴
+
+The `Vercel` check fails on every PR at **0 seconds**, before any build, with the
+same short link on every commit and every branch: `https://vercel.link/3Fpeeb1`,
+which resolves to **`vercel.com/docs/cron-jobs/usage-and-pricing`**.
+
+`vercel.json` declares **11 crons**, two of them sub-daily
+(`*/10 * * * *` on `/api/cron/publish-scheduled`, and `0 9 1 * *` monthly). Plan
+cron allowances are what this needs checking against.
+
+This is why nothing has been reaching `mixhive.vercel.app` — it is not a code
+failure and no amount of green GitHub Actions will fix it. Either raise the plan
+or consolidate crons (several daily jobs could run from a single dispatcher).
+
+**FK-1 adds no cron requirement** — see §1.
+
 ### B4 — `src/lib/database.types.ts` is badly stale
 
 Committed file is **2,701 lines**; regenerating against the real schema produces
@@ -74,18 +90,23 @@ by name with explicit casts).
 
 ## What Codex needs to do for FK-1 itself
 
-### 1. Cron: stale-drain reaper
+### 1. Cron: stale-drain reaper — **do NOT add one**
 
-`vercel.json` needs:
+An earlier draft of this handoff asked for
+`{ "path": "/api/cron/flow-key-reap", "schedule": "*/5 * * * *" }` in
+`vercel.json`. **That was wrong** — see blocker B5: `vercel.json` already
+declares 11 crons and the Vercel deployment is failing on cron limits. A twelfth
+on a five-minute schedule would deepen the exact failure that is currently
+blocking every deploy.
 
-```json
-{ "path": "/api/cron/flow-key-reap", "schedule": "*/5 * * * *" }
-```
+`turn_flow_key` now self-heals instead. Before it claims the drain lock it voids
+this session's own drain if it has been open longer than 15 minutes and clears
+the orphaned tap. A crashed seal can no longer strand the key in the open
+position, and **correctness no longer depends on a cron running at all**.
 
-The handler is `POST`, guarded by `CRON_SECRET` using the identical pattern as
-`src/app/api/cron/strategic-agents/route.ts`. It voids drains left open longer
-than 15 minutes and closes their taps, so a session is never left with a
-stuck-open Flow Key.
+`reap_stale_flow_drains()` and `/api/cron/flow-key-reap` still ship, as an
+optional global sweep for observability. Wire it only if and when the cron
+budget allows — nothing breaks if it never runs.
 
 ### 2. Environment variables (Vercel, server-only)
 

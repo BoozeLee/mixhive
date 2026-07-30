@@ -207,6 +207,25 @@ begin
   -- Lock the tap row so two simultaneous turns cannot both pass the check.
   perform 1 from public.flow_key_taps where session_id = p_session_id for update;
 
+  -- Self-heal before claiming the lock: void this session's own drain if it was
+  -- abandoned. A crashed seal must never strand the key in the open position,
+  -- and doing it here means correctness does not depend on a cron running.
+  -- reap_stale_flow_drains() remains as an optional sweep for observability.
+  update public.flow_spores s
+     set state = 'void'
+   where s.session_id = p_session_id
+     and s.state = 'draining'
+     and s.opened_at < now() - interval '15 minutes';
+
+  update public.flow_key_taps t
+     set is_open = false, drain_lock = null
+   where t.session_id = p_session_id
+     and t.is_open
+     and not exists (
+       select 1 from public.flow_spores s
+       where s.id = t.drain_lock and s.state = 'draining'
+     );
+
   if exists (
     select 1 from public.flow_key_taps
     where session_id = p_session_id and is_open

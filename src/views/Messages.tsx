@@ -239,7 +239,7 @@ export function MessagesPage() {
 
   if (error) {
     return (
-<div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[8]}px ${space[8]}px ${space[15]}px` }}>
+<div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[11]}px ${space[8]}px ${space[15]}px` }}>
         <SectionHeading as="h1" eyebrow={t('chat')} title={t('messages')} />
         <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
           <p>{error}</p>
@@ -261,7 +261,7 @@ export function MessagesPage() {
   }
 
   return (
-    <div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[8]}px ${space[8]}px ${space[15]}px` }}>
+    <div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[11]}px ${space[8]}px ${space[15]}px` }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: space[3] }}>
         <SectionHeading as="h1" eyebrow={t('chat')} title={t('messages')} />
         <button

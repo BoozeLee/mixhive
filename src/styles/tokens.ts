@@ -131,6 +131,10 @@ export const space = {
   12: 40,
   13: 48,
   14: 64,
+  // Messages.tsx reads space[15] for its bottom gutter (pre-sweep: 96px), but
+  // the scale stopped at 14 — so the padding shorthand rendered as
+  // `undefinedpx` and the whole declaration was dropped by the browser.
+  15: 96,
 } as const;
 
 export const radius = {
@@ -256,6 +260,12 @@ export const transition = {
   fast: '120ms ease',
   base: '180ms ease',
   slow: '280ms ease',
+  // The P1 sweep (1128c01) rewrote four call sites to `transition.smooth`
+  // without adding the key, so Navbar, Feed and Landing have been rendering
+  // `transition: undefined` — those animations simply did not run. 250ms is
+  // Navbar's exact pre-sweep value ('height 0.25s ease, …'), so restoring it
+  // here fixes all four sites without editing any of them.
+  smooth: '250ms ease',
 } as const;
 
 export type Tokens = {

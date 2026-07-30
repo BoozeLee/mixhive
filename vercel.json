@@ -146,10 +146,6 @@
     {
       "path": "/api/cron/monthly-recap",
       "schedule": "0 9 1 * *"
-    },
-    {
-      "path": "/api/cron/publish-scheduled",
-      "schedule": "*/10 * * * *"
     }
   ]
 }

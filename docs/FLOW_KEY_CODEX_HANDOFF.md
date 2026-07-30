@@ -48,33 +48,60 @@ installed ad hoc at some point.
 `next.config.mjs` and `package.json` scripts are Codex-owned, so this is written
 down rather than patched. Fix: add `@next/bundle-analyzer` to `devDependencies`.
 
-### B3 — No migration ledger, and no staging database
+### B3 — No migration ledger — RESOLVED BY MEASUREMENT ✅
 
-`supabase/.temp/project-ref` is `ljdolmqytncxhgojqguh` — **that is production.**
-There is no scratch or staging project. Commit `b064cc6` records that
-"production has no migration ledger", so **which of migrations 105–118 are
-actually applied to production is unknown.**
+`supabase/.temp/project-ref` is `ljdolmqytncxhgojqguh` — **that is production**,
+and there is no staging project. Commit `b064cc6` records that "production has
+no migration ledger", so the applied state was unknown.
 
-Migration 119 was therefore verified against a **local** Postgres
-(`supabase start`) with the full 001→119 chain applied from scratch. It cannot
-be confirmed safe against production until someone establishes what production's
-real schema state is.
+**Measured directly** against production using the public anon key (the same one
+that ships in the browser bundle) via PostgREST. No data was read — only schema
+existence. Method validated first: a nonexistent table returns `404 PGRST205`;
+an existing but RLS-protected one returns `401 42501`.
 
-### B5 — Vercel deploys are failing on cron limits 🔴
+> **Production is at migration 115.**
 
-The `Vercel` check fails on every PR at **0 seconds**, before any build, with the
-same short link on every commit and every branch: `https://vercel.link/3Fpeeb1`,
-which resolves to **`vercel.com/docs/cron-jobs/usage-and-pricing`**.
+| Migration | Sentinel | Production |
+|---|---|---|
+| 045 | `mythic_nodes`, `mythic_edges` | ✅ |
+| 097 | `collab_session_assets` / `_state` / `_events` | ✅ (401 naming `can_manage_collab_session`) |
+| 103 | `mix_agent_credits` | ✅ |
+| 104 | `ai_agents` | ✅ |
+| 105–113 | `invites`, `oembed_cache`, `beta_invites`, `ai_art_generations`, `live_rooms`, `events` | ✅ |
+| 115 | `mixes.archived` | ✅ |
+| **116** | `mixes.required_tier` | ❌ `42703 column does not exist` |
+| **117** | `mixes.visibility` | ❌ `42703 column does not exist` |
+| **118** | notification triggers | ❌ (not applied) |
+| **119** | `flow_spores` | ❌ `404 PGRST205` |
 
-`vercel.json` declares **11 crons**, two of them sub-daily
-(`*/10 * * * *` on `/api/cron/publish-scheduled`, and `0 9 1 * *` monthly). Plan
-cron allowances are what this needs checking against.
+**Every FK-1 prerequisite is live.** 097, 103 and 104 are all applied, so
+migration 119 has everything it depends on and does **not** require 116–118
+first. It is nonetheless correct to apply the backlog in order — and note that
+**migration 120 (in the pg_cron PR) does require 117**, since
+`publish_due_mixes()` reads `mixes.visibility`.
 
-This is why nothing has been reaching `mixhive.vercel.app` — it is not a code
-failure and no amount of green GitHub Actions will fix it. Either raise the plan
-or consolidate crons (several daily jobs could run from a single dispatcher).
+Apply order to reach a deployable production: **116 → 117 → 118 → 119 → 120.**
 
-**FK-1 adds no cron requirement** — see §1.
+### B5 — Vercel deploys rejected on Hobby cron frequency — FIXED in a separate PR ✅
+
+The `Vercel` check failed on every PR at **0 seconds**, before any build, with
+the same short link on every commit and branch: `https://vercel.link/3Fpeeb1`,
+resolving to **`vercel.com/docs/cron-jobs/usage-and-pricing`**.
+
+The account is on the **Hobby** plan (confirmed via the Vercel API:
+`plan: hobby`). Hobby allows **100 crons — the count was never the problem** —
+but limits them to **once per day**, and "cron expressions that would run more
+frequently will fail during deployment."
+
+Exactly one of the 11 entries violated that: `*/10 * * * *` on
+`/api/cron/publish-scheduled`, added in `1128c01` — the same commit behind B1.
+The other ten are daily or monthly.
+
+Fixed by moving that job to pg_cron (migration 120), which this project already
+uses for sub-daily work. `vercel.json` now has zero sub-daily schedules.
+
+**FK-1 adds no cron requirement** — see §1. Had the original `*/5` reaper
+recommendation shipped, it would have been a second violation.
 
 ### B4 — `src/lib/database.types.ts` is badly stale
 

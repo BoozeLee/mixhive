@@ -14,6 +14,25 @@ export interface RitualAsset {
   created_at?: string;
 }
 
+export type GerminationTarget = 'beehive' | 'mixhive_session' | 'mix_draft';
+
+/** A sealed spore as returned by GET /api/flow-spores. */
+export interface FlowSpore {
+  id: string;
+  session_id: string;
+  state: 'draining' | 'sealed' | 'void';
+  sealed_at: string | null;
+  generation: number;
+  content_hash: string | null;
+  parent_hash: string | null;
+  capped_count: number;
+  skipped_count: number;
+  carbon_count: number;
+  silica_count: number;
+  germination_count: number;
+  is_mine: boolean;
+}
+
 /** Flow Key tap state for a session (GET /api/mythic/sessions/:id/flow-key). */
 export interface FlowKeyState {
   is_open: boolean;

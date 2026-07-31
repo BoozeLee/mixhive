@@ -145,6 +145,7 @@ const SceneRadar = lazy(() => import('./views/SceneRadar').then(m => ({ default:
 const CollabSessionRoom = lazy(() =>
   import('./views/CollabSessionRoom').then(m => ({ default: m.CollabSessionRoom }))
 );
+const Spores = lazy(() => import('./views/Spores').then(m => ({ default: m.Spores })));
 const LiveRituals = lazy(() =>
   import('./views/LiveRituals').then(m => ({ default: m.LiveRituals }))
 );
@@ -388,6 +389,16 @@ function AnimatedRoutes() {
           }
         />
         <Route path="/rituals" element={<LiveRituals />} />
+        {/* Spores are private to their turner and contributors (RLS), so the
+            surface is signed-in only. */}
+        <Route
+          path="/spores"
+          element={
+            <ProtectedRoute>
+              <Spores />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/composer"
           element={

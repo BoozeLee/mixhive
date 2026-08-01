@@ -8,6 +8,24 @@ FK-1 is code-complete and green on its own terms: **78 new tests across 10 suite
 all passing**, zero lint warnings in any `flow-key` file. It cannot be deployed
 yet for reasons that have nothing to do with it. Those are listed first.
 
+## CI state — every check green except one
+
+| Check | Result |
+| --- | --- |
+| Type Check & Lint · Build & Test · Playwright E2E | ✅ |
+| Performance budget (Lighthouse) · Deploy Preview · Vercel | ✅ |
+| CodeQL · Migrations apply | ✅ |
+| **Security Scan** | ❌ **known perma-red** |
+
+Security Scan is `npm audit` against 5 standing advisories (react-router,
+postcss, brace-expansion). It predates this branch and fails identically on
+`main`; react-router is dependabot PR #110's to resolve. Nothing here touches it.
+
+The blockers below were cleared in order, each one hiding the next: the build
+failure (B1/B2) hid the deploy rejection (B5), which hid the 500 on every route
+(B6), which hid an unparseable E2E spec, which hid a real axe violation on
+`/feed`. **B1, B2, B5, B6, B7 are fixed; B3 is measured; B4 stands.**
+
 ---
 
 ## BLOCKERS (pre-existing, not introduced by FK-1)

@@ -10,6 +10,8 @@ interface DiscoverLaneProps {
   hrefLabel?: string;
   loading?: boolean;
   error?: boolean;
+  /** Shown in place of the rail when the lane resolves to nothing. */
+  emptyLabel?: string;
   skeletonCount?: number;
   skeletonWidth?: number;
   children: React.ReactNode;
@@ -22,11 +24,18 @@ export function DiscoverLane({
   hrefLabel,
   loading,
   error,
+  emptyLabel,
   skeletonCount = 4,
   skeletonWidth = 200,
   children,
 }: DiscoverLaneProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const isEmpty = !children || (Array.isArray(children) && children.length === 0);
+  // The arrows scroll the rail. Skeletons, the error note and the empty state
+  // are not a rail, so offering them was two controls that did nothing —
+  // reachable by keyboard and announced to screen readers all the same.
+  const hasRail = !loading && !error && !isEmpty;
 
   function scroll(direction: 'left' | 'right') {
     const el = scrollRef.current;
@@ -74,10 +83,12 @@ export function DiscoverLane({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: space[3], flexShrink: 0 }}>
-          <div style={{ display: 'flex', gap: space[2] }}>
-            <ScrollButton direction="left" onClick={() => scroll('left')} />
-            <ScrollButton direction="right" onClick={() => scroll('right')} />
-          </div>
+          {hasRail && (
+            <div style={{ display: 'flex', gap: space[2] }}>
+              <ScrollButton direction="left" onClick={() => scroll('left')} />
+              <ScrollButton direction="right" onClick={() => scroll('right')} />
+            </div>
+          )}
           {href && hrefLabel && (
             <Link
               to={href}
@@ -124,7 +135,20 @@ export function DiscoverLane({
         >
           This section is temporarily unavailable.
         </p>
-      ) : !children || (Array.isArray(children) && children.length === 0) ? null : (
+      ) : isEmpty ? (
+        emptyLabel ? (
+          <p
+            style={{
+              color: colors.text.faint,
+              fontSize: fontSize.sm,
+              padding: `${space[6]}px 0`,
+              textAlign: 'center',
+            }}
+          >
+            {emptyLabel}
+          </p>
+        ) : null
+      ) : (
         <div
           ref={scrollRef}
           style={{

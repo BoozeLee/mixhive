@@ -10,6 +10,55 @@ export interface RitualAsset {
   duration_seconds: number | null;
   asset_type: 'stem' | 'mix' | 'preview';
   uploader_id: string;
+  /** Needed by the Flow Key capping boundary. */
+  created_at?: string;
+}
+
+export type GerminationTarget = 'beehive' | 'mixhive_session' | 'mix_draft';
+
+/** A sealed spore as returned by GET /api/flow-spores. */
+export interface FlowSpore {
+  id: string;
+  session_id: string;
+  state: 'draining' | 'sealed' | 'void';
+  sealed_at: string | null;
+  generation: number;
+  content_hash: string | null;
+  parent_hash: string | null;
+  capped_count: number;
+  skipped_count: number;
+  carbon_count: number;
+  silica_count: number;
+  germination_count: number;
+  /** How many carbon contributors have signed with their own key (Layer B). */
+  countersigned_count: number;
+  /** True when the caller is a carbon contributor who has not yet signed. */
+  can_countersign: boolean;
+  i_countersigned: boolean;
+  /** Merkle notary batch this spore belongs to (Layer C), if anchored. */
+  anchor: {
+    batch_date: string;
+    merkle_root: string;
+    chain: string | null;
+    anchored_at: string | null;
+  } | null;
+  is_mine: boolean;
+}
+
+/** Flow Key tap state for a session (GET /api/mythic/sessions/:id/flow-key). */
+export interface FlowKeyState {
+  is_open: boolean;
+  opened_at: string | null;
+  turns_count: number;
+  spore_id: string | null;
+  capped: number;
+  skipped: number;
+  /**
+   * The take playing right now, when that is why a cell is being skipped.
+   * Present only while it is genuinely uncapped — this is what makes the host
+   * override reachable.
+   */
+  live_take: { id: string; name: string } | null;
 }
 
 export interface RitualPlaybackState {

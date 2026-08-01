@@ -184,6 +184,7 @@
     "errorFeedTitle": "Couldn't load feed",
     "errorFeedBody": "Something went wrong while loading the hive. Try again?",
     "errorFeedAction": "Retry",
+    "dateRangeLabel": "Filter by date range",
     "dateAll": "All time",
     "date24h": "Past 24h",
     "dateWeek": "Past week",

@@ -12,6 +12,7 @@ import { RecommendedDJs } from '../components/RecommendedDJs';
 import { SkeletonFeed } from '../components/Skeleton';
 import { EmptyState } from '../components/EmptyState';
 import { Icon } from '../components/ui/Icon';
+import { Button } from '../components/ui/Button';
 import {
   colors,
   display,
@@ -191,7 +192,15 @@ function TrendingNowPanel({ mixes }: { mixes: FeedMix[] }) {
               >
                 {mix.title}
               </div>
-              <div style={{ fontSize: fontSize.xs, color: colors.text.dim, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div
+                style={{
+                  fontSize: fontSize.xs,
+                  color: colors.text.dim,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {mix.dj_display_name || mix.dj_username}
               </div>
             </div>
@@ -502,18 +511,24 @@ export function Feed() {
     const then = new Date(dateStr).getTime();
     const diff = now - then;
     switch (range) {
-      case '24h': return diff < 86400000;
-      case 'week': return diff < 604800000;
-      case 'month': return diff < 2592000000;
-      case 'year': return diff < 31536000000;
-      default: return true;
+      case '24h':
+        return diff < 86400000;
+      case 'week':
+        return diff < 604800000;
+      case 'month':
+        return diff < 2592000000;
+      case 'year':
+        return diff < 31536000000;
+      default:
+        return true;
     }
   }
 
   const filterItem = (item: FeedItem): boolean => {
     const mix = item.type === 'mix' ? item.data : null;
     if (!mix) return true;
-    if (selectedGenre && mix.genre_name?.toLowerCase() !== selectedGenre.toLowerCase()) return false;
+    if (selectedGenre && mix.genre_name?.toLowerCase() !== selectedGenre.toLowerCase())
+      return false;
     if (dateRange !== 'all' && !isWithinDateRange(mix.created_at, dateRange)) return false;
     if (aiBandOnly && !mix.ai_band) return false;
     return true;
@@ -604,10 +619,7 @@ export function Feed() {
           >
             {t('liveFeed')}
           </p>
-          <h1
-            className="hive-title"
-            style={{ margin: 0, fontSize: display.sm, lineHeight: 1.1 }}
-          >
+          <h1 className="hive-title" style={{ margin: 0, fontSize: display.sm, lineHeight: 1.1 }}>
             {t('heroTitle')}
           </h1>
           <p
@@ -758,6 +770,7 @@ export function Feed() {
             </button>
             {/* Date range select */}
             <select
+              aria-label={t('dateRangeLabel')}
               value={dateRange}
               onChange={e => setDateRange(e.target.value as DateRange)}
               style={{
@@ -781,9 +794,21 @@ export function Feed() {
 
           {/* Error banner */}
           {error && (
-            <div style={{ padding: `${space[6]}px ${space[8]}px`, marginBottom: space[8], background: withAlpha(colors.danger, 0.1), border: `1px solid ${withAlpha(colors.danger, 0.3)}`, borderRadius: radius.md, color: colors.danger, fontSize: fontSize.sm }}>
+            <div
+              style={{
+                padding: `${space[6]}px ${space[8]}px`,
+                marginBottom: space[8],
+                background: withAlpha(colors.danger, 0.1),
+                border: `1px solid ${withAlpha(colors.danger, 0.3)}`,
+                borderRadius: radius.md,
+                color: colors.danger,
+                fontSize: fontSize.sm,
+              }}
+            >
               {error}
-              <Button variant="danger" size="sm" onClick={() => handleRetry(tab)}>Retry</Button>
+              <Button variant="danger" size="sm" onClick={() => handleRetry(tab)}>
+                Retry
+              </Button>
             </div>
           )}
 

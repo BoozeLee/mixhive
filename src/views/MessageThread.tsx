@@ -168,12 +168,31 @@ export function MessageThreadPage() {
   if (error) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px 96px' }}>
-        <Link to="/messages" style={{ color: colors.text.muted, textDecoration: 'none', display: 'inline-block', marginBottom: space[6] }}>
+        <Link
+          to="/messages"
+          style={{
+            color: colors.text.muted,
+            textDecoration: 'none',
+            display: 'inline-block',
+            marginBottom: space[6],
+          }}
+        >
           ← Back
         </Link>
-        <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
+        <div
+          style={{
+            padding: space[10],
+            textAlign: 'center',
+            color: colors.danger,
+            background: colors.dangerBg,
+            borderRadius: radius.md,
+            border: `1px solid ${colors.danger}`,
+          }}
+        >
           <p>{error}</p>
-          <HiveButton variant="primary" size="md" onClick={() => window.location.reload()}>Retry</HiveButton>
+          <HiveButton variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </HiveButton>
         </div>
       </div>
     );
@@ -224,12 +243,16 @@ export function MessageThreadPage() {
         }}
       >
         {nextCursor && (
-<HiveButton variant="ghost" size="sm" onClick={() => loadHistory(nextCursor)}>{t('loadMore')}</HiveButton>
+          <HiveButton variant="ghost" size="sm" onClick={() => loadHistory(nextCursor)}>
+            {t('loadMore')}
+          </HiveButton>
         )}
         {loadErr && messages.length === 0 && (
           <div style={{ padding: space[8], textAlign: 'center', color: colors.danger }}>
             <p>{loadErr}</p>
-            <HiveButton variant="ghost" size="sm" onClick={() => loadHistory()}>Retry</HiveButton>
+            <HiveButton variant="ghost" size="sm" onClick={() => loadHistory()}>
+              Retry
+            </HiveButton>
           </div>
         )}
         {loading && messages.length === 0 && (
@@ -259,7 +282,7 @@ export function MessageThreadPage() {
               {msg.body}
               {msg.status === 'failed' && (
                 <span style={{ color: colors.danger, fontSize: 11, marginLeft: space[2] }}>
-                  {t('failed')}
+                  {t('failed')}
                 </span>
               )}
             </div>
@@ -303,7 +326,7 @@ export function MessageThreadPage() {
           disabled={!input.trim() || blocked || sending}
           style={{ padding: '8px 14px' }}
         >
-          {t('send')}
+          {t('send')}
         </HiveButton>
       </div>
     </div>

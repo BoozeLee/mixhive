@@ -131,6 +131,10 @@ export const space = {
   12: 40,
   13: 48,
   14: 64,
+  // Messages.tsx reads space[15] for its bottom gutter (pre-sweep: 96px), but
+  // the scale stopped at 14 — so the padding shorthand rendered as
+  // `undefinedpx` and the whole declaration was dropped by the browser.
+  15: 96,
 } as const;
 
 export const radius = {
@@ -238,10 +242,30 @@ export const mq = {
   desktopUp: `(min-width: ${bp.lg}px)`,
 } as const;
 
+// Chrome dimensions shared by fixed shell elements and the content column.
+// Values are the literals these call sites carried before the P1 sweep
+// (1128c01) replaced them with `layout.*` references; the export itself was
+// never added, which is what broke the build.
+export const layout = {
+  // Fallback only — `--navbar-height` in mixhive.css is authoritative and is
+  // currently 64px. 73 is preserved here because that is what the fallback was
+  // before the sweep; changing it would be a behaviour change, not a fix.
+  navbarHeight: 73,
+  sidebarWidth: 220,
+  mobileNavHeight: 60,
+  contentMaxWidth: 640,
+} as const;
+
 export const transition = {
   fast: '120ms ease',
   base: '180ms ease',
   slow: '280ms ease',
+  // The P1 sweep (1128c01) rewrote four call sites to `transition.smooth`
+  // without adding the key, so Navbar, Feed and Landing have been rendering
+  // `transition: undefined` — those animations simply did not run. 250ms is
+  // Navbar's exact pre-sweep value ('height 0.25s ease, …'), so restoring it
+  // here fixes all four sites without editing any of them.
+  smooth: '250ms ease',
 } as const;
 
 export type Tokens = {
@@ -316,6 +340,31 @@ export function getGenreColor(genre?: string | null): string {
   if (!genre) return genreColors.default;
   const key = genre.toLowerCase().trim();
   return genreColors[key] ?? genreColors.default;
+}
+
+// ── Agent category colors ───────────────────────────────────────────────────
+// Tag chips on AgentCard. Same warm-anchored discipline as `genreColors`:
+// saturation stays in the 14–78% band and lightness in 58–68%, so seven
+// categories sitting side by side on one card read as a set rather than a
+// rainbow. `moderation` is deliberately the quietest — a moderation tag is
+// stating a fact, not asking for attention.
+
+export const agentCategoryColors: Record<string, string> = {
+  social: 'hsl(14, 62%, 65%)', // warm coral — human connection
+  growth: 'hsl(96, 44%, 60%)', // green — increase
+  discovery: 'hsl(196, 50%, 64%)', // teal — exploration
+  moderation: 'hsl(38, 14%, 62%)', // near-neutral warm grey — restraint
+  release: 'hsl(44, 78%, 58%)', // brand-adjacent gold — shipping music
+  schedule: 'hsl(216, 48%, 68%)', // cool blue — time
+  engagement: 'hsl(330, 46%, 68%)', // magenta — interaction
+  // Default — MixHive gold, matching `genreColors.default`
+  default: 'hsl(46, 92%, 52%)',
+};
+
+export function getAgentCategoryColor(category?: string | null): string {
+  if (!category) return agentCategoryColors.default;
+  const key = category.toLowerCase().trim();
+  return agentCategoryColors[key] ?? agentCategoryColors.default;
 }
 
 // ── DJ mood-color mapping (Phase 12) ────────────────────────────────────────

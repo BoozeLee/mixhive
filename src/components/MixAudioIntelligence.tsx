@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { useAgentStream } from '../lib/useAgentStream';
 import { useAgentStore } from '../lib/agentStore';
@@ -93,7 +93,15 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
     const bustCache = stream.complete;
     useAgentStore.getState().setRunning(true);
     useAgentStore.getState().setError(null);
-    stream.start(mix.id, { agentId: 'dj_set_analyzer', context: { audio_features: feature ?? undefined, mix_title: mix.title, genre: mix.genre_name ?? null }, bustCache });
+    stream.start(mix.id, {
+      agentId: 'dj_set_analyzer',
+      context: {
+        audio_features: feature ?? undefined,
+        mix_title: mix.title,
+        genre: mix.genre_name ?? null,
+      },
+      bustCache,
+    });
   }
 
   async function analyze() {
@@ -195,7 +203,11 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                 cursor: stream.running ? 'default' : 'pointer',
               }}
             >
-              {stream.running ? (stream.statusMessage || 'Running AI…') : stream.complete ? 'Run again' : 'AI Set Analysis'}
+              {stream.running
+                ? stream.statusMessage || 'Running AI…'
+                : stream.complete
+                  ? 'Run again'
+                  : 'AI Set Analysis'}
             </button>
           </div>
         )}
@@ -213,7 +225,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
             marginTop: 16,
             padding: 12,
             borderRadius: 8,
-            background: 'rgba(240,192,64,0.08)',
+            background: withAlpha(colors.accent, 0.08),
             border: `1px solid ${colors.border}`,
           }}
         >
@@ -380,7 +392,9 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         </>
       )}
 
-      {stream.error && <p style={{ marginTop: 12, color: colors.danger, fontSize: 13 }}>{stream.error}</p>}
+      {stream.error && (
+        <p style={{ marginTop: 12, color: colors.danger, fontSize: 13 }}>{stream.error}</p>
+      )}
 
       {stream.suggestions.length > 0 && (
         <div style={{ marginTop: 16 }}>

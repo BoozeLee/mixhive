@@ -19,18 +19,23 @@ function isMissingTable(error: { code?: string; message?: string } | null | unde
   return error?.code === '42P01' || /Could not find the table/i.test(error?.message || '');
 }
 
-async function extractRawPcm(
-): Promise<{ samples: Float32Array; duration: number }> {
+async function extractRawPcm(): Promise<{ samples: Float32Array; duration: number }> {
   const outPath = filePath + '.raw';
   try {
     await new Promise<void>((resolve, reject) => {
       const ff = spawn('ffmpeg', [
-        '-i', filePath,
-        '-f', 's16le',
-        '-acodec', 'pcm_s16le',
-        '-ar', String(sampleRate),
-        '-ac', '1',
-        '-y', outPath,
+        '-i',
+        filePath,
+        '-f',
+        's16le',
+        '-acodec',
+        'pcm_s16le',
+        '-ar',
+        String(sampleRate),
+        '-ac',
+        '1',
+        '-y',
+        outPath,
       ]);
       ff.on('close', code => (code === 0 ? resolve() : reject(new Error(`ffmpeg exit ${code}`))));
       ff.on('error', reject);
@@ -43,7 +48,11 @@ async function extractRawPcm(
     const duration = samples.length / sampleRate;
     return { samples, duration };
   } finally {
-    try { await fs.unlink(outPath); } catch { /* best-effort */ }
+    try {
+      await fs.unlink(outPath);
+    } catch {
+      /* best-effort */
+    }
   }
 }
 
@@ -95,9 +104,11 @@ function detectBpm(samples: Float32Array, sampleRate: number): number {
   return Math.round(Math.max(minBpm, Math.min(maxBpm, bpm)));
 }
 
-function estimateEnergyAndMood(
-  samples: Float32Array
-): { energy: number; mood: string; danceability: number } {
+function estimateEnergyAndMood(samples: Float32Array): {
+  energy: number;
+  mood: string;
+  danceability: number;
+} {
   let sumSq = 0;
   let peak = 0;
   let zeroCrossings = 0;
@@ -113,11 +124,11 @@ function estimateEnergyAndMood(
 
   let mood: string;
   if (energy < 0.3) {
-    mood = (zcRate > 0.12) ? 'immersive' : 'atmospheric';
+    mood = zcRate > 0.12 ? 'immersive' : 'atmospheric';
   } else if (energy < 0.6) {
-    mood = (zcRate > 0.14) ? 'deep' : 'warm-groove';
+    mood = zcRate > 0.14 ? 'deep' : 'warm-groove';
   } else {
-    mood = (zcRate > 0.18) ? 'high-energy' : 'underground-club';
+    mood = zcRate > 0.18 ? 'high-energy' : 'underground-club';
   }
 
   return { energy, mood, danceability };
@@ -159,7 +170,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ mix
 
   if (isMissingTable(error)) {
     return NextResponse.json({
-      feature: null, tracks: [], setup_required: true,
+      feature: null,
+      tracks: [],
+      setup_required: true,
       message: 'audio_features migration has not been applied yet.',
     });
   }
@@ -213,17 +226,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ mix
     return NextResponse.json({ error: 'Only the mix owner can analyze this mix' }, { status: 403 });
 
   // Upsert processing status immediately
-  const { error: upsertError } = await sb
-    .from('audio_features')
-    .upsert(
-      {
-        mix_id: mix.id,
-        status: 'processing',
-        source: 'mixhive-ffmpeg-v1',
-        model: 'ffmpeg-extraction-v1',
-      },
-      { onConflict: 'mix_id' }
-    );
+  const { error: upsertError } = await sb.from('audio_features').upsert(
+    {
+      mix_id: mix.id,
+      status: 'processing',
+      source: 'mixhive-ffmpeg-v1',
+      model: 'ffmpeg-extraction-v1',
+    },
+    { onConflict: 'mix_id' }
+  );
   if (upsertError && !isMissingTable(upsertError)) {
     return NextResponse.json({ error: upsertError.message }, { status: 500 });
   }
@@ -252,7 +263,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ mix
       } catch (err) {
         errorMessage = err instanceof Error ? err.message : 'Unknown processing error';
       } finally {
-        if (tmpPath) try { await fs.unlink(tmpPath); } catch { /* best-effort */ }
+        if (tmpPath)
+          try {
+            await fs.unlink(tmpPath);
+          } catch {
+            /* best-effort */
+          }
       }
     }
 
@@ -280,7 +296,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ mix
 
     if (isMissingTable(writeError)) {
       return NextResponse.json(
-        { error: 'audio_intelligence_storage_not_ready', message: 'Run Supabase migrations before storing audio analysis.' },
+        {
+          error: 'audio_intelligence_storage_not_ready',
+          message: 'Run Supabase migrations before storing audio analysis.',
+        },
         { status: 503 }
       );
     }

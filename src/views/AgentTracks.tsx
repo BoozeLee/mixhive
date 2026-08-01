@@ -29,12 +29,20 @@ export function AgentTracks() {
     Promise.all([getAgent(slug), getMixesByAgent(slug)])
       .then(([a, rows]) => {
         if (cancelled) return;
-        if (!a) { setError('Agent not found'); setLoading(false); return; }
+        if (!a) {
+          setError('Agent not found');
+          setLoading(false);
+          return;
+        }
         setAgent(a);
         setMixes(rows);
       })
-      .catch(() => { if (!cancelled) setError('Failed to load agent'); })
-      .finally(() => { if (!cancelled) setLoading(false); });
+      .catch(() => {
+        if (!cancelled) setError('Failed to load agent');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -55,7 +63,9 @@ export function AgentTracks() {
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '16px 12px 96px' }}>
         <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>
           <p>{error}</p>
-          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );

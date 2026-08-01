@@ -38,7 +38,10 @@ export async function POST(req: NextRequest) {
     auth: { persistSession: false },
   });
 
-  const { data: { user }, error: authError } = await sb.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await sb.auth.getUser();
   if (authError || !user) return new Response('Invalid session', { status: 401 });
 
   const encoder = new TextEncoder();
@@ -75,7 +78,9 @@ export async function POST(req: NextRequest) {
             .maybeSingle();
 
           const cached = (stateRow?.state_json as Record<string, unknown> | undefined)
-            ?.mix_cache as Record<string, { suggestions: unknown[]; cached_at: string }> | undefined;
+            ?.mix_cache as
+            | Record<string, { suggestions: unknown[]; cached_at: string }>
+            | undefined;
 
           const entry = cached?.[mixId];
           if (entry && Date.now() - new Date(entry.cached_at).getTime() < CACHE_TTL_MS) {
@@ -145,8 +150,12 @@ export async function POST(req: NextRequest) {
             .eq('agent_id', resolvedAgentId)
             .maybeSingle();
 
-          const stateJson = (existingState?.state_json as Record<string, unknown> ?? {}) as Record<string, unknown>;
-          const mixCache = (stateJson.mix_cache as Record<string, unknown> ?? {}) as Record<string, unknown>;
+          const stateJson = ((existingState?.state_json as Record<string, unknown>) ??
+            {}) as Record<string, unknown>;
+          const mixCache = ((stateJson.mix_cache as Record<string, unknown>) ?? {}) as Record<
+            string,
+            unknown
+          >;
           mixCache[mixId] = { suggestions, cached_at: new Date().toISOString() };
           stateJson.mix_cache = mixCache;
 

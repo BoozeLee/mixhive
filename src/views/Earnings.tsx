@@ -181,9 +181,7 @@ export function Earnings() {
         ) : status?.payouts_enabled ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ color: colors.successStrong, fontSize: 20 }}>✓</span>
-            <span style={{ color: colors.text.secondary }}>
-              {t('payoutsActive')}
-            </span>
+            <span style={{ color: colors.text.secondary }}>{t('payoutsActive')}</span>
           </div>
         ) : (
           <div>
@@ -191,9 +189,7 @@ export function Earnings() {
               {t('setupPayouts')}
             </p>
             <p style={{ color: colors.text.muted, fontSize: 13, margin: '0 0 14px' }}>
-              {status?.onboarded
-                ? t('stripeNeedsDetails')
-                : t('connectStripePrompt')}
+              {status?.onboarded ? t('stripeNeedsDetails') : t('connectStripePrompt')}
             </p>
             <Button
               onClick={handleConnect}

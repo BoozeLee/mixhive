@@ -17,7 +17,13 @@ jest.mock('@supabase/supabase-js', () => ({
 
 jest.mock('stripe', () => ({
   default: jest.fn().mockImplementation(() => ({
-    accounts: { retrieve: jest.fn().mockResolvedValue({ payouts_enabled: true, charges_enabled: true, requirements: { currently_due: [] } }) },
+    accounts: {
+      retrieve: jest.fn().mockResolvedValue({
+        payouts_enabled: true,
+        charges_enabled: true,
+        requirements: { currently_due: [] },
+      }),
+    },
   })),
 }));
 

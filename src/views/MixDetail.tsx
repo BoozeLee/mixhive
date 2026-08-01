@@ -80,46 +80,52 @@ export function MixDetail() {
     if (!id) return;
     setLoading(true);
     setLoadError('');
-    getMix(id).then(async m => {
-      setMix(m);
-      if (m) {
-        setLikeCount(m.like_count);
-        const [c, liked, f, rp] = await Promise.all([
-          getComments(m.id),
-          user ? hasLiked(user.id, m.id) : Promise.resolve(false),
-          getFansAlsoLiked(m.id),
-          user ? hasReposted(user.id, m.id) : Promise.resolve(false),
-        ]);
-        setComments(c);
-        setFansAlsoLiked(f);
-        if (typeof liked === 'boolean') setLiked(liked);
-        if (typeof rp === 'boolean') setReposted(rp);
+    getMix(id)
+      .then(async m => {
+        setMix(m);
+        if (m) {
+          setLikeCount(m.like_count);
+          const [c, liked, f, rp] = await Promise.all([
+            getComments(m.id),
+            user ? hasLiked(user.id, m.id) : Promise.resolve(false),
+            getFansAlsoLiked(m.id),
+            user ? hasReposted(user.id, m.id) : Promise.resolve(false),
+          ]);
+          setComments(c);
+          setFansAlsoLiked(f);
+          if (typeof liked === 'boolean') setLiked(liked);
+          if (typeof rp === 'boolean') setReposted(rp);
 
-        // Check premium access
-        if (m.required_tier && m.required_tier !== 'free' && m.dj_id !== user?.id) {
-          if (!user) {
-            setCanAccess(false);
-          } else {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.access_token) {
-              const res = await fetch('/api/subscription/status', { headers: { Authorization: `Bearer ${session.access_token}` } });
-              if (res.ok) {
-                const sub = await res.json();
-                setCanAccess(meetsTier(sub.tier || 'free', m.required_tier));
+          // Check premium access
+          if (m.required_tier && m.required_tier !== 'free' && m.dj_id !== user?.id) {
+            if (!user) {
+              setCanAccess(false);
+            } else {
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+              if (session?.access_token) {
+                const res = await fetch('/api/subscription/status', {
+                  headers: { Authorization: `Bearer ${session.access_token}` },
+                });
+                if (res.ok) {
+                  const sub = await res.json();
+                  setCanAccess(meetsTier(sub.tier || 'free', m.required_tier));
+                } else {
+                  setCanAccess(false);
+                }
               } else {
                 setCanAccess(false);
               }
-            } else {
-              setCanAccess(false);
             }
           }
         }
-      }
-      setLoading(false);
-    }).catch(() => {
-      setLoading(false);
-      setLoadError('Failed to load mix');
-    });
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+        setLoadError('Failed to load mix');
+      });
   }, [id, user]);
 
   // Realtime: new comments + live like-count updates for everyone viewing
@@ -200,7 +206,15 @@ export function MixDetail() {
   if (loading) return <SkeletonMixDetail />;
   if (loadError) {
     return (
-      <div role="alert" style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: 32, textAlign: 'center' }}>
+      <div
+        role="alert"
+        style={{
+          maxWidth: layout.contentMaxWidth,
+          margin: '0 auto',
+          padding: 32,
+          textAlign: 'center',
+        }}
+      >
         <p style={{ color: colors.danger, marginBottom: 16 }}>{loadError}</p>
         <Button onClick={() => window.location.reload()}>Retry</Button>
       </div>
@@ -209,7 +223,13 @@ export function MixDetail() {
   if (!mix) return <NotFoundState what="mix" />;
 
   return (
-    <div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[6]}px ${space[8]}px` }}>
+    <div
+      style={{
+        maxWidth: layout.contentMaxWidth,
+        margin: '0 auto',
+        padding: `${space[6]}px ${space[8]}px`,
+      }}
+    >
       <div
         style={{
           width: '100%',
@@ -232,7 +252,15 @@ export function MixDetail() {
 
       <div style={{ marginBottom: space[10] }}>
         <h1
-          style={{ fontSize: fontSize['3xl'], fontWeight: 700, color: colors.text.primary, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}
+          style={{
+            fontSize: fontSize['3xl'],
+            fontWeight: 700,
+            color: colors.text.primary,
+            margin: '0 0 4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
         >
           {mix.title}
           {mix.required_tier && mix.required_tier !== 'free' && (
@@ -274,7 +302,14 @@ export function MixDetail() {
           </div>
         )}
         {mix.description && (
-          <p style={{ color: colors.text.dim, fontSize: fontSize.md, marginTop: 12, lineHeight: 1.6 }}>
+          <p
+            style={{
+              color: colors.text.dim,
+              fontSize: fontSize.md,
+              marginTop: 12,
+              lineHeight: 1.6,
+            }}
+          >
             {mix.description}
           </p>
         )}
@@ -318,7 +353,9 @@ export function MixDetail() {
         <WaveformPlayer src={mix.audio_url} waveformUrl={mix.waveform_url} onPlay={handlePlay} />
       )}
 
-      <div style={{ display: 'flex', gap: 16, marginTop: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+      <div
+        style={{ display: 'flex', gap: 16, marginTop: 16, alignItems: 'center', flexWrap: 'wrap' }}
+      >
         <button
           onClick={toggleLike}
           aria-pressed={liked}
@@ -336,7 +373,9 @@ export function MixDetail() {
         >
           {liked ? '♥' : '♡'} <span style={{ fontSize: fontSize.md }}>{likeCount}</span>
         </button>
-        <span style={{ color: colors.text.faint, fontSize: fontSize.md }}>{mix.play_count} plays</span>
+        <span style={{ color: colors.text.faint, fontSize: fontSize.md }}>
+          {mix.play_count} plays
+        </span>
         {mix.genre_name && (
           <span style={{ color: colors.text.faint, fontSize: 13 }}>{mix.genre_name}</span>
         )}
@@ -562,7 +601,12 @@ export function MixDetail() {
       {mix.tracklist && mix.tracklist.length > 0 && (
         <div style={{ marginTop: 24 }}>
           <h3
-            style={{ fontSize: fontSize.md, fontWeight: 600, color: colors.text.secondary, marginBottom: 8 }}
+            style={{
+              fontSize: fontSize.md,
+              fontWeight: 600,
+              color: colors.text.secondary,
+              marginBottom: 8,
+            }}
           >
             {t('tracklist')}
           </h3>
@@ -606,7 +650,12 @@ export function MixDetail() {
 
       <div style={{ marginTop: 32 }}>
         <h3
-          style={{ fontSize: fontSize.md, fontWeight: 600, color: colors.text.secondary, marginBottom: 12 }}
+          style={{
+            fontSize: fontSize.md,
+            fontWeight: 600,
+            color: colors.text.secondary,
+            marginBottom: 12,
+          }}
         >
           Comments ({comments.length})
         </h3>
@@ -662,7 +711,13 @@ export function MixDetail() {
         <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
           {comments.map(c => (
             <div key={c.id}>
-              <div style={{ background: colors.surface, borderRadius: radius.lg, padding: '10px 14px' }}>
+              <div
+                style={{
+                  background: colors.surface,
+                  borderRadius: radius.lg,
+                  padding: '10px 14px',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                   {c.user?.avatar_url && (
                     <img
@@ -734,7 +789,11 @@ export function MixDetail() {
                         {r.user?.display_name || r.user?.username}
                       </Link>
                       <span
-                        style={{ color: colors.text.faintest, fontSize: fontSize.xs, marginLeft: 'auto' }}
+                        style={{
+                          color: colors.text.faintest,
+                          fontSize: fontSize.xs,
+                          marginLeft: 'auto',
+                        }}
                       >
                         {timeAgo(r.created_at)}
                       </span>

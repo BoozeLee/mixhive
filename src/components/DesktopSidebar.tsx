@@ -4,7 +4,15 @@ import { useMessages } from '../lib/messagesStore';
 import { Logo } from './Logo';
 import { Icon, HexIcon } from './ui/Icon';
 import type { IconKey } from '../lib/icons';
-import { colors, space, transition, fontSize, fontWeight, layout, withAlpha } from '../styles/tokens';
+import {
+  colors,
+  space,
+  transition,
+  fontSize,
+  fontWeight,
+  layout,
+  withAlpha,
+} from '../styles/tokens';
 
 interface SidebarItem {
   path: string;

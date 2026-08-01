@@ -313,7 +313,16 @@ export function MixCard({ mix }: Props) {
               </div>
 
               {/* DJ name */}
-              <div style={{ fontSize: fontSize.sm, color: colors.text.muted, marginBottom: 5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div
+                style={{
+                  fontSize: fontSize.sm,
+                  color: colors.text.muted,
+                  marginBottom: 5,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {mix.dj_display_name || mix.dj_username}
               </div>
 

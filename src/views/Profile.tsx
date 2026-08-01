@@ -117,7 +117,10 @@ export function ProfilePage() {
         }
         setLoading(false);
       })
-      .catch(() => { setLoading(false); setError('Failed to load profile'); });
+      .catch(() => {
+        setLoading(false);
+        setError('Failed to load profile');
+      });
     return () => {
       cancelled = true;
     };
@@ -174,8 +177,22 @@ export function ProfilePage() {
 
   if (error) {
     return (
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '64px 16px', textAlign: 'center' }} role="alert">
-        <div style={{ padding: '12px 16px', marginBottom: 16, background: withAlpha(colors.danger, 0.1), border: `1px solid ${withAlpha(colors.danger, 0.3)}`, borderRadius: radius.md, color: colors.danger, fontSize: fontSize.sm, display: 'inline-block' }}>
+      <div
+        style={{ maxWidth: 600, margin: '0 auto', padding: '64px 16px', textAlign: 'center' }}
+        role="alert"
+      >
+        <div
+          style={{
+            padding: '12px 16px',
+            marginBottom: 16,
+            background: withAlpha(colors.danger, 0.1),
+            border: `1px solid ${withAlpha(colors.danger, 0.3)}`,
+            borderRadius: radius.md,
+            color: colors.danger,
+            fontSize: fontSize.sm,
+            display: 'inline-block',
+          }}
+        >
           {error}
         </div>
       </div>
@@ -214,96 +231,96 @@ export function ProfilePage() {
 
         <div role="tabpanel" aria-live="polite">
           {profileTab === 'mixes' &&
-          (mixes.length === 0 ? (
-            <EmptyState
-              iconKey="mix"
-              title={isOwn ? t('noMixesTitleOwn') : t('noMixesTitleOther')}
-              body={isOwn ? t('noMixesBodyOwn') : t('noMixesBodyOther')}
-              actionLabel={isOwn ? t('noMixesAction') : undefined}
-              actionTo={isOwn ? '/upload' : undefined}
-            />
-          ) : (
-            <div
-              style={{
-                display: 'flex',
-                gap: space[6],
-                overflowX: 'auto',
-                paddingBottom: space[5],
-                scrollSnapType: 'x mandatory',
-              }}
-            >
-              {mixes.map(mix => (
-                <div
-                  key={mix.id}
-                  style={{ minWidth: 'min(280px, 88vw)', scrollSnapAlign: 'start' }}
-                >
-                  <MixCard
-                    mix={{
-                      ...mix,
-                      dj_username: profile.username,
-                      dj_display_name: profile.display_name || profile.username,
-                      dj_avatar_url: profile.avatar_url || '',
-                      genre_name: mix.genre_name || null,
-                      weekly_plays: mix.weekly_plays || 0,
-                    }}
+            (mixes.length === 0 ? (
+              <EmptyState
+                iconKey="mix"
+                title={isOwn ? t('noMixesTitleOwn') : t('noMixesTitleOther')}
+                body={isOwn ? t('noMixesBodyOwn') : t('noMixesBodyOther')}
+                actionLabel={isOwn ? t('noMixesAction') : undefined}
+                actionTo={isOwn ? '/upload' : undefined}
+              />
+            ) : (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: space[6],
+                  overflowX: 'auto',
+                  paddingBottom: space[5],
+                  scrollSnapType: 'x mandatory',
+                }}
+              >
+                {mixes.map(mix => (
+                  <div
+                    key={mix.id}
+                    style={{ minWidth: 'min(280px, 88vw)', scrollSnapAlign: 'start' }}
+                  >
+                    <MixCard
+                      mix={{
+                        ...mix,
+                        dj_username: profile.username,
+                        dj_display_name: profile.display_name || profile.username,
+                        dj_avatar_url: profile.avatar_url || '',
+                        genre_name: mix.genre_name || null,
+                        weekly_plays: mix.weekly_plays || 0,
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
+
+          {profileTab === 'buzzes' &&
+            (buzzes.length === 0 ? (
+              <EmptyState
+                iconKey="buzz"
+                title={t('noBuzzes')}
+                body={isOwn ? t('noBuzzesBodyOwn') : t('noBuzzesBodyOther')}
+              />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
+                {buzzes.map(b => (
+                  <BuzzCard
+                    key={b.id}
+                    buzz={b}
+                    onDeleted={id => setBuzzes(prev => prev.filter(x => x.id !== id))}
                   />
-                </div>
-              ))}
-            </div>
-          ))}
+                ))}
+              </div>
+            ))}
 
-        {profileTab === 'buzzes' &&
-          (buzzes.length === 0 ? (
-            <EmptyState
-              iconKey="buzz"
-              title={t('noBuzzes')}
-              body={isOwn ? t('noBuzzesBodyOwn') : t('noBuzzesBodyOther')}
+          {profileTab === 'playlists' &&
+            (playlists.length === 0 ? (
+              <EmptyState
+                iconKey="music"
+                title={t('noPlaylistsTitle')}
+                body={isOwn ? t('noPlaylistsBodyOwn') : t('noPlaylistsBodyOther')}
+              />
+            ) : (
+              <div style={{ display: 'grid', gap: space[6] }}>
+                {playlists.map(playlist => (
+                  <PlaylistCard key={playlist.id} playlist={playlist} />
+                ))}
+              </div>
+            ))}
+
+          {profileTab === 'story' && (
+            <HiveStory
+              profileId={profile.id}
+              showJourney={
+                ((profile as unknown as Record<string, unknown>)?.show_journey as boolean) ?? false
+              }
+              isOwn={isOwn}
             />
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
-              {buzzes.map(b => (
-                <BuzzCard
-                  key={b.id}
-                  buzz={b}
-                  onDeleted={id => setBuzzes(prev => prev.filter(x => x.id !== id))}
-                />
-              ))}
-            </div>
-          ))}
+          )}
 
-        {profileTab === 'playlists' &&
-          (playlists.length === 0 ? (
-            <EmptyState
-              iconKey="music"
-              title={t('noPlaylistsTitle')}
-              body={isOwn ? t('noPlaylistsBodyOwn') : t('noPlaylistsBodyOther')}
-            />
-          ) : (
-            <div style={{ display: 'grid', gap: space[6] }}>
-              {playlists.map(playlist => (
-                <PlaylistCard key={playlist.id} playlist={playlist} />
-              ))}
-            </div>
-          ))}
+          {profileTab === 'activity' && <ActivityTab activity={activity} milestones={milestones} />}
 
-        {profileTab === 'story' && (
-          <HiveStory
-            profileId={profile.id}
-            showJourney={
-              ((profile as unknown as Record<string, unknown>)?.show_journey as boolean) ?? false
-            }
-            isOwn={isOwn}
-          />
-        )}
+          {profileTab === 'agents' && <AgentsTab isOwn={isOwn} />}
 
-        {profileTab === 'activity' && <ActivityTab activity={activity} milestones={milestones} />}
+          {profileTab === 'events' && <EventsTab />}
 
-        {profileTab === 'agents' && <AgentsTab isOwn={isOwn} />}
-
-        {profileTab === 'events' && <EventsTab />}
-
-        {profileTab === 'about' && <AboutTab profile={profile} />}
-      </div>
+          {profileTab === 'about' && <AboutTab profile={profile} />}
+        </div>
       </section>
 
       <StartMythicSessionModal

@@ -74,21 +74,27 @@ export function AgentsGallery() {
         s.name.toLowerCase().includes(q) ||
         s.description.toLowerCase().includes(q) ||
         s.tags.some(t => t.toLowerCase().includes(q))
-    ).filter(
-      s => category === 'all' || s.tags.some(tag => tag.toLowerCase() === category.toLowerCase())
-    ).map(s => ({ ...s, kind: 'starter' as const }));
+    )
+      .filter(
+        s => category === 'all' || s.tags.some(tag => tag.toLowerCase() === category.toLowerCase())
+      )
+      .map(s => ({ ...s, kind: 'starter' as const }));
   }, [search, category]);
 
   const filteredAgents = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return agents.filter(
-      a =>
-        a.name.toLowerCase().includes(q) ||
-        (a.description ?? '').toLowerCase().includes(q) ||
-        (a.tags ?? []).some(t => t.toLowerCase().includes(q))
-    ).filter(
-      a => category === 'all' || (a.tags ?? []).some(tag => tag.toLowerCase() === category.toLowerCase())
-    );
+    return agents
+      .filter(
+        a =>
+          a.name.toLowerCase().includes(q) ||
+          (a.description ?? '').toLowerCase().includes(q) ||
+          (a.tags ?? []).some(t => t.toLowerCase().includes(q))
+      )
+      .filter(
+        a =>
+          category === 'all' ||
+          (a.tags ?? []).some(tag => tag.toLowerCase() === category.toLowerCase())
+      );
   }, [agents, search, category]);
 
   const hasAny = filteredStarters.length > 0 || filteredAgents.length > 0;

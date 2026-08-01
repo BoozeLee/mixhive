@@ -16,7 +16,13 @@ function formatBytes(bytes: number): string {
   return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
 }
 
-export function UploadProgress({ progress, loadedBytes, totalBytes, label, onCancel }: UploadProgressProps) {
+export function UploadProgress({
+  progress,
+  loadedBytes,
+  totalBytes,
+  label,
+  onCancel,
+}: UploadProgressProps) {
   return (
     <div style={{ marginBottom: space[7] }}>
       <div
@@ -29,8 +35,27 @@ export function UploadProgress({ progress, loadedBytes, totalBytes, label, onCan
           gap: space[2],
         }}
       >
-        <span style={{ color: colors.accent, fontWeight: fontWeight.semibold, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{label}</span>
-        <span style={{ color: colors.text.muted, display: 'flex', alignItems: 'center', gap: space[3], flexShrink: 0 }}>
+        <span
+          style={{
+            color: colors.accent,
+            fontWeight: fontWeight.semibold,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            minWidth: 0,
+          }}
+        >
+          {label}
+        </span>
+        <span
+          style={{
+            color: colors.text.muted,
+            display: 'flex',
+            alignItems: 'center',
+            gap: space[3],
+            flexShrink: 0,
+          }}
+        >
           {Math.round(progress)}% · {formatBytes(loadedBytes)} / {formatBytes(totalBytes)}
           {onCancel && (
             <button

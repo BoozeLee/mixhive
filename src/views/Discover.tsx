@@ -22,7 +22,15 @@ import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
 import { useAuth } from '../hooks/useAuth';
 import type { FeedMix, Profile, FeedBuzz } from '../lib/types';
-import { colors, radius, space, fontSize, fontWeight, transition, withAlpha } from '../styles/tokens';
+import {
+  colors,
+  radius,
+  space,
+  fontSize,
+  fontWeight,
+  transition,
+  withAlpha,
+} from '../styles/tokens';
 
 const NAV_ITEMS: { key: string; label: string }[] = [
   { key: 'trending', label: 'Trending' },
@@ -201,7 +209,12 @@ export function Discover() {
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 16px 96px' }}>
       <header style={{ marginBottom: space[8] }}>
-        <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+        <SectionHeading
+          as="h1"
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          subtitle={t('subtitle')}
+        />
       </header>
 
       {/* Quick-nav pills */}
@@ -262,195 +275,244 @@ export function Discover() {
       )}
 
       {/* Trending mixes lane */}
-      <div id="discover-trending"><Reveal index={1} from="up">
-      <DiscoverLane
-        title={t('trendingMixes')}
-        subtitle={t('trendingSubtitle')}
-        href="/search?tab=mixes"
-        hrefLabel={t('seeAll')}
-        loading={trendingLoading}
-        error={trendingError}
-        skeletonCount={5}
-        skeletonWidth={160}
-      >
-        {trending.slice(1).map(mix => (
-          <CompactMixCard key={mix.id} mix={mix} />
-        ))}
-      </DiscoverLane>
-      </Reveal></div>
+      <div id="discover-trending">
+        <Reveal index={1} from="up">
+          <DiscoverLane
+            title={t('trendingMixes')}
+            subtitle={t('trendingSubtitle')}
+            href="/search?tab=mixes"
+            hrefLabel={t('seeAll')}
+            loading={trendingLoading}
+            error={trendingError}
+            skeletonCount={5}
+            skeletonWidth={160}
+          >
+            {trending.slice(1).map(mix => (
+              <CompactMixCard key={mix.id} mix={mix} />
+            ))}
+          </DiscoverLane>
+        </Reveal>
+      </div>
 
       {/* Fresh drops lane */}
-      <div id="discover-fresh"><Reveal index={2} from="up">
-      <DiscoverLane
-        title={t('freshDrops')}
-        subtitle={t('freshDropsSubtitle')}
-        href="/search?tab=mixes"
-        hrefLabel={t('seeAll')}
-        loading={freshLoading}
-        error={freshError}
-        skeletonCount={5}
-        skeletonWidth={160}
-      >
-        {fresh.map(mix => (
-          <CompactMixCard key={mix.id} mix={mix} />
-        ))}
-      </DiscoverLane>
-      </Reveal></div>
+      <div id="discover-fresh">
+        <Reveal index={2} from="up">
+          <DiscoverLane
+            title={t('freshDrops')}
+            subtitle={t('freshDropsSubtitle')}
+            href="/search?tab=mixes"
+            hrefLabel={t('seeAll')}
+            loading={freshLoading}
+            error={freshError}
+            skeletonCount={5}
+            skeletonWidth={160}
+          >
+            {fresh.map(mix => (
+              <CompactMixCard key={mix.id} mix={mix} />
+            ))}
+          </DiscoverLane>
+        </Reveal>
+      </div>
 
       {/* Top creators lane */}
-      <div id="discover-creators"><Reveal index={3} from="up">
-      <DiscoverLane
-        title={t('topCreators')}
-        subtitle={t('topCreatorsSubtitle')}
-        href="/search?tab=artists"
-        hrefLabel={t('seeAll')}
-        loading={creatorsLoading}
-        error={creatorsError}
-        skeletonCount={5}
-        skeletonWidth={160}
-      >
-        {creators.map(profile => (
-          <CreatorCard key={profile.id} profile={profile} />
-        ))}
-      </DiscoverLane>
-      </Reveal></div>
+      <div id="discover-creators">
+        <Reveal index={3} from="up">
+          <DiscoverLane
+            title={t('topCreators')}
+            subtitle={t('topCreatorsSubtitle')}
+            href="/search?tab=artists"
+            hrefLabel={t('seeAll')}
+            loading={creatorsLoading}
+            error={creatorsError}
+            skeletonCount={5}
+            skeletonWidth={160}
+          >
+            {creators.map(profile => (
+              <CreatorCard key={profile.id} profile={profile} />
+            ))}
+          </DiscoverLane>
+        </Reveal>
+      </div>
 
       {/* Buzzing now lane */}
-      <div id="discover-buzz"><Reveal index={4} from="up">
-      <DiscoverLane
-        title={t('buzzingNow')}
-        subtitle={t('buzzingNowSubtitle')}
-        href="/feed?tab=latest"
-        hrefLabel={t('seeAll')}
-        loading={buzzLoading}
-        error={buzzError}
-        skeletonCount={4}
-        skeletonWidth={280}
-      >
-        {buzzes.map(buzz => (
-          <div
-            key={buzz.id}
-            style={{
-              flexShrink: 0,
-              width: 280,
-              scrollSnapAlign: 'start',
-              background: colors.surface,
-              borderRadius: radius.lg,
-              border: `1px solid ${colors.border}`,
-              padding: space[5],
-            }}
+      <div id="discover-buzz">
+        <Reveal index={4} from="up">
+          <DiscoverLane
+            title={t('buzzingNow')}
+            subtitle={t('buzzingNowSubtitle')}
+            href="/feed?tab=latest"
+            hrefLabel={t('seeAll')}
+            loading={buzzLoading}
+            error={buzzError}
+            skeletonCount={4}
+            skeletonWidth={280}
           >
-            <BuzzCard buzz={buzz} compact />
-          </div>
-        ))}
-      </DiscoverLane>
-      </Reveal></div>
+            {buzzes.map(buzz => (
+              <div
+                key={buzz.id}
+                style={{
+                  flexShrink: 0,
+                  width: 280,
+                  scrollSnapAlign: 'start',
+                  background: colors.surface,
+                  borderRadius: radius.lg,
+                  border: `1px solid ${colors.border}`,
+                  padding: space[5],
+                }}
+              >
+                <BuzzCard buzz={buzz} compact />
+              </div>
+            ))}
+          </DiscoverLane>
+        </Reveal>
+      </div>
 
       {/* AI Band lane */}
-      <div id="discover-aiBand"><Reveal index={5} from="up">
-      <DiscoverLane
-        title={t('aiBand')}
-        subtitle={t('aiBandSubtitle')}
-        href="/ai-band"
-        hrefLabel={t('seeAll')}
-        loading={agentsLoading}
-        error={agentsError}
-        skeletonCount={4}
-        skeletonWidth={240}
-      >
-        {agents.map(agent => (
-          <div key={agent.id} style={{ flexShrink: 0, width: 240, scrollSnapAlign: 'start' }}>
-            <AIAgentCard agent={agent} currentUserId={user?.id} />
-          </div>
-        ))}
-      </DiscoverLane>
-      </Reveal></div>
+      <div id="discover-aiBand">
+        <Reveal index={5} from="up">
+          <DiscoverLane
+            title={t('aiBand')}
+            subtitle={t('aiBandSubtitle')}
+            href="/ai-band"
+            hrefLabel={t('seeAll')}
+            loading={agentsLoading}
+            error={agentsError}
+            skeletonCount={4}
+            skeletonWidth={240}
+          >
+            {agents.map(agent => (
+              <div key={agent.id} style={{ flexShrink: 0, width: 240, scrollSnapAlign: 'start' }}>
+                <AIAgentCard agent={agent} currentUserId={user?.id} />
+              </div>
+            ))}
+          </DiscoverLane>
+        </Reveal>
+      </div>
 
       {/* Popular genres lane */}
-      <div id="discover-genres"><Reveal index={6} from="up">
-      <DiscoverLane
-        title={t('popularGenres')}
-        subtitle={t('popularGenresSubtitle')}
-        href="/search"
-        hrefLabel={t('seeAll')}
-        loading={genresLoading}
-        error={genresError}
-        skeletonCount={6}
-        skeletonWidth={140}
-      >
-        {genres.map(genre => (
-          <GenreCard key={genre.id} name={genre.name} count={genre.count} />
-        ))}
-      </DiscoverLane>
-      </Reveal></div>
+      <div id="discover-genres">
+        <Reveal index={6} from="up">
+          <DiscoverLane
+            title={t('popularGenres')}
+            subtitle={t('popularGenresSubtitle')}
+            href="/search"
+            hrefLabel={t('seeAll')}
+            loading={genresLoading}
+            error={genresError}
+            skeletonCount={6}
+            skeletonWidth={140}
+          >
+            {genres.map(genre => (
+              <GenreCard key={genre.id} name={genre.name} count={genre.count} />
+            ))}
+          </DiscoverLane>
+        </Reveal>
+      </div>
 
       {/* Upcoming events lane */}
-      <div id="discover-events"><Reveal index={7} from="up">
-      <DiscoverLane
-        title={t('upcomingEvents') || 'Upcoming Events'}
-        subtitle={t('upcomingEventsSubtitle') || 'Raves, sessions, and meetups'}
-        href="/events"
-        hrefLabel={t('seeAll')}
-        loading={eventsLoading}
-        error={eventsError}
-        skeletonCount={4}
-        skeletonWidth={260}
-      >
-        {events.map(event => (
-          <Link
-            key={event.id}
-            to={`/events/${event.id}`}
-            style={{
-              flexShrink: 0,
-              width: 260,
-              scrollSnapAlign: 'start',
-              background: colors.surface,
-              borderRadius: radius.lg,
-              border: `1px solid ${colors.border}`,
-              textDecoration: 'none',
-              color: colors.text.primary,
-              overflow: 'hidden',
-              transition: transition.base,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = colors.accent; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = colors.border; }}
+      <div id="discover-events">
+        <Reveal index={7} from="up">
+          <DiscoverLane
+            title={t('upcomingEvents') || 'Upcoming Events'}
+            subtitle={t('upcomingEventsSubtitle') || 'Raves, sessions, and meetups'}
+            href="/events"
+            hrefLabel={t('seeAll')}
+            loading={eventsLoading}
+            error={eventsError}
+            skeletonCount={4}
+            skeletonWidth={260}
           >
-            <div style={{
-              height: 100,
-              background: event.cover_image_url
-                ? `url(${event.cover_image_url}) center/cover`
-                : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
-              display: 'flex', alignItems: 'flex-end', padding: space[2],
-            }}>
-              <div style={{
-                background: colors.bg, borderRadius: radius.sm,
-                padding: `${space[1]} ${space[2]}`, textAlign: 'center', minWidth: space[12],
-              }}>
-                <div style={{ fontSize: fontSize.xs, color: colors.accent, fontWeight: 700, textTransform: 'uppercase' }}>
-                  {new Date(event.starts_at).toLocaleDateString(undefined, { month: 'short' })}
+            {events.map(event => (
+              <Link
+                key={event.id}
+                to={`/events/${event.id}`}
+                style={{
+                  flexShrink: 0,
+                  width: 260,
+                  scrollSnapAlign: 'start',
+                  background: colors.surface,
+                  borderRadius: radius.lg,
+                  border: `1px solid ${colors.border}`,
+                  textDecoration: 'none',
+                  color: colors.text.primary,
+                  overflow: 'hidden',
+                  transition: transition.base,
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = colors.accent;
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = colors.border;
+                }}
+              >
+                <div
+                  style={{
+                    height: 100,
+                    background: event.cover_image_url
+                      ? `url(${event.cover_image_url}) center/cover`
+                      : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.surface})`,
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    padding: space[2],
+                  }}
+                >
+                  <div
+                    style={{
+                      background: colors.bg,
+                      borderRadius: radius.sm,
+                      padding: `${space[1]} ${space[2]}`,
+                      textAlign: 'center',
+                      minWidth: space[12],
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: fontSize.xs,
+                        color: colors.accent,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {new Date(event.starts_at).toLocaleDateString(undefined, { month: 'short' })}
+                    </div>
+                    <div style={{ fontSize: fontSize.xl, fontWeight: 700, lineHeight: 1 }}>
+                      {new Date(event.starts_at).getDate()}
+                    </div>
+                  </div>
                 </div>
-                <div style={{ fontSize: fontSize.xl, fontWeight: 700, lineHeight: 1 }}>
-                  {new Date(event.starts_at).getDate()}
+                <div style={{ padding: space[3] }}>
+                  <h4
+                    style={{
+                      fontSize: fontSize.sm,
+                      fontWeight: 700,
+                      margin: 0,
+                      marginBottom: space[1],
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {event.title}
+                  </h4>
+                  {event.venue_name && (
+                    <p style={{ fontSize: fontSize.xs, color: colors.text.faint, margin: 0 }}>
+                      {event.venue_name}
+                    </p>
+                  )}
+                  <p
+                    style={{
+                      fontSize: fontSize.xs,
+                      color: colors.text.muted,
+                      margin: 0,
+                      marginTop: space[1],
+                    }}
+                  >
+                    {event.rsvp_counts.going} going · {event.is_free ? 'Free' : 'Ticket'}
+                  </p>
                 </div>
-              </div>
-            </div>
-            <div style={{ padding: space[3] }}>
-              <h4 style={{ fontSize: fontSize.sm, fontWeight: 700, margin: 0, marginBottom: space[1], lineHeight: 1.3 }}>
-                {event.title}
-              </h4>
-              {event.venue_name && (
-                <p style={{ fontSize: fontSize.xs, color: colors.text.faint, margin: 0 }}>
-                  {event.venue_name}
-                </p>
-              )}
-              <p style={{ fontSize: fontSize.xs, color: colors.text.muted, margin: 0, marginTop: space[1] }}>
-                {event.rsvp_counts.going} going · {event.is_free ? 'Free' : 'Ticket'}
-              </p>
-            </div>
-          </Link>
-        ))}
-      </DiscoverLane>
-      </Reveal></div>
+              </Link>
+            ))}
+          </DiscoverLane>
+        </Reveal>
+      </div>
 
       {/* Empty state when everything fails */}
       {!trendingLoading &&

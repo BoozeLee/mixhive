@@ -58,12 +58,20 @@ describe('POST /api/events/[id]/rsvp', () => {
         return {
           select: () => ({
             eq: () => ({
-              neq: () => ({ then: (resolve: Function) => resolve({ data: null, count: 0, error: null }) }),
+              neq: () => ({
+                then: (resolve: Function) => resolve({ data: null, count: 0, error: null }),
+              }),
             }),
           }),
           upsert: () => ({
             select: () => ({
-              single: () => ({ then: (resolve: Function) => resolve({ data: { event_id: 'e1', user_id: 'u1', status: 'going' }, error: null }) }),
+              single: () => ({
+                then: (resolve: Function) =>
+                  resolve({
+                    data: { event_id: 'e1', user_id: 'u1', status: 'going' },
+                    error: null,
+                  }),
+              }),
             }),
           }),
         };

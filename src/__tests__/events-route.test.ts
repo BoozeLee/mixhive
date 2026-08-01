@@ -7,7 +7,13 @@ import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/events/route';
 
 const mockEvents = [
-  { id: 'e1', title: 'Rave Night', status: 'published', starts_at: '2026-08-01T20:00:00Z', organizer_id: 'u1' },
+  {
+    id: 'e1',
+    title: 'Rave Night',
+    status: 'published',
+    starts_at: '2026-08-01T20:00:00Z',
+    organizer_id: 'u1',
+  },
 ];
 const mockRsvps = [{ event_id: 'e1', status: 'going' }];
 

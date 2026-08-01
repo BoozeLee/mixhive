@@ -403,7 +403,11 @@ export function Opportunities() {
         ))}
       </div>
 
-      {loading && <div role="status" aria-live="polite"><LoadingSpinner size="medium" /></div>}
+      {loading && (
+        <div role="status" aria-live="polite">
+          <LoadingSpinner size="medium" />
+        </div>
+      )}
       {error && <div style={{ color: colors.danger }}>{error}</div>}
       {!loading && !error && visibleMatches.length === 0 && (
         <div

@@ -149,10 +149,13 @@ export const PlatformLinksSchema = z.record(
 );
 
 export const ScheduleSchema = z.object({
-  scheduledAt: z.string().datetime().refine(
-    iso => new Date(iso) > new Date(Date.now() + 5 * 60 * 1000),
-    'Schedule time must be at least 5 minutes in the future'
-  ),
+  scheduledAt: z
+    .string()
+    .datetime()
+    .refine(
+      iso => new Date(iso) > new Date(Date.now() + 5 * 60 * 1000),
+      'Schedule time must be at least 5 minutes in the future'
+    ),
 });
 
 // ── Subscription schemas ──────────────────────────────────────────────────────

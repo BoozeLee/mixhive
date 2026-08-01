@@ -55,9 +55,21 @@ export function Leaderboard() {
           <h1 style={{ margin: 0, fontSize: 26, color: colors.text.primary }}>{t('title')}</h1>
           <p style={{ color: colors.text.dim, fontSize: 13, margin: '6px 0 0' }}>{t('subtitle')}</p>
         </header>
-        <div role="alert" style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
+        <div
+          role="alert"
+          style={{
+            padding: space[10],
+            textAlign: 'center',
+            color: colors.danger,
+            background: colors.dangerBg,
+            borderRadius: radius.md,
+            border: `1px solid ${colors.danger}`,
+          }}
+        >
           <p>{error}</p>
-          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );

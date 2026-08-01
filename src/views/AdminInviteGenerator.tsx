@@ -338,7 +338,14 @@ export function AdminInviteGenerator() {
           >
             Invite created!
           </div>
-          <div style={{ fontSize: fontSize.lg, fontWeight: fontWeight.bold, color: colors.text.primary, fontFamily: 'monospace' }}>
+          <div
+            style={{
+              fontSize: fontSize.lg,
+              fontWeight: fontWeight.bold,
+              color: colors.text.primary,
+              fontFamily: 'monospace',
+            }}
+          >
             {lastCreated.code}
           </div>
           <div
@@ -455,7 +462,9 @@ export function AdminInviteGenerator() {
             {invites.map(invite => {
               const usedPct = invite.max_uses > 0 ? (invite.uses_count / invite.max_uses) * 100 : 0;
               const isExhausted = invite.uses_count >= invite.max_uses;
-              const isExpired = invite.expires_at ? new Date(invite.expires_at) < new Date() : false;
+              const isExpired = invite.expires_at
+                ? new Date(invite.expires_at) < new Date()
+                : false;
               const isDisabled = !invite.is_active || isExhausted || isExpired;
 
               return (
@@ -483,7 +492,9 @@ export function AdminInviteGenerator() {
                       {invite.code}
                     </div>
                     {invite.label && (
-                      <div style={{ fontSize: fontSize.xs, color: colors.text.muted, marginTop: 2 }}>
+                      <div
+                        style={{ fontSize: fontSize.xs, color: colors.text.muted, marginTop: 2 }}
+                      >
                         {invite.label}
                       </div>
                     )}
@@ -514,8 +525,11 @@ export function AdminInviteGenerator() {
                       {invite.uses_count}/{invite.max_uses} used
                       {invite.expires_at && (
                         <>
-                          {' '}&middot;{' '}
-                          {isExpired ? 'Expired' : `Expires ${new Date(invite.expires_at).toLocaleDateString()}`}
+                          {' '}
+                          &middot;{' '}
+                          {isExpired
+                            ? 'Expired'
+                            : `Expires ${new Date(invite.expires_at).toLocaleDateString()}`}
                         </>
                       )}
                     </div>

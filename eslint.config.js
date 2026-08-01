@@ -54,7 +54,6 @@ export default defineConfig([
       // types; keep lint focused on behavioral issues.
       'react-refresh/only-export-components': 'off',
 
-
       // jsx-a11y — every rule the codebase currently satisfies is at 'error'.
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/anchor-has-content': 'error',

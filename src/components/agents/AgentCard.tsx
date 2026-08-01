@@ -2,7 +2,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslations } from 'next-intl';
 import { Button } from '../ui/Button';
-import { colors, fontSize, fontWeight, radius, space, transition, getAgentCategoryColor } from '../../styles/tokens';
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  radius,
+  space,
+  transition,
+  getAgentCategoryColor,
+} from '../../styles/tokens';
 import type { StarterAgent } from '../../lib/starter_agents';
 import type { PublicLuaAgent } from '../../lib/agents';
 

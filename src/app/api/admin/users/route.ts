@@ -30,23 +30,21 @@ export async function GET(req: NextRequest) {
   const showBanned = searchParams.get('banned') === 'true';
 
   const sb = serviceClient();
-  let dbQuery = sb
-    .from('profiles')
-    .select('*', { count: 'exact' });
+  let dbQuery = sb.from('profiles').select('*', { count: 'exact' });
 
   if (query) {
-    dbQuery = dbQuery.or(
-      `username.ilike.%${query}%,display_name.ilike.%${query}%`
-    );
+    dbQuery = dbQuery.or(`username.ilike.%${query}%,display_name.ilike.%${query}%`);
   }
 
   if (showBanned) {
     dbQuery = dbQuery.eq('moderation_status', 'banned');
   }
 
-  const { data: users, count, error } = await dbQuery
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
+  const {
+    data: users,
+    count,
+    error,
+  } = await dbQuery.order('created_at', { ascending: false }).range(offset, offset + limit - 1);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

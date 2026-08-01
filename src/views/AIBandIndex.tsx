@@ -27,7 +27,10 @@ export function AIBandIndex() {
         setAgents(a);
         setLoading(false);
       })
-      .catch(() => { setError('Failed to load AI agents'); setLoading(false); });
+      .catch(() => {
+        setError('Failed to load AI agents');
+        setLoading(false);
+      });
   }
 
   useEffect(() => {
@@ -54,12 +57,16 @@ export function AIBandIndex() {
     return (
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '24px 16px' }}>
         <div style={{ marginBottom: 24 }}>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: colors.text.primary }}>{t('title')}</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: colors.text.primary }}>
+            {t('title')}
+          </h1>
           <p style={{ color: colors.text.dim, fontSize: 13, margin: '6px 0 0' }}>{t('subtitle')}</p>
         </div>
         <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>
           <p>{error}</p>
-          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );

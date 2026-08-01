@@ -35,25 +35,24 @@ export const useAgentStore = create<AgentStoreState & AgentStoreActions>((set, g
   lastError: null,
   lastRunAt: null,
 
-  setRunning: (running) => set({ running, lastRunAt: running ? new Date().toISOString() : get().lastRunAt }),
+  setRunning: running =>
+    set({ running, lastRunAt: running ? new Date().toISOString() : get().lastRunAt }),
 
-  setError: (lastError) => set({ lastError }),
+  setError: lastError => set({ lastError }),
 
-  addSuggestions: (suggestions) =>
-    set((state) => ({
+  addSuggestions: suggestions =>
+    set(state => ({
       suggestions: [...suggestions, ...state.suggestions].slice(0, 100),
     })),
 
   updateSuggestion: (id, updates) =>
-    set((state) => ({
-      suggestions: state.suggestions.map((s) =>
-        s.id === id ? { ...s, ...updates } : s
-      ),
+    set(state => ({
+      suggestions: state.suggestions.map(s => (s.id === id ? { ...s, ...updates } : s)),
     })),
 
   clearSuggestions: () => set({ suggestions: [] }),
 
-  subscribe: (userId) => {
+  subscribe: userId => {
     const channel: RealtimeChannel = supabase
       .channel(`agent-store:${userId}`)
       .on(
@@ -64,9 +63,9 @@ export const useAgentStore = create<AgentStoreState & AgentStoreActions>((set, g
           table: 'ai_suggestions',
           filter: `profile_id=eq.${userId}`,
         },
-        (payload) => {
+        payload => {
           const newSuggestion = payload.new as StoreSuggestion;
-          set((state) => ({
+          set(state => ({
             suggestions: [newSuggestion, ...state.suggestions].slice(0, 100),
           }));
         }
@@ -79,12 +78,10 @@ export const useAgentStore = create<AgentStoreState & AgentStoreActions>((set, g
           table: 'ai_suggestions',
           filter: `profile_id=eq.${userId}`,
         },
-        (payload) => {
+        payload => {
           const updated = payload.new as StoreSuggestion;
-          set((state) => ({
-            suggestions: state.suggestions.map((s) =>
-              s.id === updated.id ? updated : s
-            ),
+          set(state => ({
+            suggestions: state.suggestions.map(s => (s.id === updated.id ? updated : s)),
           }));
         }
       )

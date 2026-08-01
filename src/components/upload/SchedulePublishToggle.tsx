@@ -76,7 +76,14 @@ export function SchedulePublishToggle({
             }}
           />
           {error && (
-            <span style={{ color: colors.danger, fontSize: fontSize.xs, marginTop: space[2], display: 'block' }}>
+            <span
+              style={{
+                color: colors.danger,
+                fontSize: fontSize.xs,
+                marginTop: space[2],
+                display: 'block',
+              }}
+            >
               {error}
             </span>
           )}

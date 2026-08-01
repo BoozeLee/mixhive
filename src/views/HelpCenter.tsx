@@ -25,7 +25,12 @@ export function HelpCenter() {
   return (
     <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 16px 96px' }}>
       <header style={{ marginBottom: space[10] }}>
-        <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+        <SectionHeading
+          as="h1"
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          subtitle={t('subtitle')}
+        />
       </header>
 
       {/* Search */}

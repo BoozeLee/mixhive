@@ -62,13 +62,18 @@ describe('PATCH /api/events/[id]', () => {
         return {
           select: () => ({
             eq: () => ({
-              maybeSingle: () => ({ then: (resolve: Function) => resolve({ data: mockEvent, error: null }) }),
+              maybeSingle: () => ({
+                then: (resolve: Function) => resolve({ data: mockEvent, error: null }),
+              }),
             }),
           }),
           update: () => ({
             eq: () => ({
               select: () => ({
-                single: () => ({ then: (resolve: Function) => resolve({ data: { ...mockEvent, title: 'Updated' }, error: null }) }),
+                single: () => ({
+                  then: (resolve: Function) =>
+                    resolve({ data: { ...mockEvent, title: 'Updated' }, error: null }),
+                }),
               }),
             }),
           }),

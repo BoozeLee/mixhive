@@ -75,31 +75,41 @@ export function PricingPage() {
     setTierError(null);
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session?.access_token) {
-        if (!cancelled) { setTierLoading(false); setSubscriptionTier('free'); }
+        if (!cancelled) {
+          setTierLoading(false);
+          setSubscriptionTier('free');
+        }
         return;
       }
       fetch('/api/subscription/status', {
         headers: { Authorization: `Bearer ${session.access_token}` },
-      }).then(res => {
-        if (!res.ok) throw new Error('Failed to fetch status');
-        return res.json();
-      }).then(data => {
-        if (!cancelled) {
-          setSubscriptionTier(data.tier || 'free');
-          setTierLoading(false);
-        }
-      }).catch(() => {
-        if (!cancelled) {
-          setTierError('Could not load subscription status');
-          setTierLoading(false);
-        }
-      });
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to fetch status');
+          return res.json();
+        })
+        .then(data => {
+          if (!cancelled) {
+            setSubscriptionTier(data.tier || 'free');
+            setTierLoading(false);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setTierError('Could not load subscription status');
+            setTierLoading(false);
+          }
+        });
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
   const handleManageBilling = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.access_token) return;
     const res = await fetch('/api/subscription/portal', {
       method: 'POST',
@@ -170,7 +180,17 @@ export function PricingPage() {
       </p>
 
       {tierError && (
-        <div style={{ marginBottom: space[8], padding: space[4], background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}`, color: colors.danger, fontSize: fontSize.sm }}>
+        <div
+          style={{
+            marginBottom: space[8],
+            padding: space[4],
+            background: colors.dangerBg,
+            borderRadius: radius.md,
+            border: `1px solid ${colors.danger}`,
+            color: colors.danger,
+            fontSize: fontSize.sm,
+          }}
+        >
           {tierError}
         </div>
       )}
@@ -191,117 +211,119 @@ export function PricingPage() {
           {TIERS.map(tier => {
             const isCurrentTier = subscriptionTier === tier.id;
             return (
-            <div
-              key={tier.id}
-              style={{
-                background: tier.featured ? colors.surfaceElevated : colors.surface,
-                border: `1px solid ${tier.featured ? colors.accent : colors.border}`,
-                borderRadius: radius.lg,
-                padding: space[8],
-                display: 'flex',
-                flexDirection: 'column',
-                gap: space[6],
-                transform: tier.featured ? 'scale(1.05)' : undefined,
-                position: 'relative',
-              }}
-            >
-              {tier.featured && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: -12,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    background: colors.accent,
-                    color: colors.black,
-                    padding: '4px 16px',
-                    borderRadius: radius.full,
-                    fontSize: fontSize.xs,
-                    fontWeight: 600,
-                  }}
-                >
-                  {t('popular')}
-                </span>
-              )}
-
-              <h2
+              <div
+                key={tier.id}
                 style={{
-                  fontSize: fontSize['2xl'],
-                  fontWeight: 700,
-                  color: colors.text.primary,
-                  textTransform: 'capitalize',
-                }}
-              >
-                {t(tier.id as never)}
-              </h2>
-
-              <div>
-                <span
-                  style={{
-                    fontSize: fontSize['3xl'],
-                    fontWeight: 700,
-                    color: colors.text.primary,
-                  }}
-                >
-                  {tier.price}
-                </span>
-                <span style={{ fontSize: fontSize.sm, color: colors.text.dim }}>{tier.period}</span>
-              </div>
-
-              <ul
-                style={{
-                  listStyle: 'none',
-                  padding: 0,
-                  margin: 0,
+                  background: tier.featured ? colors.surfaceElevated : colors.surface,
+                  border: `1px solid ${tier.featured ? colors.accent : colors.border}`,
+                  borderRadius: radius.lg,
+                  padding: space[8],
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: space[3],
-                  textAlign: 'left',
+                  gap: space[6],
+                  transform: tier.featured ? 'scale(1.05)' : undefined,
+                  position: 'relative',
                 }}
               >
-                {tier.features.map(f => (
-                  <li
-                    key={f}
+                {tier.featured && (
+                  <span
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: space[2],
-                      fontSize: fontSize.sm,
-                      color: colors.text.secondary,
+                      position: 'absolute',
+                      top: -12,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: colors.accent,
+                      color: colors.black,
+                      padding: '4px 16px',
+                      borderRadius: radius.full,
+                      fontSize: fontSize.xs,
+                      fontWeight: 600,
                     }}
                   >
-                    <Icon name="check" size={16} color={colors.success} />
-                    {t(f)}
-                  </li>
-                ))}
-              </ul>
+                    {t('popular')}
+                  </span>
+                )}
 
-              {isCurrentTier ? (
-                <Button variant="secondary" size="lg" disabled style={{ marginTop: 'auto' }}>
-                  {t('current')}
-                </Button>
-              ) : (
-                <Button
-                  variant={tier.featured ? 'primary' : 'secondary'}
-                  size="lg"
-                  onClick={() => handleSubscribe(`${tier.id.toUpperCase()}_PRICE_ID`)}
-                  style={{ marginTop: 'auto' }}
+                <h2
+                  style={{
+                    fontSize: fontSize['2xl'],
+                    fontWeight: 700,
+                    color: colors.text.primary,
+                    textTransform: 'capitalize',
+                  }}
                 >
-                  {t('subscribe')}
-                </Button>
-              )}
+                  {t(tier.id as never)}
+                </h2>
 
-              {hasSubscription && isCurrentTier && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleManageBilling}
-                  style={{ marginTop: 0 }}
+                <div>
+                  <span
+                    style={{
+                      fontSize: fontSize['3xl'],
+                      fontWeight: 700,
+                      color: colors.text.primary,
+                    }}
+                  >
+                    {tier.price}
+                  </span>
+                  <span style={{ fontSize: fontSize.sm, color: colors.text.dim }}>
+                    {tier.period}
+                  </span>
+                </div>
+
+                <ul
+                  style={{
+                    listStyle: 'none',
+                    padding: 0,
+                    margin: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: space[3],
+                    textAlign: 'left',
+                  }}
                 >
-                  {t('manage')}
-                </Button>
-              )}
-            </div>
+                  {tier.features.map(f => (
+                    <li
+                      key={f}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: space[2],
+                        fontSize: fontSize.sm,
+                        color: colors.text.secondary,
+                      }}
+                    >
+                      <Icon name="check" size={16} color={colors.success} />
+                      {t(f)}
+                    </li>
+                  ))}
+                </ul>
+
+                {isCurrentTier ? (
+                  <Button variant="secondary" size="lg" disabled style={{ marginTop: 'auto' }}>
+                    {t('current')}
+                  </Button>
+                ) : (
+                  <Button
+                    variant={tier.featured ? 'primary' : 'secondary'}
+                    size="lg"
+                    onClick={() => handleSubscribe(`${tier.id.toUpperCase()}_PRICE_ID`)}
+                    style={{ marginTop: 'auto' }}
+                  >
+                    {t('subscribe')}
+                  </Button>
+                )}
+
+                {hasSubscription && isCurrentTier && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleManageBilling}
+                    style={{ marginTop: 0 }}
+                  >
+                    {t('manage')}
+                  </Button>
+                )}
+              </div>
             );
           })}
         </div>

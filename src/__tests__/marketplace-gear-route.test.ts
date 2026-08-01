@@ -7,7 +7,16 @@ import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/marketplace/gear/route';
 
 const mockListings = [
-  { id: 'g1', title: 'Pioneer CDJ-3000', category: 'cdj', price: 1500, status: 'active', seller_profile_id: 'u1', condition: 'used_good', photos: ['img1.jpg'] },
+  {
+    id: 'g1',
+    title: 'Pioneer CDJ-3000',
+    category: 'cdj',
+    price: 1500,
+    status: 'active',
+    seller_profile_id: 'u1',
+    condition: 'used_good',
+    photos: ['img1.jpg'],
+  },
 ];
 
 const fromMock = jest.fn();
@@ -152,7 +161,13 @@ describe('POST /api/marketplace/gear', () => {
       new NextRequest('https://test.vercel.app/api/marketplace/gear', {
         method: 'POST',
         headers: { authorization: 'Bearer valid-jwt' },
-        body: JSON.stringify({ title: 'Test', category: 'cdj', condition: 'new', price: 100, photos: ['x.jpg'] }),
+        body: JSON.stringify({
+          title: 'Test',
+          category: 'cdj',
+          condition: 'new',
+          price: 100,
+          photos: ['x.jpg'],
+        }),
       })
     );
     expect(res.status).toBe(403);

@@ -25,7 +25,7 @@ test.describe('Critical accessibility — public routes', () => {
       await page.waitForTimeout(1000);
       const results = await new AxeBuilder({ page }).analyze();
       const critical = results.violations.filter(
-        violation => violation.impact === 'critical' || violation.impact === 'serious',
+        violation => violation.impact === 'critical' || violation.impact === 'serious'
       );
       expect(critical, JSON.stringify(critical, null, 2)).toEqual([]);
     });
@@ -33,10 +33,7 @@ test.describe('Critical accessibility — public routes', () => {
 });
 
 test.describe('Critical accessibility — authed routes', () => {
-  test.skip(
-    !hasE2ECredentials,
-    'E2E account and backend credentials are not configured',
-  );
+  test.skip(!hasE2ECredentials, 'E2E account and backend credentials are not configured');
 
   for (const route of AUTHED_ROUTES) {
     test(`${route} has no serious or critical axe violations`, async ({ page }) => {
@@ -44,7 +41,7 @@ test.describe('Critical accessibility — authed routes', () => {
       await page.waitForTimeout(1000);
       const results = await new AxeBuilder({ page }).analyze();
       const critical = results.violations.filter(
-        violation => violation.impact === 'critical' || violation.impact === 'serious',
+        violation => violation.impact === 'critical' || violation.impact === 'serious'
       );
       expect(critical, JSON.stringify(critical, null, 2)).toEqual([]);
     });

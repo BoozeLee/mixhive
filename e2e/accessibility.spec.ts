@@ -50,5 +50,3 @@ test.describe('Critical accessibility — authed routes', () => {
     });
   }
 });
-  }
-});

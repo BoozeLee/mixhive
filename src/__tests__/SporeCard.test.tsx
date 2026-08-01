@@ -16,6 +16,10 @@ const spore = (over: Partial<FlowSpore> = {}): FlowSpore => ({
   carbon_count: 2,
   silica_count: 1,
   germination_count: 0,
+  countersigned_count: 0,
+  can_countersign: false,
+  i_countersigned: false,
+  anchor: null,
   is_mine: true,
   ...over,
 });
@@ -91,5 +95,113 @@ describe('SporeCard', () => {
   it('disables the hash button when a spore has no genome', () => {
     render(<SporeCard spore={spore({ content_hash: null })} onGerminate={jest.fn()} />);
     expect(screen.getByRole('button', { name: /no genome hash yet/i })).toBeDisabled();
+  });
+
+  it('says plainly when nobody has vouched for it yet', () => {
+    render(<SporeCard spore={spore()} onGerminate={jest.fn()} />);
+    expect(screen.getByText(/nobody has signed for this yet/i)).toBeInTheDocument();
+  });
+
+  it('reports how many of the humans have signed', () => {
+    render(
+      <SporeCard
+        spore={spore({ carbon_count: 3, countersigned_count: 2 })}
+        onGerminate={jest.fn()}
+      />
+    );
+    expect(screen.getByText(/2 of 3 signed for it/i)).toBeInTheDocument();
+  });
+
+  it('notes when the viewer is among the signers', () => {
+    render(
+      <SporeCard
+        spore={spore({ countersigned_count: 1, i_countersigned: true })}
+        onGerminate={jest.fn()}
+      />
+    );
+    expect(screen.getByText(/including you/i)).toBeInTheDocument();
+  });
+
+  it('shows the notary state — unanchored by default', () => {
+    render(<SporeCard spore={spore()} onGerminate={jest.fn()} />);
+    expect(screen.getByText(/sealed, not yet notarised/i)).toBeInTheDocument();
+  });
+
+  it('shows the batch date once notarised, and the root on hover', () => {
+    render(
+      <SporeCard
+        spore={spore({
+          anchor: {
+            batch_date: '2026-07-30',
+            merkle_root: 'f'.repeat(64),
+            chain: null,
+            anchored_at: null,
+          },
+        })}
+        onGerminate={jest.fn()}
+      />
+    );
+    const el = screen.getByText(/notarised 2026-07-30/i);
+    expect(el).toBeInTheDocument();
+    expect(el).toHaveAttribute('title', expect.stringContaining('f'.repeat(64)));
+  });
+
+  it('names the chain when a root was additionally anchored on one', () => {
+    render(
+      <SporeCard
+        spore={spore({
+          anchor: {
+            batch_date: '2026-07-30',
+            merkle_root: 'a'.repeat(64),
+            chain: 'base-sepolia',
+            anchored_at: '2026-07-31T00:00:00.000Z',
+          },
+        })}
+        onGerminate={jest.fn()}
+      />
+    );
+    expect(screen.getByText(/base-sepolia/i)).toBeInTheDocument();
+  });
+
+  it('offers signing only to an unsigned contributor who has a wallet', () => {
+    const onCountersign = jest.fn().mockResolvedValue(undefined);
+    const { rerender } = render(
+      <SporeCard spore={spore({ can_countersign: true })} onGerminate={jest.fn()} />
+    );
+    // No wallet handler supplied -> no offer.
+    expect(screen.queryByRole('button', { name: /sign that you were there/i })).not.toBeInTheDocument();
+
+    rerender(
+      <SporeCard
+        spore={spore({ can_countersign: true })}
+        onGerminate={jest.fn()}
+        onCountersign={onCountersign}
+      />
+    );
+    expect(screen.getByRole('button', { name: /sign that you were there/i })).toBeInTheDocument();
+  });
+
+  it('does not offer signing to someone who already signed', () => {
+    render(
+      <SporeCard
+        spore={spore({ can_countersign: false, i_countersigned: true })}
+        onGerminate={jest.fn()}
+        onCountersign={jest.fn()}
+      />
+    );
+    expect(screen.queryByRole('button', { name: /sign that you were there/i })).not.toBeInTheDocument();
+  });
+
+  it('calls onCountersign with the spore id', async () => {
+    const onCountersign = jest.fn().mockResolvedValue(undefined);
+    render(
+      <SporeCard
+        spore={spore({ can_countersign: true })}
+        onGerminate={jest.fn()}
+        onCountersign={onCountersign}
+      />
+    );
+    await userEvent.click(screen.getByRole('button', { name: /sign that you were there/i }));
+    expect(onCountersign).toHaveBeenCalledWith('sp1');
   });
 });

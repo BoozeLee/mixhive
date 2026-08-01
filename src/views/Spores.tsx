@@ -5,6 +5,7 @@ import { EmptyState } from '../components/EmptyState';
 import { SkeletonBar } from '../components/Skeleton';
 import { ErrorComponent } from '../components/ErrorComponent';
 import { ritualRequest, type FlowSpore, type GerminationTarget } from '../lib/rituals';
+import { hasInjectedWallet, personalSign, requestWalletAddress } from '../lib/browser-wallet';
 import { colors, fontSize, fontWeight, layout, space } from '../styles/tokens';
 
 export function Spores() {
@@ -39,6 +40,37 @@ export function Spores() {
         await load();
       } catch (e) {
         toast.error(e instanceof Error ? e.message : 'It would not take root');
+      }
+    },
+    [load]
+  );
+
+  const countersign = useCallback(
+    async (sporeId: string) => {
+      const address = await requestWalletAddress();
+      if (!address) {
+        toast.error('No wallet available to sign with');
+        return;
+      }
+      try {
+        // The message comes from the server, never composed here — both sides
+        // must derive it from the same function or the signature will not verify.
+        const { message } = await ritualRequest<{ message: string }>(
+          `/api/flow-spores/${sporeId}/countersign?address=${address}`
+        );
+        const signature = await personalSign(address, message);
+        if (!signature) {
+          // A refusal at the wallet is a choice, not a failure.
+          return;
+        }
+        await ritualRequest(`/api/flow-spores/${sporeId}/countersign`, {
+          method: 'POST',
+          body: JSON.stringify({ address, signature }),
+        });
+        toast.success('Signed — that is your word on it now');
+        await load();
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : 'Could not record the signature');
       }
     },
     [load]
@@ -90,7 +122,12 @@ export function Spores() {
         {!loading &&
           !error &&
           spores.map(spore => (
-            <SporeCard key={spore.id} spore={spore} onGerminate={germinate} />
+            <SporeCard
+              key={spore.id}
+              spore={spore}
+              onGerminate={germinate}
+              onCountersign={hasInjectedWallet() ? countersign : undefined}
+            />
           ))}
       </div>
     </div>

@@ -30,6 +30,18 @@ export interface FlowSpore {
   carbon_count: number;
   silica_count: number;
   germination_count: number;
+  /** How many carbon contributors have signed with their own key (Layer B). */
+  countersigned_count: number;
+  /** True when the caller is a carbon contributor who has not yet signed. */
+  can_countersign: boolean;
+  i_countersigned: boolean;
+  /** Merkle notary batch this spore belongs to (Layer C), if anchored. */
+  anchor: {
+    batch_date: string;
+    merkle_root: string;
+    chain: string | null;
+    anchored_at: string | null;
+  } | null;
   is_mine: boolean;
 }
 

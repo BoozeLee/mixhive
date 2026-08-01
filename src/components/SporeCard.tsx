@@ -36,11 +36,14 @@ function FractionHex({ carbon, silica }: { carbon: number; silica: number }) {
 export interface SporeCardProps {
   spore: FlowSpore;
   onGerminate: (sporeId: string, target: GerminationTarget) => Promise<void>;
+  /** Absent when the viewer has no wallet available to sign with. */
+  onCountersign?: (sporeId: string) => Promise<void>;
 }
 
-export function SporeCard({ spore, onGerminate }: SporeCardProps) {
+export function SporeCard({ spore, onGerminate, onCountersign }: SporeCardProps) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [signing, setSigning] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const shortHash = spore.content_hash ? spore.content_hash.slice(0, 12) : 'unsealed';
@@ -135,6 +138,44 @@ export function SporeCard({ spore, onGerminate }: SporeCardProps) {
           {copied ? 'copied' : shortHash}
         </button>
       </div>
+
+      {/* Layers B and C: who has vouched for this with their own key, and
+          whether it sits under a published notary root. Both are stated
+          plainly rather than badged — a proof that needs explaining is not a
+          proof anyone will trust. */}
+      <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>
+          {spore.countersigned_count === 0
+            ? 'nobody has signed for this yet'
+            : `${spore.countersigned_count} of ${spore.carbon_count} signed for it`}
+          {spore.i_countersigned && ' · including you'}
+        </span>
+        <span
+          style={{
+            fontSize: fontSize.xs,
+            color: spore.anchor ? colors.accent : colors.text.faint,
+          }}
+          title={spore.anchor ? `Merkle root ${spore.anchor.merkle_root}` : undefined}
+        >
+          {spore.anchor
+            ? `notarised ${spore.anchor.batch_date}${spore.anchor.chain ? ` · ${spore.anchor.chain}` : ''}`
+            : 'sealed, not yet notarised'}
+        </span>
+      </div>
+
+      {spore.can_countersign && onCountersign && (
+        <HiveButton
+          variant="glass"
+          size="sm"
+          loading={signing}
+          onClick={() => {
+            setSigning(true);
+            void onCountersign(spore.id).finally(() => setSigning(false));
+          }}
+        >
+          Sign that you were there
+        </HiveButton>
+      )}
 
       {!open ? (
         <HiveButton variant="ghost" size="sm" onClick={() => setOpen(true)}>

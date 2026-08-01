@@ -61,48 +61,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <SentryClient />
         <MixpanelClient />
         <Toaster position="top-right" />
-        <a
-          href="#main-content"
-          style={{
-            position: 'absolute',
-            width: 1,
-            height: 1,
-            padding: 0,
-            margin: -1,
-            overflow: 'hidden',
-            clip: 'rect(0,0,0,0)',
-            whiteSpace: 'nowrap',
-            border: 0,
-          }}
-          onFocus={e => {
-            e.currentTarget.style.position = 'fixed';
-            e.currentTarget.style.width = 'auto';
-            e.currentTarget.style.height = 'auto';
-            e.currentTarget.style.padding = '8px 16px';
-            e.currentTarget.style.margin = 0;
-            e.currentTarget.style.clip = 'auto';
-            e.currentTarget.style.background = colors.accent;
-            e.currentTarget.style.color = colors.black;
-            e.currentTarget.style.top = 0;
-            e.currentTarget.style.left = 0;
-            e.currentTarget.style.zIndex = 9999;
-            e.currentTarget.style.fontSize = '14px';
-            e.currentTarget.style.fontWeight = 700;
-            e.currentTarget.style.outline = 'none';
-            e.currentTarget.style.textDecoration = 'none';
-          }}
-          onBlur={e => {
-            e.currentTarget.style.position = 'absolute';
-            e.currentTarget.style.width = 1;
-            e.currentTarget.style.height = 1;
-            e.currentTarget.style.padding = 0;
-            e.currentTarget.style.margin = -1;
-            e.currentTarget.style.clip = 'rect(0,0,0,0)';
-          }}
-        >
-          Skip to content
-        </a>
-        <div id="main-content" />
         {children}
       </body>
     </html>

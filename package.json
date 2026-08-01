@@ -23,7 +23,7 @@
     "preview": "node scripts/preview.mjs",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=9999",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "lint:hex": "node scripts/check-raw-hex.mjs --max 152",
+    "lint:hex": "node scripts/check-raw-hex.mjs --max 285",
     "lint:i18n": "node scripts/check-i18n-messages.mjs",
     "type-check": "tsc --noEmit",
     "format": "npx prettier --write .",

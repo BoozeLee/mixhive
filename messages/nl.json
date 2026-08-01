@@ -176,6 +176,7 @@
     "errorFeedTitle": "Feed kon niet worden geladen",
     "errorFeedBody": "Er is iets misgegaan bij het laden van de korf. Opnieuw proberen?",
     "errorFeedAction": "Opnieuw proberen",
+    "dateRangeLabel": "Filter op periode",
     "dateAll": "Altijd",
     "date24h": "24u",
     "dateWeek": "Deze week",

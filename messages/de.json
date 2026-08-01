@@ -177,6 +177,7 @@
     "errorFeedTitle": "Feed konnte nicht geladen werden",
     "errorFeedBody": "Beim Laden des Bienenstocks ist ein Fehler aufgetreten. Erneut versuchen?",
     "errorFeedAction": "Erneut versuchen",
+    "dateRangeLabel": "Nach Zeitraum filtern",
     "dateAll": "Alle",
     "date24h": "24h",
     "dateWeek": "Diese Woche",

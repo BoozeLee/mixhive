@@ -177,6 +177,7 @@
     "errorFeedTitle": "No se pudo cargar el feed",
     "errorFeedBody": "Algo salió mal al cargar la colmena. ¿Intentar de nuevo?",
     "errorFeedAction": "Reintentar",
+    "dateRangeLabel": "Filtrar por periodo",
     "dateAll": "Todo",
     "date24h": "24h",
     "dateWeek": "Esta semana",

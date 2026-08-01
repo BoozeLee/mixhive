@@ -177,6 +177,7 @@
     "errorFeedTitle": "Impossible de charger le fil",
     "errorFeedBody": "Une erreur s'est produite lors du chargement de la ruche. Réessayer ?",
     "errorFeedAction": "Réessayer",
+    "dateRangeLabel": "Filtrer par période",
     "dateAll": "Tout",
     "date24h": "24h",
     "dateWeek": "Cette semaine",

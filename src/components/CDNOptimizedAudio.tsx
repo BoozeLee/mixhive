@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Icon } from './ui/Icon';
+import { CDNArtwork } from './CDNOptimizedImage';
 import { getOptimizedAudioUrl, preloadAudio } from '../lib/cdnUrlTransformers';
 import type { AudioOptimizationParams } from '../lib/cdnUrlTransformers';
 

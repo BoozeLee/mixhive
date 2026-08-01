@@ -41,6 +41,12 @@ export interface FlowKeyState {
   spore_id: string | null;
   capped: number;
   skipped: number;
+  /**
+   * The take playing right now, when that is why a cell is being skipped.
+   * Present only while it is genuinely uncapped — this is what makes the host
+   * override reachable.
+   */
+  live_take: { id: string; name: string } | null;
 }
 
 export interface RitualPlaybackState {

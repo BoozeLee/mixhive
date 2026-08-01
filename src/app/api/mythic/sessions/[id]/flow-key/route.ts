@@ -8,7 +8,7 @@ async function cappedCounts(sb: SupabaseClient, sessionId: string, boundary: str
   const [{ data: assets }, { data: state }, { data: capEvents }] = await Promise.all([
     sb
       .from('collab_session_assets')
-      .select('id, created_at, upload_complete, deleted_at')
+      .select('id, name, created_at, upload_complete, deleted_at')
       .eq('session_id', sessionId),
     sb
       .from('collab_session_state')
@@ -26,12 +26,26 @@ async function cappedCounts(sb: SupabaseClient, sessionId: string, boundary: str
     .map(e => e.payload?.asset_id)
     .filter((id): id is string => Boolean(id));
 
-  return selectCappedCells((assets ?? []) as CappableAsset[], {
+  const currentAssetId = (state?.current_asset_id as string | null) ?? null;
+  const playbackStatus = (state?.playback_status as 'paused' | 'playing') ?? 'paused';
+  const rows = (assets ?? []) as Array<CappableAsset & { name?: string }>;
+
+  const partition = selectCappedCells(rows, {
     boundary,
-    currentAssetId: (state?.current_asset_id as string | null) ?? null,
-    playbackStatus: (state?.playback_status as 'paused' | 'playing') ?? 'paused',
+    currentAssetId,
+    playbackStatus,
     manuallyCappedIds,
   });
+
+  // The take playing right now, when it is the reason a cell is being skipped.
+  // Surfacing it is what makes the host override reachable.
+  const live = rows.find(a => a.id === currentAssetId);
+  const liveTake =
+    live && playbackStatus === 'playing' && !manuallyCappedIds.includes(live.id)
+      ? { id: live.id, name: live.name ?? 'the current take' }
+      : null;
+
+  return { ...partition, liveTake };
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -91,7 +105,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       .maybeSingle();
 
     const boundary = (tap?.opened_at as string | null) ?? new Date().toISOString();
-    const { capped, skipped } = await cappedCounts(ctx.sb, id, boundary);
+    const { capped, skipped, liveTake } = await cappedCounts(ctx.sb, id, boundary);
 
     return NextResponse.json({
       is_open: Boolean(tap?.is_open),
@@ -100,6 +114,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       spore_id: (tap?.drain_lock as string | null) ?? null,
       capped: capped.length,
       skipped: skipped.length,
+      live_take: liveTake,
     });
   } catch (error) {
     return handleApiError(error, 'flow-key:state');

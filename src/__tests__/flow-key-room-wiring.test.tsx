@@ -22,6 +22,7 @@ describe('FlowKeyTap', () => {
       spore_id: null,
       capped: 2,
       skipped: 1,
+      live_take: null,
     });
     render(<FlowKeyTap sessionId="s1" isCreator />);
     await waitFor(() =>
@@ -38,6 +39,7 @@ describe('FlowKeyTap', () => {
         spore_id: null,
         capped: 2,
         skipped: 0,
+        live_take: null,
       })
       .mockResolvedValueOnce({ spore_id: 'sp1', capped: 2, skipped: 0, turns_count: 1 })
       .mockResolvedValueOnce({ spore_id: 'sp1', content_hash: 'a'.repeat(64), capped: 2 })
@@ -48,6 +50,7 @@ describe('FlowKeyTap', () => {
         spore_id: null,
         capped: 2,
         skipped: 0,
+        live_take: null,
       });
 
     render(<FlowKeyTap sessionId="s1" isCreator />);
@@ -76,6 +79,7 @@ describe('FlowKeyTap', () => {
       spore_id: null,
       capped: 0,
       skipped: 2,
+      live_take: null,
     });
     render(<FlowKeyTap sessionId="s1" isCreator />);
     await waitFor(() => expect(screen.getByRole('button')).toBeDisabled());
@@ -90,6 +94,7 @@ describe('FlowKeyTap', () => {
       spore_id: 'sp1',
       capped: 2,
       skipped: 0,
+      live_take: null,
     });
     render(<FlowKeyTap sessionId="s1" isCreator={false} />);
     await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(/comb draining/i));

@@ -69,7 +69,7 @@ export function Agents() {
         setAgents(a);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(err => {
         setError(err instanceof Error ? err.message : 'Failed to load agents');
         setLoading(false);
       });
@@ -170,7 +170,17 @@ export function Agents() {
       </header>
 
       {error && (
-        <div style={{ padding: '12px 16px', marginBottom: 16, background: 'rgba(255,85,85,0.1)', border: '1px solid rgba(255,85,85,0.3)', borderRadius: radius.md, color: colors.danger, fontSize: fontSize.sm }}>
+        <div
+          style={{
+            padding: '12px 16px',
+            marginBottom: 16,
+            background: 'rgba(255,85,85,0.1)',
+            border: '1px solid rgba(255,85,85,0.3)',
+            borderRadius: radius.md,
+            color: colors.danger,
+            fontSize: fontSize.sm,
+          }}
+        >
           {error}
         </div>
       )}

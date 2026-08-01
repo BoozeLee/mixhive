@@ -110,7 +110,7 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.repeatMode, state.currentIndex, state.playlist]);
 
   const play = () => {

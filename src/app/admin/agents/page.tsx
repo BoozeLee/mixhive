@@ -131,7 +131,14 @@ export default function AdminAgentsPage() {
       }}
     >
       {/* Sidebar */}
-      <aside style={{ width: 280, borderRight: `1px solid ${colors.borderSubtle}`, overflowY: 'auto', padding: 12 }}>
+      <aside
+        style={{
+          width: 280,
+          borderRight: `1px solid ${colors.borderSubtle}`,
+          overflowY: 'auto',
+          padding: 12,
+        }}
+      >
         <h2 style={{ color: colors.accent, margin: '0 0 12px' }}>Agent Registry</h2>
         {loading && <p style={{ color: colors.text.muted }}>Loading…</p>}
         {agents.map(a => (
@@ -146,7 +153,10 @@ export default function AdminAgentsPage() {
               marginBottom: 4,
               cursor: 'pointer',
               background: selected?.id === a.id ? colors.surface : 'transparent',
-              border: selected?.id === a.id ? `1px solid ${colors.accent}` : `1px solid ${colors.borderStrong}`,
+              border:
+                selected?.id === a.id
+                  ? `1px solid ${colors.accent}`
+                  : `1px solid ${colors.borderStrong}`,
               borderRadius: 4,
               color: colors.text.primary,
             }}
@@ -154,7 +164,9 @@ export default function AdminAgentsPage() {
             <div style={{ fontWeight: 600, fontSize: 13 }}>{a.display_name}</div>
             <div style={{ fontSize: 11, color: tierColor[a.tier] ?? colors.text.muted }}>
               {a.tier} · v{a.lua_script_version} · {a.approval_policy}
-              {!a.enabled && <span style={{ color: colors.dangerStrong, marginLeft: 6 }}>DISABLED</span>}
+              {!a.enabled && (
+                <span style={{ color: colors.dangerStrong, marginLeft: 6 }}>DISABLED</span>
+              )}
             </div>
           </button>
         ))}
@@ -190,11 +202,19 @@ export default function AdminAgentsPage() {
             )}
 
             {/* Version history */}
-            <h3 style={{ color: colors.text.secondary, borderBottom: `1px solid ${colors.borderSubtle}`, paddingBottom: 8 }}>
+            <h3
+              style={{
+                color: colors.text.secondary,
+                borderBottom: `1px solid ${colors.borderSubtle}`,
+                paddingBottom: 8,
+              }}
+            >
               Version History
             </h3>
             <div style={{ marginBottom: 20 }}>
-              {versions.length === 0 && <p style={{ color: colors.text.faintest }}>No versions yet.</p>}
+              {versions.length === 0 && (
+                <p style={{ color: colors.text.faintest }}>No versions yet.</p>
+              )}
               {versions.map(v => {
                 const isLive = v.version === selected.lua_script_version && !v.rolled_back_at;
                 const isRolledBack = Boolean(v.rolled_back_at);
@@ -211,7 +231,12 @@ export default function AdminAgentsPage() {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span style={{ fontWeight: 700, color: isLive ? colors.accent : colors.text.dimmed }}>
+                      <span
+                        style={{
+                          fontWeight: 700,
+                          color: isLive ? colors.accent : colors.text.dimmed,
+                        }}
+                      >
                         v{v.version}
                       </span>
                       {isLive && (
@@ -244,12 +269,16 @@ export default function AdminAgentsPage() {
                       {v.promoted_at && !isRolledBack && (
                         <span style={{ color: colors.successStrong, fontSize: 11 }}>promoted</span>
                       )}
-                      <span style={{ color: colors.text.faintest, fontSize: 11, marginLeft: 'auto' }}>
+                      <span
+                        style={{ color: colors.text.faintest, fontSize: 11, marginLeft: 'auto' }}
+                      >
                         {v.author ?? 'unknown'} · {new Date(v.created_at).toLocaleDateString()}
                       </span>
                     </div>
                     {v.notes && (
-                      <div style={{ color: colors.text.dimmed, fontSize: 12, marginTop: 4 }}>{v.notes}</div>
+                      <div style={{ color: colors.text.dimmed, fontSize: 12, marginTop: 4 }}>
+                        {v.notes}
+                      </div>
                     )}
                     {!isLive && !isRolledBack && (
                       <button
@@ -293,7 +322,13 @@ export default function AdminAgentsPage() {
             )}
 
             {/* Create new version */}
-            <h3 style={{ color: colors.text.secondary, borderBottom: `1px solid ${colors.borderSubtle}`, paddingBottom: 8 }}>
+            <h3
+              style={{
+                color: colors.text.secondary,
+                borderBottom: `1px solid ${colors.borderSubtle}`,
+                paddingBottom: 8,
+              }}
+            >
               Create Draft Version
             </h3>
             <input

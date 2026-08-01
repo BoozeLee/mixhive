@@ -101,7 +101,9 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
       onClick={e => {
         if (e.target === e.currentTarget) onClose();
       }}
-      onKeyDown={e => { if (e.key === 'Escape') onClose(); }}
+      onKeyDown={e => {
+        if (e.key === 'Escape') onClose();
+      }}
     >
       <div
         style={{

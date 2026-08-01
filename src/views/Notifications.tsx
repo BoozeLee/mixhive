@@ -48,9 +48,20 @@ export function NotificationsPage() {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 16px' }}>
         <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} />
-        <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
+        <div
+          style={{
+            padding: space[10],
+            textAlign: 'center',
+            color: colors.danger,
+            background: colors.dangerBg,
+            borderRadius: radius.md,
+            border: `1px solid ${colors.danger}`,
+          }}
+        >
           <p>{error}</p>
-          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );

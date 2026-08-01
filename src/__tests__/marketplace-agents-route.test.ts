@@ -34,7 +34,11 @@ describe('GET /api/marketplace/agents', () => {
   });
 
   it('passes filters to RPC', async () => {
-    await GET(new NextRequest('https://test.vercel.app/api/marketplace/agents?category=discovery&discipline=dj&free=true&limit=10'));
+    await GET(
+      new NextRequest(
+        'https://test.vercel.app/api/marketplace/agents?category=discovery&discipline=dj&free=true&limit=10'
+      )
+    );
     expect(rpcMock).toHaveBeenCalledWith(
       'list_agent_packages',
       expect.objectContaining({

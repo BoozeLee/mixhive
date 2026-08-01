@@ -7,11 +7,20 @@ import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/live-rooms/route';
 
 const mockRooms = [
-  { id: 'r1', title: 'Test Room', status: 'waiting', host_id: 'u1', max_participants: 8, is_public: true, created_at: '2026-01-01T00:00:00Z' },
+  {
+    id: 'r1',
+    title: 'Test Room',
+    status: 'waiting',
+    host_id: 'u1',
+    max_participants: 8,
+    is_public: true,
+    created_at: '2026-01-01T00:00:00Z',
+  },
 ];
 
 function makeChain(result: unknown = null, error: unknown = null, count?: number) {
-  const resolve = (cb: Function) => cb({ data: result, error, count: count ?? (Array.isArray(result) ? result.length : 0) });
+  const resolve = (cb: Function) =>
+    cb({ data: result, error, count: count ?? (Array.isArray(result) ? result.length : 0) });
   const chain: Record<string, unknown> = {};
   const pass = () => chain;
   chain.select = pass;
@@ -44,7 +53,8 @@ describe('GET /api/live-rooms', () => {
   it('returns rooms with participant counts', async () => {
     fromMock.mockImplementation((table: string) => {
       if (table === 'live_rooms') return makeChain(mockRooms, null, 1);
-      if (table === 'live_room_participants') return makeChain([{ room_id: 'r1' }, { room_id: 'r1' }]);
+      if (table === 'live_room_participants')
+        return makeChain([{ room_id: 'r1' }, { room_id: 'r1' }]);
       return makeChain([]);
     });
 

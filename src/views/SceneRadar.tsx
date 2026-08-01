@@ -176,7 +176,11 @@ export function SceneRadar() {
 
       {/* Content */}
       {activeLoading && (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: `${space[10]}px 0` }} role="status" aria-live="polite">
+        <div
+          style={{ display: 'flex', justifyContent: 'center', padding: `${space[10]}px 0` }}
+          role="status"
+          aria-live="polite"
+        >
           <LoadingSpinner />
         </div>
       )}
@@ -198,7 +202,12 @@ export function SceneRadar() {
           <HiveButton
             variant="secondary"
             onClick={activeRefresh}
-            style={{ marginLeft: space[3], minHeight: 44, display: 'inline-flex', alignItems: 'center' }}
+            style={{
+              marginLeft: space[3],
+              minHeight: 44,
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
           >
             {t('retry')}
           </HiveButton>

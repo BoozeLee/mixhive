@@ -18,13 +18,15 @@ export function SavedPage() {
 
   useEffect(() => {
     if (!user) return;
-    getLikedMixes(user.id).then(data => {
-      setMixes(data);
-      setLoading(false);
-    }).catch(() => {
-      setError('Failed to load saved mixes');
-      setLoading(false);
-    });
+    getLikedMixes(user.id)
+      .then(data => {
+        setMixes(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Failed to load saved mixes');
+        setLoading(false);
+      });
   }, [user]);
 
   if (!user) {
@@ -53,9 +55,7 @@ export function SavedPage() {
           <LoadingSpinner size="lg" />
         </div>
       ) : mixes.length === 0 ? (
-        <p style={{ color: colors.text.dim, textAlign: 'center', padding: 40 }}>
-          {t('empty')}
-        </p>
+        <p style={{ color: colors.text.dim, textAlign: 'center', padding: 40 }}>{t('empty')}</p>
       ) : (
         <div style={{ display: 'grid', gap: space[4], marginTop: space[8] }}>
           {mixes.map(mix => (

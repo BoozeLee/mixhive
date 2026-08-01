@@ -59,7 +59,9 @@ export function useAgentStream() {
     });
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error('Not signed in');
 
       const res = await fetch('/api/ai/agent-stream', {

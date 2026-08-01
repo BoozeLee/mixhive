@@ -46,7 +46,10 @@ beforeEach(() => {
 describe('PATCH /api/ai/suggestions/[id]', () => {
   it('returns 401 without auth', async () => {
     const res = await PATCH(
-      new NextRequest('https://test.vercel.app/api/ai/suggestions/s1', { method: 'PATCH', body: JSON.stringify({ action: 'apply' }) }),
+      new NextRequest('https://test.vercel.app/api/ai/suggestions/s1', {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'apply' }),
+      }),
       { params: Promise.resolve({ id: 's1' }) }
     );
     expect(res.status).toBe(401);

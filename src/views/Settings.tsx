@@ -117,24 +117,40 @@ export function Settings() {
   const [tierLoading, setTierLoading] = useState(false);
 
   useEffect(() => {
-    if (!user) { setSubscriptionTier(null); return; }
+    if (!user) {
+      setSubscriptionTier(null);
+      return;
+    }
     let cancelled = false;
     setTierLoading(true);
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session?.access_token) {
-        if (!cancelled) { setSubscriptionTier('free'); setTierLoading(false); }
+        if (!cancelled) {
+          setSubscriptionTier('free');
+          setTierLoading(false);
+        }
         return;
       }
       fetch('/api/subscription/status', {
         headers: { Authorization: `Bearer ${session.access_token}` },
       })
-        .then(res => res.ok ? res.json() : { tier: 'free' })
+        .then(res => (res.ok ? res.json() : { tier: 'free' }))
         .then(data => {
-          if (!cancelled) { setSubscriptionTier(data.tier || 'free'); setTierLoading(false); }
+          if (!cancelled) {
+            setSubscriptionTier(data.tier || 'free');
+            setTierLoading(false);
+          }
         })
-        .catch(() => { if (!cancelled) { setSubscriptionTier('free'); setTierLoading(false); } });
+        .catch(() => {
+          if (!cancelled) {
+            setSubscriptionTier('free');
+            setTierLoading(false);
+          }
+        });
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
   const [formData, setFormData] = useState({
@@ -1178,13 +1194,31 @@ export function Settings() {
         <p style={{ fontSize: fontSize.sm, color: colors.text.dim, marginBottom: space[4] }}>
           {t('billingDescription')}
         </p>
-        <div style={{ display: 'flex', gap: space[4], flexWrap: 'wrap', alignItems: 'center', marginBottom: space[4] }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: space[4],
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            marginBottom: space[4],
+          }}
+        >
           {tierLoading ? (
             <LoadingSpinner size="small" />
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: space[2], color: colors.text.secondary, fontSize: fontSize.sm }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: space[2],
+                color: colors.text.secondary,
+                fontSize: fontSize.sm,
+              }}
+            >
               <span>Current plan:</span>
-              <span style={{ color: colors.text.primary, fontWeight: 600, textTransform: 'capitalize' }}>
+              <span
+                style={{ color: colors.text.primary, fontWeight: 600, textTransform: 'capitalize' }}
+              >
                 {subscriptionTier || 'Free'}
               </span>
             </div>

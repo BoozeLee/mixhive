@@ -123,7 +123,9 @@ export function SearchPage() {
   useEffect(() => {
     const nextQuery = searchParams.get('q') || '';
     const requestedType = searchParams.get('type');
-    const nextType: SearchEntityType = ['mixes', 'profiles', 'scenes', 'agents'].includes(requestedType || '')
+    const nextType: SearchEntityType = ['mixes', 'profiles', 'scenes', 'agents'].includes(
+      requestedType || ''
+    )
       ? (requestedType as SearchEntityType)
       : 'all';
     const nextFilters: SearchFiltersValue = {
@@ -264,7 +266,11 @@ export function SearchPage() {
             <GroupedResults results={results} onSeeAll={switchTab} agents={filteredAgents} />
           ) : (
             <>
-              <EntityResults type={tab} results={results} agents={tab === 'agents' ? filteredAgents : undefined} />
+              <EntityResults
+                type={tab}
+                results={results}
+                agents={tab === 'agents' ? filteredAgents : undefined}
+              />
               {activeSection?.hasMore && (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: space[10] }}>
                   <Button
@@ -420,13 +426,7 @@ function EntityResults({
   if (type === 'agents') {
     const agentList = agents ?? [];
     if (!agentList.length)
-      return (
-        <EmptyState
-          iconKey="search"
-          title={t('noResults')}
-          body={t('noResultsBody')}
-        />
-      );
+      return <EmptyState iconKey="search" title={t('noResults')} body={t('noResultsBody')} />;
     return (
       <div style={{ display: 'grid', gap: space[6] }}>
         {agentList.map(agent => (
@@ -437,13 +437,7 @@ function EntityResults({
   }
   const section = results.sections[type as keyof typeof results.sections];
   if (!section?.items.length)
-    return (
-      <EmptyState
-        iconKey="search"
-        title={t('noResults')}
-        body={t('noResultsBody')}
-      />
-    );
+    return <EmptyState iconKey="search" title={t('noResults')} body={t('noResultsBody')} />;
   if (type === 'mixes')
     return (
       <div style={{ display: 'grid', gap: space[6] }}>

@@ -39,6 +39,8 @@ describe('GET /api/health', () => {
     const res = await GET();
     const body = await res.json();
     expect(body.services.database).toBeDefined();
-    expect(['healthy', 'degraded', 'unhealthy', 'skipped']).toContain(body.services.database.status);
+    expect(['healthy', 'degraded', 'unhealthy', 'skipped']).toContain(
+      body.services.database.status
+    );
   });
 });

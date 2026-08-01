@@ -217,14 +217,37 @@ export function Dashboard() {
             borderRadius: radius.lg,
           }}
         >
-          <p style={{ color: colors.text.primary, fontSize: 20, fontWeight: 700, marginBottom: space[4] }}>
+          <p
+            style={{
+              color: colors.text.primary,
+              fontSize: 20,
+              fontWeight: 700,
+              marginBottom: space[4],
+            }}
+          >
             Welcome to your Command Cell
           </p>
-          <p style={{ color: colors.text.dim, fontSize: 14, maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
-            Upload your first mix to see analytics, activity, and recommendations here.
-            Your dashboard fills up as your sound reaches listeners.
+          <p
+            style={{
+              color: colors.text.dim,
+              fontSize: 14,
+              maxWidth: 480,
+              margin: '0 auto',
+              lineHeight: 1.6,
+            }}
+          >
+            Upload your first mix to see analytics, activity, and recommendations here. Your
+            dashboard fills up as your sound reaches listeners.
           </p>
-          <div style={{ marginTop: space[8], display: 'flex', gap: space[4], justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              marginTop: space[8],
+              display: 'flex',
+              gap: space[4],
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
             <Link
               to="/upload"
               style={{

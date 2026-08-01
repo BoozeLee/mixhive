@@ -29,7 +29,9 @@ export function ArtHistory() {
     if (!user) return;
     setLoading(true);
     fetch(`/api/ai/art-generations?page=${page}&limit=${limit}`, {
-      headers: { Authorization: `Bearer ${(supabase as { supabaseKey?: string }).supabaseKey || ''}` },
+      headers: {
+        Authorization: `Bearer ${(supabase as { supabaseKey?: string }).supabaseKey || ''}`,
+      },
     })
       .then(r => r.json())
       .then(data => {
@@ -116,15 +118,16 @@ export function ArtHistory() {
                 {gen.prompt}
               </div>
               <div style={{ fontSize: 10, color: colors.text.faint, marginTop: 2 }}>
-                {gen.style} · {gen.aspect_ratio} ·{' '}
-                {new Date(gen.created_at).toLocaleDateString()}
+                {gen.style} · {gen.aspect_ratio} · {new Date(gen.created_at).toLocaleDateString()}
               </div>
             </div>
           </div>
         ))}
       </div>
       {totalPages > 1 && (
-        <div style={{ display: 'flex', gap: space[3], marginTop: space[6], justifyContent: 'center' }}>
+        <div
+          style={{ display: 'flex', gap: space[3], marginTop: space[6], justifyContent: 'center' }}
+        >
           <button
             type="button"
             onClick={() => setPage(p => Math.max(1, p - 1))}

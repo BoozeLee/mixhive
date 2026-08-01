@@ -23,9 +23,19 @@ interface EventDetail {
   is_free: boolean;
   ticket_url: string | null;
   status: string;
-  organizer: { id: string; username: string; display_name: string | null; avatar_url: string | null } | null;
+  organizer: {
+    id: string;
+    username: string;
+    display_name: string | null;
+    avatar_url: string | null;
+  } | null;
   rsvp_counts: { going: number; maybe: number };
-  attendees: { id: string; username: string; display_name: string | null; avatar_url: string | null }[];
+  attendees: {
+    id: string;
+    username: string;
+    display_name: string | null;
+    avatar_url: string | null;
+  }[];
 }
 
 /**
@@ -81,7 +91,9 @@ export function EventDetail() {
       if (!cancelled) setLoading(false);
     }
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   // Check current user RSVP
@@ -138,7 +150,12 @@ export function EventDetail() {
   }
 
   function formatDate(d: string) {
-    return new Date(d).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    return new Date(d).toLocaleDateString(undefined, {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
   }
   function formatTime(d: string) {
     return new Date(d).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
@@ -147,7 +164,18 @@ export function EventDetail() {
   if (error) {
     return (
       <div style={{ maxWidth: 600, margin: '0 auto', padding: '64px 16px', textAlign: 'center' }}>
-        <div style={{ padding: '12px 16px', marginBottom: 16, background: 'rgba(255,85,85,0.1)', border: '1px solid rgba(255,85,85,0.3)', borderRadius: radius.md, color: colors.danger, fontSize: fontSize.sm, display: 'inline-block' }}>
+        <div
+          style={{
+            padding: '12px 16px',
+            marginBottom: 16,
+            background: 'rgba(255,85,85,0.1)',
+            border: '1px solid rgba(255,85,85,0.3)',
+            borderRadius: radius.md,
+            color: colors.danger,
+            fontSize: fontSize.sm,
+            display: 'inline-block',
+          }}
+        >
           {error}
         </div>
         <div style={{ marginTop: space[5] }}>
@@ -159,7 +187,9 @@ export function EventDetail() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}
+      >
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -167,9 +197,19 @@ export function EventDetail() {
 
   if (!event) {
     return (
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '64px 16px', textAlign: 'center', color: colors.text.faint }}>
+      <div
+        style={{
+          maxWidth: 600,
+          margin: '0 auto',
+          padding: '64px 16px',
+          textAlign: 'center',
+          color: colors.text.faint,
+        }}
+      >
         <p style={{ fontSize: fontSize.lg }}>{t('eventNotFound')}</p>
-        <Button onClick={() => navigate('/events')} style={{ marginTop: space[5] }}>{t('backToEvents')}</Button>
+        <Button onClick={() => navigate('/events')} style={{ marginTop: space[5] }}>
+          {t('backToEvents')}
+        </Button>
       </div>
     );
   }
@@ -180,25 +220,59 @@ export function EventDetail() {
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 16px 96px' }}>
       {/* Back link */}
-      <Link to="/events" style={{ color: colors.text.muted, fontSize: fontSize.sm, textDecoration: 'none', marginBottom: space[5], display: 'block' }}>
+      <Link
+        to="/events"
+        style={{
+          color: colors.text.muted,
+          fontSize: fontSize.sm,
+          textDecoration: 'none',
+          marginBottom: space[5],
+          display: 'block',
+        }}
+      >
         ← {t('backToEvents')}
       </Link>
 
       {/* Cover */}
       {event.cover_image_url && (
-        <div style={{
-          width: '100%', height: 280, borderRadius: radius.lg, overflow: 'hidden',
-          marginBottom: space[6],
-          background: `url(${event.cover_image_url}) center/cover`,
-        }} />
+        <div
+          style={{
+            width: '100%',
+            height: 280,
+            borderRadius: radius.lg,
+            overflow: 'hidden',
+            marginBottom: space[6],
+            background: `url(${event.cover_image_url}) center/cover`,
+          }}
+        />
       )}
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: space[4], marginBottom: space[6] }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: space[4],
+          marginBottom: space[6],
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: fontSize['3xl'], fontWeight: 700, margin: 0, marginBottom: space[2] }}>{event.title}</h1>
+          <h1
+            style={{
+              fontSize: fontSize['3xl'],
+              fontWeight: 700,
+              margin: 0,
+              marginBottom: space[2],
+            }}
+          >
+            {event.title}
+          </h1>
           <p style={{ fontSize: fontSize.sm, color: colors.text.muted, margin: 0 }}>
-            {t('byOrganizer', { name: event.organizer?.display_name || event.organizer?.username || '' })}
+            {t('byOrganizer', {
+              name: event.organizer?.display_name || event.organizer?.username || '',
+            })}
           </p>
         </div>
 
@@ -207,7 +281,9 @@ export function EventDetail() {
               editor for a cancelled or past event. */}
           {user && event.organizer?.id === user.id && (
             <Link to={`/events/${event.id}/edit`} style={{ textDecoration: 'none' }}>
-              <Button variant="ghost" size="sm">{t('editEvent')}</Button>
+              <Button variant="ghost" size="sm">
+                {t('editEvent')}
+              </Button>
             </Link>
           )}
           {event.status === 'cancelled' ? (
@@ -217,55 +293,173 @@ export function EventDetail() {
           ) : user ? (
             <>
               {rsvpStatus === 'going' ? (
-                <Button onClick={handleCancelRsvp} variant="ghost" size="sm">{t('rsvpCancel')}</Button>
+                <Button onClick={handleCancelRsvp} variant="ghost" size="sm">
+                  {t('rsvpCancel')}
+                </Button>
               ) : rsvpStatus === 'maybe' ? (
-                <Button onClick={() => handleRsvp('going')} size="sm">{t('rsvpGoing')}</Button>
+                <Button onClick={() => handleRsvp('going')} size="sm">
+                  {t('rsvpGoing')}
+                </Button>
               ) : (
                 <>
-                  <Button onClick={() => handleRsvp('going')} loading={rsvping} size="sm">{t('rsvpGoing')}</Button>
-                  <Button onClick={() => handleRsvp('maybe')} loading={rsvping} variant="ghost" size="sm">{t('rsvpMaybe')}</Button>
+                  <Button onClick={() => handleRsvp('going')} loading={rsvping} size="sm">
+                    {t('rsvpGoing')}
+                  </Button>
+                  <Button
+                    onClick={() => handleRsvp('maybe')}
+                    loading={rsvping}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    {t('rsvpMaybe')}
+                  </Button>
                 </>
               )}
             </>
           ) : (
-            <Button onClick={() => navigate('/login')} size="sm">{t('rsvpGoing')}</Button>
+            <Button onClick={() => navigate('/login')} size="sm">
+              {t('rsvpGoing')}
+            </Button>
           )}
         </div>
       </div>
 
       {/* Meta */}
-      <div style={{
-        display: 'flex', flexWrap: 'wrap', gap: space[4], marginBottom: space[6],
-        padding: space[4], background: colors.surface, borderRadius: radius.lg,
-        border: `1px solid ${colors.border}`,
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: space[4],
+          marginBottom: space[6],
+          padding: space[4],
+          background: colors.surface,
+          borderRadius: radius.lg,
+          border: `1px solid ${colors.border}`,
+        }}
+      >
         <div>
-          <p style={{ fontSize: fontSize.xs, color: colors.text.faint, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>{t('date')}</p>
-          <p style={{ fontSize: fontSize.md, color: colors.text.primary, margin: 0, marginTop: space[1] }}>{formatDate(event.starts_at)}</p>
+          <p
+            style={{
+              fontSize: fontSize.xs,
+              color: colors.text.faint,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              margin: 0,
+            }}
+          >
+            {t('date')}
+          </p>
+          <p
+            style={{
+              fontSize: fontSize.md,
+              color: colors.text.primary,
+              margin: 0,
+              marginTop: space[1],
+            }}
+          >
+            {formatDate(event.starts_at)}
+          </p>
         </div>
         <div>
-          <p style={{ fontSize: fontSize.xs, color: colors.text.faint, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>{t('time')}</p>
-          <p style={{ fontSize: fontSize.md, color: colors.text.primary, margin: 0, marginTop: space[1] }}>
-            {formatTime(event.starts_at)}{event.ends_at ? ` – ${formatTime(event.ends_at)}` : ''}
+          <p
+            style={{
+              fontSize: fontSize.xs,
+              color: colors.text.faint,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              margin: 0,
+            }}
+          >
+            {t('time')}
+          </p>
+          <p
+            style={{
+              fontSize: fontSize.md,
+              color: colors.text.primary,
+              margin: 0,
+              marginTop: space[1],
+            }}
+          >
+            {formatTime(event.starts_at)}
+            {event.ends_at ? ` – ${formatTime(event.ends_at)}` : ''}
           </p>
         </div>
         {event.venue_name && (
           <div>
-            <p style={{ fontSize: fontSize.xs, color: colors.text.faint, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>{t('venue')}</p>
-            <p style={{ fontSize: fontSize.md, color: colors.text.primary, margin: 0, marginTop: space[1] }}>{event.venue_name}</p>
-            {event.venue_address && <p style={{ fontSize: fontSize.sm, color: colors.text.muted, margin: 0 }}>{event.venue_address}</p>}
+            <p
+              style={{
+                fontSize: fontSize.xs,
+                color: colors.text.faint,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                margin: 0,
+              }}
+            >
+              {t('venue')}
+            </p>
+            <p
+              style={{
+                fontSize: fontSize.md,
+                color: colors.text.primary,
+                margin: 0,
+                marginTop: space[1],
+              }}
+            >
+              {event.venue_name}
+            </p>
+            {event.venue_address && (
+              <p style={{ fontSize: fontSize.sm, color: colors.text.muted, margin: 0 }}>
+                {event.venue_address}
+              </p>
+            )}
           </div>
         )}
         <div>
-          <p style={{ fontSize: fontSize.xs, color: colors.text.faint, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>{t('price')}</p>
-          <p style={{ fontSize: fontSize.md, color: event.is_free ? colors.successStrong : colors.warning, fontWeight: 600, margin: 0, marginTop: space[1] }}>
+          <p
+            style={{
+              fontSize: fontSize.xs,
+              color: colors.text.faint,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              margin: 0,
+            }}
+          >
+            {t('price')}
+          </p>
+          <p
+            style={{
+              fontSize: fontSize.md,
+              color: event.is_free ? colors.successStrong : colors.warning,
+              fontWeight: 600,
+              margin: 0,
+              marginTop: space[1],
+            }}
+          >
             {event.is_free ? t('free') : t('ticketRequired')}
           </p>
         </div>
         {spotsLeft !== null && (
           <div>
-            <p style={{ fontSize: fontSize.xs, color: colors.text.faint, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>{t('spotsLeft')}</p>
-            <p style={{ fontSize: fontSize.md, color: spotsLeft < 10 ? colors.warning : colors.text.primary, fontWeight: 600, margin: 0, marginTop: space[1] }}>
+            <p
+              style={{
+                fontSize: fontSize.xs,
+                color: colors.text.faint,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                margin: 0,
+              }}
+            >
+              {t('spotsLeft')}
+            </p>
+            <p
+              style={{
+                fontSize: fontSize.md,
+                color: spotsLeft < 10 ? colors.warning : colors.text.primary,
+                fontWeight: 600,
+                margin: 0,
+                marginTop: space[1],
+              }}
+            >
               {spotsLeft}
             </p>
           </div>
@@ -275,10 +469,26 @@ export function EventDetail() {
       {/* Description */}
       {event.description && (
         <div style={{ marginBottom: space[6] }}>
-          <h2 style={{ fontSize: fontSize.md, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: colors.text.muted, marginBottom: space[3] }}>
+          <h2
+            style={{
+              fontSize: fontSize.md,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: colors.text.muted,
+              marginBottom: space[3],
+            }}
+          >
             {t('about')}
           </h2>
-          <p style={{ fontSize: fontSize.base, color: colors.text.secondary, lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+          <p
+            style={{
+              fontSize: fontSize.base,
+              color: colors.text.secondary,
+              lineHeight: 1.7,
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {event.description}
           </p>
         </div>
@@ -287,7 +497,16 @@ export function EventDetail() {
       {/* Attendees */}
       {event.attendees && event.attendees.length > 0 && (
         <div>
-          <h2 style={{ fontSize: fontSize.md, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: colors.text.muted, marginBottom: space[3] }}>
+          <h2
+            style={{
+              fontSize: fontSize.md,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: colors.text.muted,
+              marginBottom: space[3],
+            }}
+          >
             {t('attendees')} ({event.attendees.length})
           </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
@@ -295,16 +514,32 @@ export function EventDetail() {
               <Link
                 key={a.id}
                 to={`/u/${a.username}`}
-                style={{ display: 'flex', alignItems: 'center', gap: space[2], textDecoration: 'none' }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: space[2],
+                  textDecoration: 'none',
+                }}
               >
-                <div style={{
-                  width: 36, height: 36, borderRadius: radius.full,
-                  background: colors.surfaceHover, display: 'flex',
-                  alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
-                  border: `1px solid ${colors.border}`,
-                }}>
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: radius.full,
+                    background: colors.surfaceHover,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    border: `1px solid ${colors.border}`,
+                  }}
+                >
                   {a.avatar_url ? (
-                    <img src={a.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img
+                      src={a.avatar_url}
+                      alt=""
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
                   ) : (
                     <span style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
                       {(a.display_name || a.username || '?')[0].toUpperCase()}
@@ -323,7 +558,9 @@ export function EventDetail() {
       {/* Ticket link */}
       {event.ticket_url && (
         <div style={{ marginTop: space[6] }}>
-          <Button onClick={() => window.open(event.ticket_url!, '_blank')} size="lg">{t('getTickets')}</Button>
+          <Button onClick={() => window.open(event.ticket_url!, '_blank')} size="lg">
+            {t('getTickets')}
+          </Button>
         </div>
       )}
     </div>

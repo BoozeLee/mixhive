@@ -372,7 +372,10 @@ export async function getMixesByDj(djId: string): Promise<Mix[]> {
     const { data: features } = await supabase
       .from('audio_features')
       .select('mix_id, bpm, musical_key, mood, energy')
-      .in('mix_id', mixes.map(m => m.id));
+      .in(
+        'mix_id',
+        mixes.map(m => m.id)
+      );
     if (features) {
       const featMap = new Map(features.map(f => [f.mix_id, f]));
       for (const mix of mixes) {
@@ -404,7 +407,14 @@ export async function getMix(id: string): Promise<Mix | null> {
     .maybeSingle();
   return {
     ...data,
-    ...(features ? { bpm: features.bpm, musical_key: features.musical_key, mood: features.mood, energy: features.energy } : {}),
+    ...(features
+      ? {
+          bpm: features.bpm,
+          musical_key: features.musical_key,
+          mood: features.mood,
+          energy: features.energy,
+        }
+      : {}),
     dj: data.profiles,
     genre_name: data.genres?.name,
   };

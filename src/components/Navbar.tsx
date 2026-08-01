@@ -83,7 +83,9 @@ export function Navbar() {
           : `linear-gradient(90deg, ${withAlpha(colors.black, 0.92)}, rgba(13,10,2,0.82), ${withAlpha(colors.black, 0.92)})`,
         backdropFilter: 'blur(18px)',
         borderWidth: '0 0 1px',
-        borderColor: scrolled ? `${withAlpha(colors.accent, 0.24)}` : `${withAlpha(colors.accent, 0.12)}`,
+        borderColor: scrolled
+          ? `${withAlpha(colors.accent, 0.24)}`
+          : `${withAlpha(colors.accent, 0.12)}`,
         borderRadius: 0,
         position: 'sticky',
         top: 0,
@@ -256,7 +258,8 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.accent, 0.08)}`;
+                      (e.currentTarget as HTMLElement).style.background =
+                        `${withAlpha(colors.accent, 0.08)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -269,7 +272,8 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.accent, 0.08)}`;
+                      (e.currentTarget as HTMLElement).style.background =
+                        `${withAlpha(colors.accent, 0.08)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -282,7 +286,8 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.accent, 0.08)}`;
+                      (e.currentTarget as HTMLElement).style.background =
+                        `${withAlpha(colors.accent, 0.08)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -295,7 +300,8 @@ export function Navbar() {
                     style={menuItemStyle}
                     onClick={() => setMenuOpen(false)}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.accent, 0.08)}`;
+                      (e.currentTarget as HTMLElement).style.background =
+                        `${withAlpha(colors.accent, 0.08)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';
@@ -308,7 +314,12 @@ export function Navbar() {
                     <LanguageSwitcher hideLabel />
                   </div>
 
-                  <div style={{ borderTop: `1px solid ${withAlpha(colors.accent, 0.10)}`, marginTop: 2 }} />
+                  <div
+                    style={{
+                      borderTop: `1px solid ${withAlpha(colors.accent, 0.1)}`,
+                      marginTop: 2,
+                    }}
+                  />
 
                   <button
                     style={{ ...menuItemStyle, color: colors.danger }}
@@ -318,7 +329,8 @@ export function Navbar() {
                       navigate('/');
                     }}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = `${withAlpha(colors.danger, 0.10)}`;
+                      (e.currentTarget as HTMLElement).style.background =
+                        `${withAlpha(colors.danger, 0.1)}`;
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.background = 'none';

@@ -18,7 +18,12 @@ interface LiveRoom {
   is_public: boolean;
   participant_count: number;
   created_at: string;
-  host: { id: string; username: string; display_name: string | null; avatar_url: string | null } | null;
+  host: {
+    id: string;
+    username: string;
+    display_name: string | null;
+    avatar_url: string | null;
+  } | null;
 }
 
 export function LiveRooms() {
@@ -35,13 +40,17 @@ export function LiveRooms() {
       setError(null);
       const params = new URLSearchParams({ limit: '30' });
       if (filter !== 'all') params.set('status', filter);
-      const { data, error: err } = await supabase.from('live_rooms')
+      const { data, error: err } = await supabase
+        .from('live_rooms')
         .select('*, host:profiles!live_rooms_host_id_fkey(id, username, display_name, avatar_url)')
         .in('status', filter === 'all' ? ['waiting', 'live'] : [filter])
         .order('created_at', { ascending: false })
         .limit(30);
       if (err) {
-        if (!cancelled) { setError(err.message); setLoading(false); }
+        if (!cancelled) {
+          setError(err.message);
+          setLoading(false);
+        }
         return;
       }
       if (!cancelled && data) {
@@ -65,7 +74,9 @@ export function LiveRooms() {
       if (!cancelled) setLoading(false);
     }
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [filter]);
 
   const cardStyle: React.CSSProperties = {
@@ -84,14 +95,21 @@ export function LiveRooms() {
   if (error) {
     return (
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 16px 96px' }}>
-        <SectionHeading
-          as="h1"
-          eyebrow="LIVE"
-          title={t('title')}
-        />
-        <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
+        <SectionHeading as="h1" eyebrow="LIVE" title={t('title')} />
+        <div
+          style={{
+            padding: space[10],
+            textAlign: 'center',
+            color: colors.danger,
+            background: colors.dangerBg,
+            borderRadius: radius.md,
+            border: `1px solid ${colors.danger}`,
+          }}
+        >
           <p>{error}</p>
-          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );
@@ -99,12 +117,7 @@ export function LiveRooms() {
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 16px 96px' }}>
-      <SectionHeading
-        as="h1"
-        eyebrow="LIVE"
-        title={t('title')}
-        subtitle={t('subtitle')}
-      />
+      <SectionHeading as="h1" eyebrow="LIVE" title={t('title')} subtitle={t('subtitle')} />
 
       <div style={{ display: 'flex', gap: space[3], marginBottom: space[8], flexWrap: 'wrap' }}>
         {(['all', 'live', 'waiting'] as const).map(f => (
@@ -140,11 +153,13 @@ export function LiveRooms() {
           <p style={{ fontSize: fontSize.base }}>{t('emptyDescription')}</p>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: space[5],
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: space[5],
+          }}
+        >
           {rooms.map(room => (
             <Link
               key={room.id}
@@ -159,14 +174,18 @@ export function LiveRooms() {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{
-                  fontSize: fontSize.xs,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  color: room.status === 'live' ? colors.successStrong : colors.warning,
-                }}>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <span
+                  style={{
+                    fontSize: fontSize.xs,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    color: room.status === 'live' ? colors.successStrong : colors.warning,
+                  }}
+                >
                   {room.status === 'live' ? `● ${t('live')}` : t('waiting')}
                 </span>
                 <span style={{ fontSize: fontSize.xs, color: colors.text.faint }}>
@@ -179,21 +198,49 @@ export function LiveRooms() {
               </h3>
 
               {room.description && (
-                <p style={{ fontSize: fontSize.sm, color: colors.text.muted, margin: 0, lineHeight: 1.4 }}>
-                  {room.description.length > 100 ? room.description.slice(0, 100) + '...' : room.description}
+                <p
+                  style={{
+                    fontSize: fontSize.sm,
+                    color: colors.text.muted,
+                    margin: 0,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {room.description.length > 100
+                    ? room.description.slice(0, 100) + '...'
+                    : room.description}
                 </p>
               )}
 
               {room.host && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: space[2], marginTop: 'auto' }}>
-                  <div style={{
-                    width: 24, height: 24, borderRadius: radius.full,
-                    background: colors.surfaceHover,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: fontSize.xs, color: colors.text.muted, overflow: 'hidden',
-                  }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: space[2],
+                    marginTop: 'auto',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: radius.full,
+                      background: colors.surfaceHover,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: fontSize.xs,
+                      color: colors.text.muted,
+                      overflow: 'hidden',
+                    }}
+                  >
                     {room.host.avatar_url ? (
-                      <img src={room.host.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img
+                        src={room.host.avatar_url}
+                        alt=""
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
                     ) : (
                       (room.host.display_name || room.host.username || '?')[0].toUpperCase()
                     )}

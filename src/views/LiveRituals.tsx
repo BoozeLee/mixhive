@@ -54,7 +54,9 @@ export function LiveRituals() {
     }
   }, [user]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const answerInvite = async (invite: RitualInvite, status: 'accepted' | 'declined') => {
     try {
@@ -122,39 +124,39 @@ export function LiveRituals() {
           <HiveButton onClick={load}>Retry</HiveButton>
         </div>
       ) : (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))',
-          gap: 12,
-          marginTop: 24,
-        }}
-      >
-        {rituals.map(ritual => (
-          <Link
-            key={ritual.id}
-            to={`/session/${ritual.id}`}
-            style={{
-              color: colors.text.primary,
-              textDecoration: 'none',
-              background: colors.surface,
-              border: `1px solid ${colors.border}`,
-              borderRadius: radius.lg,
-              padding: 20,
-            }}
-          >
-            <strong>{ritual.title}</strong>
-            <p style={{ color: colors.text.muted }}>
-              {ritual.description || 'A live creative process is unfolding.'}
-            </p>
-            <span style={{ color: colors.accent }}>Enter ritual →</span>
-          </Link>
-        ))}
-        {rituals.length === 0 && (
-          <div style={{ color: colors.text.muted }}>{t('noPublicRitualsAre')}</div>
-        )}
-      </div>
-    )}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))',
+            gap: 12,
+            marginTop: 24,
+          }}
+        >
+          {rituals.map(ritual => (
+            <Link
+              key={ritual.id}
+              to={`/session/${ritual.id}`}
+              style={{
+                color: colors.text.primary,
+                textDecoration: 'none',
+                background: colors.surface,
+                border: `1px solid ${colors.border}`,
+                borderRadius: radius.lg,
+                padding: 20,
+              }}
+            >
+              <strong>{ritual.title}</strong>
+              <p style={{ color: colors.text.muted }}>
+                {ritual.description || 'A live creative process is unfolding.'}
+              </p>
+              <span style={{ color: colors.accent }}>Enter ritual →</span>
+            </Link>
+          ))}
+          {rituals.length === 0 && (
+            <div style={{ color: colors.text.muted }}>{t('noPublicRitualsAre')}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

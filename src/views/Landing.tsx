@@ -161,7 +161,10 @@ export function Landing() {
   useEffect(() => {
     getHiveStats()
       .then(setStats)
-      .catch(() => { setStats(null); setStatsError(true); });
+      .catch(() => {
+        setStats(null);
+        setStatsError(true);
+      });
   }, []);
 
   const s = stats ?? { mixes_total: 0, voices_total: 0, plays_total: 0, live_now: 0 };

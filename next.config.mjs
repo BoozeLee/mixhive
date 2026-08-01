@@ -32,7 +32,18 @@ const nextConfig = {
     root: appDir,
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'date-fns', '@radix-ui/react-avatar', '@radix-ui/react-dropdown-menu', '@radix-ui/react-hover-card', '@radix-ui/react-popover', '@radix-ui/react-scroll-area', '@radix-ui/react-separator', '@radix-ui/react-tabs', '@radix-ui/react-toast'],
+    optimizePackageImports: [
+      'lucide-react',
+      'date-fns',
+      '@radix-ui/react-avatar',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-hover-card',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-scroll-area',
+      '@radix-ui/react-separator',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-toast',
+    ],
   },
   serverExternalPackages: [
     'ioredis',

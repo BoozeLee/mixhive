@@ -6,7 +6,16 @@ import { LogoIcon } from './Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Icon } from './ui/Icon';
 import type { IconKey } from '../lib/icons';
-import { colors, space, transition, fontSize, fontWeight, layout, shadow, withAlpha } from '../styles/tokens';
+import {
+  colors,
+  space,
+  transition,
+  fontSize,
+  fontWeight,
+  layout,
+  shadow,
+  withAlpha,
+} from '../styles/tokens';
 
 interface NavItem {
   path: string;

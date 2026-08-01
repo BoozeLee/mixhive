@@ -160,13 +160,21 @@ export function Upload() {
     if (showDraftResume) return;
     const timer = setTimeout(() => {
       try {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify({
-          formData: { title: formData.title, description: formData.description, genreId: formData.genreId, tags: formData.tags },
-          tracklist,
-          platformLinks,
-          isExplicit,
-          draftMixId,
-        }));
+        localStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({
+            formData: {
+              title: formData.title,
+              description: formData.description,
+              genreId: formData.genreId,
+              tags: formData.tags,
+            },
+            tracklist,
+            platformLinks,
+            isExplicit,
+            draftMixId,
+          })
+        );
       } catch {
         // localStorage full or unavailable
       }
@@ -625,7 +633,9 @@ export function Upload() {
             flexWrap: 'wrap',
           }}
         >
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{generalError}</span>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
+            {generalError}
+          </span>
           {step === 'publish' && !uploading && (
             <button
               type="button"
@@ -946,7 +956,6 @@ export function Upload() {
             </Button>
           </div>
         )}
-
       </form>
     </div>
   );

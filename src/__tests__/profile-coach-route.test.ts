@@ -29,7 +29,13 @@ beforeEach(() => {
       return {
         select: () => ({
           eq: () => ({
-            single: () => ({ then: (cb: Function) => cb({ data: { is_admin: false, is_pro: false, display_name: 'DJ Test' }, error: null }) }),
+            single: () => ({
+              then: (cb: Function) =>
+                cb({
+                  data: { is_admin: false, is_pro: false, display_name: 'DJ Test' },
+                  error: null,
+                }),
+            }),
           }),
         }),
       };
@@ -38,7 +44,9 @@ beforeEach(() => {
       return {
         select: () => ({
           eq: () => ({
-            maybeSingle: () => ({ then: (cb: Function) => cb({ data: { openai_api_key: 'sk-user' }, error: null }) }),
+            maybeSingle: () => ({
+              then: (cb: Function) => cb({ data: { openai_api_key: 'sk-user' }, error: null }),
+            }),
           }),
         }),
       };
@@ -58,7 +66,9 @@ beforeEach(() => {
       return {
         insert: () => ({
           select: () => ({
-            single: () => ({ then: (cb: Function) => cb({ data: { id: 's1', status: 'pending' }, error: null }) }),
+            single: () => ({
+              then: (cb: Function) => cb({ data: { id: 's1', status: 'pending' }, error: null }),
+            }),
           }),
         }),
       };
@@ -79,38 +89,54 @@ const COACH_RESPONSE = JSON.stringify({
 
 describe('POST /api/ai/profile-coach', () => {
   it('returns 401 without auth', async () => {
-    const res = await POST(new NextRequest('https://test.vercel.app/api/ai/profile-coach', {
-      method: 'POST',
-      body: JSON.stringify({}),
-    }));
+    const res = await POST(
+      new NextRequest('https://test.vercel.app/api/ai/profile-coach', {
+        method: 'POST',
+        body: JSON.stringify({}),
+      })
+    );
     expect(res.status).toBe(401);
   });
 
   it('returns coaching suggestions with valid profile', async () => {
-    fetchSpy.mockResolvedValueOnce(new Response(JSON.stringify({
-      choices: [{ message: { content: COACH_RESPONSE } }],
-    }), { status: 200 }));
+    fetchSpy.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          choices: [{ message: { content: COACH_RESPONSE } }],
+        }),
+        { status: 200 }
+      )
+    );
 
-    const res = await POST(new NextRequest('https://test.vercel.app/api/ai/profile-coach', {
-      method: 'POST',
-      headers: { authorization: 'Bearer valid-jwt' },
-      body: JSON.stringify({}),
-    }));
+    const res = await POST(
+      new NextRequest('https://test.vercel.app/api/ai/profile-coach', {
+        method: 'POST',
+        headers: { authorization: 'Bearer valid-jwt' },
+        body: JSON.stringify({}),
+      })
+    );
     const body = await res.json();
     expect(res.status).toBe(200);
     expect(body.suggestion).toBeDefined();
   });
 
   it('returns 500 when GPT returns invalid JSON', async () => {
-    fetchSpy.mockResolvedValueOnce(new Response(JSON.stringify({
-      choices: [{ message: { content: 'not json' } }],
-    }), { status: 200 }));
+    fetchSpy.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          choices: [{ message: { content: 'not json' } }],
+        }),
+        { status: 200 }
+      )
+    );
 
-    const res = await POST(new NextRequest('https://test.vercel.app/api/ai/profile-coach', {
-      method: 'POST',
-      headers: { authorization: 'Bearer valid-jwt' },
-      body: JSON.stringify({}),
-    }));
+    const res = await POST(
+      new NextRequest('https://test.vercel.app/api/ai/profile-coach', {
+        method: 'POST',
+        headers: { authorization: 'Bearer valid-jwt' },
+        body: JSON.stringify({}),
+      })
+    );
     expect(res.status).toBe(500);
   });
 });

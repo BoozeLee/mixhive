@@ -73,10 +73,14 @@ export function BuzzDetail() {
   if (error) {
     return (
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px' }}>
-        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+          ← Back
+        </Button>
         <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>
           <p>{error}</p>
-          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );

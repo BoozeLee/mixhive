@@ -95,10 +95,25 @@ export function AIBandDetail() {
   if (error) {
     return (
       <div style={{ maxWidth: 600, margin: '80px auto', textAlign: 'center', padding: '0 16px' }}>
-        <Link to="/ai-band" style={{ color: colors.text.muted, fontSize: 13, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4, marginBottom: 16 }}>← Back to AI Band</Link>
+        <Link
+          to="/ai-band"
+          style={{
+            color: colors.text.muted,
+            fontSize: 13,
+            textDecoration: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            marginBottom: 16,
+          }}
+        >
+          ← Back to AI Band
+        </Link>
         <div style={{ textAlign: 'center', padding: 40, color: colors.danger }}>
           <p>{error}</p>
-          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );

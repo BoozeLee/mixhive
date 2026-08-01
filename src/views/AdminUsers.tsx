@@ -155,10 +155,15 @@ export function AdminUsers() {
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 96px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <h1 style={{ color: colors.text.primary, fontSize: 24, margin: 0 }}>
-          {t('title')}
-        </h1>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 8,
+        }}
+      >
+        <h1 style={{ color: colors.text.primary, fontSize: 24, margin: 0 }}>{t('title')}</h1>
         <div style={{ display: 'flex', gap: space[3] }}>
           <Link to="/admin/verification" style={{ color: colors.accent, fontSize: 13 }}>
             Verification
@@ -171,12 +176,13 @@ export function AdminUsers() {
           </Link>
         </div>
       </div>
-      <p style={{ color: colors.text.muted, margin: '0 0 24px' }}>
-        {t('subtitle')}
-      </p>
+      <p style={{ color: colors.text.muted, margin: '0 0 24px' }}>{t('subtitle')}</p>
 
       {/* Search + filter */}
-      <form onSubmit={handleSearch} style={{ display: 'flex', gap: space[3], marginBottom: space[5], flexWrap: 'wrap' }}>
+      <form
+        onSubmit={handleSearch}
+        style={{ display: 'flex', gap: space[3], marginBottom: space[5], flexWrap: 'wrap' }}
+      >
         <input
           type="text"
           value={searchInput}
@@ -208,18 +214,40 @@ export function AdminUsers() {
         >
           {t('search')}
         </button>
-        <label style={{ display: 'flex', alignItems: 'center', gap: space[2], color: colors.text.muted, fontSize: fontSize.sm, cursor: 'pointer' }}>
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: space[2],
+            color: colors.text.muted,
+            fontSize: fontSize.sm,
+            cursor: 'pointer',
+          }}
+        >
           <input
             type="checkbox"
             checked={showBanned}
-            onChange={e => { setShowBanned(e.target.checked); setPage(1); }}
+            onChange={e => {
+              setShowBanned(e.target.checked);
+              setPage(1);
+            }}
           />
           {t('bannedOnly')}
         </label>
       </form>
 
       {error && (
-        <div role="alert" style={{ padding: 12, marginBottom: 16, borderRadius: radius.md, background: colors.dangerBg, border: `1px solid ${colors.dangerStrong}`, color: colors.danger }}>
+        <div
+          role="alert"
+          style={{
+            padding: 12,
+            marginBottom: 16,
+            borderRadius: radius.md,
+            background: colors.dangerBg,
+            border: `1px solid ${colors.dangerStrong}`,
+            color: colors.danger,
+          }}
+        >
           {error}
         </div>
       )}
@@ -234,7 +262,13 @@ export function AdminUsers() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: fontSize.sm }}>
             <thead>
-              <tr style={{ borderBottom: `1px solid ${colors.border}`, color: colors.text.dim, textAlign: 'left' }}>
+              <tr
+                style={{
+                  borderBottom: `1px solid ${colors.border}`,
+                  color: colors.text.dim,
+                  textAlign: 'left',
+                }}
+              >
                 <th style={{ padding: '8px 12px' }}>{t('colUser')}</th>
                 <th style={{ padding: '8px 12px' }}>{t('colStatus')}</th>
                 <th style={{ padding: '8px 12px' }}>{t('colMixes')}</th>
@@ -247,18 +281,52 @@ export function AdminUsers() {
               {users.map(u => {
                 const isBanned = u.moderation_status === 'banned';
                 return (
-                  <tr key={u.id} style={{ borderBottom: `1px solid ${colors.borderSubtle}`, color: colors.text.primary }}>
+                  <tr
+                    key={u.id}
+                    style={{
+                      borderBottom: `1px solid ${colors.borderSubtle}`,
+                      color: colors.text.primary,
+                    }}
+                  >
                     <td style={{ padding: '10px 12px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: space[3] }}>
                         {u.avatar_url ? (
-                          <img src={u.avatar_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+                          <img
+                            src={u.avatar_url}
+                            alt=""
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: '50%',
+                              objectFit: 'cover',
+                            }}
+                          />
                         ) : (
-                          <div style={{ width: 32, height: 32, borderRadius: '50%', background: colors.surfaceMuted, display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.text.dim, fontSize: 12 }}>
+                          <div
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: '50%',
+                              background: colors.surfaceMuted,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: colors.text.dim,
+                              fontSize: 12,
+                            }}
+                          >
                             {(u.username || '?')[0].toUpperCase()}
                           </div>
                         )}
                         <div>
-                          <Link to={`/profile/${u.username}`} style={{ color: colors.text.primary, textDecoration: 'none', fontWeight: 600 }}>
+                          <Link
+                            to={`/profile/${u.username}`}
+                            style={{
+                              color: colors.text.primary,
+                              textDecoration: 'none',
+                              fontWeight: 600,
+                            }}
+                          >
                             {u.display_name || u.username}
                           </Link>
                           <div style={{ color: colors.text.dim, fontSize: 11 }}>@{u.username}</div>
@@ -274,8 +342,12 @@ export function AdminUsers() {
                         <span style={{ color: colors.text.dim }}>{t('active')}</span>
                       )}
                     </td>
-                    <td style={{ padding: '10px 12px', color: colors.text.dim }}>{u.mix_count ?? 0}</td>
-                    <td style={{ padding: '10px 12px', color: colors.text.dim }}>{u.followers_count ?? 0}</td>
+                    <td style={{ padding: '10px 12px', color: colors.text.dim }}>
+                      {u.mix_count ?? 0}
+                    </td>
+                    <td style={{ padding: '10px 12px', color: colors.text.dim }}>
+                      {u.followers_count ?? 0}
+                    </td>
                     <td style={{ padding: '10px 12px', color: colors.text.dim, fontSize: 11 }}>
                       {new Date(u.created_at).toLocaleDateString()}
                     </td>
@@ -340,7 +412,9 @@ export function AdminUsers() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: space[3], marginTop: space[6] }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', gap: space[3], marginTop: space[6] }}
+        >
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page <= 1}
@@ -413,7 +487,9 @@ export function AdminUsers() {
             padding: 16,
           }}
           onClick={() => setAuditTarget(null)}
-          onKeyDown={e => { if (e.key === 'Escape') setAuditTarget(null); }}
+          onKeyDown={e => {
+            if (e.key === 'Escape') setAuditTarget(null);
+          }}
         >
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- Dialog dismissal via backdrop click; keyboard users Escape through the outer backdrop handler. */}
           <div
@@ -432,14 +508,27 @@ export function AdminUsers() {
               padding: 24,
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 16,
+              }}
+            >
               <h3 id="audit-dialog-title" style={{ margin: 0, color: colors.text.primary }}>
                 {t('auditTitle')} — @{auditTarget.username}
               </h3>
               <button
                 aria-label="Close audit log"
                 onClick={() => setAuditTarget(null)}
-                style={{ background: 'none', border: 'none', color: colors.text.dim, cursor: 'pointer', fontSize: 18 }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: colors.text.dim,
+                  cursor: 'pointer',
+                  fontSize: 18,
+                }}
               >
                 ✕
               </button>
@@ -460,13 +549,23 @@ export function AdminUsers() {
                       border: `1px solid ${colors.borderSubtle}`,
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{
-                        color: entry.signal_type.includes('ban') ? colors.dangerStrong : colors.accent,
-                        fontWeight: 600,
-                        fontSize: 12,
-                      }}>
-                        {entry.signal_type === 'admin_ban' ? 'Ban' : entry.signal_type === 'admin_unban' ? 'Unban' : entry.signal_type}
+                    <div
+                      style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}
+                    >
+                      <span
+                        style={{
+                          color: entry.signal_type.includes('ban')
+                            ? colors.dangerStrong
+                            : colors.accent,
+                          fontWeight: 600,
+                          fontSize: 12,
+                        }}
+                      >
+                        {entry.signal_type === 'admin_ban'
+                          ? 'Ban'
+                          : entry.signal_type === 'admin_unban'
+                            ? 'Unban'
+                            : entry.signal_type}
                       </span>
                       <span style={{ color: colors.text.dim, fontSize: 11 }}>
                         {new Date(entry.created_at).toLocaleString()}

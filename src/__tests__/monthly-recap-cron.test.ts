@@ -85,9 +85,11 @@ describe('monthly-recap cron', () => {
 
   it('returns 401 with wrong cron secret', async () => {
     process.env.CRON_SECRET = 'real-secret';
-    const res = await GET(new NextRequest('https://mixhive.test/api/cron/monthly-recap', {
-      headers: { authorization: 'Bearer wrong-secret' },
-    }));
+    const res = await GET(
+      new NextRequest('https://mixhive.test/api/cron/monthly-recap', {
+        headers: { authorization: 'Bearer wrong-secret' },
+      })
+    );
     expect(res.status).toBe(401);
   });
 });

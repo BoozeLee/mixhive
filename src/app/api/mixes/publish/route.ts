@@ -27,14 +27,21 @@ const PublishMetadataSchema = z.object({
   source: z.string().max(100).optional(),
   bpm: z.number().finite().optional(),
   key: z.string().max(10).optional(),
-  provenance: z.object({
-    agents: z.array(z.object({
-      name: z.string().max(80),
-      role: z.string().max(60).optional(),
-      contribution: z.string().max(280).optional(),
-      model: z.string().max(60).optional(),
-    })).max(MAX_AGENTS).optional(),
-  }).optional(),
+  provenance: z
+    .object({
+      agents: z
+        .array(
+          z.object({
+            name: z.string().max(80),
+            role: z.string().max(60).optional(),
+            contribution: z.string().max(280).optional(),
+            model: z.string().max(60).optional(),
+          })
+        )
+        .max(MAX_AGENTS)
+        .optional(),
+    })
+    .optional(),
 });
 
 // Parse + validate the optional AI-agent provenance into credit rows. Returns []
@@ -111,7 +118,7 @@ export async function POST(req: NextRequest) {
     if (!parsedMeta.success) {
       return NextResponse.json(
         { error: parsedMeta.error.issues[0]?.message || 'Invalid metadata' },
-        { status: 400 },
+        { status: 400 }
       );
     }
     const validatedMeta = parsedMeta.data;

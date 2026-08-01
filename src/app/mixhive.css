@@ -42,19 +42,24 @@
   --hive-border: #1f1d16;
   --hive-border-strong: #35322a;
 
-  /* Surface & border tokens — bridges JS tokens.ts to CSS consumers */
-  --hive-bg: #0a0a0a;
-  --hive-surface: #111;
-  --hive-surface-hover: #1a1a2e;
-  --hive-surface-muted: #0f0f0f;
-  --hive-border: #1a1a2e;
-  --hive-border-strong: #333;
-  --hive-border-subtle: #222;
-  --hive-accent: #f0c040;
-  --hive-accent-hover: #f5cd5a;
-  --hive-text-primary: #eee;
-  --hive-text-secondary: #ccc;
-  --hive-text-dimmed: #999;
+  /* Legacy aliases — older chrome still reads these names. They must alias the
+     canonical values above, never restate them: while these carried literals
+     they were the *second* declaration of --hive-border and
+     --hive-border-strong, so the cascade handed every border in the shell the
+     retired navy #1a1a2e and a neutral #333 instead of the warm #1f1d16 /
+     #35322a this palette was retuned to. The rest of the block had drifted the
+     same way — neutral greys (#111, #eee, #ccc, #999) under a warm palette,
+     and the superseded gold #f0c040 next to buttons already on #f6c400. */
+  --hive-bg: var(--hive-black);
+  --hive-surface: var(--hive-ink);
+  --hive-surface-hover: var(--hive-border);
+  --hive-surface-muted: var(--hive-ink);
+  --hive-border-subtle: var(--hive-border);
+  --hive-accent: var(--hive-gold);
+  --hive-accent-hover: var(--hive-gold-hot);
+  --hive-text-primary: var(--hive-text);
+  --hive-text-secondary: var(--hive-text-soft);
+  --hive-text-dimmed: var(--hive-muted);
 
   /* Audio-reactive: src/lib/audioReactive.ts writes a value 0..1 from the
      current track's bass channel. Defaults to 0 when nothing is playing. */
@@ -681,7 +686,7 @@ pre, code {
     flex: 1 !important;
     width: 100% !important;
     border-left: none !important;
-    border-top: 1px solid #1a1a2e !important;
+    border-top: 1px solid var(--hive-border) !important;
     height: auto !important;
   }
 }

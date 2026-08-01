@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { colors } from '../styles/tokens';
+import { colors, withAlpha } from '../styles/tokens';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { useAgentStream } from '../lib/useAgentStream';
 import { useAgentStore } from '../lib/agentStore';
@@ -213,7 +213,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
             marginTop: 16,
             padding: 12,
             borderRadius: 8,
-            background: 'rgba(240,192,64,0.08)',
+            background: withAlpha(colors.accent, 0.08),
             border: `1px solid ${colors.border}`,
           }}
         >

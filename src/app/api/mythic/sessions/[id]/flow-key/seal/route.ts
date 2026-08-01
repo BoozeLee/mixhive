@@ -48,14 +48,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         .eq('session_id', id),
     ]);
 
-    const events = ((eventRows ?? []) as Array<{
-      id: string;
-      event_type: string;
-      actor_id: string | null;
-      actor_type: string;
-      created_at: string;
-      payload: { asset_id?: string } | null;
-    }>).filter(e => new Date(e.created_at) <= new Date(spore.opened_at as string));
+    const events = (
+      (eventRows ?? []) as Array<{
+        id: string;
+        event_type: string;
+        actor_id: string | null;
+        actor_type: string;
+        created_at: string;
+        payload: { asset_id?: string } | null;
+      }>
+    ).filter(e => new Date(e.created_at) <= new Date(spore.opened_at as string));
 
     const assets: SporeAsset[] = ((assetRows ?? []) as Array<Record<string, unknown>>).map(row => ({
       id: row.id as string,

@@ -133,7 +133,8 @@ body {
     linear-gradient(180deg, #070706 0%, #0c0b09 45%, #050504 100%);
 }
 
-pre, code {
+pre,
+code {
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
@@ -701,7 +702,9 @@ pre, code {
 
 .landing-pillar:hover {
   border-color: var(--hive-gold, #f6c400);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5), 0 0 32px rgba(246, 196, 0, 0.08);
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.5),
+    0 0 32px rgba(246, 196, 0, 0.08);
   transform: translateY(-2px);
 }
 

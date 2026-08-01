@@ -38,7 +38,10 @@ describe('POST .../flow-key/cap', () => {
   });
 
   it('caps a cell, defaulting capped to true', async () => {
-    rpcMock.mockResolvedValue({ data: { asset_id: 'a1', name: 'kick', capped: true }, error: null });
+    rpcMock.mockResolvedValue({
+      data: { asset_id: 'a1', name: 'kick', capped: true },
+      error: null,
+    });
     const res = await POST(post({ asset_id: 'a1' }), params);
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ capped: true, name: 'kick' });

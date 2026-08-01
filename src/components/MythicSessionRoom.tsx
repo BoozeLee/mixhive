@@ -465,7 +465,12 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
             )}
           </div>
           {currentAsset && (
-            <audio ref={audioRef} src={assetUrl(currentAsset)} preload="auto" aria-label="Audio player">
+            <audio
+              ref={audioRef}
+              src={assetUrl(currentAsset)}
+              preload="auto"
+              aria-label="Audio player"
+            >
               <track kind="captions" src="" label="No captions" />
             </audio>
           )}

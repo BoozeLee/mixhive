@@ -35,8 +35,7 @@ export async function POST(req: NextRequest) {
 
   // Default to yesterday so the day is closed and cannot gain more spores.
   const requested = new URL(req.url).searchParams.get('date');
-  const batchDate =
-    requested ?? new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  const batchDate = requested ?? new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
 
   const { data: pending, error } = await sb.rpc('flow_spores_awaiting_anchor', {
     p_batch_date: batchDate,

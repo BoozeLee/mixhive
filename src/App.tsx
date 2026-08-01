@@ -86,9 +86,7 @@ const AdminVerification = lazy(() =>
 const AdminModeration = lazy(() =>
   import('./views/AdminModeration').then(m => ({ default: m.AdminModeration }))
 );
-const AdminUsers = lazy(() =>
-  import('./views/AdminUsers').then(m => ({ default: m.AdminUsers }))
-);
+const AdminUsers = lazy(() => import('./views/AdminUsers').then(m => ({ default: m.AdminUsers })));
 const AdminInviteGenerator = lazy(() =>
   import('./views/AdminInviteGenerator').then(m => ({ default: m.AdminInviteGenerator }))
 );
@@ -173,9 +171,7 @@ const MessagesPage = lazy(() =>
 const MessageThreadPage = lazy(() =>
   import('./views/MessageThread').then(m => ({ default: m.MessageThreadPage }))
 );
-const SavedPage = lazy(() =>
-  import('./views/Saved').then(m => ({ default: m.SavedPage }))
-);
+const SavedPage = lazy(() => import('./views/Saved').then(m => ({ default: m.SavedPage })));
 // Phase 17 — Live Rooms & Events
 const LiveRooms = lazy(() => import('./views/LiveRooms').then(m => ({ default: m.LiveRooms })));
 const LiveRoomView = lazy(() => import('./views/LiveRoom').then(m => ({ default: m.LiveRoom })));
@@ -264,7 +260,7 @@ function AnimatedRoutes() {
         <Route path="/agents/gallery" element={<AgentsGallery />} />
         <Route path="/ai-band" element={<AIBandIndex />} />
         <Route path="/ai-band/:slug" element={<AIBandDetail />} />
-          <Route
+        <Route
           path="/admin/users"
           element={
             <ProtectedRoute>

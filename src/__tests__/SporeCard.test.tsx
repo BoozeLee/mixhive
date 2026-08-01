@@ -46,7 +46,9 @@ describe('SporeCard', () => {
   });
 
   it('omits the machine fraction entirely when there is none', () => {
-    render(<SporeCard spore={spore({ silica_count: 0, carbon_count: 1 })} onGerminate={jest.fn()} />);
+    render(
+      <SporeCard spore={spore({ silica_count: 0, carbon_count: 1 })} onGerminate={jest.fn()} />
+    );
     expect(screen.getByText(/1 human/i)).toBeInTheDocument();
     expect(screen.queryByText(/machine/i)).not.toBeInTheDocument();
   });
@@ -169,7 +171,9 @@ describe('SporeCard', () => {
       <SporeCard spore={spore({ can_countersign: true })} onGerminate={jest.fn()} />
     );
     // No wallet handler supplied -> no offer.
-    expect(screen.queryByRole('button', { name: /sign that you were there/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /sign that you were there/i })
+    ).not.toBeInTheDocument();
 
     rerender(
       <SporeCard
@@ -189,7 +193,9 @@ describe('SporeCard', () => {
         onCountersign={jest.fn()}
       />
     );
-    expect(screen.queryByRole('button', { name: /sign that you were there/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /sign that you were there/i })
+    ).not.toBeInTheDocument();
   });
 
   it('calls onCountersign with the spore id', async () => {

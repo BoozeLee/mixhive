@@ -5,7 +5,16 @@ import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../lib/messagesStore';
 import { searchProfiles, getOrCreateDm } from '../lib/api';
 import type { Profile } from '../lib/types';
-import { colors, layout, space, fontSize, fontWeight, radius, transition, withAlpha } from '../styles/tokens';
+import {
+  colors,
+  layout,
+  space,
+  fontSize,
+  fontWeight,
+  radius,
+  transition,
+  withAlpha,
+} from '../styles/tokens';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Icon } from '../components/ui/Icon';
 import { Button } from '../components/ui/Button';
@@ -21,13 +30,7 @@ function relativeTime(dateStr: string): string {
   return `${days}d`;
 }
 
-function NewConversationDialog({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
+function NewConversationDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations('messages');
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
@@ -57,7 +60,9 @@ function NewConversationDialog({
       setResults(profiles);
       setSearching(false);
     }, 300);
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, [query]);
 
   async function handleSelect(profile: Profile) {
@@ -92,7 +97,9 @@ function NewConversationDialog({
         tabIndex={0}
         aria-label="Close"
         onClick={onClose}
-        onKeyDown={e => { if (e.key === 'Escape' || e.key === 'Enter') onClose(); }}
+        onKeyDown={e => {
+          if (e.key === 'Escape' || e.key === 'Enter') onClose();
+        }}
         style={{
           position: 'absolute',
           inset: 0,
@@ -205,9 +212,7 @@ function NewConversationDialog({
                   justifyContent: 'center',
                 }}
               >
-                {!profile.avatar_url && (
-                  <Icon name="profile" size={16} color={colors.text.muted} />
-                )}
+                {!profile.avatar_url && <Icon name="profile" size={16} color={colors.text.muted} />}
               </div>
               <div>
                 <div style={{ fontWeight: fontWeight.medium }}>
@@ -239,11 +244,28 @@ export function MessagesPage() {
 
   if (error) {
     return (
-<div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[11]}px ${space[8]}px ${space[15]}px` }}>
+      <div
+        style={{
+          maxWidth: layout.contentMaxWidth,
+          margin: '0 auto',
+          padding: `${space[11]}px ${space[8]}px ${space[15]}px`,
+        }}
+      >
         <SectionHeading as="h1" eyebrow={t('chat')} title={t('messages')} />
-        <div style={{ padding: space[10], textAlign: 'center', color: colors.danger, background: colors.dangerBg, borderRadius: radius.md, border: `1px solid ${colors.danger}` }}>
+        <div
+          style={{
+            padding: space[10],
+            textAlign: 'center',
+            color: colors.danger,
+            background: colors.dangerBg,
+            borderRadius: radius.md,
+            border: `1px solid ${colors.danger}`,
+          }}
+        >
           <p>{error}</p>
-          <Button variant="primary" size="md" onClick={() => window.location.reload()}>Retry</Button>
+          <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );
@@ -261,8 +283,22 @@ export function MessagesPage() {
   }
 
   return (
-    <div style={{ maxWidth: layout.contentMaxWidth, margin: '0 auto', padding: `${space[11]}px ${space[8]}px ${space[15]}px` }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: space[3] }}>
+    <div
+      style={{
+        maxWidth: layout.contentMaxWidth,
+        margin: '0 auto',
+        padding: `${space[11]}px ${space[8]}px ${space[15]}px`,
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: space[3],
+        }}
+      >
         <SectionHeading as="h1" eyebrow={t('chat')} title={t('messages')} />
         <button
           onClick={() => setComposeOpen(true)}

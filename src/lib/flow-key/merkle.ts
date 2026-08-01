@@ -108,8 +108,7 @@ export function verifyInclusion(contentHash: string, proof: ProofStep[], root: s
     let current = leafHash(contentHash);
     for (const step of proof) {
       const sibling = Buffer.from(step.hash, 'hex');
-      current =
-        step.position === 'right' ? nodeHash(current, sibling) : nodeHash(sibling, current);
+      current = step.position === 'right' ? nodeHash(current, sibling) : nodeHash(sibling, current);
     }
     return current.toString('hex') === root;
   } catch {

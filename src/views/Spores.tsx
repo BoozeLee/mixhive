@@ -99,7 +99,9 @@ export function Spores() {
         again.
       </p>
 
-      <div style={{ marginTop: space[10], display: 'flex', flexDirection: 'column', gap: space[6] }}>
+      <div
+        style={{ marginTop: space[10], display: 'flex', flexDirection: 'column', gap: space[6] }}
+      >
         {loading && (
           <>
             <SkeletonBar />

@@ -11,19 +11,14 @@ import { BuzzComposer } from '../components/BuzzComposer';
 import { RecommendedDJs } from '../components/RecommendedDJs';
 import { SkeletonFeed } from '../components/Skeleton';
 import { EmptyState } from '../components/EmptyState';
-import { Icon } from '../components/ui/Icon';
-import { Button } from '../components/ui/Button';
 import {
   colors,
-  display,
   fontSize,
   fontWeight,
   getGenreColor,
   radius,
-  shadow,
   space,
   transition,
-  withAlpha,
 } from '../styles/tokens';
 import type {
   FeedMix,
@@ -341,15 +336,6 @@ export function Feed() {
     };
   }, [user]);
 
-  // Keep default tab in sync if auth state changes
-  useEffect(() => {
-    setTab(prev => {
-      if (user && prev === 'trending') return 'feed';
-      if (!user && prev === 'feed') return 'trending';
-      return prev;
-    });
-  }, [user]);
-
   const handleShowNew = async () => {
     if (!user) return;
     setNewCount(0);
@@ -456,7 +442,6 @@ export function Feed() {
         });
       } catch {
         setMixedFeed(prev => ({ ...prev, loading: false }));
-        setError('Failed to load feed');
       }
       return;
     }
@@ -473,7 +458,6 @@ export function Feed() {
         });
       } catch {
         setLatestMixed(prev => ({ ...prev, loading: false }));
-        setError('Failed to load latest mixes');
       }
       return;
     }
@@ -488,7 +472,6 @@ export function Feed() {
       });
     } catch {
       setTrendingTab(prev => ({ ...prev, loading: false }));
-      setError('Failed to load trending');
     }
   };
 
@@ -538,8 +521,8 @@ export function Feed() {
     tab === 'feed'
       ? mixedFeed.data.filter(filterItem)
       : tab === 'latest'
-        ? latestMixed.data.filter(filterItem)
-        : trendingTab.data.map(m => ({ type: 'mix' as const, data: m })).filter(filterItem);
+        ? latestMixed.data
+        : trendingTab.data.map(m => ({ type: 'mix' as const, data: m }));
   const currentLoading =
     tab === 'feed'
       ? mixedFeed.loading
@@ -553,44 +536,11 @@ export function Feed() {
         ? latestMixed.hasMore
         : trendingTab.hasMore;
 
-  function emptyStateForTab(tabId: Tab): {
-    iconKey: 'feed' | 'discover' | 'zap';
-    title: string;
-    body: string;
-    actionLabel: string;
-    actionTo?: string;
-    onAction?: () => void;
-  } {
-    switch (tabId) {
-      case 'feed':
-        return {
-          iconKey: 'feed',
-          title: t('emptyFollowingTitle'),
-          body: t('emptyFollowingBody'),
-          actionLabel: t('emptyFollowingAction'),
-          actionTo: '/discover',
-        };
-      case 'latest':
-        return {
-          iconKey: 'discover',
-          title: t('emptyLatestTitle'),
-          body: t('emptyLatestBody'),
-          actionLabel: t('emptyLatestAction'),
-          actionTo: '/upload',
-        };
-      case 'trending':
-      default:
-        return {
-          iconKey: 'zap',
-          title: t('emptyTrendingTitle'),
-          body: t('emptyTrendingBody'),
-          actionLabel: t('emptyTrendingAction'),
-          onAction: () => handleRetry('trending'),
-        };
-    }
-  }
-
-  const emptyState = emptyStateForTab(tab);
+  const tabLabels: Record<Tab, string> = {
+    trending: 'Trending',
+    latest: 'Latest',
+    feed: 'Following',
+  };
 
   return (
     <>
@@ -630,7 +580,7 @@ export function Feed() {
               lineHeight: 1.4,
             }}
           >
-            {t('heroSubtitle')}
+            Underground mixes, live from the scene.
           </p>
         </div>
         {user && (
@@ -822,13 +772,10 @@ export function Feed() {
                 fontSize: fontSize.md,
               }}
             >
-              {t.rich('followingPrompt', {
-                link: chunks => (
-                  <Link to="/login" style={{ color: colors.accent }}>
-                    {chunks}
-                  </Link>
-                ),
-              })}
+              <Link to="/login" style={{ color: colors.accent }}>
+                Sign in
+              </Link>{' '}
+              to see your following feed.
             </div>
           )}
 
@@ -878,11 +825,7 @@ export function Feed() {
         </div>
 
         {/* Right rail — desktop only */}
-        <aside
-          className="feed-right-rail"
-          aria-label={t('sidebarAria')}
-          style={{ alignSelf: 'start' }}
-        >
+        <aside className="feed-right-rail" aria-label="Feed sidebar" style={{ alignSelf: 'start' }}>
           {trendingTab.data.length > 0 && <TrendingNowPanel mixes={trendingTab.data} />}
           <GenreRadar />
           {user && <RecommendedDJs userId={user.id} />}

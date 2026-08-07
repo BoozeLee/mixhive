@@ -105,28 +105,17 @@ export function NotificationsPage() {
           marginBottom: space[10],
         }}
       >
-        <SectionHeading as="h1" eyebrow={t('eyebrow')} title={t('title')} />
-        <div style={{ display: 'flex', gap: space[3] }}>
-          <Link
-            to="/settings#notifications"
-            style={{
-              fontSize: fontSize.sm,
-              color: colors.text.dim,
-              textDecoration: 'none',
-              padding: '6px 0',
-            }}
-          >
-            {t('preferences')}
-          </Link>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={handleMarkAllAsRead}
-            disabled={unreadCount === 0}
-          >
-            {t('markAllRead')}
-          </Button>
-        </div>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: colors.text.primary, margin: 0 }}>
+          Notifications
+        </h1>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleMarkAllAsRead}
+          disabled={unreadCount === 0}
+        >
+          Mark all read
+        </Button>
       </div>
 
       {notifications.length === 0 ? (

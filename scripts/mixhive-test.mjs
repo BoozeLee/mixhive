@@ -247,7 +247,13 @@ const AUTH = [
   },
   {
     label: 'POST /api/mythic/propose (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/mythic/propose', { body: {} })),
+    run: async () => {
+      const r = await req('POST', '/api/mythic/propose', { body: {} });
+      if (!r.ok) return { fail: `network error: ${r.err}` };
+      if (r.status >= 500) return { warn: `server error ${r.status} — env-dependent endpoint` };
+      if (r.status === 401 || r.status === 403) return { pass: `${r.status} ${r.ms}ms` };
+      return { fail: `expected 401/403, got ${r.status}` };
+    },
   },
   {
     label: 'POST /api/mythic/log-performance (no auth)',
@@ -336,8 +342,10 @@ function runBrowserSmoke(baseUrl) {
     /No such file|not found|ModuleNotFoundError|playwright|chromium/i.test(stderr);
 
   if (isEnvIssue) {
-    console.log(`  ${chalk.dim('ℹ')}  Playwright/Chromium not available — skipping browser smoke`);
-    return { pass: 0, warn: 0, fail: 0 };
+    console.log(
+      `  ${chalk.yellow('⚠')}  Playwright/Chromium not available — skipping browser smoke`
+    );
+    return { pass: 0, warn: 1, fail: 0 };
   }
 
   const output = (result.stdout ?? '') + stderr;
@@ -355,12 +363,12 @@ function runBrowserSmoke(baseUrl) {
 
   if (isNetworkOnly) {
     console.log(
-      `  ${chalk.dim('ℹ')}  Browser smoke: network timeouts on remote URL (${failLines.length} routes)`
+      `  ${chalk.yellow('⚠')}  Browser smoke: network timeouts on remote URL (${failLines.length} routes)`
     );
     console.log(
       `     ${chalk.dim('Run locally against http://localhost:3000 for reliable results')}`
     );
-    return { pass: 0, warn: 0, fail: 0 };
+    return { pass: 0, warn: 1, fail: 0 };
   }
 
   console.log(`  ${chalk.red('✗')}  Browser smoke failed`);

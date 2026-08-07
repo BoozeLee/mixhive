@@ -272,3 +272,17 @@ export class JobProcessor {
 // which left audio_jobs unprocessed in production. The Go worker is now the
 // single source of truth; start this manually only for local debugging.
 export const jobProcessor = new JobProcessor();
+
+// Auto-start processor in development mode
+if (process.env.NODE_ENV === 'development') {
+  jobProcessor.start();
+}
+
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+  jobProcessor.stop();
+});
+
+process.on('SIGINT', () => {
+  jobProcessor.stop();
+});

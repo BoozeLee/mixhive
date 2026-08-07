@@ -48,7 +48,7 @@ export function forbidden(message = 'Forbidden') {
   return NextResponse.json({ error: message }, { status: 403 });
 }
 
-export function badRequest(message: string, issues?: unknown) {
+export function badRequest(message: string, issues?: any) {
   return NextResponse.json({ error: message, ...(issues && { issues }) }, { status: 400 });
 }
 

@@ -15,8 +15,14 @@ const CreateSessionSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const ctx = await ritualAuth(request);
-    if (!ctx) return unauthorized();
+    const supabase = createServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return unauthorized();
+    }
 
     const body = await request.json();
     const parsed = CreateSessionSchema.safeParse(body);
@@ -54,8 +60,14 @@ export async function POST(request: NextRequest) {
 // End a session
 export async function PATCH(request: NextRequest) {
   try {
-    const ctx = await ritualAuth(request);
-    if (!ctx) return unauthorized();
+    const supabase = createServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return unauthorized();
+    }
 
     const body = await request.json();
     const { sessionId } = body;

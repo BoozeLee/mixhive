@@ -62,8 +62,8 @@ export function QuestsList() {
 
   if (loading) {
     return (
-      <div style={{ padding: 40, textAlign: 'center' }}>
-        <LoadingSpinner size="lg" />
+      <div style={{ padding: 40, textAlign: 'center', color: colors.text.muted }}>
+        Loading quests…
       </div>
     );
   }
@@ -103,7 +103,7 @@ export function QuestsList() {
             style={{
               display: 'grid',
               gap: space[4],
-              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
             }}
           >
             {activeQuests.map(quest => (
@@ -140,7 +140,7 @@ export function QuestsList() {
                       marginBottom: space[2],
                     }}
                   >
-                    <div>{t('momentum')}</div>
+                    <div>Momentum</div>
                     <div style={{ fontWeight: fontWeight.medium }}>{quest.momentum}</div>
                   </div>
 
@@ -185,12 +185,12 @@ export function QuestsList() {
       {/* Completed / Archived */}
       {completedQuests.length > 0 && (
         <section>
-          <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>{t('completed')}</h2>
+          <h2 style={{ fontSize: fontSize.xl, marginBottom: space[4] }}>Completed</h2>
           <div
             style={{
               display: 'grid',
               gap: space[4],
-              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
             }}
           >
             {completedQuests.map(quest => (
@@ -216,7 +216,7 @@ export function QuestsList() {
       {showCreateModal && (
         <CreateQuestModal
           onClose={() => setShowCreateModal(false)}
-          onCreated={_newQuest => {
+          onCreated={newQuest => {
             // Refresh the list after creation
             getActiveQuests(user!.id).then(data => {
               const formatted = data.map((q: MythicQuest) => ({

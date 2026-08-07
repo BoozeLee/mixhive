@@ -319,14 +319,6 @@ const AGENT_META: Record<AgentId, AgentMeta> = {
       'mythic.edge.create',
     ],
   },
-  set_composer_agent: {
-    display_name: 'Set Composer',
-    description: "Analyses a Hive Composer set's BPM arc and flow on demand.",
-    tier: 'free',
-    approval: 'auto',
-    timeout_ms: 25000,
-    tools: ['llm.call'],
-  },
 };
 
 const now = new Date().toISOString();

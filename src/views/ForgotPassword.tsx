@@ -58,10 +58,7 @@ export function ForgotPassword() {
           <p style={{ color: colors.text.muted, fontSize: 14, marginBottom: 24, lineHeight: 1.5 }}>
             If an account with <strong>{email}</strong> exists, we sent a password reset link.
           </p>
-          <Link
-            to="/login"
-            style={{ color: colors.accent, fontSize: 14, textDecoration: 'underline' }}
-          >
+          <Link to="/login" style={{ color: '#f0c040', fontSize: 14, textDecoration: 'none' }}>
             Back to sign in
           </Link>
         </div>

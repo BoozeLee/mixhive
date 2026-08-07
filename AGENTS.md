@@ -1,89 +1,153 @@
-# AGENTS.md / SOUL.md - MixHive Session Summary
+# AGENTS.md - MixHive
 
-## Objective
-Polish secondary route error/loading/empty states (Phase 2a), mobile overflow
-audit at 320px (Phase 2b), and update DESIGN_SYSTEM.md (Phase 4).
+Drop-in conventions for any OpenCode session opened inside this repo.
 
-## Important Details
-- Stack: Next.js 16 App Router + React 19 + TypeScript 6 + React Router v7
-  inside client bridge. Supabase, Vercel, Tailwind 4 CSS tokens.
-- Mobile: stable at 320px, no horizontal overflow. Content width = 288px
-  (320px - 16px * 2 padding).
-- Submodule: `mixhive/` at `d659fa5d43a6e46b9e27e6495b139c333f7bcefe`. Push
-  submodule first, then parent.
-- User is @kilisan on GitHub. Basecamp project: "Thursdsay Hive Corp".
-- DESIGN_SYSTEM.md lives at `docs/DESIGN_SYSTEM.md` — updated.
-- Error handling pattern: `error` state + Retry button + inline danger banner.
-- Loading pattern: `<LoadingSpinner size="lg" />` or `<SkeletonFeed />`.
-- Empty state pattern: `<EmptyState iconKey="..." title="..." body="..." />`.
-- 320px mobile pattern: `flexWrap: 'wrap'` on multi-item rows, text overflow
-  protection (`overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap`),
-  `wordBreak: 'break-word'` on message bubbles and notification text.
+## Project
 
-## Completed (Phase 1 - Critical Bug Fixes)
-1. ArtStudio: added missing `tierLoading` state declaration.
-2. Settings: replaced hardcoded "Free" with actual tier fetch.
-3. Dashboard: top-level empty state for new users.
+MixHive is a DJ-first social music platform: Facebook x SoundCloud for DJs,
+producers, rave organizers, visual artists, and underground culture creators.
+The app has been migrated from Vite to Next.js App Router. Next serves a
+catch-all bridge at `src/app/[[...slug]]/page.tsx`, then the client app uses
+React Router v7 for the existing route tree under `src/views`.
 
-## Completed (Phase 10/12 UI fixes)
-1. MixDetail: `.catch()` on `getMix()` to prevent infinite spinner.
-2. Notifications: plain text → `<LoadingSpinner />`.
-3. EventDetail: `/profile/` → `/u/` links.
-4. HiveComposer: two-panel mobile layout at 768px breakpoint.
+Current stack:
 
-## Completed (Stripe subscription fixes)
-1. PricingPage, Settings, ArtStudio: tier-aware subscription display.
+- Next.js 16 App Router + React 19 + TypeScript 6 strict
+- React Router v7 inside the client bridge
+- Supabase for Postgres, Auth, Storage, RLS, and Realtime
+- Vercel production deploys, plus a Python serverless Lua agent runtime
+- Tailwind 4 tokens/CSS plus local cyber-hive styling in `src/app/mixhive.css`
+- Three.js backdrop with CSS fallback
 
-## Completed (Phase 2a - Error/loading states for secondary routes)
-All 10 files: Leaderboard, LiveRooms, Notifications, Messages,
-MessageThread, MixAnalytics, BuzzDetail, AIBandDetail, AIBandIndex,
-AgentTracks — added error state + catch + retry.
+The external `mixhive.app` DNS task is intentionally deferred. Build and deploy
+against Vercel deployment URLs and `https://mixhive.vercel.app`.
 
-## Completed (Phase 2b - 320px mobile overflow audit)
-**MixCard.tsx:** DJ name div — added `overflow: hidden, textOverflow:
-ellipsis, whiteSpace: nowrap`.
+## Agent Ownership
 
-**Feed.tsx:**
-- TrendingNowPanel DJ name — added overflow protection.
-- Tab bar container — added `overflow: hidden`.
+Codex owns infrastructure and integration:
 
-**BuzzComposer.tsx:**
-- Toolbar — added `flexWrap: 'wrap'`.
-- AttachBadge — added `maxWidth: 100%, overflow: hidden` + text overflow.
+- `next.config.mjs`, `vercel.json`, `.github/workflows/*`
+- `src/app/*`, `src/MixHiveClient.tsx`, package scripts, smoke scripts
+- Vercel deploys, production smoke checks, and final merge/deploy review
 
-**Notifications.tsx:** Text body — added `wordBreak: 'break-word'` + parent
-`overflow: hidden`.
+Claude Code owns product/UI polish:
 
-**Messages.tsx:** Header row — added `flexWrap: 'wrap'`.
+- `src/views/*`
+- `src/components/*`
+- `src/styles/tokens.ts`
+- user-facing docs and `CLAUDE.md` when instructions drift
 
-**MessageThread.tsx:** Message bubbles — added `wordBreak: 'break-word'`.
+OpenCode owns QA, security, and developer experience:
 
-**Upload.tsx:**
-- Error banner — added `flexWrap: 'wrap'` + text overflow.
-- Draft resume banner — added `flexWrap: 'wrap'`.
+- `scripts/browser_smoke.py`, `scripts/mixhive-test.mjs`, `scripts/test.js`
+- `package.json`, `package-lock.json`
+- `SECURITY.md`, `README.md`, `docs/**`
+- `.github/workflows/*` (maintenance bumps, lint/test changes)
+- `CLAUDE.md` and this file when governance drift occurs
 
-**UploadProgress.tsx:** Status row — added `flexWrap: 'wrap'` + text overflow.
+Shared files require coordination before edits:
 
-**MixDetail.tsx:**
-- Stats row — added `flexWrap: 'wrap'`.
-- Action buttons — added `flexWrap: 'wrap'`.
+- `src/App.tsx`
+- `src/lib/supabase.ts`
+- `src/styles/global.css`
 
-## Completed (Phase 4 - DESIGN_SYSTEM.md update)
-Added responsive patterns (320px mobile, flexWrap, text overflow, word-break),
-error/loading/empty state patterns, and Phase 2 progress to the checklist.
+If OpenCode finds an infra/config issue, write it down for Codex instead of
+patching infra directly. If OpenCode finds a product/UI issue, write it down
+for Claude Code instead of patching UI directly.
 
-## Relevant Files
-- `src/components/MixCard.tsx` — DJ name overflow fix
-- `src/views/Feed.tsx` — DJ name overflow + tab bar overflow
-- `src/components/BuzzComposer.tsx` — toolbar flexWrap + AttachBadge overflow
-- `src/views/Notifications.tsx` — wordBreak + overflow
-- `src/views/Messages.tsx` — header flexWrap
-- `src/views/MessageThread.tsx` — wordBreak on bubbles
-- `src/views/Upload.tsx` — error banner + draft banner flexWrap
-- `src/components/upload/UploadProgress.tsx` — flexWrap + overflow
-- `src/views/MixDetail.tsx` — stats + action buttons flexWrap
-- `docs/DESIGN_SYSTEM.md` — Phase 4 update
-- `src/styles/tokens.ts` — design tokens
+## Key Paths
 
-## Next
-Basecamp progress update, then Phase 3/5.
+- `src/app/[[...slug]]/page.tsx` - Next catch-all bridge into the client app
+- `src/MixHiveClient.tsx` - client bootstrap, Sentry init, top error boundary
+- `src/App.tsx` - React Router route tree and global shell
+- `src/views/` - routed screens
+- `src/components/` - reusable UI, player, nav, hive components
+- `src/components/CyberHiveBackdrop.tsx` - Three.js backdrop and fallback
+- `src/lib/api.ts` - server interactions, queries, mutations, RPCs
+- `src/lib/types.ts` - shared app types and `parseMentions()`
+- `src/lib/database.types.ts` - generated Supabase types; do not hand-edit
+- `src/lib/playerStore.tsx` - global persistent audio player context
+- `src/lib/schemas.ts` - Zod schemas and `formatZodError()`
+- `src/lib/agents.ts` + `src/lib/starter_agents.ts` - Lua agent client API
+- `src/styles/tokens.ts` - color, space, radius, fontSize, shadow, z tokens
+- `src/app/mixhive.css` - brand shell, honeycomb, landing, and Next CSS
+- `scripts/browser_smoke.py` - headless browser route/console/overflow smoke
+- `api/lua-agent/run.py` - Vercel Python serverless Lua worker
+- `supabase/migrations/NNN_*.sql` - numbered idempotent migrations
+- `docs/LUA_AGENTS.md` - Lua sandbox reference
+- `docs/PATTERNS.md` - local cookbook patterns
+
+## Conventions
+
+- Keep UI consistent with the black/gold cyber-hive brand. Use restrained,
+  premium, high-contrast motion; avoid layout clutter and overlapping text.
+- Use tokenized colors from `src/styles/tokens.ts` or existing CSS variables in
+  `src/app/mixhive.css`. Do not introduce random one-off hex colors.
+- Use existing form components from `src/components/ui/` before raw controls.
+- Buttons must be real `<button>` elements or `IconButton` with a label.
+- Keep mobile layouts stable at 320px width. No horizontal overflow.
+- Respect `prefers-reduced-motion`; do not make WebGL required for usability.
+- Do not disable RLS or use a service-role key from browser code.
+- Do not edit existing migrations. Add a new numbered migration only if schema
+  work is explicitly required.
+- Do not commit `.env*` files except `.env.example`.
+- Do not add paid third-party APIs.
+
+## Workflow
+
+Run checks in this order before handoff:
+
+```bash
+npx tsc --noEmit
+npm run lint
+npm run build
+npm run smoke -- --mock-supabase http://127.0.0.1:<port>
+```
+
+For local production smoke:
+
+```bash
+npm run build
+npm run preview -- -p 3002
+npm run smoke -- --mock-supabase http://127.0.0.1:3002
+```
+
+For Vercel production verification, Codex runs:
+
+```bash
+vercel deploy --prod --yes
+vercel inspect <deployment-url>
+npm run smoke -- --mock-supabase https://<deployment-url>
+curl -I https://mixhive.vercel.app
+```
+
+## OpenCode Task Card
+
+When asked to continue QA/Security/DevEx work, focus on:
+
+- smoke script maintenance and route coverage in `scripts/*`
+- dependency hygiene in `package.json` and `package-lock.json`
+- `SECURITY.md` updates and dependency audit findings
+- `.github/workflows/*` maintenance bumps for CI health
+- `README.md` and `docs/**` accuracy
+- `CLAUDE.md` and `AGENTS.md` governance drift
+- lint/test/build health without changing product behavior
+
+Report back with:
+
+- changed files
+- security/QA findings
+- commands run and any failures
+- recommendations for Claude Code or Codex if product/infra issues are found
+
+## Quick Commands
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Next dev server |
+| `npm run build` | Production Next build |
+| `npm run preview` | Serve the built Next app |
+| `npm run lint` | ESLint flat config |
+| `npm run smoke -- --mock-supabase <url>` | Browser smoke across core routes/viewports |
+| `npm run analyze` | Bundle analysis build |
+| `npm run db:types` | Regenerate Supabase database types |

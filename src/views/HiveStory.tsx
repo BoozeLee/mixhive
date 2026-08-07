@@ -367,7 +367,7 @@ export function HiveStory({ profileId, showJourney, isOwn }: HiveStoryProps) {
                           letterSpacing: '0.06em',
                         }}
                       >
-                        {t('soundConsistency')}
+                        Sound consistency
                       </span>
                       <span
                         style={{

@@ -126,8 +126,8 @@ export default function AdminAgentsPage() {
         display: 'flex',
         height: '100vh',
         fontFamily: 'monospace',
-        background: colors.bg,
-        color: colors.text.primary,
+        background: '#0a0a0a',
+        color: '#e0e0e0',
       }}
     >
       {/* Sidebar */}
@@ -152,13 +152,10 @@ export default function AdminAgentsPage() {
               padding: '8px 10px',
               marginBottom: 4,
               cursor: 'pointer',
-              background: selected?.id === a.id ? colors.surface : 'transparent',
-              border:
-                selected?.id === a.id
-                  ? `1px solid ${colors.accent}`
-                  : `1px solid ${colors.borderStrong}`,
+              background: selected?.id === a.id ? '#1a1a1a' : 'transparent',
+              border: selected?.id === a.id ? '1px solid #ffd700' : '1px solid #333',
               borderRadius: 4,
-              color: colors.text.primary,
+              color: '#e0e0e0',
             }}
           >
             <div style={{ fontWeight: 600, fontSize: 13 }}>{a.display_name}</div>
@@ -180,8 +177,8 @@ export default function AdminAgentsPage() {
           </div>
         ) : (
           <>
-            <h2 style={{ color: colors.accent, margin: '0 0 4px' }}>{selected.display_name}</h2>
-            <p style={{ color: colors.text.muted, margin: '0 0 16px', fontSize: 13 }}>
+            <h2 style={{ color: '#ffd700', margin: '0 0 4px' }}>{selected.display_name}</h2>
+            <p style={{ color: '#888', margin: '0 0 16px', fontSize: 13 }}>
               {selected.description}
             </p>
 
@@ -191,9 +188,9 @@ export default function AdminAgentsPage() {
                   padding: '8px 12px',
                   marginBottom: 16,
                   borderRadius: 4,
-                  background: status.startsWith('Error') ? colors.dangerBg : colors.successBg,
-                  border: `1px solid ${status.startsWith('Error') ? colors.dangerStrong : colors.successStrong}`,
-                  color: status.startsWith('Error') ? colors.dangerStrong : colors.successStrong,
+                  background: status.startsWith('Error') ? '#2d0000' : '#002d00',
+                  border: `1px solid ${status.startsWith('Error') ? '#f44336' : '#4caf50'}`,
+                  color: status.startsWith('Error') ? '#f44336' : '#4caf50',
                   fontSize: 13,
                 }}
               >
@@ -202,13 +199,7 @@ export default function AdminAgentsPage() {
             )}
 
             {/* Version history */}
-            <h3
-              style={{
-                color: colors.text.secondary,
-                borderBottom: `1px solid ${colors.borderSubtle}`,
-                paddingBottom: 8,
-              }}
-            >
+            <h3 style={{ color: '#ccc', borderBottom: '1px solid #222', paddingBottom: 8 }}>
               Version History
             </h3>
             <div style={{ marginBottom: 20 }}>
@@ -225,25 +216,20 @@ export default function AdminAgentsPage() {
                       padding: '10px 14px',
                       marginBottom: 8,
                       borderRadius: 4,
-                      background: colors.surface,
-                      border: `1px solid ${isLive ? colors.accent : isRolledBack ? colors.borderStrong : colors.borderSubtle}`,
+                      background: '#111',
+                      border: `1px solid ${isLive ? '#ffd700' : isRolledBack ? '#333' : '#222'}`,
                       opacity: isRolledBack ? 0.5 : 1,
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span
-                        style={{
-                          fontWeight: 700,
-                          color: isLive ? colors.accent : colors.text.dimmed,
-                        }}
-                      >
+                      <span style={{ fontWeight: 700, color: isLive ? '#ffd700' : '#aaa' }}>
                         v{v.version}
                       </span>
                       {isLive && (
                         <span
                           style={{
-                            background: colors.accent,
-                            color: colors.black,
+                            background: '#ffd700',
+                            color: '#000',
                             padding: '1px 6px',
                             borderRadius: 3,
                             fontSize: 11,
@@ -256,8 +242,8 @@ export default function AdminAgentsPage() {
                       {isRolledBack && (
                         <span
                           style={{
-                            background: colors.borderStrong,
-                            color: colors.text.muted,
+                            background: '#333',
+                            color: '#888',
                             padding: '1px 6px',
                             borderRadius: 3,
                             fontSize: 11,
@@ -267,18 +253,14 @@ export default function AdminAgentsPage() {
                         </span>
                       )}
                       {v.promoted_at && !isRolledBack && (
-                        <span style={{ color: colors.successStrong, fontSize: 11 }}>promoted</span>
+                        <span style={{ color: '#4caf50', fontSize: 11 }}>promoted</span>
                       )}
-                      <span
-                        style={{ color: colors.text.faintest, fontSize: 11, marginLeft: 'auto' }}
-                      >
+                      <span style={{ color: '#555', fontSize: 11, marginLeft: 'auto' }}>
                         {v.author ?? 'unknown'} · {new Date(v.created_at).toLocaleDateString()}
                       </span>
                     </div>
                     {v.notes && (
-                      <div style={{ color: colors.text.dimmed, fontSize: 12, marginTop: 4 }}>
-                        {v.notes}
-                      </div>
+                      <div style={{ color: '#aaa', fontSize: 12, marginTop: 4 }}>{v.notes}</div>
                     )}
                     {!isLive && !isRolledBack && (
                       <button
@@ -286,9 +268,9 @@ export default function AdminAgentsPage() {
                         style={{
                           marginTop: 8,
                           padding: '4px 10px',
-                          background: colors.successBg,
-                          border: `1px solid ${colors.successStrong}`,
-                          color: colors.successStrong,
+                          background: '#1a3a00',
+                          border: '1px solid #4caf50',
+                          color: '#4caf50',
                           borderRadius: 3,
                           cursor: 'pointer',
                           fontSize: 12,
@@ -308,9 +290,9 @@ export default function AdminAgentsPage() {
                 onClick={handleRollback}
                 style={{
                   padding: '6px 14px',
-                  background: colors.dangerBg,
-                  border: `1px solid ${colors.dangerStrong}`,
-                  color: colors.dangerStrong,
+                  background: '#2d0000',
+                  border: '1px solid #f44336',
+                  color: '#f44336',
                   borderRadius: 4,
                   cursor: 'pointer',
                   fontSize: 13,
@@ -322,13 +304,7 @@ export default function AdminAgentsPage() {
             )}
 
             {/* Create new version */}
-            <h3
-              style={{
-                color: colors.text.secondary,
-                borderBottom: `1px solid ${colors.borderSubtle}`,
-                paddingBottom: 8,
-              }}
-            >
+            <h3 style={{ color: '#ccc', borderBottom: '1px solid #222', paddingBottom: 8 }}>
               Create Draft Version
             </h3>
             <input
@@ -340,9 +316,9 @@ export default function AdminAgentsPage() {
                 width: '100%',
                 padding: '6px 10px',
                 marginBottom: 8,
-                background: colors.surface,
-                border: `1px solid ${colors.borderStrong}`,
-                color: colors.text.primary,
+                background: '#111',
+                border: '1px solid #333',
+                color: '#e0e0e0',
                 borderRadius: 4,
                 boxSizing: 'border-box',
                 fontFamily: 'monospace',
@@ -358,9 +334,9 @@ export default function AdminAgentsPage() {
                 width: '100%',
                 padding: '8px 10px',
                 marginBottom: 10,
-                background: colors.surface,
-                border: `1px solid ${colors.borderStrong}`,
-                color: colors.text.primary,
+                background: '#111',
+                border: '1px solid #333',
+                color: '#e0e0e0',
                 borderRadius: 4,
                 boxSizing: 'border-box',
                 fontFamily: 'monospace',
@@ -373,9 +349,9 @@ export default function AdminAgentsPage() {
               disabled={!newScript.trim()}
               style={{
                 padding: '8px 18px',
-                background: newScript.trim() ? colors.surfaceHover : colors.surface,
-                border: `1px solid ${newScript.trim() ? colors.accent : colors.borderStrong}`,
-                color: newScript.trim() ? colors.accent : colors.text.faintest,
+                background: newScript.trim() ? '#1a1a3a' : '#111',
+                border: `1px solid ${newScript.trim() ? '#ffd700' : '#333'}`,
+                color: newScript.trim() ? '#ffd700' : '#555',
                 borderRadius: 4,
                 cursor: newScript.trim() ? 'pointer' : 'not-allowed',
                 fontSize: 13,

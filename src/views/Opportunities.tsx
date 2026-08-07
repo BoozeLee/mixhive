@@ -279,14 +279,13 @@ export function Opportunities() {
 
       {matchError && (
         <div
-          role="alert"
           style={{
             marginBottom: space[6],
             padding: `${space[4]}px`,
             borderRadius: radius.lg,
             background: 'rgba(220,0,80,0.08)',
             border: '1px solid rgba(220,0,80,0.2)',
-            color: colors.danger,
+            color: '#e05',
             fontSize: fontSize.sm,
           }}
         >
@@ -306,24 +305,22 @@ export function Opportunities() {
           <div
             style={{
               padding: `${space[4]}px ${space[5]}px`,
-              background: 'rgba(246,196,0,0.06)',
+              background: 'rgba(240,192,64,0.06)',
               borderBottom: `1px solid ${colors.accentMuted}`,
               color: colors.accent,
               fontWeight: fontWeight.bold,
               fontSize: fontSize.sm,
             }}
           >
-            {t('aiMatchResults', {
-              count: Math.min(3, matchResult.suggestions.length),
-              total: matchResult.suggestions.length,
-            })}
+            AI Match Results — top {Math.min(3, matchResult.suggestions.length)} of{' '}
+            {matchResult.suggestions.length}
           </div>
           <div style={{ padding: `${space[4]}px ${space[5]}px`, display: 'grid', gap: space[3] }}>
             {matchResult.suggestions.slice(0, 3).map((s, i) => (
               <div
                 key={i}
                 style={{
-                  border: `1px solid ${colors.borderSubtle}`,
+                  border: `1px solid #222`,
                   borderRadius: radius.lg,
                   padding: `${space[3]}px ${space[4]}px`,
                   background: 'rgba(0,0,0,0.2)',
@@ -334,8 +331,6 @@ export function Opportunities() {
                     display: 'flex',
                     justifyContent: 'space-between',
                     marginBottom: space[1],
-                    flexWrap: 'wrap',
-                    gap: space[1],
                   }}
                 >
                   <span
@@ -349,7 +344,7 @@ export function Opportunities() {
                     {s.type.replace(/_/g, ' ')}
                   </span>
                   <span style={{ color: colors.text.dim, fontSize: fontSize.xs }}>
-                    {t('percentMatch', { pct: Math.round(s.confidence * 100) })}
+                    {Math.round(s.confidence * 100)}% match
                   </span>
                 </div>
                 <p
@@ -365,7 +360,7 @@ export function Opportunities() {
               </div>
             ))}
             <a href="/agents/inbox" style={{ color: colors.accent, fontSize: fontSize.xs }}>
-              {t('viewAllInAgents')}
+              View all in agents inbox →
             </a>
           </div>
         </div>

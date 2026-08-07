@@ -271,7 +271,7 @@ export function HexCell({
 
   if (disabled) {
     return (
-      <div style={hexStyle} role="presentation">
+      <div style={hexStyle} aria-disabled="true" role="presentation">
         {innerContent}
       </div>
     );

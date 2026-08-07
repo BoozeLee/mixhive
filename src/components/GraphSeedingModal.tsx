@@ -126,7 +126,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           padding: 24,
         }}
       >
-        <h2 style={{ marginTop: 0 }}>{t('seedYourMythicGraph')}</h2>
+        <h2 style={{ marginTop: 0 }}>Seed Your Mythic Graph</h2>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
           Log real activity so your agents and quests have data to work with.
         </p>
@@ -163,7 +163,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           <div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                {t('date')}
+                Date
               </label>
               <input
                 type="date"
@@ -180,17 +180,13 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               />
             </div>
             <div style={{ marginBottom: 12 }}>
-              <label
-                htmlFor="graph-seed-venue"
-                style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}
-              >
+              <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
                 Venue / Event
               </label>
               <input
-                id="graph-seed-venue"
                 value={gigForm.venue}
                 onChange={e => setGigForm({ ...gigForm, venue: e.target.value })}
-                placeholder={t('fuseKioskRadioEtc')}
+                placeholder="Fuse, Kiosk Radio, etc."
                 style={{
                   width: '100%',
                   padding: 8,
@@ -206,12 +202,12 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
             >
               <div>
                 <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                  {t('city')}
+                  City
                 </label>
                 <input
                   value={gigForm.city}
                   onChange={e => setGigForm({ ...gigForm, city: e.target.value })}
-                  placeholder={t('brussels')}
+                  placeholder="Brussels"
                   style={{
                     width: '100%',
                     padding: 8,
@@ -224,7 +220,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
               </div>
               <div>
                 <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                  {t('role')}
+                  Role
                 </label>
                 <select
                   value={gigForm.role}
@@ -238,17 +234,17 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
                     borderRadius: 6,
                   }}
                 >
-                  <option value="headline">{t('headline')}</option>
-                  <option value="support">{t('support')}</option>
-                  <option value="resident">{t('resident')}</option>
-                  <option value="radio">{t('radio')}</option>
-                  <option value="festival">{t('festivalSlot')}</option>
+                  <option value="headline">Headline</option>
+                  <option value="support">Support</option>
+                  <option value="resident">Resident</option>
+                  <option value="radio">Radio</option>
+                  <option value="festival">Festival slot</option>
                 </select>
               </div>
             </div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontSize: fontSize.sm, display: 'block', marginBottom: 4 }}>
-                {t('notesOptional')}
+                Notes (optional)
               </label>
               <textarea
                 value={gigForm.notes}
@@ -284,8 +280,8 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
         {submitError && (
           <div
             style={{
-              background: colors.dangerBg,
-              color: colors.danger,
+              background: '#3a1f1f',
+              color: '#ff6b6b',
               padding: '8px 12px',
               borderRadius: 6,
               fontSize: fontSize.sm,
@@ -319,7 +315,7 @@ export function GraphSeedingModal({ onClose, onSeeded }: Props) {
           /* Normal submit buttons */
           <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 16 }}>
             <HiveButton variant="secondary" onClick={onClose} disabled={isSubmitting}>
-              {t('cancel')}
+              Cancel
             </HiveButton>
             <HiveButton
               variant="primary"

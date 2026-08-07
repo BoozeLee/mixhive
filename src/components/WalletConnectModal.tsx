@@ -284,7 +284,6 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: Props) {
             ← Back
           </button>
           <label
-            htmlFor="wallet-email"
             style={{
               display: 'block',
               fontSize: fontSize.sm,

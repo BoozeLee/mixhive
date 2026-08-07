@@ -541,31 +541,28 @@ export default function App() {
     <BrowserRouter>
       <PlayerProvider>
         <NotificationProvider>
-          <MessagesProvider>
-            <div className="mixhive-shell">
-              <CyberHiveBackdrop />
-              <Navbar />
-              <a href="#main-content" className="skip-link">
-                Skip to main content
-              </a>
-              <div className="app-body">
-                <DesktopSidebar />
-                <main id="main-content" className="mixhive-main app-main">
+          <div className="mixhive-shell">
+            <CyberHiveBackdrop />
+            <Navbar />
+            <a href="#main-content" className="skip-link">
+              Skip to main content
+            </a>
+            <div className="app-body">
+              <DesktopSidebar />
+              <main id="main-content" className="mixhive-main app-main">
+                <ErrorBoundary>
                   <Suspense fallback={<RoutePending />}>
-                    <OnboardingGate>
-                      <RouteRecoveringRoutes />
-                    </OnboardingGate>
+                    <AnimatedRoutes />
                   </Suspense>
-                </main>
-              </div>
-              <GlobalPlayer />
-              <MobileNav />
-              <SessionFab />
-              {loadVercelTelemetry && <Analytics />}
-              {loadVercelTelemetry && <SpeedInsights />}
-              <ConsentBanner />
+                </ErrorBoundary>
+              </main>
             </div>
-          </MessagesProvider>
+            <GlobalPlayer />
+            <MobileNav />
+            <SessionFab />
+            {loadVercelTelemetry && <Analytics />}
+            {loadVercelTelemetry && <SpeedInsights />}
+          </div>
         </NotificationProvider>
       </PlayerProvider>
     </BrowserRouter>

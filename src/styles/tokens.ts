@@ -43,13 +43,11 @@ export const colors = {
   // also suits the honey identity. Ratios measured against `surface` (#0f0e0c);
   // every level improved or held.
   text: {
-    primary: '#f5f3e7', // 17.32:1 — AA text
-    secondary: '#d4cdb0', // 12.09:1 — AA text
-    dimmed: '#b8b09a', // 8.93:1 — AA text
-    muted: '#a9a390', // 7.65:1 — AA text
-    dim: '#8c8676', // 5.32:1 — AA text (was #808080 @ 4.78:1)
-    faint: '#6f6a5c', // 3.58:1 — AA UI components (was #666 @ 3.3:1)
-    faintest: '#57534a', // 2.52:1 — decorative/disabled only, below AA for text
+    primary: '#eee',
+    secondary: '#ccc',
+    muted: '#888',
+    dim: '#777', // 4.6:1 on #111 — passes AA normal text
+    faint: '#666', // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
   },
 
   // Semantic
@@ -310,30 +308,30 @@ export const tokens: Tokens = {
 // coloured text and translucent fills, not just decoration.
 export const genreColors: Record<string, string> = {
   // Electronic underground
-  techno: 'hsl(205, 52%, 64%)',
-  industrial: 'hsl(35, 10%, 64%)',
-  hardcore: 'hsl(9, 66%, 63%)',
-  trance: 'hsl(285, 44%, 70%)',
-  ambient: 'hsl(190, 46%, 62%)',
+  techno: 'hsl(210, 90%, 55%)',
+  industrial: 'hsl(0, 0%, 65%)',
+  hardcore: 'hsl(0, 85%, 55%)',
+  trance: 'hsl(300, 70%, 55%)',
+  ambient: 'hsl(195, 60%, 50%)',
   // Bass
-  'drum and bass': 'hsl(78, 54%, 60%)',
-  dnb: 'hsl(78, 54%, 60%)',
-  jungle: 'hsl(108, 40%, 57%)',
-  garage: 'hsl(165, 46%, 58%)',
-  grime: 'hsl(150, 44%, 57%)',
-  // Dance — brand-adjacent, kept warm and rich
-  house: 'hsl(41, 80%, 60%)',
-  'afro house': 'hsl(20, 74%, 62%)',
-  breaks: 'hsl(48, 72%, 60%)',
-  electro: 'hsl(224, 54%, 73%)',
+  'drum and bass': 'hsl(82, 80%, 48%)',
+  dnb: 'hsl(82, 80%, 48%)',
+  jungle: 'hsl(95, 75%, 45%)',
+  garage: 'hsl(170, 75%, 48%)',
+  grime: 'hsl(150, 70%, 45%)',
+  // Dance
+  house: 'hsl(38, 80%, 52%)',
+  'afro house': 'hsl(15, 85%, 55%)',
+  breaks: 'hsl(55, 80%, 50%)',
+  electro: 'hsl(230, 80%, 60%)',
   // Trap / Urban
-  trap: 'hsl(268, 44%, 73%)',
-  'hip hop': 'hsl(252, 40%, 70%)',
+  trap: 'hsl(270, 70%, 55%)',
+  'hip hop': 'hsl(260, 60%, 55%)',
   // Experimental
-  experimental: 'hsl(178, 42%, 58%)',
-  noise: 'hsl(28, 7%, 62%)',
+  experimental: 'hsl(175, 55%, 48%)',
+  noise: 'hsl(0, 10%, 60%)',
   // Default — MixHive gold
-  default: 'hsl(46, 92%, 52%)',
+  default: 'hsl(38, 95%, 52%)',
 };
 
 export function getGenreColor(genre?: string | null): string {

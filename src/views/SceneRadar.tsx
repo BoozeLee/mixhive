@@ -79,9 +79,9 @@ export function SceneRadar() {
   if (!user) {
     return (
       <div style={{ textAlign: 'center', padding: space[8], color: colors.text.muted }}>
-        <p style={{ marginBottom: space[4] }}>{t('signInToSee')}</p>
+        <p style={{ marginBottom: space[4] }}>Sign in to see your scene radar.</p>
         <HiveButton variant="primary" onClick={() => navigate('/login')}>
-          {t('signIn')}
+          Sign in
         </HiveButton>
       </div>
     );
@@ -114,7 +114,7 @@ export function SceneRadar() {
                 color: colors.text.primary,
               }}
             >
-              {t('sceneRadar')}
+              Scene Radar
             </h1>
             <p
               style={{
@@ -198,18 +198,13 @@ export function SceneRadar() {
             marginBottom: space[4],
           }}
         >
-          <strong>{t('agentError')}</strong> {activeError}
+          <strong>Agent error:</strong> {activeError}
           <HiveButton
             variant="secondary"
             onClick={activeRefresh}
-            style={{
-              marginLeft: space[3],
-              minHeight: 44,
-              display: 'inline-flex',
-              alignItems: 'center',
-            }}
+            style={{ marginLeft: space[3], fontSize: 12, padding: '4px 10px' }}
           >
-            {t('retry')}
+            Retry
           </HiveButton>
         </div>
       )}
@@ -226,10 +221,10 @@ export function SceneRadar() {
                 borderRadius: '50%',
                 background:
                   activeOutput.status === 'ok'
-                    ? colors.successStrong
+                    ? '#22c55e'
                     : activeOutput.status === 'error'
-                      ? colors.dangerStrong
-                      : colors.warning,
+                      ? '#ef4444'
+                      : '#f59e0b',
               }}
             />
             <span
@@ -273,7 +268,6 @@ export function SceneRadar() {
                       fontSize: fontSize.sm,
                       margin: 0,
                       lineHeight: 1.6,
-                      wordBreak: 'break-word',
                     }}
                   >
                     {n.body}
@@ -285,7 +279,7 @@ export function SceneRadar() {
                         display: 'inline-block',
                         marginTop: space[3],
                         fontSize: fontSize.sm,
-                        color: colors.accent,
+                        color: colors.gold,
                       }}
                     >
                       {n.cta_url.startsWith('/') ? 'View →' : 'Open →'}
@@ -307,7 +301,7 @@ export function SceneRadar() {
                   color: colors.text.primary,
                 }}
               >
-                {t('recommendations')}
+                Recommendations
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[3] }}>
                 {(activeOutput.suggestions ?? []).map((s, i) => (
@@ -330,7 +324,7 @@ export function SceneRadar() {
                     >
                       <span
                         style={{
-                          color: colors.accent,
+                          color: colors.gold,
                           fontSize: 11,
                           fontWeight: fontWeight.bold,
                           textTransform: 'uppercase',
@@ -359,7 +353,7 @@ export function SceneRadar() {
                           display: 'inline-block',
                           marginTop: space[2],
                           fontSize: 11,
-                          color: colors.warning,
+                          color: '#f59e0b',
                         }}
                       >
                         ⚡ Requires your approval
@@ -382,7 +376,7 @@ export function SceneRadar() {
                   color: colors.text.primary,
                 }}
               >
-                {t('suggestedActions')}
+                Suggested Actions
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[2] }}>
                 {(activeOutput.tasks ?? []).map((t, i) => (
@@ -413,7 +407,7 @@ export function SceneRadar() {
                           fontWeight: fontWeight.bold,
                           textTransform: 'uppercase',
                           padding: '2px 6px',
-                          borderRadius: 4,
+                          borderRadius: 3,
                           background:
                             t.priority === 'high'
                               ? 'rgba(239,68,68,0.15)'
@@ -422,10 +416,10 @@ export function SceneRadar() {
                                 : 'rgba(107,114,128,0.15)',
                           color:
                             t.priority === 'high'
-                              ? colors.danger
+                              ? '#f87171'
                               : t.priority === 'medium'
-                                ? colors.warning
-                                : colors.text.dimmed,
+                                ? '#fbbf24'
+                                : '#9ca3af',
                         }}
                       >
                         {t.priority}
@@ -438,9 +432,9 @@ export function SceneRadar() {
           )}
 
           {/* Empty state */}
-          {(activeOutput.notifications ?? []).length === 0 &&
-            (activeOutput.suggestions ?? []).length === 0 &&
-            (activeOutput.tasks ?? []).length === 0 && (
+          {activeOutput.notifications.length === 0 &&
+            activeOutput.suggestions.length === 0 &&
+            activeOutput.tasks.length === 0 && (
               <div
                 style={{
                   textAlign: 'center',
@@ -449,9 +443,7 @@ export function SceneRadar() {
                   fontSize: fontSize.sm,
                 }}
               >
-                <div style={{ marginBottom: space[3], display: 'flex', justifyContent: 'center' }}>
-                  <Icon name="radar" size={34} color="rgba(246,196,0,0.55)" strokeWidth={1.6} />
-                </div>
+                <div style={{ fontSize: 32, marginBottom: space[3] }}>📡</div>
                 <p style={{ margin: 0 }}>
                   {tab === 'scene'
                     ? 'No scene activity detected yet — add gigs and follows to seed the radar.'

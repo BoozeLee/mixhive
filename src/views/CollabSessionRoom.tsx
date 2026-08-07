@@ -60,6 +60,15 @@ export function CollabSessionRoom() {
     if (data.status === 'ended') {
       setMode('ended');
     } else {
+      // Auto-join as participant if not the owner
+      if (profile && data.owner_id !== profile.id) {
+        await supabase
+          .from('collab_session_participants')
+          .upsert(
+            { session_id: id, profile_id: profile.id, role: 'participant' },
+            { onConflict: 'session_id,profile_id' }
+          );
+      }
       setMode('room');
     }
   }, [id]);
@@ -100,13 +109,13 @@ export function CollabSessionRoom() {
       >
         <div style={{ fontSize: 40, marginBottom: space[4] }}>⚡</div>
         <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>
-          {t('sessionUnavailable')}
+          Session unavailable
         </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>
           {errorMsg}
         </p>
         <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>
-          {t('backToDashboard')}
+          Back to Dashboard
         </HiveButton>
       </div>
     );
@@ -124,17 +133,17 @@ export function CollabSessionRoom() {
       >
         <div style={{ fontSize: 40, marginBottom: space[4] }}>🎛️</div>
         <h1 style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginBottom: space[2] }}>
-          {t('sessionEnded')}
+          Session ended
         </h1>
         <p style={{ color: colors.text.muted, fontSize: fontSize.sm, marginBottom: space[6] }}>
           {session?.title} — this session has been closed and its provenance written to the graph.
         </p>
         <div style={{ display: 'flex', gap: space[3], justifyContent: 'center' }}>
           <HiveButton variant="secondary" onClick={() => navigate('/dashboard')}>
-            {t('dashboard')}
+            Dashboard
           </HiveButton>
           <HiveButton variant="primary" onClick={() => navigate('/quests')}>
-            {t('viewQuests')}
+            View Quests
           </HiveButton>
         </div>
       </div>

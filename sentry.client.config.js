@@ -1,10 +1,10 @@
-// This file configures the Sentry.io server for your Next.js application
+// This file configures the Sentry.io client for your Next.js application
 // To learn more, see https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN || 'https://examplePublicKey@o0.ingest.sentry.io/0',
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || 'https://examplePublicKey@o0.ingest.sentry.io/0',
 
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.

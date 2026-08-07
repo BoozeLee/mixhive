@@ -120,7 +120,7 @@ export function CreateQuestModal({ onClose, onCreated }: Props) {
                   selectedTemplate === t.id
                     ? `2px solid ${colors.accent}`
                     : `1px solid ${colors.border}`,
-                background: selectedTemplate === t.id ? 'rgba(246,196,0,0.08)' : 'transparent',
+                background: selectedTemplate === t.id ? 'rgba(240,192,64,0.08)' : 'transparent',
                 cursor: 'pointer',
               }}
             >
@@ -132,10 +132,7 @@ export function CreateQuestModal({ onClose, onCreated }: Props) {
 
         {selectedTemplate && (
           <div style={{ marginBottom: space[6] }}>
-            <label
-              htmlFor="quest-custom-title"
-              style={{ display: 'block', fontSize: fontSize.sm, marginBottom: 4 }}
-            >
+            <label style={{ display: 'block', fontSize: fontSize.sm, marginBottom: 4 }}>
               Custom title (optional)
             </label>
             <input

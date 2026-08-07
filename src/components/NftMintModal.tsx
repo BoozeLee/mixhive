@@ -39,7 +39,6 @@ export function NftMintModal({
   defaultConfig,
   onDeployed,
 }: Props) {
-  const t = useTranslations('nftMintModal');
   const [step, setStep] = useState<Step>('configure');
   const [name, setName] = useState(defaultConfig?.name ?? '');
   const [description, setDescription] = useState(defaultConfig?.description ?? '');
@@ -187,7 +186,7 @@ export function NftMintModal({
                 style={inputStyle}
               />
               <span style={{ fontSize: fontSize.xs, color: colors.text.faint }}>
-                {t('leave0ForUnlimited')}
+                Leave 0 for unlimited
               </span>
             </div>
 
@@ -230,9 +229,8 @@ export function NftMintModal({
               color: colors.text.muted,
             }}
           >
-            {t('tokensAreMintedOn')}
-            <strong>{t('baseL2')}</strong> via Zora Protocol. Gas is covered by MIXHIVE — free to
-            claim for holders. No secondary market is shown inside the app.
+            Tokens are minted on <strong>Base L2</strong> via Zora Protocol. Gas is covered by
+            MIXHIVE — free to claim for holders. No secondary market is shown inside the app.
           </div>
 
           <div
@@ -244,7 +242,7 @@ export function NftMintModal({
             }}
           >
             <HiveButton variant="secondary" onClick={handleClose}>
-              {t('cancel')}
+              Cancel
             </HiveButton>
             <HiveButton
               variant="secondary"
@@ -310,8 +308,8 @@ export function NftMintModal({
           <div style={{ textAlign: 'center', padding: `${space[4]}px 0` }}>
             <div style={{ fontSize: 40, marginBottom: space[3] }}>✅</div>
             <p style={{ color: colors.text.secondary, fontSize: fontSize.sm }}>
-              {t('collection')}
-              <strong>{name}</strong> is live. Fans can now claim tokens from the {sourceType} page.
+              Collection <strong>{name}</strong> is live. Fans can now claim tokens from the{' '}
+              {sourceType} page.
             </p>
             {collectionId && (
               <p style={{ fontSize: fontSize.xs, color: colors.text.faint, marginTop: space[2] }}>
@@ -358,7 +356,7 @@ function TokenPreviewCard({
           height: 120,
           background: imageUrl
             ? `url(${imageUrl}) center/cover`
-            : `linear-gradient(135deg, ${colors.surfaceHover}, ${colors.border})`,
+            : 'linear-gradient(135deg, #1a1a2e, #16213e)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -388,7 +386,7 @@ function TokenPreviewCard({
             }
             gold
           />
-          <Tag label={t('baseL2')} />
+          <Tag label="Base L2" />
         </div>
       </div>
     </div>

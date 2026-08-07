@@ -392,15 +392,13 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         </>
       )}
 
-      {stream.error && (
-        <p style={{ marginTop: 12, color: colors.danger, fontSize: 13 }}>{stream.error}</p>
-      )}
+      {aiError && <p style={{ marginTop: 12, color: '#e05', fontSize: 13 }}>{aiError}</p>}
 
       {stream.suggestions.length > 0 && (
         <div style={{ marginTop: 16 }}>
           <div
             style={{
-              color: colors.accent,
+              color: '#f0c040',
               fontSize: 11,
               fontWeight: 800,
               textTransform: 'uppercase',
@@ -408,7 +406,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
               marginBottom: 10,
             }}
           >
-            {t('aiSetIntelligence')}
+            AI Set Intelligence
           </div>
           <div style={{ display: 'grid', gap: 8 }}>
             {stream.suggestions.slice(0, 3).map((s, i) => (
@@ -431,7 +429,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                 >
                   <span
                     style={{
-                      color: colors.accent,
+                      color: '#f0c040',
                       fontSize: 11,
                       fontWeight: 700,
                       textTransform: 'uppercase',
@@ -443,18 +441,16 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                     {Math.round(s.confidence * 100)}% confidence
                   </span>
                 </div>
-                <p
-                  style={{ margin: 0, color: colors.text.secondary, fontSize: 13, lineHeight: 1.5 }}
-                >
+                <p style={{ margin: 0, color: '#bbb', fontSize: 13, lineHeight: 1.5 }}>
                   {s.rationale}
                 </p>
               </div>
             ))}
           </div>
-          {stream.suggestions.length > 3 && (
-            <p style={{ marginTop: 8, color: colors.text.faintest, fontSize: 12 }}>
-              +{stream.suggestions.length - 3} more in{' '}
-              <a href="/agents/inbox" style={{ color: colors.accent }}>
+          {aiAnalysis.suggestions.length > 3 && (
+            <p style={{ marginTop: 8, color: '#555', fontSize: 12 }}>
+              +{aiAnalysis.suggestions.length - 3} more in{' '}
+              <a href="/agents/inbox" style={{ color: '#f0c040' }}>
                 agents inbox
               </a>
             </p>

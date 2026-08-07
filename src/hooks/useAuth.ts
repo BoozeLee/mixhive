@@ -11,6 +11,8 @@ const missingConfigError = {
 
 function getAuthRedirectTo() {
   if (typeof window === 'undefined') return undefined;
+
+  // Prefer explicit env var for production, fallback to current origin
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
   return `${baseUrl}/auth/callback`;
 }
@@ -83,7 +85,38 @@ export function useAuth() {
       setLoading(true);
       setUser(session?.user ?? null);
 
-      if (!session?.user) {
+      if (session?.user) {
+        // Fetch or create profile (important for Google OAuth users)
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        if (profileData) {
+          setProfile(profileData);
+        } else {
+          // Fallback profile creation for OAuth users
+          const metadata = session.user.user_metadata || {};
+          const newProfile = {
+            id: session.user.id,
+            username:
+              metadata.preferred_username ||
+              metadata.user_name ||
+              `user_${session.user.id.slice(0, 8)}`,
+            display_name:
+              metadata.full_name || metadata.name || session.user.email?.split('@')[0] || 'User',
+            avatar_url: metadata.avatar_url || metadata.picture,
+          };
+
+          const { data: created } = await supabase
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .single();
+          if (created) setProfile(created);
+        }
+      } else {
         setProfile(null);
         setLoading(false);
         return;

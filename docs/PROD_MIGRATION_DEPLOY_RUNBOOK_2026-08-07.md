@@ -25,7 +25,8 @@ monetization decision — never apply it) and **skipping 118** (already applied)
 | 121 `flow_key_germination` | FK-2 germination RPCs | pending |
 | 122 `flow_key_countersign_and_notary` | countersigns, anchor | pending |
 | 123 `flow_key_cap_override` | cap override | pending |
-| **124 `restore_phase15_mythic_constraints`** | **NEW corrective — restores 20 Phase 15 graph types 119 dropped** | pending |
+| 124 `restore_phase15_mythic_constraints` | **NEW corrective — restores 20 Phase 15 graph types 119 dropped** | **✅ applied** |
+| **125 `restore_flow_key_rls_recursion_and_grants`** | **NEW corrective — fixes 42P17 RLS recursion + PUBLIC EXECUTE leak from 119** | **✅ applied** |
 
 ### Why 124 is required
 
@@ -53,8 +54,9 @@ idempotent on the local stack.
 
 ### Deploy order
 
-**117 → 119 → 120 → 121 → 122 → 123 → 124** (skip 116 [P14 gate], skip 118
-[already live]).
+**117 → 119 → 120 → 121 → 122 → 123 → 124 → 125** (skip 116 [P14 gate], skip 118
+[already live]). 125 is the post-deploy corrective for two merged-119 runtime
+defects (RLS recursion, PUBLIC EXECUTE leak).
 
 Dependencies verified: 120 reads `mixes.visibility` (created by 117); no
 migration in 117–124 references `required_tier` or `premium_mixes` (116).
@@ -257,3 +259,27 @@ inverse-DDL (new migration, never hand-edits):
 - `mythic_edges` constraint: 077's full list (Phase 15 types present) ✓
 - `mythic_nodes`: 63 `artist_profile` rows; `mythic_edges`: empty
 - Management API SQL endpoint: **`[{"ok":1}]` smoke test passed**
+
+### Applied to prod (2026-08-07)
+
+117, 119, 120, 121, 122, 123, 124 applied via Management API SQL endpoint.
+Post-apply probes exposed **two merged-119 defects**, fixed by **migration 125**
+(PR #121, merged `aeb177f`), which is now also applied to prod:
+
+- **RLS infinite recursion (42P17)**: `flow_spores` / `flow_spore_contributors` /
+  `flow_spore_germinations` 500'd on any anon/authenticated read because the
+  SELECT policies cross-referenced each other's tables. Fix: security-definer
+  helpers `can_view_flow_spore`, `can_view_flow_spore_contributor`,
+  `can_view_flow_spore_germination` (pattern from `can_view_collab_session`, 097)
+  called from the policies — no cycle, same result.
+- **Default PUBLIC EXECUTE leak**: `revoke ... from anon, authenticated` does not
+  remove the default `PUBLIC` (`=X/postgres`) grant, so `has_function_privilege
+  ('anon')` stayed true on every FK RPC — including service-role-only
+  `seal_flow_spore` / `reap_stale_flow_drains` (no internal auth guard). Fix:
+  `revoke all on function ... from public` then re-grant the intended role
+  (service_role for writers, authenticated for client RPCs).
+
+Prod post-125 probes: all flow_* tables + mixes → **200**; `reap_stale_flow_drains`
+as anon → **401**; all arg-taking RPCs → 404; prod ACL table confirms
+anon/auth EXECUTE removed on writers, authenticated-only on client RPCs, and
+no PUBLIC grant anywhere.

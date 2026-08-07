@@ -69,19 +69,32 @@ export function AuthCallback() {
               .eq('id', session.user.id)
               .maybeSingle();
 
-            if (!existingProfile) {
-              // Create minimal profile for Google users if trigger missed
-              const metadata = session.user.user_metadata || {};
-              await supabase.from('profiles').insert({
-                id: session.user.id,
-                username:
-                  metadata.preferred_username ||
-                  metadata.user_name ||
-                  `user_${session.user.id.slice(0, 8)}`,
-                display_name:
-                  metadata.full_name || metadata.name || session.user.email?.split('@')[0],
-                avatar_url: metadata.avatar_url || metadata.picture,
-              });
+            if (existing) {
+              profile = existing;
+            } else {
+              const metadata = session.user.user_metadata ?? {};
+              const { data: created, error: createError } = await supabase
+                .from('profiles')
+                .upsert(
+                  {
+                    id: session.user.id,
+                    username:
+                      metadata.preferred_username ||
+                      metadata.user_name ||
+                      `user_${session.user.id.slice(0, 8)}`,
+                    display_name:
+                      metadata.full_name ||
+                      metadata.name ||
+                      session.user.email?.split('@')[0] ||
+                      'User',
+                    avatar_url: metadata.avatar_url || metadata.picture || null,
+                  },
+                  { onConflict: 'id', ignoreDuplicates: false }
+                )
+                .select()
+                .single();
+              if (createError) throw createError;
+              profile = created;
             }
           } catch (profileErr) {
             // Profile creation is non-fatal — useAuth will retry on next render

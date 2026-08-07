@@ -315,15 +315,12 @@ export function ProfilePage() {
 
           {profileTab === 'activity' && <ActivityTab activity={activity} milestones={milestones} />}
 
-        {profileTab === 'story' && (
-          <HiveStory
-            profileId={profile.id}
-            showJourney={
-              ((profile as unknown as Record<string, unknown>)?.show_journey as boolean) ?? false
-            }
-            isOwn={isOwn}
-          />
-        )}
+          {profileTab === 'agents' && <AgentsTab isOwn={isOwn} />}
+
+          {profileTab === 'events' && <EventsTab />}
+
+          {profileTab === 'about' && <AboutTab profile={profile} />}
+        </div>
       </section>
 
       <StartMythicSessionModal

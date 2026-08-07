@@ -55,7 +55,7 @@ export const mixpanelService = {
   },
 
   // Identify user
-  identify: (userId: string, properties?: Record<string, any>) => {
+  identify: (userId: string, properties?: Record<string, unknown>) => {
     mixpanel.identify(userId, properties);
   },
 
@@ -65,13 +65,13 @@ export const mixpanelService = {
   },
 
   // Track events
-  track: (eventName: EventName, properties?: Record<string, any>) => {
+  track: (eventName: EventName, properties?: Record<string, unknown>) => {
     const eventKey = Events[eventName];
     mixpanel.track(eventKey, properties);
   },
 
   // Set user properties
-  set: (properties: Record<string, any>) => {
+  set: (properties: Record<string, unknown>) => {
     mixpanel.set(properties);
   },
 

@@ -117,7 +117,6 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
           display: 'flex',
           flexDirection: 'column',
         }}
-        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div
@@ -161,6 +160,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
             <div style={{ padding: 24 }}>
               <div style={{ marginBottom: 20 }}>
                 <label
+                  htmlFor="mythic-session-title"
                   style={{
                     display: 'block',
                     marginBottom: 6,
@@ -190,6 +190,7 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
 
               <div style={{ marginBottom: 20 }}>
                 <label
+                  htmlFor="mythic-session-description"
                   style={{
                     display: 'block',
                     marginBottom: 6,
@@ -227,6 +228,18 @@ export function StartMythicSessionModal({ isOpen, onClose }: StartMythicSessionM
                   />
                   <span style={{ fontSize: fontSize.sm }}>
                     Make this session visible in legends (public)
+                  </span>
+                </label>
+              </div>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.agentEnabled}
+                    onChange={e => setForm({ ...form, agentEnabled: e.target.checked })}
+                  />
+                  <span style={{ fontSize: fontSize.sm }}>
+                    Invite the bounded autonomous Session Spirit
                   </span>
                 </label>
               </div>

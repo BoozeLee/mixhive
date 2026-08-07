@@ -135,8 +135,11 @@ export function MixCard({ mix }: Props) {
             color: colors.text.dim,
           }}
         >
-          <span style={{ color: colors.success, fontSize: 12, lineHeight: 1 }} aria-hidden="true">
-            🔁
+          <span
+            style={{ color: colors.success, lineHeight: 0, display: 'inline-flex' }}
+            aria-hidden="true"
+          >
+            <Icon name="repost" size={12} color="currentColor" />
           </span>
           <span>
             Reposted by{' '}
@@ -434,9 +437,8 @@ export function MixCard({ mix }: Props) {
                     border: 'none',
                     color: reposted ? colors.success : colors.text.faint,
                     cursor: repostBusy ? 'wait' : 'pointer',
-                    fontSize: 16,
                     padding: '4px',
-                    lineHeight: 1,
+                    lineHeight: 0,
                     opacity: repostBusy ? 0.6 : 1,
                     minWidth: 32,
                     minHeight: 32,

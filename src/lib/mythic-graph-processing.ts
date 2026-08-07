@@ -461,6 +461,7 @@ export class MythicGraphProcessingWorker {
               generated_by: 'collab_session_post_process',
               created_at: new Date().toISOString(),
               status: 'proposed', // <-- Key field for review flow
+              ...(collabSig ?? {}), // signature + signed_at + participant_count (when secret set)
             },
           },
           { onConflict: 'from_node_id,to_node_id,edge_type' }

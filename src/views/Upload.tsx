@@ -527,12 +527,12 @@ export function Upload() {
             margin: '0 0 4px',
             fontSize: 11,
             fontWeight: 700,
-            color: '#f0c040',
+            color: colors.accent,
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
           }}
         >
-          Nectar Upload
+          {t('title')}
         </p>
         <h1
           style={{
@@ -619,13 +619,18 @@ export function Upload() {
       {generalError && (
         <div
           style={{
-            background: '#2a1010',
-            color: '#f55',
+            background: colors.dangerBg,
+            color: colors.danger,
             padding: '10px 14px',
             borderRadius: 8,
             fontSize: 13,
             marginBottom: 16,
-            border: '1px solid #f5525244',
+            border: `1px solid ${withAlpha(colors.danger, 0.27)}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 8,
+            flexWrap: 'wrap',
           }}
         >
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
@@ -654,343 +659,27 @@ export function Upload() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        {/* Drag-and-drop audio upload zone */}
-        <div>
-          <label
-            style={{
-              display: 'block',
-              fontSize: 12,
-              fontWeight: 600,
-              color: '#999',
-              marginBottom: 8,
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-            }}
-          >
-            Audio file *
-          </label>
-          <div
-            role="button"
-            tabIndex={0}
-            aria-label="Audio file drop zone — drag and drop or click to browse"
-            onDragEnter={e => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragOver={e => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragLeave={e => {
-              e.preventDefault();
-              setDragOver(false);
-            }}
-            onDrop={e => {
-              e.preventDefault();
-              setDragOver(false);
-              const file = e.dataTransfer.files?.[0];
-              if (file) setAudioFile(file);
-            }}
-            onClick={() => {
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = 'audio/*';
-              input.onchange = () => {
-                const f = input.files?.[0];
-                if (f) setAudioFile(f);
-              };
-              input.click();
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click();
-            }}
-            style={{
-              minHeight: 120,
-              borderRadius: 10,
-              border: dragOver
-                ? '2px solid #f0c040'
-                : audioFile
-                  ? '2px solid #f0c04055'
-                  : '1.5px dashed #1a1a2e',
-              background: dragOver ? '#f0c04014' : audioFile ? '#f0c04008' : '#111',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              cursor: 'pointer',
-              padding: '24px 20px',
-              transition: 'border-color 120ms ease, background 120ms ease',
-              textAlign: 'center',
-              outline: 'none',
-            }}
-          >
-            {audioFile ? (
-              <>
-                <span aria-hidden="true" style={{ fontSize: 28, color: '#f0c040' }}>
-                  ✓
-                </span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: '#eee' }}>
-                  {audioFile.name}
-                </span>
-                <span style={{ fontSize: 12, color: '#888' }}>
-                  {(audioFile.size / 1024 / 1024).toFixed(1)} MB
-                  {duration &&
-                    !detectingDuration &&
-                    ` · ${Math.floor(duration / 60)}:${String(duration % 60).padStart(2, '0')}`}
-                  {detectingDuration && ' · detecting duration…'}
-                </span>
-                <button
-                  type="button"
-                  onClick={e => {
-                    e.stopPropagation();
-                    setAudioFile(null);
-                    setDuration(null);
-                  }}
-                  style={{
-                    fontSize: 11,
-                    color: '#f55',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    marginTop: 4,
-                  }}
-                >
-                  Remove
-                </button>
-              </>
-            ) : (
-              <>
-                <span
-                  aria-hidden="true"
-                  style={{ fontSize: 30, color: dragOver ? '#f0c040' : '#444' }}
-                >
-                  ⬡
-                </span>
-                <span
-                  style={{ fontSize: 14, fontWeight: 600, color: dragOver ? '#f0c040' : '#777' }}
-                >
-                  {dragOver ? 'Drop it!' : 'Drop your mix here'}
-                </span>
-                <span style={{ fontSize: 12, color: '#555' }}>
-                  or click to browse — MP3, WAV, AIFF, FLAC
-                </span>
-              </>
-            )}
-          </div>
-        </div>
-
-        <Input
-          label="Title *"
-          value={formData.title}
-          onChange={e => handleInputChange('title', e.target.value)}
-          required
-          error={formErrors.title}
-          placeholder="Enter mix title"
-        />
-
-        <Textarea
-          label="Description"
-          value={formData.description}
-          onChange={e => handleInputChange('description', e.target.value)}
-          rows={3}
-          placeholder="Describe your mix..."
-        />
-
-        <Select
-          label="Genre"
-          value={formData.genreId === '' ? '' : String(formData.genreId)}
-          onChange={e =>
-            handleInputChange('genreId', e.target.value === '' ? '' : Number(e.target.value))
-          }
-          placeholder="Select genre"
-        >
-          {genres.map(g => (
-            <option key={g.id} value={g.id}>
-              {g.name}
-            </option>
-          ))}
-        </Select>
-
-        <Input
-          label="Tags (comma separated)"
-          value={formData.tags}
-          onChange={e => handleInputChange('tags', e.target.value)}
-          placeholder="house, deep, vinyl"
-        />
-
-        <FileInput
-          label="Artwork (optional)"
-          accept="image/*"
-          help="Square artwork works best. JPG, PNG, or WebP."
-          style={{ minHeight: 48 }}
-          onChange={e => setArtworkFile(e.target.files?.[0] || null)}
-        />
-
-        <label
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            cursor: 'pointer',
-            color: '#ccc',
-            fontSize: 14,
-            minHeight: 44,
-            padding: '8px 0',
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={isExplicit}
-            onChange={e => {
-              if (!audioFile) {
-                setGeneralError('Must select audio file to set explicit content');
-                return;
-              }
-              setIsExplicit(e.target.checked);
-            }}
-            style={{ width: 22, height: 22 }}
-          />
-          <span>Mark as explicit content</span>
-        </label>
-
-        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>
-            Platform Links (optional)
-          </legend>
-          <div style={{ marginTop: 8 }}>
-            {[
-              ['SoundCloud', 'soundcloud'],
-              ['Mixcloud', 'mixcloud'],
-              ['YouTube', 'youtube'],
-              ['Spotify', 'spotify'],
-              ['Apple Music', 'applemusic'],
-            ].map(([label, key]) => (
-              <div
-                key={key}
-                style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}
-              >
-                <Input
-                  type="text"
-                  value={platformLinks[key] || ''}
-                  onChange={e => {
-                    const value = e.target.value.trim();
-                    const links = { ...platformLinks };
-                    const errors = { ...platformErrors };
-                    if (value === '') {
-                      delete links[key];
-                      delete errors[key];
-                    } else if (!/^https?:\/\//i.test(value)) {
-                      links[key] = value;
-                      errors[key] = 'Must start with http:// or https://';
-                    } else {
-                      links[key] = value;
-                      delete errors[key];
-                    }
-                    setPlatformLinks(links);
-                    setPlatformErrors(errors);
-                  }}
-                  placeholder={`${label} URL`}
-                  error={platformErrors[key]}
-                />
-                {platformErrors[key] && (
-                  <small style={{ color: '#f55', fontSize: 11, display: 'block', marginTop: 2 }}>
-                    {platformErrors[key]}
-                  </small>
-                )}
-              </div>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>Tracklist</legend>
-          <div style={{ marginTop: 8 }}>
-            {tracklist.map((track, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) 96px 44px',
-                  gap: 8,
-                  alignItems: 'center',
-                  marginBottom: 10,
-                }}
-              >
-                <Input
-                  type="text"
-                  value={track.artist}
-                  onChange={e => {
-                    const list = [...tracklist];
-                    list[index] = { ...list[index], artist: e.target.value };
-                    setTracklist(list);
-                  }}
-                  placeholder="Artist"
-                  style={{ flex: 1 }}
-                />
-                <Input
-                  type="text"
-                  value={track.title}
-                  onChange={e => {
-                    const list = [...tracklist];
-                    list[index] = { ...list[index], title: e.target.value };
-                    setTracklist(list);
-                  }}
-                  placeholder="Track Title"
-                  style={{ flex: 1 }}
-                />
-                <Input
-                  type="number"
-                  value={track.start_time ?? 0}
-                  onChange={e => {
-                    const list = [...tracklist];
-                    const val = e.target.value === '' ? undefined : Number(e.target.value);
-                    list[index] = { ...list[index], start_time: val };
-                    setTracklist(list);
-                  }}
-                  placeholder="Start (sec)"
-                  style={{ width: '100%' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const list = [...tracklist];
-                    list.splice(index, 1);
-                    setTracklist(list);
-                  }}
-                  style={{
-                    background: '#2a1010',
-                    color: '#f55',
-                    border: 'none',
-                    borderRadius: 6,
-                    minHeight: 40,
-                    padding: '8px 10px',
-                    fontSize: 16,
-                    cursor: 'pointer',
-                  }}
-                >
-                  −
-                </button>
-              </div>
-            ))}
-            <div style={{ marginTop: 12, textAlign: 'right' }}>
-              <button
-                type="button"
-                onClick={() => setTracklist([...tracklist, { artist: '', title: '' }])}
-                style={{
-                  background: '#1a1a2e',
-                  color: '#f0c040',
-                  border: '1px solid #f0c040',
-                  borderRadius: 6,
-                  minHeight: 40,
-                  padding: '8px 14px',
-                  fontSize: 14,
-                  cursor: 'pointer',
-                }}
-              >
-                + Add Track
-              </button>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          void handlePublish(true);
+        }}
+        style={{ display: 'flex', flexDirection: 'column', gap: 18 }}
+      >
+        {step === 'audio' && (
+          <>
+            <div
+              style={{
+                display: 'block',
+                fontSize: 12,
+                fontWeight: 600,
+                color: colors.text.dimmed,
+                marginBottom: 8,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+              }}
+            >
+              Audio file *
             </div>
             <AudioDropZone
               audioFile={audioFile}

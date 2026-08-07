@@ -1074,7 +1074,7 @@ export function Settings() {
             onChange={e => handleShowJourneyToggle(e.target.checked)}
             style={{ accentColor: colors.accent, width: 16, height: 16 }}
           />
-          <span style={{ fontSize: 13, color: colors.text.primary }}>Share my journey</span>
+          <span style={{ fontSize: 13, color: colors.text.primary }}>{t('shareJourney')}</span>
         </label>
       </div>
 

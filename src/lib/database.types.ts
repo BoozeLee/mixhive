@@ -861,6 +861,47 @@ export type Database = {
           },
         ];
       };
+      deletion_requests: {
+        Row: {
+          error_count: number;
+          finalized_at: string | null;
+          id: string;
+          process_after: string;
+          reason: string | null;
+          requested_at: string;
+          status: string;
+          user_id: string;
+        };
+        Insert: {
+          error_count?: number;
+          finalized_at?: string | null;
+          id?: string;
+          process_after?: string;
+          reason?: string | null;
+          requested_at?: string;
+          status?: string;
+          user_id: string;
+        };
+        Update: {
+          error_count?: number;
+          finalized_at?: string | null;
+          id?: string;
+          process_after?: string;
+          reason?: string | null;
+          requested_at?: string;
+          status?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'deletion_requests_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       estimates: {
         Row: {
           category: string;

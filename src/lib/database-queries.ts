@@ -87,7 +87,7 @@ export async function mark_audio_job_processing(jobId: string): Promise<void> {
 /**
  * Mark a job as complete with results
  */
-export async function mark_audio_job_complete(jobId: string, result: any): Promise<void> {
+export async function mark_audio_job_complete(jobId: string, result: Json): Promise<void> {
   const supabase = createServerClient();
 
   const { error } = await supabase.rpc('mark_audio_job_complete', {
@@ -221,7 +221,7 @@ export async function update_mix_processing_status(
 ): Promise<void> {
   const supabase = createServerClient();
 
-  const updateData: any = { upload_status: status };
+  const updateData: Record<string, Json> = { upload_status: status };
 
   if (updates?.processingStartedAt) {
     updateData.processing_started_at = updates.processingStartedAt;
@@ -247,7 +247,10 @@ export async function update_mix_processing_status(
     updateData.audio_metadata = updates.audioMetadata;
   }
 
-  const { error } = await supabase.from('mixes').update(updateData).eq('id', mixId);
+  const { error } = await supabase
+    .from('mixes')
+    .update(updateData as never)
+    .eq('id', mixId);
 
   if (error) {
     throw new Error(`Failed to update mix processing status: ${error.message}`);
@@ -339,7 +342,7 @@ export async function mark_mythic_graph_job_processing(jobId: string): Promise<v
   }
 }
 
-export async function mark_mythic_graph_job_complete(jobId: string, result?: any): Promise<void> {
+export async function mark_mythic_graph_job_complete(jobId: string, result?: Json): Promise<void> {
   const supabase = createServerClient();
 
   const { error } = await supabase.rpc('mark_mythic_graph_job_complete', {

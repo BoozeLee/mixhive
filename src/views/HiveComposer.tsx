@@ -212,7 +212,7 @@ export function HiveComposer() {
           }
         }
       } catch {
-        dispatch({ type: 'SET_LOADING_SUGGESTIONS', loading: false });
+        dispatch({ type: 'SET_SUGGESTION_ERROR', error: 'Could not load suggestions' });
       }
     },
     [state.tracks, user, bpmRange, genreFilter]
@@ -629,7 +629,7 @@ export function HiveComposer() {
             />
             {state.searching && (
               <p style={{ color: colors.text.muted, fontSize: fontSize.sm, margin: 0 }}>
-                Searching…
+                {t('searching')}
               </p>
             )}
             {state.searchResults.length > 0 && (
@@ -671,7 +671,7 @@ export function HiveComposer() {
               state.searchQuery.length > 1 &&
               state.searchResults.length === 0 && (
                 <p style={{ color: colors.text.dim, fontSize: fontSize.sm, margin: 0 }}>
-                  No mixes found.
+                  {t('noMixesFound')}
                 </p>
               )}
           </div>

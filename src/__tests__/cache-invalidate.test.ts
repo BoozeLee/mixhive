@@ -34,7 +34,7 @@ function post(body: unknown) {
     new NextRequest('http://localhost/api/cache/invalidate', {
       method: 'POST',
       body: typeof body === 'string' ? body : JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer test-token' },
     })
   );
 }

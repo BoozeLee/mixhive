@@ -71,8 +71,8 @@ export default async function NftReceiptPage({ params }: Props) {
     <main
       style={{
         minHeight: '100vh',
-        background: '#0a0a0a',
-        color: '#eee',
+        background: '#070706',
+        color: '#f5f3e7',
         fontFamily: 'Inter, system-ui, sans-serif',
         display: 'flex',
         justifyContent: 'center',
@@ -86,7 +86,7 @@ export default async function NftReceiptPage({ params }: Props) {
           style={{
             fontSize: 13,
             letterSpacing: 3,
-            color: '#f0c040',
+            color: '#f6c400',
             marginBottom: 32,
             textTransform: 'uppercase',
           }}
@@ -128,12 +128,12 @@ export default async function NftReceiptPage({ params }: Props) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
-              background: 'rgba(240,192,64,0.1)',
-              border: '1px solid rgba(240,192,64,0.3)',
+              background: 'rgba(246,196,0,0.1)',
+              border: '1px solid rgba(246,196,0,0.3)',
               borderRadius: 999,
               padding: '4px 12px',
               fontSize: 12,
-              color: '#f0c040',
+              color: '#f6c400',
               marginBottom: 24,
             }}
           >
@@ -151,8 +151,8 @@ export default async function NftReceiptPage({ params }: Props) {
         {/* Provenance details */}
         <div
           style={{
-            background: '#111',
-            border: '1px solid #222',
+            background: '#0f0e0c',
+            border: '1px solid #1f1d16',
             borderRadius: 10,
             padding: 20,
             marginBottom: 20,
@@ -235,7 +235,7 @@ function ProvenanceRow({ label, value, mono }: { label: string; value: string; m
       <dd
         style={{
           fontSize: 13,
-          color: '#ccc',
+          color: '#d4cdb0',
           margin: 0,
           fontFamily: mono ? 'monospace' : 'inherit',
         }}

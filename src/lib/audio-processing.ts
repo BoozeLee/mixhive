@@ -135,7 +135,7 @@ export class AudioProcessingWorker {
    * Download audio file to temporary location
    */
   private async downloadAudioFile(audioUrl: string, mixId: string): Promise<string> {
-    const supabase = createServerClient();
+    const _supabase = createServerClient();
 
     // Create temp directory if it doesn't exist
     await fs.mkdir(this.config.tempDir, { recursive: true });

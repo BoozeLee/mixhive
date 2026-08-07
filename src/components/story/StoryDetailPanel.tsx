@@ -103,7 +103,7 @@ export function StoryDetailPanel({ chapter, onClose }: StoryDetailPanelProps) {
           style={{ padding: space[8], background: colors.surfaceHover, borderRadius: radius.md }}
         >
           <p style={{ margin: 0, fontSize: fontSize.sm, color: colors.text.secondary }}>
-            🤝 Collab with{' '}
+            <Icon name="network" size={14} /> Collab with{' '}
             <strong style={{ color: colors.text.primary }}>
               {String(props.collaborator_name)}
             </strong>

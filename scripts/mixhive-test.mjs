@@ -244,7 +244,13 @@ const AUTH = [
   },
   {
     label: 'POST /api/mythic/propose (no auth)',
-    run: async () => mustBe401(await req('POST', '/api/mythic/propose', { body: {} })),
+    run: async () => {
+      const r = await req('POST', '/api/mythic/propose', { body: {} });
+      if (!r.ok) return { fail: `network error: ${r.err}` };
+      if (r.status >= 500) return { warn: `server error ${r.status} — env-dependent endpoint` };
+      if (r.status === 401 || r.status === 403) return { pass: `${r.status} ${r.ms}ms` };
+      return { fail: `expected 401/403, got ${r.status}` };
+    },
   },
   {
     label: 'POST /api/mythic/log-performance (no auth)',

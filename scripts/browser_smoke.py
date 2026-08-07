@@ -52,6 +52,7 @@ def main() -> int:
             context = browser.new_context(
                 viewport={"width": width, "height": height},
                 user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                bypass_csp=True,
             )
             if args.mock_supabase:
                 context.add_init_script("window.__MIXHIVE_DISABLE_SUPABASE__ = true")

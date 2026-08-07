@@ -1,8 +1,8 @@
-# CLAUDE.md - MixHive
+# AGENTS.md - MixHive
 
-Drop-in conventions for any Claude Code session opened inside this repo.
+Drop-in conventions for any OpenCode session opened inside this repo.
 
-## What this is
+## Project
 
 MixHive is a DJ-first social music platform: Facebook x SoundCloud for DJs,
 producers, rave organizers, visual artists, and underground culture creators.
@@ -35,7 +35,7 @@ Claude Code owns product/UI polish:
 - `src/views/*`
 - `src/components/*`
 - `src/styles/tokens.ts`
-- user-facing docs and this file when instructions drift
+- user-facing docs and `CLAUDE.md` when instructions drift
 
 OpenCode owns QA, security, and developer experience:
 
@@ -43,7 +43,7 @@ OpenCode owns QA, security, and developer experience:
 - `package.json`, `package-lock.json`
 - `SECURITY.md`, `README.md`, `docs/**`
 - `.github/workflows/*` (maintenance bumps, lint/test changes)
-- `CLAUDE.md` and `AGENTS.md` when governance drift occurs
+- `CLAUDE.md` and this file when governance drift occurs
 
 Shared files require coordination before edits:
 
@@ -51,10 +51,9 @@ Shared files require coordination before edits:
 - `src/lib/supabase.ts`
 - `src/styles/global.css`
 
-If Claude Code finds an infra/config issue, write it down for Codex instead of
-patching infra directly. If OpenCode finds an infra/config issue, write it down
-for Codex instead of patching infra directly. If OpenCode finds a product/UI
-issue, write it down for Claude Code instead of patching UI directly.
+If OpenCode finds an infra/config issue, write it down for Codex instead of
+patching infra directly. If OpenCode finds a product/UI issue, write it down
+for Claude Code instead of patching UI directly.
 
 ## Key Paths
 
@@ -140,24 +139,6 @@ Report back with:
 - security/QA findings
 - commands run and any failures
 - recommendations for Claude Code or Codex if product/infra issues are found
-
-## Claude Code Task Card
-
-When asked to continue product work, focus on:
-
-- route-level UI polish in `src/views/*`
-- component accessibility and mobile overflow fixes in `src/components/*`
-- empty/loading/error states for feed, discover, search, profile, upload,
-  notifications, agents, and mix detail
-- console-warning cleanup from user-facing routes
-- documentation drift in user-facing docs
-
-Report back with:
-
-- changed files
-- user-visible behavior changes
-- routes and viewport widths tested
-- commands run and any failures
 
 ## Quick Commands
 

@@ -37,6 +37,14 @@ Claude Code owns product/UI polish:
 - `src/styles/tokens.ts`
 - user-facing docs and this file when instructions drift
 
+OpenCode owns QA, security, and developer experience:
+
+- `scripts/browser_smoke.py`, `scripts/mixhive-test.mjs`, `scripts/test.js`
+- `package.json`, `package-lock.json`
+- `SECURITY.md`, `README.md`, `docs/**`
+- `.github/workflows/*` (maintenance bumps, lint/test changes)
+- `CLAUDE.md` and `AGENTS.md` when governance drift occurs
+
 Shared files require coordination before edits:
 
 - `src/App.tsx`
@@ -44,7 +52,9 @@ Shared files require coordination before edits:
 - `src/styles/global.css`
 
 If Claude Code finds an infra/config issue, write it down for Codex instead of
-patching infra directly.
+patching infra directly. If OpenCode finds an infra/config issue, write it down
+for Codex instead of patching infra directly. If OpenCode finds a product/UI
+issue, write it down for Claude Code instead of patching UI directly.
 
 ## Key Paths
 

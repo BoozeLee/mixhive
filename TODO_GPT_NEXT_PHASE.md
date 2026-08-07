@@ -81,3 +81,16 @@ Use this as the terminal-facing task checklist for GPT/Codex/Claude Code work.
 - [ ] AGENT_BUILD_PLAN and GPT_TASK_PLAN are current.
 - [x] Latest Vercel deployment is `READY`.
 - [x] `https://mixhive.vercel.app` returns HTTP 200.
+
+## 7. OpenCode - QA / Security / DevEx
+
+- [x] Run `npm audit --audit-level moderate` and document findings.
+- [x] Apply `npm audit fix` for non-breaking patches.
+- [x] Update `SECURITY.md` with audit history and remaining risks.
+- [ ] Resolve remaining React Router CSRF bypass (breaking change required — defer to maintenance window).
+- [ ] Verify `npm outdated` against `package.json` ranges and close stale ranges.
+- [ ] Review `.github/workflows/*` for stale actions and least-privilege permissions.
+- [ ] Verify `scripts/browser_smoke.py` covers all core routes at 320px/390px/768px/1440px.
+- [ ] Verify `scripts/mixhive-test.mjs` covers API health and asset smoke.
+- [ ] Update `README.md` build/run instructions if drift is found.
+- [ ] Confirm `AGENTS.md` and `CLAUDE.md` ownership table stays in sync.

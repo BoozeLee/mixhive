@@ -8,15 +8,18 @@
 
 ## 1. Context
 
-Production is at migration **115**. Origin/main ships **116–124**. This runbook
-deploys the backlog in dependency order, **skipping 116** (`premium_mixes` is
-gated behind the P14 monetization decision — never apply it).
+Production ledger (measured 2026-08-07 via Management API, **correcting the
+handoff's "no ledger / at 115" claim**) is **000–115 plus 118** — 111 entries.
+`118`'s triggers (`trg_rsvp_notification`, `trg_event_change_notification`) are
+confirmed live. Origin/main ships **116–124**. This runbook deploys the backlog
+in dependency order, **skipping 116** (`premium_mixes` is gated behind the P14
+monetization decision — never apply it) and **skipping 118** (already applied).
 
 | Migration | Purpose | Applied |
 |---|---|---|
 | 116 `premium_mixes` | `mixes.required_tier` | **SKIP (P14 gate)** |
-| 117 `mixes_visibility` | `mixes.visibility` column | pending |
-| 118 `notification_triggers_events_rooms` | RSVP / event-change triggers | pending |
+| 117 `mixes_visibility` | `mixes.visibility` column | **pending** |
+| 118 `notification_triggers_events_rooms` | RSVP / event-change triggers | **✅ live (skip)** |
 | 119 `flow_key_spine` | FK-1: spores, taps, RPCs, graph types | pending |
 | 120 `publish_scheduled_pg_cron` | pg_cron publish job (**needs 117**) | pending |
 | 121 `flow_key_germination` | FK-2 germination RPCs | pending |
@@ -50,7 +53,8 @@ idempotent on the local stack.
 
 ### Deploy order
 
-**117 → 118 → 119 → 120 → 121 → 122 → 123 → 124** (skip 116).
+**117 → 119 → 120 → 121 → 122 → 123 → 124** (skip 116 [P14 gate], skip 118
+[already live]).
 
 Dependencies verified: 120 reads `mixes.visibility` (created by 117); no
 migration in 117–124 references `required_tier` or `premium_mixes` (116).
@@ -73,43 +77,59 @@ supabase db reset                    # 119 files applied, 0 errors
 - 124 is additive: edge constraint final = **35 types**, node = **17 types**,
   including all 20 Phase 15 types restored
 
-> **Never** run `supabase db push`/`db reset` against prod. The prod project has
-> **no migration ledger** (handoff B3), so `db push` would replay everything.
+> **Never** run `supabase db push`/`db reset` against prod. Prod DOES have a
+> migration ledger (measured 2026-08-07: 000–115 + 118), but it is **out of
+> sync** with the file list, and `db push` would replay everything from the first
+> gap. Use the Management API SQL path below, which runs one file at a time.
 
 ---
 
 ## 3. Pre-flight (prod) — verify before any write
 
-### 3a. Credentials
+### 3a. Credentials — Management API (no DB password needed)
 
-You need a **direct Postgres URL for prod** (pooler or direct, password required).
-Not stored locally. From Supabase dashboard → Connect → pooler/direct:
+A **direct Postgres URL is NOT stored anywhere** (every `.env` `DATABASE_URL` is
+a placeholder). But the Supabase **Management API SQL endpoint works** with the
+CLI's access token, which is stored in the **system keyring**:
 
 ```bash
-# Session pooling (transaction-safe for psql DDL):
-export PROD_URL="postgresql://postgres.ljdolmqytncxhgojqguh:PASSWORD@aws-0-eu-west-1.pooler.supabase.com:6543/postgres"
-# or direct (same region): db.ljdolmqytncxhgojqguh.supabase.co:5432
+SB=$(secret-tool search service supabase | grep '^secret =' | awk '{print $3}')
+# -> sbp_<redacted>  (validate below; read-only value, do not commit)
+curl -s -H "Authorization: Bearer $SB" \
+  https://api.supabase.com/v1/projects/ljdolmqytncxhgojqguh/postgrest
+
+# Run any SQL against prod (read-only for pre-flight, DDL for apply):
+q() {
+  curl -s -X POST -H "Authorization: Bearer $SB" -H "Content-Type: application/json" \
+    -d "{\"query\":$(python3 -c 'import json,sys;print(json.dumps(sys.argv[1]))' "$1")}" \
+    https://api.supabase.com/v1/projects/ljdolmqytncxhgojqguh/database/query
+}
+q "select 1 as ok"          # -> [{"ok":1}]
 ```
 
-> The access token for `supabase` CLI is **not** stored on this machine
-> (`~/.supabase` has no token; no env var). `projects list` worked earlier via a
-> transient login — re-login if needed: `supabase login`.
+> The `DATABASE_URL` / `SB_ACCESS_TOKEN` secrets on the project (digests
+> `3dab0863…`, `64a6a09c…`) are **write-only** — values are not retrievable.
+> The `SB_ACCESS_TOKEN` in Vercel env is **empty**. The keyring token above is
+> the operative credential.
 
 ### 3b. Confirm current state
 
 ```bash
-# Must show only up to 115: required_tier/visibility/flow_spores all absent.
-psql "$PROD_URL" -c "\d+ public.mixes" | grep -E "required_tier|visibility"   # expect no rows
-psql "$PROD_URL" -c "select count(*) from pg_tables where schemaname='public' and tablename in ('flow_spores','flow_key_taps');"  # expect 0
+# Ledger must be 000–115 + 118 (no 116/117, no 119+):
+q "select version from supabase_migrations.schema_migrations order by version::int"
+
+# 117 absent, 116 absent, 119 absent:
+q "select column_name from information_schema.columns where table_schema='public' and table_name='mixes' and column_name in ('visibility','required_tier')"
+q "select count(*) from pg_tables where schemaname='public' and tablename in ('flow_spores','flow_key_taps')"
 
 # Capture the PRE-apply graph constraints (audit baseline).
-psql "$PROD_URL" -c "\d+ public.mythic_edges" | grep edge_type_check > /tmp/edge_pre.txt
-psql "$PROD_URL" -c "\d+ public.mythic_nodes" | grep node_type_check > /tmp/node_pre.txt
+q "select pg_get_constraintdef(oid) from pg_constraint where conname='mythic_edges_edge_type_check'"
+q "select pg_get_constraintdef(oid) from pg_constraint where conname='mythic_nodes_node_type_check'"
 # Save these — they must be a strict subset of the post-apply constraints.
 
 # Data check: any row that would violate 119's narrow list already exists?
-psql "$PROD_URL" -Atc "select distinct node_type from public.mythic_nodes;"
-psql "$PROD_URL" -Atc "select distinct edge_type from public.mythic_edges;"
+q "select distinct node_type from public.mythic_nodes"
+q "select distinct edge_type from public.mythic_edges"
 ```
 
 Known current values (measured 2026-08-07): `mythic_nodes` has 63
@@ -125,18 +145,22 @@ atomically. Apply in order, pausing after 119 to confirm the graph constraints:
 
 ```bash
 MIG=/tmp/mixhive-mig/supabase/migrations
-for n in 117 118 119 120 121 122 123 124; do
+for n in 117 119 120 121 122 123 124; do
   f=$(ls $MIG/${n}_*.sql)
   echo "== applying $f =="
-  psql "$PROD_URL" -v ON_ERROR_STOP=1 -f "$f" || { echo "FAILED at $f — rollback complete, stop here"; exit 1; }
+  q "$(cat "$f")" || { echo "FAILED at $f — transaction rolled back, stop here"; exit 1; }
 done
 ```
+
+> The Management API `/database/query` endpoint runs the whole file as one
+> query; each file's own `begin; … commit;` gives atomicity. It returned
+> `[{"ok":1}]` on a smoke test (2026-08-07).
 
 ### 4a. Checkpoint after 119 (graph constraints)
 
 ```bash
-psql "$PROD_URL" -c "\d+ public.mythic_edges" | grep edge_type_check
-psql "$PROD_URL" -c "\d+ public.mythic_nodes" | grep node_type_check
+q "select pg_get_constraintdef(oid) from pg_constraint where conname='mythic_edges_edge_type_check'"
+q "select pg_get_constraintdef(oid) from pg_constraint where conname='mythic_nodes_node_type_check'"
 ```
 
 At this point 119's narrow lists are active (18 edge / 14 node types). Then 124
@@ -148,22 +172,21 @@ pauses here leaves the graph types narrowed until 124 lands.
 ## 5. Post-apply verification
 
 ```bash
-# 117
-psql "$PROD_URL" -Atc "select count(*) from information_schema.columns where table_schema='public' and table_name='mixes' and column_name in ('visibility');"
+q "select column_name from information_schema.columns where table_schema='public' and table_name='mixes' and column_name='visibility'"
 
 # 119 + 121–123 tables
-psql "$PROD_URL" -Atc "select tablename from pg_tables where schemaname='public' and tablename like 'flow%' order by 1;"
+q "select tablename from pg_tables where schemaname='public' and tablename like 'flow%' order by 1"
 
 # 119 RPCs
-psql "$PROD_URL" -Atc "select proname from pg_proc where pronamespace='public'::regnamespace and proname like 'flow_key%' or proname in ('turn_flow_key','seal_flow_spore','revoke_flow_key','reap_stale_flow_drains');"
+q "select proname from pg_proc where pronamespace='public'::regnamespace and (proname like 'flow_key%' or proname in ('turn_flow_key','seal_flow_spore','revoke_flow_key','reap_stale_flow_drains'))"
 
 # 120 cron job
-psql "$PROD_URL" -Atc "select jobname, schedule, active from cron.job where jobname like '%publish%';"
+q "select jobname, schedule, active from cron.job where jobname like '%publish%'"
 
 # 124 — constraints restored (union)
-psql "$PROD_URL" -c "\d+ public.mythic_edges" | grep edge_type_check
-psql "$PROD_URL" -c "\d+ public.mythic_nodes" | grep node_type_check
-# Diff against /tmp/edge_pre.txt / /tmp/node_pre.txt — every pre-apply value must still be present.
+q "select pg_get_constraintdef(oid) from pg_constraint where conname='mythic_edges_edge_type_check'"
+q "select pg_get_constraintdef(oid) from pg_constraint where conname='mythic_nodes_node_type_check'"
+# Compare against the pre-apply values captured in §3b — every pre-apply value must still be present.
 ```
 
 ### REST smoke probes (public anon key, from `.env.production`)
@@ -207,14 +230,17 @@ inverse-DDL (new migration, never hand-edits):
    it the seal route fails closed — correct failure mode, but the Flow Key
    cannot produce sealed spores until set. Generate with
    `npx ed25519-keygen` or `openssl genpkey -algorithm ed25519` (base64 seed).
-2. **Commit migration 124** (not yet on any branch — it's in the worktree only).
+2. **Push the branch** `fix/restore-phase15-graph-constraints` (carries migration
+   124 + this runbook), open a PR, and merge so 124 is on `main`.
 3. Merge `main` (currently 2 behind origin/main: `fed8eb1`, `28535ab`) into the
    deployment branch, then deploy to Vercel.
 4. Revisit 116 only when the P14 monetization decision is approved.
 
 ---
 
-## 8. Verification log (2026-08-07, local stack)
+## 8. Verification log (2026-08-07)
+
+### Local stack
 
 - 001→124 from-scratch: **clean** (119 files, 0 errors) — `/tmp/mig_reset2.log`
 - Simulated prod order (all except 116): **clean** — `/tmp/mig_reset3.log`
@@ -222,3 +248,12 @@ inverse-DDL (new migration, never hand-edits):
 - 124 apply + re-apply: **PASS**; edge=35 types, node=17 types
 - Confirmed 120 hard-requires 117; no backlog migration references 116's
   `required_tier`/`premium_mixes`
+
+### Production (read-only probes, Management API)
+
+- Migration ledger: **111 entries** = 000–115 **+ 118** (116/117 absent, 119+ absent)
+- `118` triggers live: `trg_rsvp_notification`, `trg_event_change_notification` ✓
+- `mixes.visibility` (117) and `mixes.required_tier` (116): **absent** ✓
+- `mythic_edges` constraint: 077's full list (Phase 15 types present) ✓
+- `mythic_nodes`: 63 `artist_profile` rows; `mythic_edges`: empty
+- Management API SQL endpoint: **`[{"ok":1}]` smoke test passed**

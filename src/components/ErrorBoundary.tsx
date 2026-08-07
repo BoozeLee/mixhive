@@ -100,32 +100,34 @@ export class ErrorBoundary extends Component<Props, State> {
                 <strong>{t('error')}</strong> {error.message}
               </div>
 
-          <button
-            onClick={() => {
-              const text = `Error: ${error.message}\n\n${error.stack || ''}`;
-              navigator.clipboard
-                ?.writeText(text)
-                .then(() => {
-                  alert('Error details copied to clipboard');
-                })
-                .catch(() => {
-                  // fallback
-                  prompt('Copy this error:', text);
-                });
-            }}
-            style={{
-              padding: '6px 12px',
-              borderRadius: 4,
-              background: 'transparent',
-              color: '#ccc',
-              border: '1px solid #444',
-              fontSize: 12,
-              cursor: 'pointer',
-              marginBottom: 16,
-            }}
-          >
-            Copy error details
-          </button>
+              <button
+                onClick={() => {
+                  const text = `Error: ${error.message}\n\n${error.stack || ''}`;
+                  navigator.clipboard
+                    ?.writeText(text)
+                    .then(() => {
+                      alert('Error details copied to clipboard');
+                    })
+                    .catch(() => {
+                      // fallback
+                      prompt('Copy this error:', text);
+                    });
+                }}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 4,
+                  background: 'transparent',
+                  color: '#ccc',
+                  border: '1px solid #444',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  marginBottom: 16,
+                }}
+              >
+                Copy error details
+              </button>
+            </>
+          )}
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
             <button
               onClick={this.reset}

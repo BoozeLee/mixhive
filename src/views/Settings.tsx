@@ -478,24 +478,21 @@ export function Settings() {
           </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {GENRE_OPTIONS.map(g => (
-              <button
+              <Button
                 key={g}
                 type="button"
+                size="sm"
                 aria-pressed={formData.genres.includes(g)}
                 onClick={() => toggleGenre(g)}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: 10,
-                  border: 'none',
+                  borderRadius: radius.xl,
                   background: formData.genres.includes(g) ? colors.accent : colors.surfaceHover,
                   color: formData.genres.includes(g) ? colors.bg : colors.text.dim,
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  fontWeight: formData.genres.includes(g) ? 600 : 400,
+                  fontWeight: formData.genres.includes(g) ? fontWeight.semibold : fontWeight.normal,
                 }}
               >
                 {g}
-              </button>
+              </Button>
             ))}
           </div>
         </fieldset>
@@ -513,26 +510,23 @@ export function Settings() {
           </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {EQUIPMENT_OPTIONS.map(item => (
-              <button
+              <Button
                 key={item}
                 type="button"
+                size="sm"
                 aria-pressed={formData.dj_equipment.includes(item)}
                 onClick={() => toggleMulti('dj_equipment', item)}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: 10,
-                  border: 'none',
+                  borderRadius: radius.xl,
                   background: formData.dj_equipment.includes(item)
                     ? colors.accent
                     : colors.surfaceHover,
                   color: formData.dj_equipment.includes(item) ? colors.bg : colors.text.dim,
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  fontWeight: formData.dj_equipment.includes(item) ? 600 : 400,
+                  fontWeight: formData.dj_equipment.includes(item) ? fontWeight.semibold : fontWeight.normal,
                 }}
               >
                 {item}
-              </button>
+              </Button>
             ))}
           </div>
         </fieldset>
@@ -543,24 +537,21 @@ export function Settings() {
           </legend>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {DAW_OPTIONS.map(item => (
-              <button
+              <Button
                 key={item}
                 type="button"
+                size="sm"
                 aria-pressed={formData.dj_daw.includes(item)}
                 onClick={() => toggleMulti('dj_daw', item)}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: 10,
-                  border: 'none',
+                  borderRadius: radius.xl,
                   background: formData.dj_daw.includes(item) ? colors.accent : colors.surfaceHover,
                   color: formData.dj_daw.includes(item) ? colors.bg : colors.text.dim,
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  fontWeight: formData.dj_daw.includes(item) ? 600 : 400,
+                  fontWeight: formData.dj_daw.includes(item) ? fontWeight.semibold : fontWeight.normal,
                 }}
               >
                 {item}
-              </button>
+              </Button>
             ))}
           </div>
         </fieldset>
@@ -641,9 +632,10 @@ export function Settings() {
               {GOAL_OPTIONS.map(opt => {
                 const active = (goals.goals || []).includes(opt.value);
                 return (
-                  <button
+                  <Button
                     key={opt.value}
                     type="button"
+                    size="sm"
                     aria-pressed={active}
                     onClick={() =>
                       setGoals(prev => ({
@@ -654,18 +646,14 @@ export function Settings() {
                       }))
                     }
                     style={{
-                      padding: '6px 12px',
-                      borderRadius: 10,
-                      border: 'none',
+                      borderRadius: radius.xl,
                       background: active ? colors.accent : colors.surfaceHover,
                       color: active ? colors.bg : colors.text.dim,
-                      fontSize: 12,
-                      cursor: 'pointer',
-                      fontWeight: active ? 600 : 400,
+                      fontWeight: active ? fontWeight.semibold : fontWeight.normal,
                     }}
                   >
                     {opt.label}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -912,22 +900,16 @@ export function Settings() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: space[4] }}>
                 <div style={{ position: 'relative' }}>
-                  <input
+                  <Input
                     id="ai-key-input"
                     type={showAiKey ? 'text' : 'password'}
                     value={aiKeyInput}
                     onChange={e => setAiKeyInput(e.target.value)}
                     placeholder={t('aiKeyPlaceholder')}
                     autoComplete="off"
+                    hideLabel
                     style={{
-                      width: '100%',
-                      boxSizing: 'border-box',
-                      padding: `${space[4]}px ${space[12]}px ${space[4]}px ${space[5]}px`,
-                      background: colors.bg,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: radius.md,
-                      color: colors.text.primary,
-                      fontSize: fontSize.sm,
+                      paddingRight: space[12],
                       fontFamily: 'monospace',
                     }}
                   />

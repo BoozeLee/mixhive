@@ -33,7 +33,7 @@ function AppLoader() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#0a0a0a',
+          background: '#070706',
           color: '#f6c400',
           fontFamily: 'system-ui, sans-serif',
           padding: 24,

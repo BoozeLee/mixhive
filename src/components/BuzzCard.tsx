@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { Button } from './ui/Button';
 import { Icon } from './ui/Icon';
 import {
   likeBuzz,
@@ -246,13 +247,15 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
           </div>
 
           {user?.id === buzz.author_id && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleDelete}
               aria-label="Delete buzz"
-              style={{ ...actionBtn, color: colors.text.faint, marginLeft: 'auto' }}
+              style={{ color: colors.text.faint, marginLeft: 'auto' }}
             >
               ×
-            </button>
+            </Button>
           )}
         </div>
 
@@ -271,8 +274,8 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
 
         {/* Image attachment */}
         {buzz.image_url && (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             style={{
               display: 'block',
               width: '100%',
@@ -298,7 +301,7 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
                 display: 'block',
               }}
             />
-          </button>
+          </Button>
         )}
 
         {/* Audio attachment */}
@@ -447,15 +450,17 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
         {/* Actions */}
         <div style={{ display: 'flex', gap: space[2], marginTop: space[4] }}>
           {/* Like */}
-          <button
-            style={{ ...actionBtn, color: liked ? colors.danger : colors.text.dim }}
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleLike}
             aria-label={liked ? 'Unlike' : 'Like'}
             aria-pressed={liked ?? false}
+            style={{ color: liked ? colors.danger : colors.text.dim }}
           >
             <span style={{ fontSize: 14 }}>{liked ? '♥' : '♡'}</span>
             <span>{likeCount > 0 ? likeCount : ''}</span>
-          </button>
+          </Button>
 
           {/* Reply */}
           <Link
@@ -469,20 +474,28 @@ export function BuzzCard({ buzz, compact = false, onDeleted }: Props) {
           </Link>
 
           {/* Repost */}
-          <button
-            style={{ ...actionBtn, color: reposted ? colors.success : colors.text.dim }}
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleRepost}
             aria-label={reposted ? 'Undo repost' : 'Repost'}
             aria-pressed={reposted ?? false}
+            style={{ color: reposted ? colors.success : colors.text.dim }}
           >
             <span style={{ fontSize: 14 }}>⟳</span>
             <span>{repostCount > 0 ? repostCount : ''}</span>
-          </button>
+          </Button>
 
           {/* Share */}
-          <button style={actionBtn} onClick={handleShare} aria-label="Share">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleShare}
+            aria-label="Share"
+            style={{ color: colors.text.dim }}
+          >
             <span style={{ fontSize: 13 }}>↗</span>
-          </button>
+          </Button>
         </div>
       </div>
 

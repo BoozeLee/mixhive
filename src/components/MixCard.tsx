@@ -9,7 +9,7 @@ import { AiBandBadge } from './AiBandBadge';
 import { BpmChip } from './BpmChip';
 import { KeyChip } from './KeyChip';
 import { WaveBar } from './hive/WaveBar';
-import { Icon } from './ui/Icon';
+import { Button, Icon, IconButton } from './ui';
 import type { FeedMix } from '../lib/types';
 import {
   colors,
@@ -215,22 +215,20 @@ export function MixCard({ mix }: Props) {
                 </div>
               )}
               {/* Play button */}
-              <button
+              <IconButton
+                label={isNowPlaying ? `Restart ${mix.title}` : `Play ${mix.title}`}
                 onClick={handlePlay}
                 className="mix-card-play"
-                aria-label={isNowPlaying ? `Restart ${mix.title}` : `Play ${mix.title}`}
                 style={{
                   position: 'absolute',
                   inset: 0,
+                  width: '100%',
+                  height: '100%',
                   borderRadius: radius.md,
                   background: 'rgba(0,0,0,0.52)',
                   border: 'none',
                   color: colors.accent,
                   fontSize: 20,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                   opacity: isNowPlaying ? 1 : 0,
                   transition: `opacity ${transition.fast}`,
                 }}
@@ -239,8 +237,8 @@ export function MixCard({ mix }: Props) {
                   if (!isNowPlaying) e.currentTarget.style.opacity = '0';
                 }}
               >
-                <span aria-hidden="true">{isNowPlaying ? '▶' : '▶'}</span>
-              </button>
+                ▶
+              </IconButton>
 
               {/* Now playing indicator */}
               {isNowPlaying && (
@@ -425,55 +423,36 @@ export function MixCard({ mix }: Props) {
                 }}
               >
                 <LikeButton mix={mix} userId={user.id} variant="icon" showCount={true} />
-                <button
+                <IconButton
+                  label={reposted ? `Un-repost ${mix.title}` : `Repost ${mix.title}`}
                   onClick={handleRepost}
                   disabled={repostBusy}
-                  aria-label={reposted ? `Un-repost ${mix.title}` : `Repost ${mix.title}`}
                   style={{
-                    background: 'transparent',
-                    border: 'none',
                     color: reposted ? colors.success : colors.text.faint,
                     cursor: repostBusy ? 'wait' : 'pointer',
-                    fontSize: 16,
-                    padding: '4px',
-                    lineHeight: 1,
                     opacity: repostBusy ? 0.6 : 1,
-                    minWidth: 32,
-                    minHeight: 32,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     transition: transition.fast,
                   }}
                 >
                   <Icon name="repost" size={16} color="currentColor" />
-                </button>
+                </IconButton>
                 <ShareButton mix={mix} variant="icon" onShare={() => {}} />
-                <button
+                <IconButton
+                  label="More options"
                   onClick={e => {
                     e.preventDefault();
                     e.stopPropagation();
                     setShowMenu(s => !s);
                   }}
-                  aria-label="More options"
+                  active={showMenu}
                   aria-expanded={showMenu}
                   style={{
-                    background: 'transparent',
-                    border: 'none',
                     color: showMenu ? colors.accent : colors.text.faint,
-                    cursor: 'pointer',
                     fontSize: 16,
-                    padding: '4px',
-                    lineHeight: 1,
-                    minWidth: 32,
-                    minHeight: 32,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                   }}
                 >
                   ⋯
-                </button>
+                </IconButton>
                 {showMenu && (
                   <div
                     role="menu"
@@ -494,28 +473,24 @@ export function MixCard({ mix }: Props) {
                       { label: 'Play next', handler: handlePlayNext },
                       { label: 'Add to queue', handler: handleAddToQueue },
                     ].map(({ label, handler }) => (
-                      <button
+                      <Button
                         key={label}
+                        variant="ghost"
+                        fullWidth
                         role="menuitem"
                         onClick={handler}
                         style={{
-                          display: 'block',
-                          width: '100%',
-                          background: 'transparent',
-                          border: 'none',
-                          color: colors.text.primary,
+                          textAlign: 'left',
+                          justifyContent: 'flex-start',
+                          borderRadius: radius.sm,
                           padding: `${space[4]}px ${space[5]}px`,
                           fontSize: fontSize.sm,
-                          cursor: 'pointer',
-                          textAlign: 'left',
-                          borderRadius: radius.sm,
-                          transition: transition.fast,
                         }}
                         onMouseEnter={e => (e.currentTarget.style.background = colors.border)}
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
                         {label}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}

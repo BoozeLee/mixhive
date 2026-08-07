@@ -43,11 +43,11 @@ export const colors = {
   // also suits the honey identity. Ratios measured against `surface` (#0f0e0c);
   // every level improved or held.
   text: {
-    primary: '#eee',
-    secondary: '#ccc',
-    muted: '#888',
+    primary: '#f5f3e7',
+    secondary: '#d4cdb0',
+    muted: '#a9a390',
     dim: '#777', // 4.6:1 on #111 — passes AA normal text
-    faint: '#666', // 3.3:1 on #111 — passes AA UI components (was #444 @ 1.9:1)
+    faint: '#6f6a5c', // 3.3:1 on #111 — passes AA UI components
   },
 
   // Semantic
@@ -240,19 +240,6 @@ export const mq = {
   desktopUp: `(min-width: ${bp.lg}px)`,
 } as const;
 
-// Chrome dimensions shared by fixed shell elements and the content column.
-// Values are the literals these call sites carried before the P1 sweep
-// (1128c01) replaced them with `layout.*` references; the export itself was
-// never added, which is what broke the build.
-export const layout = {
-  // Fallback only — `--navbar-height` in mixhive.css is authoritative and is
-  // currently 64px. 73 is preserved here because that is what the fallback was
-  // before the sweep; changing it would be a behaviour change, not a fix.
-  navbarHeight: 73,
-  sidebarWidth: 220,
-  mobileNavHeight: 60,
-  contentMaxWidth: 640,
-} as const;
 
 export const transition = {
   fast: '120ms ease',
@@ -266,6 +253,15 @@ export const transition = {
   smooth: '250ms ease',
 } as const;
 
+
+// Layout dimensions used across shell and views.
+export const layout = {
+  navbarHeight: 73,
+  sidebarWidth: 220,
+  mobileNavHeight: 60,
+  contentMaxWidth: 640,
+} as const;
+
 export type Tokens = {
   colors: typeof colors;
   space: typeof space;
@@ -277,6 +273,7 @@ export type Tokens = {
   bp: typeof bp;
   mq: typeof mq;
   transition: typeof transition;
+  layout: typeof layout;
 };
 
 export const tokens: Tokens = {
@@ -290,6 +287,7 @@ export const tokens: Tokens = {
   bp,
   mq,
   transition,
+  layout,
 };
 
 // ── Genre-color mapping (Phase 10) ──────────────────────────────────────────

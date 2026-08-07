@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import type { AISuggestion } from '../lib/types';
 import { colors, space, radius, fontSize, fontWeight, transition } from '../styles/tokens';
 import { trackEvent } from '../lib/experiments';
-import { Icon } from './ui/Icon';
+import { Button, Icon, Textarea } from './ui';
 import type { IconKey } from '../lib/icons';
 
 const typeLabels: Record<string, string> = {
@@ -279,24 +279,24 @@ function StarRating({ onRate }: { onRate: (r: number) => void }) {
   return (
     <div style={{ display: 'flex', gap: space[1] }}>
       {[1, 2, 3, 4, 5].map(n => (
-        <button
+        <Button
           key={n}
+          variant="ghost"
+          size="sm"
           aria-label={`Rate ${n} stars`}
           onClick={() => onRate(n)}
           onMouseEnter={() => setHovered(n)}
           onMouseLeave={() => setHovered(0)}
           style={{
-            background: 'none',
-            border: 'none',
             padding: `${space[1]}px`,
-            cursor: 'pointer',
             lineHeight: 0,
             color: n <= hovered ? colors.accent : colors.text.faint,
             transition: transition.fast,
+            border: 'none',
           }}
         >
           <Icon name="rating" size={16} color="currentColor" />
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -458,7 +458,7 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
               >
                 ✎ Editing suggestion
               </div>
-              <textarea
+              <Textarea
                 value={editText}
                 onChange={e => setEditText(e.target.value)}
                 rows={6}
@@ -468,12 +468,10 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                   padding: `${space[5]}px`,
                   background: 'rgba(255,255,255,0.03)',
                   border: `1px solid ${colors.accentMuted}`,
-                  borderRadius: radius.md,
                   color: colors.text.primary,
                   fontSize: fontSize.base,
                   lineHeight: 1.6,
                   resize: 'vertical',
-                  fontFamily: 'inherit',
                   outline: 'none',
                 }}
               />
@@ -487,25 +485,22 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
       {/* Rationale accordion */}
       {suggestion.rationale && !isRejected && (
         <div style={{ marginBottom: space[6] }}>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowRationale(v => !v)}
             style={{
-              background: 'none',
-              border: 'none',
               padding: 0,
-              cursor: 'pointer',
               fontSize: fontSize.xs,
               color: colors.text.muted,
-              display: 'flex',
-              alignItems: 'center',
               gap: space[2],
+              border: 'none',
               textDecoration: 'underline',
               textDecorationColor: colors.accentMuted,
               transition: transition.fast,
             }}
           >
             {showRationale ? '▲' : '▼'} Why this analysis?
-          </button>
+          </Button>
           {showRationale && (
             <p
               style={{
@@ -528,41 +523,34 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
         <div style={{ display: 'flex', alignItems: 'center', gap: space[4], flexWrap: 'wrap' }}>
           {editMode ? (
             <>
-              <button
+              <Button
                 onClick={handleApply}
+                variant="primary"
                 style={{
                   padding: `${space[3]}px ${space[7]}px`,
-                  borderRadius: radius.md,
                   background: `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent} 58%, ${colors.accentDeep})`,
                   color: colors.black,
-                  fontWeight: fontWeight.bold,
-                  fontSize: fontSize.base,
                   textTransform: 'uppercase',
                   letterSpacing: 0.5,
-                  cursor: 'pointer',
                   border: 'none',
                 }}
               >
                 Save &amp; Apply
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => {
                   setEditMode(false);
                   setEditText(getEditableText(suggestion) ?? '');
                 }}
                 style={{
                   padding: `${space[3]}px ${space[6]}px`,
-                  borderRadius: radius.md,
-                  background: 'transparent',
                   border: `1px solid ${colors.border}`,
                   color: colors.text.muted,
-                  fontWeight: fontWeight.medium,
-                  fontSize: fontSize.base,
-                  cursor: 'pointer',
                 }}
               >
                 {t('cancel')}
-              </button>
+              </Button>
             </>
           ) : (
             <>
@@ -585,56 +573,45 @@ export function AISuggestionCard({ suggestion, profileId, onApply, onReject, onR
                 </Link>
               )}
               {suggestion.suggestion_type !== 'profile_coach' && onApply && (
-                <button
+                <Button
                   onClick={handleApply}
+                  variant="primary"
                   style={{
                     padding: `${space[3]}px ${space[7]}px`,
-                    borderRadius: radius.md,
                     background: `linear-gradient(135deg, ${colors.accentBrightest}, ${colors.accent} 58%, ${colors.accentDeep})`,
                     color: colors.black,
-                    fontWeight: fontWeight.bold,
-                    fontSize: fontSize.base,
                     textTransform: 'uppercase',
                     letterSpacing: 0.5,
-                    cursor: 'pointer',
                     border: 'none',
                   }}
                 >
                   {suggestion.suggestion_type === 'web3_proposal' ? 'Open' : 'Apply'}
-                </button>
+                </Button>
               )}
               {canEdit && !isDone && (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setEditMode(true)}
                   style={{
                     padding: `${space[3]}px ${space[6]}px`,
-                    borderRadius: radius.md,
-                    background: 'transparent',
                     border: `1px solid ${colors.accentMuted}`,
                     color: colors.accent,
-                    fontWeight: fontWeight.medium,
-                    fontSize: fontSize.base,
-                    cursor: 'pointer',
                   }}
                 >
                   {t('edit')}
-                </button>
+                </Button>
               )}
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleReject}
                 style={{
                   padding: `${space[3]}px ${space[6]}px`,
-                  borderRadius: radius.md,
-                  background: 'transparent',
                   border: `1px solid ${colors.border}`,
                   color: colors.text.muted,
-                  fontWeight: fontWeight.medium,
-                  fontSize: fontSize.base,
-                  cursor: 'pointer',
                 }}
               >
                 {t('dismiss')}
-              </button>
+              </Button>
               {!rated && onRate && <StarRating onRate={handleRate} />}
               {rated && (
                 <span style={{ fontSize: fontSize.xs, color: colors.text.muted }}>

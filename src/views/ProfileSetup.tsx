@@ -954,9 +954,10 @@ export function ProfileSetup() {
               <FormField label={t('genres')}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
                   {GENRES.map(g => (
-                    <button
+                    <Button
                       key={g}
                       type="button"
+                      size="sm"
                       aria-pressed={form.genres.includes(g)}
                       onClick={() => toggleArray('genres', g)}
                       style={{
@@ -965,13 +966,10 @@ export function ProfileSetup() {
                         border: `1px solid ${form.genres.includes(g) ? colors.accent : colors.border}`,
                         background: form.genres.includes(g) ? colors.accentFaint : 'transparent',
                         color: form.genres.includes(g) ? colors.accent : colors.text.muted,
-                        fontSize: fontSize.sm,
-                        cursor: 'pointer',
-                        transition: 'all 120ms',
                       }}
                     >
                       {g}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </FormField>
@@ -1069,8 +1067,11 @@ export function ProfileSetup() {
               <FormField label={t('djEquipment')}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
                   {EQUIPMENT_OPTIONS.map(e => (
-                    <button
+                    <Button
                       key={e}
+                      type="button"
+                      size="sm"
+                      aria-pressed={form.equipment.includes(e)}
                       onClick={() => toggleArray('equipment', e)}
                       style={{
                         padding: `${space[2]}px ${space[5]}px`,
@@ -1078,13 +1079,10 @@ export function ProfileSetup() {
                         border: `1px solid ${form.equipment.includes(e) ? colors.accent : colors.border}`,
                         background: form.equipment.includes(e) ? colors.accentFaint : 'transparent',
                         color: form.equipment.includes(e) ? colors.accent : colors.text.muted,
-                        fontSize: fontSize.sm,
-                        cursor: 'pointer',
-                        transition: 'all 120ms',
                       }}
                     >
                       {e}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </FormField>
@@ -1092,8 +1090,11 @@ export function ProfileSetup() {
               <FormField label={t('productionDjSoftware')}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: space[3] }}>
                   {DAW_OPTIONS.map(d => (
-                    <button
+                    <Button
                       key={d}
+                      type="button"
+                      size="sm"
+                      aria-pressed={form.daw.includes(d)}
                       onClick={() => toggleArray('daw', d)}
                       style={{
                         padding: `${space[2]}px ${space[5]}px`,
@@ -1101,13 +1102,10 @@ export function ProfileSetup() {
                         border: `1px solid ${form.daw.includes(d) ? colors.accent : colors.border}`,
                         background: form.daw.includes(d) ? colors.accentFaint : 'transparent',
                         color: form.daw.includes(d) ? colors.accent : colors.text.muted,
-                        fontSize: fontSize.sm,
-                        cursor: 'pointer',
-                        transition: 'all 120ms',
                       }}
                     >
                       {d}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </FormField>

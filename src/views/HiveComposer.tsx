@@ -1,11 +1,13 @@
 import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { Button } from '../components/ui/Button';
 import { Icon } from '../components/ui/Icon';
+import { Input } from '../components/ui/Input';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
+import { colors, fontSize, fontWeight, radius, space, transition, withAlpha } from '../styles/tokens';
 import { ComposerCanvas, type TrackCell } from '../components/composer/ComposerCanvas';
 import { ComposerAgentPanel } from '../components/composer/ComposerAgentPanel';
 import type { Suggestion } from '../components/composer/SuggestionCell';
@@ -395,7 +397,7 @@ export function HiveComposer() {
           {t('hiveComposer')}
         </h1>
 
-        <input
+        <Input
           type="text"
           placeholder={t('setTitle')}
           value={setTitle}
@@ -406,7 +408,6 @@ export function HiveComposer() {
             padding: `${space[4]}px ${space[6]}px`,
             background: colors.surfaceHover,
             border: `1px solid ${colors.border}`,
-            borderRadius: radius.md,
             color: colors.text.primary,
             fontSize: fontSize.sm,
             outline: 'none',
@@ -414,38 +415,35 @@ export function HiveComposer() {
         />
 
         <div style={{ marginLeft: 'auto', display: 'flex', gap: space[6] }}>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => dispatch({ type: 'TOGGLE_AGENT_PANEL' })}
             style={{
               padding: `${space[4]}px ${space[8]}px`,
-              background: 'transparent',
               border: `1px solid ${colors.border}`,
-              borderRadius: radius.md,
               color: colors.text.muted,
               fontSize: fontSize.sm,
-              cursor: 'pointer',
             }}
           >
             {t('agentPanel')}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="primary"
             onClick={handleSave}
             disabled={state.tracks.length === 0 || state.saving}
             style={{
               padding: `${space[4]}px ${space[10]}px`,
               background: state.tracks.length > 0 ? colors.accent : colors.surface,
               border: `1px solid ${state.tracks.length > 0 ? colors.accent : colors.border}`,
-              borderRadius: radius.md,
               color: state.tracks.length > 0 ? colors.bg : colors.text.dim,
               fontSize: fontSize.sm,
               fontWeight: fontWeight.semibold,
+              opacity: 1,
               cursor: state.tracks.length > 0 && !state.saving ? 'pointer' : 'default',
             }}
           >
             {state.saving ? t('saving') : t('saveSet')}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -468,20 +466,19 @@ export function HiveComposer() {
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <Icon name="composer" size={14} /> {t('draftRestored')}
           </span>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => setShowDraftBanner(false)}
             style={{
               marginLeft: 'auto',
-              background: 'none',
               border: 'none',
               color: colors.text.muted,
-              cursor: 'pointer',
               fontSize: fontSize.sm,
+              padding: 0,
             }}
           >
             {t('dismiss')}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -500,8 +497,8 @@ export function HiveComposer() {
         >
           <span style={{ fontSize: fontSize.xs, color: colors.text.dim }}>{t('filtering')}</span>
           {genreFilter && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               className="filter-chip"
               onClick={() => {
                 setGenreFilter(null);
@@ -510,11 +507,11 @@ export function HiveComposer() {
               }}
             >
               Genre: {genreFilter} ×
-            </button>
+            </Button>
           )}
           {bpmRange && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               className="filter-chip"
               onClick={() => {
                 setBpmRange(null);
@@ -523,7 +520,7 @@ export function HiveComposer() {
               }}
             >
               {bpmRange[0]}–{bpmRange[1]} BPM ×
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -612,7 +609,7 @@ export function HiveComposer() {
               gap: space[8],
             }}
           >
-            <input
+            <Input
               type="text"
               placeholder={t('searchMixes')}
               value={state.searchQuery}
@@ -621,7 +618,6 @@ export function HiveComposer() {
                 padding: `${space[6]}px ${space[8]}px`,
                 background: colors.surfaceHover,
                 border: `1px solid ${colors.border}`,
-                borderRadius: radius.md,
                 color: colors.text.primary,
                 fontSize: fontSize.md,
                 outline: 'none',
@@ -645,24 +641,21 @@ export function HiveComposer() {
               >
                 {state.searchResults.map(r => (
                   <li key={r.mix_id}>
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
                       onClick={() => handleSelectFromSearch(r)}
                       style={{
                         width: '100%',
                         textAlign: 'left',
                         padding: `${space[6]}px ${space[8]}px`,
-                        background: 'transparent',
                         border: `1px solid ${colors.border}`,
-                        borderRadius: radius.md,
                         color: colors.text.primary,
                         fontSize: fontSize.sm,
-                        cursor: 'pointer',
                       }}
                     >
                       <span style={{ fontWeight: fontWeight.semibold }}>{r.title}</span>
                       <span style={{ color: colors.text.muted }}> · {r.artist}</span>
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ul>

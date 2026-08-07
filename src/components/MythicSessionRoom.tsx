@@ -16,7 +16,6 @@ import {
 import { reportContent } from '../lib/api';
 import { supabase } from '../lib/supabase';
 import { colors, fontSize, fontWeight, radius, space } from '../styles/tokens';
-import { FlowKeyTap } from './FlowKeyTap';
 import { HiveButton } from './hive/HiveButton';
 import { Avatar } from './ui/Avatar';
 
@@ -28,7 +27,8 @@ interface Props {
 
 const STEM_BUCKET = 'mix-audio';
 
-export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSessionRoomProps) {
+export function MythicSessionRoom({ sessionId, title, onEndSession }: Props) {
+  const t = useTranslations('mythicSessionRoom');
   const { profile } = useAuth();
   const [snapshot, setSnapshot] = useState<RitualSnapshot | null>(null);
   const [messages, setMessages] = useState<RitualMessage[]>([]);
@@ -54,24 +54,6 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
     setVotes(next.votes);
   }, [sessionId]);
 
-  // Realtime state
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([currentUsername]);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      user: 'ArtistX',
-      text: 'Just dropped a new bassline idea',
-      timestamp: new Date().toISOString(),
-    },
-  ]);
-  const [messageInput, setMessageInput] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
-  const [typingUsers, setTypingUsers] = useState<string[]>([]);
-
-  const channelRef = useRef<any>(null);
-  const supabaseRef = useRef<any>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Setup Supabase Realtime for presence + chat
   useEffect(() => {
     void load().catch(error => toast.error(error.message));
   }, [load]);
@@ -92,30 +74,36 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
           }));
         setParticipants(Array.from(new Map(next.map(item => [item.id, item])).values()));
       })
-      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('User joined session:', newPresences);
-      })
-      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('User left session:', leftPresences);
-      })
-      // Broadcast: simple chat
-      .on('broadcast', { event: 'chat-message' }, payload => {
-        const msg = payload.payload as ChatMessage;
-        setMessages(prev => [...prev, msg]);
-      })
-      // Typing indicators
-      .on('broadcast', { event: 'typing' }, payload => {
-        const { username, isTyping } = payload.payload;
-        if (username === currentUsername) return; // Ignore own typing
-
-        setTypingUsers(prev => {
-          if (isTyping) {
-            return prev.includes(username) ? prev : [...prev, username];
-          } else {
-            return prev.filter(u => u !== username);
-          }
-        });
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'collab_session_messages',
+          filter: `session_id=eq.${sessionId}`,
+        },
+        () => void load()
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'collab_session_state',
+          filter: `session_id=eq.${sessionId}`,
+        },
+        () => void load()
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'collab_session_votes',
+          filter: `session_id=eq.${sessionId}`,
+        },
+        () => void load()
+      )
       .subscribe(async status => {
         if (status === 'SUBSCRIBED') {
           await channel.track({
@@ -210,13 +198,8 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
       method: 'POST',
       body: JSON.stringify({ body: message.trim(), channel: 'audience' }),
     });
-
-    // Optimistically add to local list
-    setMessages(prev => [...prev, msg]);
-    setMessageInput('');
-
-    // Stop typing indicator
-    sendTypingStatus(false);
+    setMessage('');
+    await load();
   };
 
   const respondVote = async (vote: RitualVote, option: string) => {
@@ -289,45 +272,12 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
     toast.success(`Invited @${username} to the creator stage`);
   };
 
-  const handleAddStem = async () => {
-    // For demo: simulate adding a stem and record it to session metadata
-    // In full version: file input + upload to Storage under `collab-sessions/${sessionId}/`
-    const newStem = {
-      id: `stem-${Date.now()}`,
-      name: `new_stem_${Math.floor(Math.random() * 100)}.wav`,
-    };
-    setStems(prev => [...prev, newStem]);
-
-    // Record to session metadata so the job processor can see it for inspired_by
-    try {
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured — cannot record stem');
-        return;
-      }
-
-      const { data: currentSession } = await supabase
-        .from('collab_sessions')
-        .select('metadata')
-        .eq('id', sessionId)
-        .single();
-
-      const currentStems = currentSession?.metadata?.stems || [];
-      const updatedStems = [...currentStems, newStem.name];
-
-      await supabase
-        .from('collab_sessions')
-        .update({
-          metadata: {
-            ...(currentSession?.metadata || {}),
-            stems: updatedStems,
-          },
-        })
-        .eq('id', sessionId);
-
-      toast.success('Stem added to session (will generate inspired_by on end)');
-    } catch (e) {
-      console.warn('Could not record stem to metadata', e);
-    }
+  const hideMessage = async (messageId: string) => {
+    await ritualRequest(`/api/mythic/sessions/${sessionId}/moderation`, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'hide_message', message_id: messageId }),
+    });
+    await load();
   };
 
   const moderateProfile = async (profileId: string, action: 'mute' | 'remove') => {
@@ -393,73 +343,24 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
         }}
       >
         <div>
-          <div
-            style={{
-              fontSize: fontSize.lg,
-              fontWeight: fontWeight.bold,
-              color: colors.text.primary,
-            }}
-          >
-            {title}
-          </div>
-          <div style={{ fontSize: fontSize.sm, color: colors.text.muted }}>
-            Mythic Session • {sessionId.slice(0, 8)}...
+          <div style={{ fontWeight: fontWeight.bold, fontSize: fontSize.xl }}>{title}</div>
+          <div style={{ color: colors.text.muted, fontSize: fontSize.sm }}>
+            {snapshot.session.is_public ? 'Public creative ritual' : 'Private creator session'} ·{' '}
+            {role}
           </div>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: space[3] }}>
-          {/* Placeholder participant avatars */}
-          <div style={{ display: 'flex', marginRight: space[2] }}>
-            {[1, 2, 3].map(i => (
-              <div
-                key={i}
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: '50%',
-                  background: colors.accentMuted,
-                  border: `2px solid ${colors.surface}`,
-                  marginLeft: i > 1 ? -8 : 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 10,
-                  color: colors.text.primary,
-                }}
-              >
-                A{i}
-              </div>
-            ))}
-          </div>
-
-          {showEndConfirm ? (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                fontSize: 12,
-                color: colors.text.secondary,
-              }}
-            >
-              End session and generate graph proposals?
-              <HiveButton
-                variant="danger"
-                onClick={handleEndSession}
-                disabled={isEnding}
-                style={{ padding: '4px 10px', fontSize: 12 }}
-              >
-                Yes, End
-              </HiveButton>
-              <HiveButton
-                variant="secondary"
-                onClick={cancelEndConfirm}
-                style={{ padding: '4px 10px', fontSize: 12 }}
-              >
-                Cancel
-              </HiveButton>
-            </div>
-          ) : (
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          {participants.slice(0, 6).map(person => (
+            <Avatar key={person.id} src={person.avatar_url} name={person.username} size={30} />
+          ))}
+          {isCreator && (
+            <HiveButton variant="glass" size="sm" onClick={() => void talkback.toggle()}>
+              {talkback.enabled
+                ? `Talkback on · ${talkback.connectedPeers} · ${talkback.relayAvailable ? 'relay ready' : 'direct only'}`
+                : 'Enable talkback'}
+            </HiveButton>
+          )}
+          {isCreator && snapshot.state.agent_enabled && (
             <HiveButton
               variant="glass"
               size="sm"
@@ -517,35 +418,22 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
               flexWrap: 'wrap',
             }}
           >
-            <span>Stems & Assets</span>
-            <HiveButton
-              variant="secondary"
-              onClick={handleAddStem}
-              style={{ fontSize: 12, padding: '4px 10px' }}
-            >
-              + Add Stem
-            </HiveButton>
-          </div>
-
-          <div style={{ flex: 1, overflowY: 'auto', padding: space[3] }}>
-            {stems.length === 0 ? (
-              <div style={{ color: colors.text.muted, fontSize: fontSize.sm, padding: space[4] }}>
-                No stems yet. Upload or drag files here.
-              </div>
-            ) : (
-              stems.map((stem, index) => (
-                <div
-                  key={stem.id}
-                  style={{
-                    padding: `${space[2]}px ${space[3]}px`,
-                    background: index % 2 === 0 ? colors.surfaceMuted : 'transparent',
-                    borderRadius: radius.sm,
-                    marginBottom: space[1],
-                    fontSize: fontSize.sm,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
+            <strong>{t('sharedSound')}</strong>
+            {isCreator && (
+              <>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="audio/*"
+                  multiple
+                  hidden
+                  onChange={event => void uploadFiles(event.target.files)}
+                />
+                <HiveButton
+                  variant="glass"
+                  size="sm"
+                  loading={uploading}
+                  onClick={() => fileRef.current?.click()}
                 >
                   {t('addAudio')}
                 </HiveButton>
@@ -574,12 +462,7 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
             )}
           </div>
           {currentAsset && (
-            <audio
-              ref={audioRef}
-              src={assetUrl(currentAsset)}
-              preload="auto"
-              aria-label="Audio player"
-            >
+            <audio ref={audioRef} src={assetUrl(currentAsset)} preload="auto" aria-label="Audio player">
               <track kind="captions" src="" label="No captions" />
             </audio>
           )}
@@ -747,56 +630,65 @@ export function MythicSessionRoom({ sessionId, title, onEndSession }: MythicSess
               <div style={{ color: colors.text.muted }}>{t('theRoomIsListening')}</div>
             )}
           </div>
-
           <div
             style={{
-              padding: space[3],
+              padding: space[4],
               borderTop: `1px solid ${colors.border}`,
               display: 'flex',
-              flexDirection: 'column',
-              gap: space[1],
+              gap: 8,
             }}
           >
-            {/* Typing indicator */}
-            {typingUsers.length > 0 && (
-              <div
-                style={{ fontSize: fontSize.sm, color: colors.text.muted, paddingLeft: space[2] }}
-              >
-                {typingUsers.join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: space[2] }}>
-              <input
-                type="text"
-                value={messageInput}
-                onChange={e => handleTyping(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                  }
-                }}
-                placeholder="Type a message..."
-                style={{
-                  flex: 1,
-                  padding: `${space[2]}px ${space[3]}px`,
-                  background: colors.bg,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: radius.sm,
-                  color: colors.text.primary,
-                  fontSize: fontSize.sm,
-                }}
-              />
-              <HiveButton
-                variant="secondary"
-                onClick={sendMessage}
-                disabled={!messageInput.trim()}
-                style={{ padding: '8px 14px' }}
-              >
-                Send
-              </HiveButton>
-            </div>
+            <input
+              value={message}
+              maxLength={1000}
+              onChange={event => setMessage(event.target.value)}
+              onKeyDown={event => {
+                if (event.key === 'Enter') void sendMessage();
+              }}
+              placeholder={t('addToTheRitual')}
+              style={{
+                flex: 1,
+                background: colors.bg,
+                color: colors.text.primary,
+                border: `1px solid ${colors.border}`,
+                borderRadius: radius.md,
+                padding: 10,
+              }}
+            />
+            <HiveButton
+              variant="glass"
+              size="sm"
+              disabled={!message.trim()}
+              onClick={() => void sendMessage()}
+            >
+              {t('send')}
+            </HiveButton>
+          </div>
+        </section>
+      </div>
+      {showVote && (
+        <div
+          role="dialog"
+          aria-label={t('createAudienceVote')}
+          style={{
+            position: 'absolute',
+            inset: '20% 25%',
+            background: colors.surface,
+            border: `1px solid ${colors.accent}`,
+            borderRadius: radius.lg,
+            padding: 24,
+            zIndex: 20,
+          }}
+        >
+          <h3>{t('openACreativeFork')}</h3>
+          <p style={{ color: colors.text.muted }}>
+            Audience members will choose between the first four shared assets.
+          </p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <HiveButton onClick={() => void createVote()}>{t('openVote')}</HiveButton>
+            <HiveButton variant="ghost" onClick={() => setShowVote(false)}>
+              {t('cancel')}
+            </HiveButton>
           </div>
         </div>
       )}

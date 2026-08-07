@@ -324,6 +324,7 @@ export function ProfilePage() {
             isOwn={isOwn}
           />
         )}
+        </div>
       </section>
 
       <StartMythicSessionModal

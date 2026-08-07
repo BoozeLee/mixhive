@@ -11,6 +11,9 @@ import { BuzzComposer } from '../components/BuzzComposer';
 import { RecommendedDJs } from '../components/RecommendedDJs';
 import { SkeletonFeed } from '../components/Skeleton';
 import { EmptyState } from '../components/EmptyState';
+import { Button } from '../components/ui/Button';
+import { Icon } from '../components/ui/Icon';
+import { Select } from '../components/ui/Select';
 import {
   colors,
   fontSize,
@@ -19,6 +22,7 @@ import {
   radius,
   space,
   transition,
+  withAlpha,
 } from '../styles/tokens';
 import type {
   FeedMix,
@@ -104,8 +108,9 @@ function GenreRadar() {
         {POPULAR_GENRES.map(genre => {
           const c = getGenreColor(genre);
           return (
-            <button
+            <Button
               key={genre}
+              variant="ghost"
               onClick={() => navigate(`/search?genre=${encodeURIComponent(genre)}`)}
               style={{
                 padding: '4px 10px',
@@ -115,9 +120,7 @@ function GenreRadar() {
                 color: c,
                 fontSize: fontSize.xs,
                 fontWeight: fontWeight.semibold,
-                cursor: 'pointer',
                 textTransform: 'capitalize',
-                transition: transition.smooth,
                 whiteSpace: 'nowrap',
               }}
               onMouseEnter={e => {
@@ -130,7 +133,7 @@ function GenreRadar() {
               }}
             >
               {genre}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -602,24 +605,19 @@ export function Feed() {
 
           {/* New items pill */}
           {user && newCount > 0 && tab !== 'feed' && (
-            <button
+            <Button
+              variant="primary"
               onClick={handleShowNew}
               style={{
                 display: 'block',
                 margin: `0 auto ${space[6]}px`,
                 padding: `${space[3]}px ${space[9]}px`,
-                background: colors.accent,
-                color: colors.bg,
-                border: 'none',
                 borderRadius: radius.pill,
-                fontWeight: fontWeight.bold,
-                fontSize: fontSize.sm,
-                cursor: 'pointer',
                 boxShadow: shadow.accent,
               }}
             >
               ↑ {t('newItems', { count: newCount })}
-            </button>
+            </Button>
           )}
 
           {/* Tab bar */}
@@ -638,16 +636,14 @@ export function Feed() {
             }}
           >
             {tabs.map(({ id, label, icon }) => (
-              <button
+              <Button
                 key={id}
+                variant="ghost"
                 role="tab"
                 aria-selected={tab === id}
                 onClick={() => setTab(id)}
                 style={{
                   flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                   gap: space[3],
                   padding: `${space[4]}px ${space[5]}px`,
                   borderRadius: radius.md,
@@ -655,15 +651,12 @@ export function Feed() {
                   background: tab === id ? colors.accent : 'transparent',
                   color: tab === id ? colors.bg : colors.text.muted,
                   fontWeight: tab === id ? fontWeight.bold : fontWeight.normal,
-                  cursor: 'pointer',
                   fontSize: fontSize.sm,
-                  transition: transition.smooth,
-                  whiteSpace: 'nowrap',
                 }}
               >
                 <Icon name={icon} size={14} color="currentColor" />
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -679,8 +672,9 @@ export function Feed() {
           >
             {/* Genre chips */}
             {POPULAR_GENRES.map(g => (
-              <button
+              <Button
                 key={g}
+                variant="ghost"
                 onClick={() => setSelectedGenre(selectedGenre === g ? '' : g)}
                 style={{
                   padding: '4px 12px',
@@ -690,17 +684,14 @@ export function Feed() {
                   color: selectedGenre === g ? colors.bg : colors.text.muted,
                   fontSize: fontSize.xs,
                   fontWeight: selectedGenre === g ? fontWeight.bold : fontWeight.normal,
-                  cursor: 'pointer',
-                  transition: transition.fast,
-                  whiteSpace: 'nowrap',
                 }}
               >
                 {g}
-              </button>
+              </Button>
             ))}
             {/* AI Band only toggle */}
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => setAiBandOnly(v => !v)}
               aria-pressed={aiBandOnly}
               style={{
@@ -711,27 +702,22 @@ export function Feed() {
                 color: aiBandOnly ? colors.bg : colors.text.muted,
                 fontSize: fontSize.xs,
                 fontWeight: aiBandOnly ? fontWeight.bold : fontWeight.normal,
-                cursor: 'pointer',
-                transition: transition.fast,
-                whiteSpace: 'nowrap',
               }}
             >
               {t('aiBandOnly')}
-            </button>
+            </Button>
             {/* Date range select */}
-            <select
-              aria-label={t('dateRangeLabel')}
+            <Select
               value={dateRange}
               onChange={e => setDateRange(e.target.value as DateRange)}
               style={{
                 marginLeft: 'auto',
                 padding: '4px 10px',
-                borderRadius: radius.md,
-                border: `1px solid ${colors.border}`,
                 background: colors.surface,
                 color: colors.text.muted,
                 fontSize: fontSize.xs,
                 cursor: 'pointer',
+                border: `1px solid ${colors.border}`,
               }}
             >
               <option value="all">{t('dateAll')}</option>
@@ -739,7 +725,7 @@ export function Feed() {
               <option value="week">{t('dateWeek')}</option>
               <option value="month">{t('dateMonth')}</option>
               <option value="year">{t('dateYear')}</option>
-            </select>
+            </Select>
           </div>
 
           {/* Error banner */}
@@ -801,7 +787,8 @@ export function Feed() {
                 )
               )}
               {currentHasMore && (
-                <button
+                <Button
+                  variant="secondary"
                   onClick={handleLoadMore}
                   disabled={currentLoading}
                   style={{
@@ -810,15 +797,14 @@ export function Feed() {
                     background: currentLoading ? colors.surfaceMuted : colors.surface,
                     border: `1px solid ${colors.border}`,
                     color: currentLoading ? colors.text.faint : colors.text.muted,
-                    borderRadius: radius.md,
+                    opacity: 1,
                     cursor: currentLoading ? 'default' : 'pointer',
                     fontSize: fontSize.md,
                     fontWeight: fontWeight.medium,
-                    transition: transition.fast,
                   }}
                 >
                   {currentLoading ? t('loadingMore') : t('loadMore')}
-                </button>
+                </Button>
               )}
             </div>
           )}

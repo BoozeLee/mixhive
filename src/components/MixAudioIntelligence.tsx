@@ -398,7 +398,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
         <div style={{ marginTop: 16 }}>
           <div
             style={{
-              color: '#f0c040',
+              color: '#f6c400',
               fontSize: 11,
               fontWeight: 800,
               textTransform: 'uppercase',
@@ -429,7 +429,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
                 >
                   <span
                     style={{
-                      color: '#f0c040',
+                      color: '#f6c400',
                       fontSize: 11,
                       fontWeight: 700,
                       textTransform: 'uppercase',
@@ -450,7 +450,7 @@ export function MixAudioIntelligence({ mix, isOwner }: Props) {
           {aiAnalysis.suggestions.length > 3 && (
             <p style={{ marginTop: 8, color: '#555', fontSize: 12 }}>
               +{aiAnalysis.suggestions.length - 3} more in{' '}
-              <a href="/agents/inbox" style={{ color: '#f0c040' }}>
+              <a href="/agents/inbox" style={{ color: '#f6c400' }}>
                 agents inbox
               </a>
             </p>

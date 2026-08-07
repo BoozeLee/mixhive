@@ -77,7 +77,7 @@ export function useAuth() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!isMounted.current) return;
       // getSession() above owns the initial load. Supabase warns against awaiting
       // other client calls inside this callback because it can deadlock auth.

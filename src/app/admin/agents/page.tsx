@@ -126,7 +126,7 @@ export default function AdminAgentsPage() {
         display: 'flex',
         height: '100vh',
         fontFamily: 'monospace',
-        background: '#0a0a0a',
+        background: colors.bg,
         color: '#e0e0e0',
       }}
     >

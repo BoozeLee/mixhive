@@ -5,6 +5,8 @@ import { useAuth } from '../hooks/useAuth';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { colors, radius, space, fontSize } from '../styles/tokens';
 import type { Profile } from '../lib/types';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
 
 const ADMIN_SECRET =
   typeof document !== 'undefined'
@@ -179,51 +181,20 @@ export function AdminUsers() {
       <p style={{ color: colors.text.muted, margin: '0 0 24px' }}>{t('subtitle')}</p>
 
       {/* Search + filter */}
-      <form
-        onSubmit={handleSearch}
-        style={{ display: 'flex', gap: space[3], marginBottom: space[5], flexWrap: 'wrap' }}
-      >
-        <input
-          type="text"
-          value={searchInput}
-          onChange={e => setSearchInput(e.target.value)}
-          placeholder={t('searchPlaceholder')}
-          style={{
-            flex: 1,
-            minWidth: 200,
-            padding: '8px 12px',
-            borderRadius: radius.md,
-            border: `1px solid ${colors.border}`,
-            background: colors.surface,
-            color: colors.text.primary,
-            fontSize: fontSize.sm,
-          }}
-        />
-        <button
-          type="submit"
-          style={{
-            padding: '8px 16px',
-            borderRadius: radius.md,
-            border: `1px solid ${colors.accent}`,
-            background: colors.accent,
-            color: colors.bg,
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontSize: fontSize.sm,
-          }}
-        >
+      <form onSubmit={handleSearch} style={{ display: 'flex', gap: space[3], marginBottom: space[5], flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <Input
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            placeholder={t('searchPlaceholder')}
+            label={t('searchPlaceholder')}
+            hideLabel
+          />
+        </div>
+        <Button type="submit" variant="primary">
           {t('search')}
-        </button>
-        <label
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: space[2],
-            color: colors.text.muted,
-            fontSize: fontSize.sm,
-            cursor: 'pointer',
-          }}
-        >
+        </Button>
+        <label style={{ display: 'flex', alignItems: 'center', gap: space[2], color: colors.text.muted, fontSize: fontSize.sm, cursor: 'pointer' }}>
           <input
             type="checkbox"
             checked={showBanned}
@@ -354,52 +325,34 @@ export function AdminUsers() {
                     <td style={{ padding: '10px 12px' }}>
                       <div style={{ display: 'flex', gap: space[2], flexWrap: 'wrap' }}>
                         {isBanned ? (
-                          <button
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => handleUnban(u.id)}
                             disabled={busyId === u.id}
-                            style={{
-                              padding: '4px 10px',
-                              borderRadius: radius.md,
-                              border: `1px solid ${colors.accent}`,
-                              background: 'transparent',
-                              color: colors.accent,
-                              cursor: busyId === u.id ? 'default' : 'pointer',
-                              fontSize: 11,
-                            }}
+                            loading={busyId === u.id}
+                            style={{ color: colors.accent }}
                           >
-                            {busyId === u.id ? '...' : t('unban')}
-                          </button>
+                            {t('unban')}
+                          </Button>
                         ) : (
-                          <button
+                          <Button
+                            variant="danger"
+                            size="sm"
                             onClick={() => handleBan(u.id)}
                             disabled={busyId === u.id}
-                            style={{
-                              padding: '4px 10px',
-                              borderRadius: radius.md,
-                              border: `1px solid ${colors.dangerStrong}`,
-                              background: 'transparent',
-                              color: colors.dangerStrong,
-                              cursor: busyId === u.id ? 'default' : 'pointer',
-                              fontSize: 11,
-                            }}
+                            loading={busyId === u.id}
                           >
-                            {busyId === u.id ? '...' : t('ban')}
-                          </button>
+                            {t('ban')}
+                          </Button>
                         )}
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => loadAudit(u)}
-                          style={{
-                            padding: '4px 10px',
-                            borderRadius: radius.md,
-                            border: `1px solid ${colors.border}`,
-                            background: 'transparent',
-                            color: colors.text.muted,
-                            cursor: 'pointer',
-                            fontSize: 11,
-                          }}
                         >
                           {t('audit')}
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -412,62 +365,38 @@ export function AdminUsers() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div
-          style={{ display: 'flex', justifyContent: 'center', gap: space[3], marginTop: space[6] }}
-        >
-          <button
+        <div style={{ display: 'flex', justifyContent: 'center', gap: space[3], marginTop: space[6] }}>
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page <= 1}
-            style={{
-              padding: '6px 14px',
-              borderRadius: radius.md,
-              border: `1px solid ${colors.border}`,
-              background: colors.surface,
-              color: page <= 1 ? colors.text.faint : colors.text.muted,
-              cursor: page <= 1 ? 'default' : 'pointer',
-              fontSize: fontSize.sm,
-            }}
           >
             {t('prev')}
-          </button>
+          </Button>
           <span style={{ color: colors.text.dim, padding: '6px 8px', fontSize: fontSize.sm }}>
             {page} / {totalPages}
           </span>
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
-            style={{
-              padding: '6px 14px',
-              borderRadius: radius.md,
-              border: `1px solid ${colors.border}`,
-              background: colors.surface,
-              color: page >= totalPages ? colors.text.faint : colors.text.muted,
-              cursor: page >= totalPages ? 'default' : 'pointer',
-              fontSize: fontSize.sm,
-            }}
           >
             {t('next')}
-          </button>
+          </Button>
         </div>
       )}
 
       {/* Ban reason input */}
       {banReason && (
         <div style={{ marginTop: space[4] }}>
-          <input
-            type="text"
+          <Input
             value={banReason}
             onChange={e => setBanReason(e.target.value)}
             placeholder="Ban reason..."
-            style={{
-              width: '100%',
-              padding: '8px 12px',
-              borderRadius: radius.md,
-              border: `1px solid ${colors.border}`,
-              background: colors.surface,
-              color: colors.text.primary,
-              fontSize: fontSize.sm,
-            }}
+            label="Ban reason"
+            hideLabel
           />
         </div>
       )}
@@ -519,19 +448,14 @@ export function AdminUsers() {
               <h3 id="audit-dialog-title" style={{ margin: 0, color: colors.text.primary }}>
                 {t('auditTitle')} — @{auditTarget.username}
               </h3>
-              <button
+              <Button
+                variant="ghost"
                 aria-label="Close audit log"
                 onClick={() => setAuditTarget(null)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: colors.text.dim,
-                  cursor: 'pointer',
-                  fontSize: 18,
-                }}
+                style={{ fontSize: 18, padding: '4px 8px' }}
               >
                 ✕
-              </button>
+              </Button>
             </div>
             {auditLoading ? (
               <p style={{ color: colors.text.muted }}>{t('auditLoading')}</p>

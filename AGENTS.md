@@ -121,6 +121,13 @@ npm run smoke -- --mock-supabase https://<deployment-url>
 curl -I https://mixhive.vercel.app
 ```
 
+## Git Convention
+
+`main` must not contain merge commits. Always use squash or rebase merge
+in PRs. If a merge commit is pushed accidentally, document the exception
+here and avoid repeating it. Future contributors should follow the
+linear-history rule enforced by branch protection.
+
 ## OpenCode Task Card
 
 When asked to continue QA/Security/DevEx work, focus on:

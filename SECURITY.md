@@ -86,7 +86,9 @@ Last full audit: 2026-08-07
 
 React Router `7.12.0 - 8.2.0`: RSC Mode CSRF Bypass Allows Action Execution Before 400 Response.
 
-`npm audit fix --force` would downgrade `react-router-dom` to `7.11.0`, which is a breaking change. Defer until React Router v7.18.2 is confirmed not vulnerable, or until a minor bump resolves it.
+Advisory: `GHSA-qwww-vcr4-c8h2`
+
+Rationale: The app uses React Router v7 inside a Next.js client bridge, not RSC Mode. The vulnerable code path requires RSC Mode action execution, which is not enabled here. `npm audit fix --force` would downgrade `react-router-dom` to `7.11.0`, which is a breaking change. Defer until React Router v7.18.2 or later is confirmed not vulnerable, or until a minor bump resolves it.
 
 ### Remediation Policy
 

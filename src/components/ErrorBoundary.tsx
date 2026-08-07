@@ -74,7 +74,7 @@ export class ErrorBoundary extends Component<Props, State> {
           >
             !
           </div>
-          <h1 style={{ margin: '0 0 8px', fontSize: 20 }}>{t('somethingWentWrong')}</h1>
+          <h1 style={{ margin: '0 0 8px', fontSize: 20 }}>Something went wrong</h1>
           <p
             style={{ color: colors.text.dimmed, fontSize: 14, lineHeight: 1.5, margin: '0 0 20px' }}
           >
@@ -97,8 +97,32 @@ export class ErrorBoundary extends Component<Props, State> {
                   wordBreak: 'break-word',
                 }}
               >
-                <strong>{t('error')}</strong> {error.message}
+                <strong>Error:</strong> {error.message}
               </div>
+
+              {error.stack && (
+                <details style={{ marginBottom: 16 }}>
+                  <summary style={{ cursor: 'pointer', color: colors.text.muted, fontSize: 12 }}>
+                    Show stack trace (click to expand)
+                  </summary>
+                  <pre
+                    style={{
+                      textAlign: 'left',
+                      fontSize: 10,
+                      color: colors.text.muted,
+                      background: colors.bg,
+                      padding: 8,
+                      borderRadius: 4,
+                      overflow: 'auto',
+                      maxHeight: 160,
+                      marginTop: 8,
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    {error.stack}
+                  </pre>
+                </details>
+              )}
 
               <button
                 onClick={() => {
@@ -117,8 +141,8 @@ export class ErrorBoundary extends Component<Props, State> {
                   padding: '6px 12px',
                   borderRadius: 4,
                   background: 'transparent',
-                  color: '#ccc',
-                  border: '1px solid #444',
+                  color: colors.text.secondary,
+                  border: `1px solid ${colors.borderStrong}`,
                   fontSize: 12,
                   cursor: 'pointer',
                   marginBottom: 16,
@@ -142,7 +166,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 cursor: 'pointer',
               }}
             >
-              {t('tryAgain')}
+              Try again
             </button>
             <a
               href="/feed"
@@ -157,7 +181,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 fontSize: 14,
               }}
             >
-              {t('backToFeed')}
+              Back to feed
             </a>
           </div>
         </div>

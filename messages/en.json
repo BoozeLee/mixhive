@@ -123,21 +123,13 @@
     "stepError": "Please fix the errors above before continuing.",
     "audioRequired": "Audio file is required",
     "titleRequired": "Title is required",
-    "genreRequired": "Genre is required",
-    "publishNow": "Publish now",
-    "scheduleForLater": "Schedule for later",
-    "draftSaved": "Draft saved!",
-    "scheduleSuccess": "Mix scheduled!",
-    "resumeDraft": "Resume draft",
-    "startNewUpload": "Start new upload",
-    "scheduleFor": "Schedule for later"
+    "genreRequired": "Genre is required"
   },
   "notifications": {
     "eyebrow": "Activity",
     "title": "Notifications",
     "loading": "Loading notifications…",
     "markAllRead": "Mark all read",
-    "preferences": "Preferences",
     "unread": "Unread",
     "signInPrompt": "Sign in to see your notifications"
   },
@@ -149,12 +141,10 @@
     "artists": "Artists",
     "mixes": "Mixes",
     "scenes": "Scenes",
-    "agents": "Agents",
     "noResults": "No results found",
     "noResultsBody": "Try another spelling, genre, or location.",
     "resultsFor": "Results for <q>{query}</q>",
-    "aiBand": "AI Band",
-    "searchUnavailable": "Search unavailable"
+    "aiBand": "AI Band"
   },
   "feed": {
     "liveFeed": "Live Feed",
@@ -183,162 +173,14 @@
     "emptyLatestAction": "Upload a mix",
     "errorFeedTitle": "Couldn't load feed",
     "errorFeedBody": "Something went wrong while loading the hive. Try again?",
-    "errorFeedAction": "Retry",
-    "dateRangeLabel": "Filter by date range",
-    "dateAll": "All time",
-    "date24h": "Past 24h",
-    "dateWeek": "Past week",
-    "dateMonth": "Past month",
-    "dateYear": "Past year",
-    "aiBandOnly": "AI Band only"
+    "errorFeedAction": "Retry"
   },
   "dashboard": {
     "title": "Hive Growth OS",
     "topSignal": "Top signal",
     "recentActivity": "Recent fan activity",
     "nextActions": "Next best actions",
-    "automationBees": "Automation bees",
-    "creatorFallback": "Creator",
-    "commandCell": "{name} command cell",
-    "subtitle": "Track your sound, activate the swarm, and turn listeners into collaborators.",
-    "stats": {
-      "plays": "plays",
-      "likes": "likes",
-      "comments": "comments",
-      "followers": "followers"
-    },
-    "topMixStats": "{plays} plays / {likes} likes / {comments} comments",
-    "topMixEmpty": "No top mix yet. Upload your first mix to start collecting signal.",
-    "recentActivityEmpty": "Activity will appear here as listeners play, like, follow, and comment.",
-    "loadError": "Failed to load dashboard data.",
-    "retry": "Retry",
-    "drafts": "Drafts",
-    "scheduled": "Scheduled",
-    "activity": {
-      "uploaded": "Uploaded {title}",
-      "liked": "Liked {title}",
-      "followed": "Followed {name}",
-      "aMix": "a mix",
-      "aCreator": "a creator"
-    },
-    "time": {
-      "justNow": "just now",
-      "minutes": "{n}m ago",
-      "hours": "{n}h ago",
-      "days": "{n}d ago",
-      "months": "{n}mo ago"
-    },
-    "actions": {
-      "upload": {
-        "title": "Drop fresh nectar",
-        "bodyEmpty": "Publish your first mix and seed the hive.",
-        "bodyActive": "Keep your cell active with a new upload.",
-        "cta": "Upload mix"
-      },
-      "profile": {
-        "title": "Tune your profile cell",
-        "bodyWithBio": "Refresh your story, links, genres, and visuals.",
-        "bodyNoBio": "Add a bio, genres, links, and visuals so fans know your sound.",
-        "cta": "Open profile"
-      },
-      "epk": {
-        "title": "Build your EPK",
-        "body": "Generate a booking-ready press kit from your profile and published mixes.",
-        "cta": "Open EPK studio"
-      },
-      "opportunities": {
-        "title": "Find your next opening",
-        "body": "Review Belgian pilot gigs, grants, radio calls, and club slots ranked for your profile.",
-        "cta": "Open opportunities"
-      }
-    },
-    "automation": {
-      "bodyEmpty": "Fork a starter agent to welcome followers, watch comments, and surface fan signals.",
-      "bodyActive": "{active} active / {total} total agents watching your hive.",
-      "ctaFork": "Fork starter agent",
-      "ctaManage": "Manage agents"
-    }
-  },
-  "contentPerformance": {
-    "heading": "Content performance",
-    "subtitle": "Which of your drops actually work — ranked by the signal they pull.",
-    "empty": "Publish a mix to see how each one performs.",
-    "catalogByGenre": "Catalog by genre",
-    "columns": {
-      "mix": "Mix",
-      "plays": "Plays",
-      "likes": "Likes",
-      "comments": "Comments",
-      "engagement": "Engagement"
-    }
-  },
-  "leaderboard": {
-    "title": "Hive Leaderboard",
-    "subtitle": "Top builders ranked by XP earned from completed collab quests.",
-    "artistXp": "Artist XP",
-    "aiBand": "AI Band",
-    "emptyTitle": "No ranks yet",
-    "emptyBody": "Complete collab quests to earn XP and climb the Hive leaderboard.",
-    "emptyAction": "Browse quests",
-    "noAgents": "No AI agents yet.",
-    "xp": "{xp} XP",
-    "mixes": "{count} mixes",
-    "followers": "{count} followers"
-  },
-  "aiBand": {
-    "title": "AI Band",
-    "subtitle": "The autonomous artists of the Hive",
-    "sortLabel": "Sort AI Band",
-    "sortFollowers": "Top followers",
-    "sortMixes": "Most mixes",
-    "sortCredibility": "Most credited",
-    "emptyTitle": "No AI agents yet",
-    "emptyBody": "AI-Band members will appear here once they're active in the Hive.",
-    "follow": "Follow",
-    "following": "Following",
-    "followers": "followers",
-    "mixes": "mixes",
-    "notFoundTitle": "Agent not found",
-    "notFoundBody": "This AI agent doesn't exist or is no longer active.",
-    "backToBand": "Back to AI Band",
-    "levelShort": "Lv.{level}",
-    "xp": "{xp} XP",
-    "creditedOn": "Credited on",
-    "noCreditedMixes": "No mixes credited yet.",
-    "bandmate": "AI bandmate",
-    "bandmateTooltip": "An AI bandmate — a credited collaborator, always tied to its human producers",
-    "follower": "follower",
-    "track": "track",
-    "tracks": "tracks",
-    "plays": "plays",
-    "discography": "Discography",
-    "noTracksTitle": "No tracks yet",
-    "noTracksBody": "No published tracks credit {name} as an AI band member yet.",
-    "allGenres": "All genres"
-  },
-  "ritualReplay": {
-    "unavailable": "Replay unavailable",
-    "loading": "Reconstructing ritual…",
-    "backToSession": "Session",
-    "titleSuffix": "{title} · Replay",
-    "subtitle": "A provenance timeline of decisions, signals, and Session Spirit interventions.",
-    "empty": "No recorded moments yet."
-  },
-  "help": {
-    "eyebrow": "Help Center",
-    "title": "How can we help?",
-    "subtitle": "Guides for getting started, uploading mixes, building AI agents, quests, the marketplace, and your account.",
-    "searchPlaceholder": "Search help articles…",
-    "searchLabel": "Search help articles",
-    "resultOne": "{count} result",
-    "resultOther": "{count} results",
-    "noMatch": "No articles match “{query}”. Try a different term.",
-    "backLink": "Help Center",
-    "notFoundWhat": "help article",
-    "backToCenter": "Back to Help Center"
-  },
-  "avatarStudio": {
-    "backToSettings": "Back to settings"
+    "automationBees": "Automation bees"
   },
   "discover": {
     "eyebrow": "Music Discovery",
@@ -356,10 +198,7 @@
     "popularGenresSubtitle": "Dive into a sound",
     "aiBand": "AI Band",
     "aiBandSubtitle": "Autonomous artists of the Hive",
-    "upcomingEvents": "Upcoming Events",
-    "upcomingEventsSubtitle": "Raves, sessions, and meetups",
     "seeAll": "See all",
-    "laneEmpty": "Nothing here yet — check back soon.",
     "emptyState": "The Hive is quiet. Check back soon for new mixes and creators."
   },
   "profile": {
@@ -426,26 +265,6 @@
     "milestoneThousandListeners": "1,000 followers milestone",
     "milestoneVerified": "Verified profile"
   },
-  "pricing": {
-    "title": "Support the Hive",
-    "subtitle": "Choose a tier that fits your creative journey. Every plan keeps MixHive independent and community-driven.",
-    "supporter": "Supporter",
-    "insider": "Insider",
-    "patron": "Patron",
-    "popular": "Most popular",
-    "subscribe": "Subscribe",
-    "current": "Current",
-    "manage": "Manage",
-    "aiStudio": "AI Studio access",
-    "analyticsExport": "Analytics export",
-    "prioritySupport": "Priority support",
-    "noWatermark": "No watermark",
-    "badge": "Supporter badge",
-    "earlyAccess": "Early access to features",
-    "customDomain": "Custom profile domain",
-    "directSupport": "Direct support channel",
-    "featureRequests": "Feature request voting"
-  },
   "settings": {
     "editProfile": "Edit profile",
     "profilePicture": "Profile Picture",
@@ -462,7 +281,6 @@
     "aiKey": "OpenAI API key",
     "notConnected": "Not connected",
     "getPro": "Get Pro",
-    "upgradePlan": "Upgrade plan",
     "hiveStory": "Hive Story",
     "shareJourney": "Share my journey",
     "connectedWallet": "Connected wallet",
@@ -482,29 +300,10 @@
     "baseCityPlaceholder": "e.g. Brussels",
     "aiKeyPlaceholder": "sk-proj-...",
     "remove": "Remove",
-    "privacyTitle": "Privacy & Data",
-    "privacyDescription": "Export a copy of your data, or request account deletion (processed within 30 days). See our <link>Privacy Policy</link>.",
-    "confirmDeletion": "Request account deletion? Your account and data will be removed within 30 days, and you will be signed out.",
     "privacyPolicy": "Privacy Policy",
     "deletionPending": "Deletion requested — pending 30-day grace period",
     "cancelDeletion": "Cancel deletion",
-    "deletionCancelled": "Deletion request cancelled — your account is safe",
-    "notificationsDescription": "Choose what reaches this browser. System pushes stay quiet while MixHive is focused.",
-    "dawSoftware": "DAW / Software",
-    "saving": "Saving...",
-    "saveProfile": "Save profile",
-    "artistGoalsDescription": "Tell MIXHIVE what you’re aiming for — the opportunity graph uses this to score matches.",
-    "savingEllipsis": "Saving…",
-    "saveGoals": "Save goals",
-    "goalsSaved": "Goals saved.",
-    "goalsError": "Could not save goals.",
-    "hiveStoryDescription": "Share your journey — your milestones, collabs, and sound evolution — on your profile.",
-    "betaAccess": "Beta Access",
-    "betaAccessDescription": "Enter an invite code for early access to new features.",
-    "billing": "Billing",
-    "billingDescription": "Manage your subscription and payment methods.",
-    "manageBilling": "Manage billing",
-    "aiArtStudio": "AI Art Studio"
+    "deletionCancelled": "Deletion request cancelled — your account is safe"
   },
   "gear": {
     "market": "GEAR MARKET",
@@ -568,7 +367,6 @@
     "cancelQuest": "Cancel Quest",
     "launchHint": "Launch when all needed roles are filled.",
     "completeHint": "Marking complete awards XP to all filled role holders.",
-    "continueInLiveRoom": "Continue in Live Room",
     "applyPlaceholder": "Tell the creator why you're a great fit..."
   },
   "earnings": {
@@ -584,14 +382,7 @@
     "status": "Status",
     "paidOut": "Paid out",
     "pendingEscrow": "Pending escrow",
-    "held": "Held (set up payouts)",
-    "loadingPayoutStatus": "Loading payout status…",
-    "payoutsActive": "Payouts active — you can receive marketplace earnings.",
-    "stripeNeedsDetails": "Your Stripe account needs a few more details before payouts can be enabled.",
-    "connectStripePrompt": "Connect a Stripe account to sell gear and receive agent-package earnings.",
-    "openingStripe": "Opening Stripe…",
-    "finishPayoutSetup": "Finish payout setup",
-    "setUpPayouts": "Set up payouts"
+    "held": "Held (set up payouts)"
   },
   "editMix": {
     "title": "Edit Mix",
@@ -611,14 +402,7 @@
     "startSec": "Start (sec)",
     "removeTrack": "Remove track",
     "audioFile": "Audio File (leave empty to keep current)",
-    "artworkImage": "Artwork Image (leave empty to keep current)",
-    "archive": "Archive",
-    "unarchive": "Unarchive",
-    "unpublish": "Unpublish",
-    "schedule": "Schedule",
-    "unschedule": "Unschedule",
-    "scheduleFor": "Schedule for later",
-    "requiredTier": "Required subscription tier"
+    "artworkImage": "Artwork Image (leave empty to keep current)"
   },
   "opportunities": {
     "graph": "Opportunity Graph",
@@ -655,9 +439,7 @@
     "tryFilters": "Try different filters",
     "haveIdea": "Have your own agent idea?",
     "official": "OFFICIAL",
-    "verified": "VERIFIED",
-    "featured": "FEATURED",
-    "featuredSection": "Featured agents"
+    "verified": "VERIFIED"
   },
   "profileSetup": {
     "addYourKeyIn": "Add your key in Settings",
@@ -706,7 +488,6 @@
     "hereSYourProfile": "Here's your profile preview. You can always edit it later."
   },
   "newCollabQuest": {
-    "30": "30",
     "postAQuest": "Post a Quest",
     "defineYourCreativeProject": "Define your creative project and the collaborators you need",
     "questDetails": "Quest Details",
@@ -726,6 +507,7 @@
     "regionOptional": "Region (optional)",
     "brusselsRemoteEurope": "Brussels, Remote, Europe",
     "timelineDays": "Timeline (days)",
+    "30": "30",
     "xpReward": "XP reward",
     "type": "Type *",
     "select": "Select...",
@@ -779,17 +561,8 @@
   "pressKitStudio": {
     "pressKitAgent": "Press Kit Agent",
     "generateYourBookingReady": "Generate your booking-ready EPK.",
-    "pressKitDescription": "Your electronic press kit is built from your profile, published mixes, and social links. Generate it once, then customise with your own sections.",
     "loadingPressKitWorkspace": "Loading press kit workspace...",
     "noEpkGeneratedYet": "No EPK generated yet",
-    "noEpkDescription": "Generate your first EPK to get a shareable, booking-ready press kit built from your profile, top mixes, and social links.",
-    "generateEpk": "Generate EPK",
-    "regenerateEpk": "Regenerate",
-    "generating": "Generating…",
-    "versionPublic": "v{v} — {visibility} — {views} views",
-    "public": "Public",
-    "private": "Private",
-    "savedVersions": "{count} saved version(s)",
     "openPublicEpk": "Open public EPK",
     "downloadPdf": "Download PDF",
     "useWithOpportunities": "Use with opportunities",
@@ -798,22 +571,7 @@
     "bio": "Bio",
     "featuredMixes": "Featured mixes",
     "noPublishedMixesYet": "No published mixes yet.",
-    "technicalNotes": "Technical notes",
-    "addMoreProfileDetails": "Add more profile details to strengthen your pitch.",
-    "plays": "plays",
-    "customSections": "Custom sections",
-    "customSectionsHelp": "Add your own sections to highlight specific achievements, past performances, press quotes, or anything else promoters should know.",
-    "addSection": "Add section",
-    "saveSections": "Save sections",
-    "saving": "Saving…",
-    "sectionHeadingPlaceholder": "Section heading (e.g. \"Past performances\")",
-    "sectionBodyPlaceholder": "Write your section content here…"
-  },
-  "saved": {
-    "signInToSee": "Sign in to see your favorites.",
-    "eyebrow": "Favorites",
-    "title": "Saved Mixes",
-    "empty": "You haven't liked any mixes yet."
+    "technicalNotes": "Technical notes"
   },
   "sceneRadar": {
     "signInToSee": "Sign in to see your scene radar.",
@@ -865,33 +623,6 @@
     "hideContent": "Hide content",
     "banOwner": "Ban owner",
     "dismiss": "Dismiss"
-  },
-  "adminUsers": {
-    "title": "User Management",
-    "subtitle": "Search, ban/unban users, and review moderation history.",
-    "searchPlaceholder": "Search by username or display name...",
-    "search": "Search",
-    "bannedOnly": "Banned only",
-    "loading": "Loading users...",
-    "noResults": "No users match your search.",
-    "noUsers": "No users found.",
-    "colUser": "User",
-    "colStatus": "Status",
-    "colMixes": "Mixes",
-    "colFollowers": "Followers",
-    "colJoined": "Joined",
-    "colActions": "Actions",
-    "banned": "Banned",
-    "verified": "Verified",
-    "active": "Active",
-    "ban": "Ban",
-    "unban": "Unban",
-    "audit": "Audit",
-    "prev": "Prev",
-    "next": "Next",
-    "auditTitle": "Moderation History",
-    "auditLoading": "Loading audit log...",
-    "auditEmpty": "No moderation history for this user."
   },
   "agentsGallery": {
     "agentGallery": "Agent gallery",
@@ -1014,20 +745,11 @@
     "signIn": "Sign in",
     "you": "You:",
     "chat": "Chat",
-    "messages": "Messages",
-    "newConversation": "New Conversation",
-    "newMessage": "New Message",
-    "searchUsers": "Search users…",
-    "noConversations": "No conversations yet.",
-    "noMessagesYet": "No messages yet",
-    "searching": "Searching…",
-    "noResults": "No users found"
+    "messages": "Messages"
   },
   "notFound": {
     "noRouteMatches": "No route matches",
-    "pageNotFound": "Page not found",
-    "mightHaveMoved": ". It might have moved or never existed.",
-    "backToFeed": "Back to feed"
+    "pageNotFound": "Page not found"
   },
   "publicPressKit": {
     "loadingEpk": "Loading EPK...",
@@ -1067,8 +789,7 @@
     "blog": "Blog",
     "privacy": "Privacy",
     "terms": "Terms",
-    "cookies": "Cookies",
-    "cookieSettings": "Cookie Settings"
+    "cookies": "Cookies"
   },
   "mythicSessionRoom": {
     "enteringRitual": "Entering ritual…",
@@ -1202,14 +923,6 @@
     "thanksForTheFeedback": "Thanks for the feedback",
     "howUsefulWasThis": "How useful was this?"
   },
-  "errorBoundary": {
-    "somethingWentWrong": "Something went wrong",
-    "error": "Error:",
-    "showStackTraceClick": "Show stack trace (click to expand)",
-    "copyErrorDetails": "Copy error details",
-    "tryAgain": "Try again",
-    "backToFeed": "Back to feed"
-  },
   "buzzComposer": {
     "signIn": "Sign in",
     "buzz": "Buzz",
@@ -1242,105 +955,25 @@
     "participantSetCryptographicallySigned": "Participant set cryptographically signed at session end"
   },
   "consentBanner": {
-    "cookieConsent": "Cookie consent",
-    "description": "We use necessary cookies to run MixHive, and optional analytics to improve it. Read our <cookieLink>Cookie Policy</cookieLink> and <privacyLink>Privacy Policy</privacyLink>.",
     "cookiePolicy": "Cookie Policy",
     "privacyPolicy": "Privacy Policy",
     "acceptAnalytics": "Accept analytics",
     "rejectNonEssential": "Reject non-essential",
-    "managePreferences": "Manage preferences",
-    "savePreferences": "Save preferences",
-    "analyticsLabel": "Analytics",
-    "analyticsHelp": "Help us understand how the platform is used so we can improve it.",
-    "marketingLabel": "Marketing",
-    "marketingHelp": "Receive personalised updates about new features and events.",
-    "back": "Back"
+    "cookieConsent": "Cookie consent"
   },
   "privacy": {
     "title": "Privacy Policy",
-    "lastUpdated": "Last updated 2026-07-19 · Policy version v2",
+    "lastUpdated": "Last updated 2026-06-09 · Policy version v1",
     "whoWeAreHeading": "Who we are",
-    "whoWeAreBody": "MixHive is a social platform for DJs, producers and underground music creators, operated from Antwerp, Belgium. This policy explains what personal data we process and your rights under the GDPR (and equivalent laws such as LGPD, APPI and PIPA). For the purposes of data protection law, the data controller is MixHive (contact via your account settings or privacy@mixhive.app).",
+    "whoWeAreBody": "MixHive is a social platform for DJs, producers and underground music creators. This policy explains what personal data we process and your rights under the GDPR (and equivalent laws such as LGPD, APPI and PIPA).",
     "dataHeading": "Data we process",
-    "dataBody": "Account data (email, profile, links), content you upload (mixes, playlists, comments), social graph (follows, messages), payment metadata (processed by Stripe; we do not store card numbers), consent records, and limited technical data (IP address, user agent — stored only in consent audit logs). Analytics are only collected if you opt in via the cookie banner.",
+    "dataBody": "Account data (email, profile, links), content you upload (mixes, playlists, comments), social graph (follows, messages), and limited technical data (consent records, basic logs). Analytics are only collected if you opt in via the cookie banner.",
     "legalHeading": "Legal bases",
-    "legalBody": "We rely on: contract performance (to provide the service), consent (for optional analytics and marketing communications), legitimate interest (security, fraud prevention, and platform integrity), and legal obligation (financial record retention for tax purposes).",
-    "retentionHeading": "Data retention",
-    "retentionBody": "Account data is retained until you request deletion. Consent records are kept for 3 years for audit purposes. Payment and financial records are retained for 7 years as required by Belgian tax law. Analytics data (if opted in) is retained for 13 months. Upon account deletion, personal data is purged within 30 days, except where retention is legally required.",
-    "transfersHeading": "International transfers",
-    "transfersBody": "Our infrastructure is provided by Supabase (United States) and Vercel (United States). Payment processing is handled by Stripe (United States). Where personal data is transferred outside the European Economic Area, we rely on Standard Contractual Clauses or other appropriate safeguards as required by GDPR Chapter V.",
-    "thirdPartiesHeading": "Third-party services",
-    "thirdPartiesBody": "We share data with the following processors solely to provide the service: Supabase (database, authentication, storage), Vercel (hosting, edge functions, analytics), Stripe (payment processing, marketplace escrow), Google (OAuth sign-in), and Sentry (error monitoring). We do not sell personal data to third parties.",
+    "legalBody": "We rely on contract (to provide the service), consent (for optional analytics/marketing), and legitimate interest (security and abuse prevention).",
     "rightsHeading": "Your rights",
-    "rightsBody": "You have the right to access, rectify, and export your data (Settings → Privacy & Data), request erasure within a 30-day window, restrict processing, object to processing based on legitimate interest, and data portability. You may withdraw analytics consent at any time via the cookie banner. You also have the right to lodge a complaint with a supervisory authority.",
-    "supervisoryHeading": "Supervisory authority",
-    "supervisoryBody": "If you believe your data protection rights have been infringed, you have the right to lodge a complaint with the Belgian Data Protection Authority (Autorité de protection des données / Gegevensbeschermingsautoriteit), Rue de la Presse 35, 1000 Brussels, Belgium, contact@apd-gba.be.",
-    "automatedHeading": "Automated decisions",
-    "automatedBody": "MixHive does not use automated decision-making or profiling that produces legal effects or similarly significantly affects you. AI-powered features (agent suggestions, audio analysis) are assistive tools and do not make autonomous decisions about your account.",
+    "rightsBody": "You can access and export your data, and request deletion, from Settings → Privacy & Data. Deletion is processed within a 30-day window. You may withdraw analytics consent at any time via the cookie banner.",
     "contactHeading": "Contact",
-    "contactBody": "For privacy requests, contact us via your account settings or email privacy@mixhive.app. We will respond to all requests within 30 days. Localized versions of this policy will accompany regional launches."
-  },
-  "terms": {
-    "title": "Terms of Service",
-    "lastUpdated": "Last updated 2026-07-19",
-    "ageHeading": "Age requirement",
-    "ageBody": "You must be at least 16 years old to use MixHive. If you are under 16, you may only use the platform with the consent of a parent or legal guardian. By using MixHive, you represent that you meet this age requirement.",
-    "acceptableUseHeading": "Acceptable use",
-    "acceptableUseBody": "You agree to upload only content you have the rights to share, to respect other creators, and to follow the community guidelines. Abuse, harassment, hate speech, and copyright infringement may result in content removal, account suspension, or permanent ban.",
-    "yourContentHeading": "Your content",
-    "yourContentBody": "You retain ownership of the mixes and material you publish. You grant MixHive a limited, non-exclusive licence to host, display, and distribute your content on the platform so it can function. You may remove your content at any time.",
-    "marketplaceHeading": "Marketplace & payments",
-    "marketplaceBody": "Gear and agent marketplace transactions are processed via Stripe. Escrow and payout terms are shown at the point of sale. MixHive charges a platform fee of 2.5%–5% on gear sales (sliding scale based on item price) and 30% on agent purchases. All payments are final unless a dispute is filed within 14 days.",
-    "dsaHeading": "Content moderation & reporting",
-    "dsaBody": "Under the Digital Services Act, we provide mechanisms to report illegal content or content that violates our terms. You can report content via the report button on any mix, profile, or message. We will review all reports and take appropriate action, which may include content removal, account restriction, or referral to law enforcement.",
-    "liabilityHeading": "Limitation of liability",
-    "liabilityBody": "MixHive is provided \"as is\" without warranties of any kind. We are not liable for indirect, incidental, or consequential damages. Our total liability shall not exceed the amount you paid to MixHive in the 12 months preceding the claim.",
-    "governingLawHeading": "Governing law",
-    "governingLawBody": "These terms are governed by Belgian law. Any disputes shall be submitted to the exclusive jurisdiction of the courts of Brussels, Belgium, unless otherwise required by consumer protection law in your jurisdiction.",
-    "changesHeading": "Changes",
-    "changesBody": "We may update these terms from time to time. Material changes will be communicated in-app at least 30 days before they take effect. Continued use of the platform after changes take effect constitutes acceptance of the updated terms."
-  },
-  "cookies": {
-    "title": "Cookie Policy",
-    "lastUpdated": "Last updated 2026-07-19",
-    "necessaryHeading": "Necessary",
-    "necessaryBody": "Required to sign you in, keep your session, and run core features. These are always on and cannot be disabled.",
-    "analyticsHeading": "Analytics (optional)",
-    "analyticsBody": "If you accept analytics, we use privacy-respecting product analytics (Vercel Analytics) to understand usage and improve MixHive. These are only loaded after you opt in via the consent banner.",
-    "marketingHeading": "Marketing (optional)",
-    "marketingBody": "Marketing cookies help us deliver personalised updates about new features and events. These are only loaded if you explicitly opt in.",
-    "declarationHeading": "Cookie declaration",
-    "declarationBody": "The table below lists all cookies used by MixHive:",
-    "cookieName": "Cookie",
-    "cookieProvider": "Provider",
-    "cookiePurpose": "Purpose",
-    "cookieDuration": "Duration",
-    "cookieType": "Type",
-    "necessaryType": "Necessary",
-    "functionalType": "Functional",
-    "analyticsType": "Analytics",
-    "mhLocaleName": "mh_locale",
-    "mhLocaleProvider": "MixHive",
-    "mhLocalePurpose": "Stores your language preference",
-    "mhLocaleDuration": "1 year",
-    "supabaseAuthName": "sb-* (Supabase)",
-    "supabaseAuthProvider": "Supabase",
-    "supabaseAuthPurpose": "Authentication and session management",
-    "supabaseAuthDuration": "Session",
-    "vercelAnalyticsName": "_vercel_insights",
-    "vercelAnalyticsProvider": "Vercel",
-    "vercelAnalyticsPurpose": "Usage analytics (only if accepted)",
-    "vercelAnalyticsDuration": "Session",
-    "consentRecordName": "mixhive_consent_v1",
-    "consentRecordProvider": "MixHive",
-    "consentRecordPurpose": "Stores your cookie consent preferences",
-    "consentRecordDuration": "Until cleared",
-    "thirdPartyHeading": "Third-party cookies",
-    "thirdPartyBody": "Google OAuth sets a session cookie when you sign in with Google. This cookie is managed by Google and is subject to Google's own cookie policy.",
-    "managingHeading": "Managing your choice",
-    "managingBody": "Your consent is stored on this device and recorded against your account if you are signed in. You can change your preferences at any time by clicking \"Cookie Settings\" in the footer. Clearing site data also resets the banner.",
-    "browserHeading": "Managing cookies in your browser",
-    "browserBody": "You can also control cookies through your browser settings. Most browsers allow you to block or delete cookies. Note that blocking necessary cookies may prevent MixHive from functioning correctly."
+    "contactBody": "For privacy requests, contact the MixHive team via your account settings. Localized (DE/ES/etc.) versions of this policy will accompany regional launches."
   },
   "cDNOptimizedAudio": {
     "cdn": "CDN",
@@ -1350,214 +983,72 @@
     "clickToPlayAudio": "Click to play audio",
     "playlist": "Playlist"
   },
-  "beta": {
-    "badge": "Beta",
-    "joinTitle": "Join the beta",
-    "joinDescription": "Enter your invite code to get early access to new features.",
-    "codeLabel": "Invite code",
-    "codePlaceholder": "Enter your invite code",
-    "redeem": "Redeem",
-    "redeeming": "Redeeming…",
-    "success": "Welcome to the beta! You now have early access.",
-    "invalidCode": "Invalid or already used invite code.",
-    "alreadyMember": "You already have beta access.",
-    "statusActive": "Beta member",
-    "statusNone": "Not a beta member"
-  },
-  "consent": {
-    "manageCookies": "Cookie Settings"
-  },
-  "artStudio": {
-    "title": "AI Art Studio",
-    "heading": "Create art with AI",
-    "subtitle": "Generate stunning artwork from text prompts or blend multiple reference images. Pro only.",
-    "promptLabel": "Describe what you want",
-    "promptPlaceholder": "A neon-lit DJ booth with holographic turntables, cyberpunk atmosphere...",
-    "promptHint": "Use (word:1.3) syntax for prompt weighting. Be specific about style, mood, and composition.",
-    "negativePrompt": "Negative prompt",
-    "negativePlaceholder": "blurry, low quality, text, watermark...",
-    "style": "Style",
-    "aspectRatio": "Aspect ratio",
-    "denoising": "Denoising strength",
-    "closerToRef": "Closer to reference",
-    "moreCreative": "More creative",
-    "qualityBoosters": "Quality boosters",
-    "detail": "Extra detail",
-    "sharpness": "Sharpness boost",
-    "cinematicBoost": "Cinematic lighting",
-    "generate": "Generate Art",
-    "history": "Generation History"
-  },
-  "liveRooms": {
-    "title": "Live Rooms",
-    "subtitle": "Join real-time DJ sessions",
-    "allRooms": "All",
-    "live": "LIVE",
-    "waiting": "Waiting",
-    "createRoom": "Create Room",
-    "joinRoom": "Join",
-    "joinedRoom": "Joined room",
-    "leaveRoom": "Leave",
-    "leftRoom": "Left room",
-    "startSession": "Start Session",
-    "sessionStarted": "Session started",
-    "endSession": "End Session",
-    "sessionEnded": "Session ended",
-    "roomNotFound": "Room not found",
-    "backToRooms": "Back to rooms",
-    "participants": "Participants",
-    "chat": "Chat",
-    "sendMessage": "Type a message...",
-    "send": "Send",
-    "joinToChat": "Join the room to chat",
-    "emptyTitle": "No live rooms right now",
-    "emptyDescription": "Create one and start mixing with others.",
-    "roomFull": "Room is full",
-    "waveformPlaceholder": "Shared Waveform",
-    "waveformDescription": "Waveform sync will appear here",
-    "role_host": "Host",
-    "role_dj": "DJ",
-    "role_listener": "Listener"
-  },
-  "events": {
-    "title": "Events",
-    "subtitle": "Raves, sessions, and meetups",
-    "upcoming": "Upcoming",
-    "allEvents": "All Events",
-    "createEvent": "Create Event",
-    "editEvent": "Edit Event",
-    "eventTitle": "Event title",
-    "eventTitlePlaceholder": "Name your event",
-    "description": "Description",
-    "eventDescriptionPlaceholder": "Tell people what to expect...",
-    "venueName": "Venue name",
-    "venueNamePlaceholder": "Club name, warehouse, etc.",
-    "venueAddress": "Address",
-    "venueAddressPlaceholder": "123 Main St, City",
-    "startDate": "Start date & time",
-    "endDate": "End date & time",
-    "freeEvent": "Free event",
-    "ticketUrl": "Ticket URL",
-    "publishEvent": "Publish Event",
-    "publishNow": "Publish immediately",
-    "saveDraft": "Save Draft",
-    "cancel": "Cancel",
-    "eventPublished": "Event published",
-    "eventSaved": "Event saved as draft",
-    "eventNotFound": "Event not found",
-    "backToEvents": "Back to events",
-    "date": "Date",
-    "time": "Time",
-    "venue": "Venue",
-    "price": "Price",
-    "spotsLeft": "Spots left",
-    "about": "About",
-    "attendees": "Attendees",
-    "getTickets": "Get Tickets",
-    "free": "Free",
-    "ticketRequired": "Ticket required",
-    "pastEvent": "This event has ended",
-    "cancelled": "Event cancelled",
-    "byOrganizer": "by {name}",
-    "rsvpGoing": "Going",
-    "rsvpMaybe": "Maybe",
-    "rsvpCancel": "Cancel RSVP",
-    "rsvpCancelled": "RSVP cancelled",
-    "going": "going",
-    "maybeLabel": "maybe",
-    "noEvents": "No upcoming events",
-    "noEventsDescription": "Organize a rave and let the hive know.",
-    "maxAttendees": "{count} spots left",
-    "saveChanges": "Save changes",
-    "eventUpdated": "Event updated",
-    "updateFailed": "Failed to update event",
-    "loadFailed": "Failed to load event",
-    "notYourEvent": "Only the organizer can edit this event",
-    "statusLabel": "Status",
-    "statusDraft": "Draft",
-    "statusPublished": "Published",
-    "cancelEvent": "Cancel event",
-    "cancelEventConfirm": "Cancel this event? Attendees will see it as cancelled.",
-    "eventCancelled": "Event cancelled"
-  },
-  "mixAnalytics": {
-    "title": "Mix Analytics",
-    "plays": "Plays",
-    "likes": "Likes",
-    "comments": "Comments",
-    "shares": "Shares",
-    "engagementRate": "Engagement",
-    "completionRate": "Completion",
-    "playsOverTime": "Plays over time",
-    "topReferrers": "Top referrers",
-    "geoDistribution": "Geographic distribution"
-  },
-  "emptyState": {
-    "notFound": "Not found",
-    "notFoundBody": "We couldn't find what you were looking for.",
-    "doesNotExist": "This page doesn't exist.",
-    "backToFeed": "Back to feed"
-  },
-  "errorComponent": {
-    "somethingWentWrong": "Something went wrong",
-    "tryAgain": "Try again",
-    "retry": "Retry",
-    "accessDenied": "Access denied",
-    "signIn": "Sign in",
-    "unableToConnect": "Unable to connect"
-  },
   "globalPlayer": {
     "play": "Play",
     "pause": "Pause",
-    "next": "Next",
     "previous": "Previous",
+    "next": "Next",
+    "seek": "Seek",
+    "volume": "Volume",
     "mute": "Mute",
     "unmute": "Unmute",
-    "volume": "Volume",
-    "seek": "Seek",
     "queue": "Queue",
     "expand": "Expand",
     "minimize": "Minimize",
     "close": "Close"
   },
-  "loadingSpinner": {
-    "loading": "Loading…"
+  "errorComponent": {
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try Again",
+    "retry": "Retry",
+    "unableToConnect": "Unable to connect to the server. Please check your internet connection.",
+    "accessDenied": "You need to be logged in to access this content.",
+    "signIn": "Sign In"
   },
-  "logo": {
-    "altLogo": "MixHive logo",
-    "altIcon": "MixHive icon"
+  "emptyState": {
+    "notFound": "This item doesn't exist",
+    "doesNotExist": "doesn't exist",
+    "notFoundBody": "It might have been deleted, made private, or the link is wrong.",
+    "backToFeed": "Back to feed"
+  },
+  "searchBar": {
+    "placeholder": "Search DJs, mixes..."
+  },
+  "searchAutocomplete": {
+    "placeholder": "Search mixes, artists, scenes...",
+    "popularSearch": "Popular search",
+    "search": "Search"
+  },
+  "loadingSpinner": {
+    "loading": "Loading..."
+  },
+  "protectedRoute": {
+    "loadingLabel": "Loading protected page",
+    "enteringTheHive": "Entering the hive…"
+  },
+  "shareButton": {
+    "checkOutThisMix": "Check out this mix",
+    "share": "Share",
+    "copied": "Copied",
+    "copyLink": "Copy link",
+    "cancel": "Cancel"
   },
   "notificationsBell": {
     "notifications": "Notifications",
     "enablePush": "Enable push notifications"
   },
-  "protectedRoute": {
-    "enteringTheHive": "Entering the hive…",
-    "loadingLabel": "Loading"
+  "logo": {
+    "altLogo": "MixHive Logo",
+    "altIcon": "MixHive"
   },
   "reportButton": {
     "report": "Report",
-    "reportReason": "Reason for reporting",
-    "reasonPlaceholder": "Tell us what's wrong…",
-    "submitReport": "Submit report",
+    "cancel": "Cancel",
+    "couldNotFile": "Could not file report",
+    "reportedThanks": "✓ Reported — thanks",
+    "reportReason": "Report reason",
+    "reasonPlaceholder": "What's wrong with this? (optional)",
     "reporting": "Reporting…",
-    "reportedThanks": "Thanks — we'll take a look.",
-    "couldNotFile": "Couldn't file that report.",
-    "cancel": "Cancel"
-  },
-  "searchAutocomplete": {
-    "search": "Search",
-    "placeholder": "Search mixes, artists, scenes…",
-    "popularSearch": "Popular searches"
-  },
-  "searchBar": {
-    "placeholder": "Search…"
-  },
-  "shareButton": {
-    "share": "Share",
-    "copyLink": "Copy link",
-    "copied": "Copied",
-    "checkOutThisMix": "Check out this mix",
-    "cancel": "Cancel"
+    "submitReport": "Submit report"
   }
 }

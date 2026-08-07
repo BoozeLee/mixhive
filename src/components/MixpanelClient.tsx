@@ -50,22 +50,14 @@ export function MixpanelClient() {
         }).data.subscription
       : null;
 
-      // Track initial page view
-      trackPageView();
-
-      // Track page changes
-      const handleRouteChange = () => {
-        trackPageView();
-      };
-
-      // Listen for navigation events
-      window.addEventListener('popstate', handleRouteChange);
-
-      // Clean up
-      return () => {
-        window.removeEventListener('popstate', handleRouteChange);
-      };
-    }
+    return () => {
+      document.removeEventListener('click', interaction);
+      window.removeEventListener('popstate', pageView);
+      window.removeEventListener(CONSENT_CHANGED_EVENT, consentChanged);
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
+      authSubscription?.unsubscribe();
+    };
   }, []);
 
   return null;
